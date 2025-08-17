@@ -1,4 +1,4 @@
-name: 'DHgate Monitor - Daily Selenium Check'
+name: 'DHgate Monitor - Cloud Selenium'
 
 on:
   schedule:
@@ -7,8 +7,9 @@ on:
   workflow_dispatch: # Allows manual triggering
 
 jobs:
-  monitor:
+  selenium-monitor:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     
     steps:
     - name: 📥 Checkout repository
@@ -19,20 +20,19 @@ jobs:
       with:
         python-version: '3.11'
         
-    - name: 📦 Install dependencies
+    - name: 📦 Install Python dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements-full.txt
         
-    - name: 🌐 Setup Chrome for Selenium
-      uses: browser-actions/setup-chrome@latest
+    - name: 🌐 Setup Chrome browser
+      uses: browser-actions/setup-chrome@v1
       with:
         chrome-version: stable
         
-    - name: 🤖 Run DHgate monitoring
+    - name: 🤖 Run DHgate Selenium monitoring
       env:
         ENVIRONMENT: production
-        # Email credentials from GitHub Secrets
         SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
         SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
         RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
@@ -44,13 +44,14 @@ jobs:
         # Update config with secrets
         python3 update_config_secrets.py
         
-        # Run monitoring
+        # Run Selenium monitoring
         python3 run_monitor.py
         
-    - name: 📊 Upload logs
+    - name: 📊 Archive monitoring logs
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: monitoring-logs
+        name: dhgate-monitoring-logs-${{ github.run_number }}
         path: logs/
         retention-days: 30
+        if-no-files-found: warn
