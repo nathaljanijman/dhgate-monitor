@@ -356,14 +356,14 @@ function generateDashboardHTML(shops, config, tags) {
             <h1 style="color: #1e40af; font-weight: 700; font-size: 2.5rem; letter-spacing: 2px;">
                 DHGate monitor
             </h1>
-            <p class="text-muted">Automatische product monitoring</p>
+            <p class="text-muted">Automatische shop en producten monitoring</p>
         </div>
         
         <div class="row">
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Geregistreerde Shops (${shops.length})</h3>
+                        <h3>Geregistreerde shops (${shops.length})</h3>
                     </div>
                     <div class="card-body">
                         ${shops.length === 0 ? 
@@ -386,9 +386,9 @@ function generateDashboardHTML(shops, config, tags) {
                         <h5>Acties</h5>
                     </div>
                     <div class="card-body d-grid gap-2">
-                        <a href="/add_shop" class="btn btn-success">Shop Toevoegen</a>
-                        <a href="/settings" class="btn btn-primary">Instellingen</a>
-                        <a href="/tags" class="btn btn-primary">Tags Beheren</a>
+                        <a href="/add_shop" class="btn btn-success">shop toevoegen</a>
+                        <a href="/settings" class="btn btn-primary">instellingen</a>
+                        <a href="/tags" class="btn btn-primary">tags beheren</a>
                     </div>
                 </div>
                 
@@ -418,7 +418,7 @@ function generateAddShopHTML() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop Toevoegen - DHgate Monitor</title>
+    <title>shop toevoegen - DHgate Monitor</title>
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -437,12 +437,12 @@ function generateAddShopHTML() {
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Shop Toevoegen</h3>
+                        <h3>shop toevoegen</h3>
                     </div>
                     <div class="card-body">
                         <form method="POST">
                             <div class="mb-3">
-                                <label class="form-label">Shop Naam</label>
+                                <label class="form-label">shop naam</label>
                                 <input type="text" name="name" class="form-control" required>
                             </div>
                             <div class="mb-3">
@@ -451,8 +451,8 @@ function generateAddShopHTML() {
                                 <div class="form-text">Voer de volledige DHgate zoek URL in</div>
                             </div>
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Shop Toevoegen</button>
-                                <a href="/" class="btn btn-outline-secondary">Terug naar Dashboard</a>
+                                <button type="submit" class="btn btn-primary">shop toevoegen</button>
+                                <a href="/" class="btn btn-outline-secondary">terug naar dashboard</a>
                             </div>
                         </form>
                     </div>
@@ -472,7 +472,7 @@ function generateSettingsHTML(config) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instellingen - DHgate Monitor</title>
+    <title>instellingen - DHgate Monitor</title>
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -491,7 +491,7 @@ function generateSettingsHTML(config) {
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Instellingen</h3>
+                        <h3>instellingen</h3>
                     </div>
                     <div class="card-body">
                         <form method="POST">
@@ -526,8 +526,8 @@ function generateSettingsHTML(config) {
                             </div>
                             
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Instellingen Opslaan</button>
-                                <a href="/" class="btn btn-outline-secondary">Terug naar Dashboard</a>
+                                <button type="submit" class="btn btn-primary">instellingen opslaan</button>
+                                <a href="/" class="btn btn-outline-secondary">terug naar dashboard</a>
                             </div>
                         </form>
                     </div>
@@ -547,7 +547,7 @@ function generateTagsHTML(tags) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tags Beheren - DHgate Monitor</title>
+    <title>tags beheren - DHgate Monitor</title>
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -576,7 +576,7 @@ function generateTagsHTML(tags) {
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Tags Beheren</h3>
+                        <h3>tags beheren</h3>
                         <p class="text-muted mb-0">Beheer welke tags gebruikt worden voor product filtering</p>
                     </div>
                     <div class="card-body">
@@ -609,8 +609,8 @@ function generateTagsHTML(tags) {
                             </div>
                             
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Tags Opslaan</button>
-                                <a href="/" class="btn btn-outline-secondary">Terug naar Dashboard</a>
+                                <button type="submit" class="btn btn-primary">tags opslaan</button>
+                                <a href="/" class="btn btn-outline-secondary">terug naar dashboard</a>
                             </div>
                         </form>
                     </div>
