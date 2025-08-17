@@ -1,12 +1,18 @@
 {
   "name": "dhgate-monitor",
-  "version": "1.0.0",
-  "description": "DHgate Kids Monitor Web Application",
+  "version": "3.0.0",
+  "description": "DHgate Kids Monitor - Pure Cloudflare Workers Application",
+  "type": "module",
   "scripts": {
-    "build": "echo 'No build step needed for Python Flask app'",
-    "start": "python3 app.py"
+    "dev": "wrangler dev",
+    "deploy": "wrangler publish",
+    "tail": "wrangler tail",
+    "login": "wrangler login"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
   },
   "engines": {
-    "python": "3.11"
+    "node": ">=18.0.0"
   }
 }
