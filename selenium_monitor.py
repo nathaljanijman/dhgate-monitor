@@ -7,6 +7,7 @@ import os
 import schedule
 import random
 import logging
+import requests
 from datetime import datetime
 import email.mime.text
 import email.mime.multipart
@@ -34,12 +35,32 @@ class DHgateSeleniumMonitor:
         self.config = self.load_config()
         self.previous_data = self.load_previous_data()
 
+    def load_dynamic_tags(self):
+        """Load dynamic tags from Cloudflare KV via API"""
+        try:
+            # Try to get tags from dhgate-monitor.com API
+            response = requests.get('https://dhgate-monitor.com/api/tags', timeout=10)
+            if response.status_code == 200:
+                tags_data = response.json()
+                if isinstance(tags_data, list) and len(tags_data) > 0:
+                    tag_names = [tag.get('name', '') for tag in tags_data if tag.get('active', True)]
+                    if tag_names:
+                        logging.info(f"🏷️  Loaded {len(tag_names)} dynamic tags: {', '.join(tag_names)}")
+                        return tag_names
+        except Exception as e:
+            logging.warning(f"⚠️  Could not load dynamic tags: {e}")
+        
+        # Fallback to default tags
+        default_tags = ['kids', 'children', 'youth']
+        logging.info(f"📌 Using default tags: {', '.join(default_tags)}")
+        return default_tags
+
     def load_config(self):
         if os.path.exists(self.config_file):
             with open(self.config_file, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                config = json.load(f)
         else:
-            default_config = {
+            config = {
                 "email": {
                     "smtp_server": "smtp.gmail.com",
                     "smtp_port": 587,
@@ -54,7 +75,7 @@ class DHgateSeleniumMonitor:
                     }
                 ],
                 "schedule": {"time": "09:00"},
-                "filters": {"keywords": ["kids"], "case_sensitive": False},
+                "filters": {"keywords": self.load_dynamic_tags(), "case_sensitive": False},
                 "max_products_to_check": 20,
                 "selenium": {
                     "headless": True,
@@ -66,9 +87,14 @@ class DHgateSeleniumMonitor:
                 }
             }
             with open(self.config_file, 'w', encoding='utf-8') as f:
-                json.dump(default_config, f, indent=4, ensure_ascii=False)
+                json.dump(config, f, indent=4, ensure_ascii=False)
             print("⚠️  Selenium config aangemaakt!")
-            return default_config
+        
+        # Always refresh keywords with dynamic tags
+        dynamic_tags = self.load_dynamic_tags()
+        config['filters']['keywords'] = dynamic_tags
+        
+        return config
 
     def load_previous_data(self):
         if os.path.exists(self.data_file):

@@ -44,9 +44,23 @@ export default {
           }
           break;
         
+        case '/tags':
+          if (method === 'GET') {
+            return await handleTagsPage(request, env);
+          } else if (method === 'POST') {
+            return await handleUpdateTags(request, env);
+          }
+          break;
+        
         case '/api/shops':
           if (method === 'GET') {
             return await handleGetShops(request, env);
+          }
+          break;
+        
+        case '/api/tags':
+          if (method === 'GET') {
+            return await handleGetTags(request, env);
           }
           break;
         
@@ -84,8 +98,9 @@ async function handleDashboard(request, env) {
     // Get shops from KV storage
     const shops = await getShops(env);
     const config = await getConfig(env);
+    const tags = await getTags(env);
     
-    const html = generateDashboardHTML(shops, config);
+    const html = generateDashboardHTML(shops, config, tags);
     
     return new Response(html, {
       headers: { 'Content-Type': 'text/html' }
@@ -173,10 +188,54 @@ async function handleUpdateSettings(request, env) {
   }
 }
 
+async function handleTagsPage(request, env) {
+  const tags = await getTags(env);
+  const html = generateTagsHTML(tags);
+  return new Response(html, {
+    headers: { 'Content-Type': 'text/html' }
+  });
+}
+
+async function handleUpdateTags(request, env) {
+  try {
+    const formData = await request.formData();
+    const tagsString = formData.get('tags') || '';
+    
+    const tags = tagsString.split(',')
+      .map(tag => tag.trim())
+      .filter(tag => tag.length > 0)
+      .map(tag => ({
+        name: tag,
+        created_at: new Date().toISOString(),
+        active: true
+      }));
+    
+    await env.DHGATE_MONITOR_KV.put('monitoring_tags', JSON.stringify(tags));
+    
+    return Response.redirect(new URL('/tags', request.url).toString(), 302);
+    
+  } catch (error) {
+    return new Response('Error updating tags: ' + error.message, { status: 400 });
+  }
+}
+
 async function handleGetShops(request, env) {
   const shops = await getShops(env);
   return new Response(JSON.stringify(shops), {
     headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+async function handleGetTags(request, env) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
+  
+  const tags = await getTags(env);
+  return new Response(JSON.stringify(tags), {
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
   });
 }
 
@@ -216,6 +275,24 @@ async function getConfig(env) {
   }
 }
 
+async function getTags(env) {
+  try {
+    const tagsData = await env.DHGATE_MONITOR_KV.get('monitoring_tags');
+    return tagsData ? JSON.parse(tagsData) : getDefaultTags();
+  } catch (error) {
+    console.error('Error getting tags:', error);
+    return getDefaultTags();
+  }
+}
+
+function getDefaultTags() {
+  return [
+    { name: 'kids', created_at: new Date().toISOString(), active: true },
+    { name: 'children', created_at: new Date().toISOString(), active: true },
+    { name: 'youth', created_at: new Date().toISOString(), active: true }
+  ];
+}
+
 function getDefaultConfig() {
   return {
     email: {
@@ -234,7 +311,7 @@ function getDefaultConfig() {
   };
 }
 
-function generateDashboardHTML(shops, config) {
+function generateDashboardHTML(shops, config, tags) {
   return `
 <!DOCTYPE html>
 <html lang="nl">
@@ -279,7 +356,7 @@ function generateDashboardHTML(shops, config) {
             <h1 style="color: #1e40af; font-weight: 700; font-size: 2.5rem; letter-spacing: 2px;">
                 DHGate monitor
             </h1>
-            <p class="text-muted">Automatische kids product monitoring</p>
+            <p class="text-muted">Automatische product monitoring</p>
         </div>
         
         <div class="row">
@@ -311,6 +388,7 @@ function generateDashboardHTML(shops, config) {
                     <div class="card-body d-grid gap-2">
                         <a href="/add_shop" class="btn btn-success">Shop Toevoegen</a>
                         <a href="/settings" class="btn btn-primary">Instellingen</a>
+                        <a href="/tags" class="btn btn-primary">Tags Beheren</a>
                     </div>
                 </div>
                 
@@ -321,7 +399,7 @@ function generateDashboardHTML(shops, config) {
                     <div class="card-body">
                         <p><strong>Platform:</strong> Cloudflare Workers</p>
                         <p><strong>Monitoring:</strong> ${config.schedule.time}</p>
-                        <p><strong>Keywords:</strong> ${config.filters.keywords.join(', ')}</p>
+                        <p><strong>Tags:</strong> ${tags.map(tag => tag.name).join(', ')}</p>
                         <p><strong>Status:</strong> <span class="text-success">Online</span></p>
                     </div>
                 </div>
@@ -460,4 +538,87 @@ function generateSettingsHTML(config) {
 </body>
 </html>
   `;
-}`;
+}
+
+function generateTagsHTML(tags) {
+  return `
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tags Beheren - DHgate Monitor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Raleway', sans-serif; 
+            background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%);
+            min-height: 100vh;
+        }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .btn-primary { background: linear-gradient(135deg, #1e3a8a, #2563eb); border: none; font-weight: 600; }
+        .tag-item {
+            background: #e0f2fe;
+            border: 1px solid #0891b2;
+            border-radius: 20px;
+            padding: 8px 16px;
+            margin: 4px;
+            display: inline-block;
+            color: #0c4a6e;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Tags Beheren</h3>
+                        <p class="text-muted mb-0">Beheer welke tags gebruikt worden voor product filtering</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h5>Huidige Tags</h5>
+                            <div class="border rounded p-3 mb-3" style="background-color: #f8fafc;">
+                                ${tags.map(tag => `
+                                    <span class="tag-item">
+                                        ${tag.name}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <form method="POST">
+                            <div class="mb-3">
+                                <label class="form-label">Tags (gescheiden door komma's)</label>
+                                <input type="text" name="tags" class="form-control" 
+                                       value="${tags.map(tag => tag.name).join(', ')}" 
+                                       placeholder="kids, children, youth, baby, toddler" required>
+                                <div class="form-text">
+                                    Deze tags worden gebruikt om producten te filteren tijdens monitoring. 
+                                    Producten die deze woorden bevatten worden gedetecteerd.
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-info">
+                                <strong>💡 Tip:</strong> Tags werden gebruikt om te zoeken naar producten die relevante woorden bevatten. 
+                                Bijvoorbeeld: "kids", "children", "youth", "baby", "toddler".
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Tags Opslaan</button>
+                                <a href="/" class="btn btn-outline-secondary">Terug naar Dashboard</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+  `;
+}
