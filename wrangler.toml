@@ -9,8 +9,7 @@ ENVIRONMENT = "production"
 # KV Namespace for data storage
 [[kv_namespaces]]
 binding = "DHGATE_MONITOR_KV"
-id = "YOUR_KV_NAMESPACE_ID"
-preview_id = "YOUR_KV_PREVIEW_ID"
+id = "9e3e5971f9454b55b2241aeba6b1e1ba"
 
 # Custom domain routing
 [[routes]]

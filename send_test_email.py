@@ -157,11 +157,11 @@ def create_test_email_html():
                         <tr>
                             <td style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 40px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
                                 <div style="margin-bottom: 25px;">
-                                    <a href="http://localhost:5001/add_shop" style="display: inline-block; color: #ff6b35; text-decoration: none; font-weight: 600; margin: 0 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Raleway', Arial, sans-serif;">
+                                    <a href="https://dhgate-monitor.com/add_shop" style="display: inline-block; color: #ff6b35; text-decoration: none; font-weight: 600; margin: 0 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Raleway', Arial, sans-serif;">
                                         Shop toevoegen
                                     </a>
                                     <span style="color: #cbd5e1; margin: 0 5px; font-size: 16px;">•</span>
-                                    <a href="http://localhost:5001/settings" style="display: inline-block; color: #1e40af; text-decoration: none; font-weight: 600; margin: 0 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Raleway', Arial, sans-serif;">
+                                    <a href="https://dhgate-monitor.com/settings" style="display: inline-block; color: #1e40af; text-decoration: none; font-weight: 600; margin: 0 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Raleway', Arial, sans-serif;">
                                         Instellingen
                                     </a>
                                 </div>
