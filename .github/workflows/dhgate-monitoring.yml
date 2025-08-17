@@ -26,9 +26,18 @@ jobs:
         pip install -r requirements-full.txt
         
     - name: 🌐 Setup Chrome browser
-      uses: browser-actions/setup-chrome@v1
-      with:
-        chrome-version: stable
+      run: |
+        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+        
+        # Install ChromeDriver
+        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+        wget -O /tmp/chromedriver.zip "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%.*}/chromedriver_linux64.zip"
+        unzip /tmp/chromedriver.zip -d /tmp/
+        sudo mv /tmp/chromedriver /usr/local/bin/
+        sudo chmod +x /usr/local/bin/chromedriver
         
     - name: 🤖 Run DHgate Selenium monitoring
       env:
@@ -47,11 +56,14 @@ jobs:
         # Run Selenium monitoring
         python3 run_monitor.py
         
-    - name: 📊 Archive monitoring logs
+    - name: 📊 Show logs
       if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: dhgate-monitoring-logs-${{ github.run_number }}
-        path: logs/
-        retention-days: 30
-        if-no-files-found: warn
+      run: |
+        echo "📊 Monitoring completed. Logs:"
+        if [ -d "logs" ]; then
+          ls -la logs/
+          echo "=== Monitor Log ==="
+          cat logs/monitor.log || echo "No monitor.log found"
+        else
+          echo "No logs directory found"
+        fi
