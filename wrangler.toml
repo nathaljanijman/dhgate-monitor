@@ -1,5 +1,5 @@
 name = "dhgate-monitor"
-main = "cloudflare_app.js"
+main = "cloudflare_cron.js"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
@@ -10,6 +10,10 @@ ENVIRONMENT = "production"
 [[kv_namespaces]]
 binding = "DHGATE_MONITOR_KV"
 id = "9e3e5971f9454b55b2241aeba6b1e1ba"
+
+# Scheduled monitoring (daily at 09:00 UTC)
+[triggers]
+crons = ["0 9 * * *"]
 
 # Custom domain routing
 [[routes]]

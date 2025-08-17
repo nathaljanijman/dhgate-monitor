@@ -1,88 +1,64 @@
 #!/usr/bin/env python3
 """
-DHgate Monitor Runner - Automated Daily Execution
-Runs the monitor automatically and handles scheduling
+DHgate Monitor - Automated Daily Runner
+Runs selenium monitoring automatically via macOS LaunchDaemon
 """
 
 import os
 import sys
 import logging
 from datetime import datetime
-import subprocess
+
+# Add current directory to path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Setup logging
-log_file = os.path.join(os.path.dirname(__file__), 'monitor.log')
+log_dir = os.path.join(os.path.dirname(__file__), 'logs')
+os.makedirs(log_dir, exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(log_file),
-        logging.StreamHandler(sys.stdout)
+        logging.FileHandler(os.path.join(log_dir, 'monitor.log')),
+        logging.StreamHandler()
     ]
 )
 
-def run_monitor():
-    """Run the DHgate monitor with error handling"""
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    
-    # Try selenium version first (more robust), fallback to requests version
-    monitors = [
-        ('selenium_monitor.py', 'Selenium Monitor'),
-        ('dhgate_monitor.py', 'Basic Monitor')
-    ]
-    
-    for script, name in monitors:
-        script_path = os.path.join(script_dir, script)
-        
-        if not os.path.exists(script_path):
-            logging.warning(f"Script not found: {script_path}")
-            continue
-            
-        try:
-            logging.info(f"Starting {name}...")
-            
-            # Run the monitor script in automated mode (option 1 = single check)
-            result = subprocess.run([
-                sys.executable, script_path
-            ], 
-            input='1\n',  # Choose option 1 (single check)
-            text=True, 
-            capture_output=True, 
-            timeout=600  # 10 minutes timeout
-            )
-            
-            if result.returncode == 0:
-                logging.info(f"{name} completed successfully")
-                logging.info(f"Output: {result.stdout}")
-                return True
-            else:
-                logging.error(f"{name} failed with return code {result.returncode}")
-                logging.error(f"Error: {result.stderr}")
-                
-        except subprocess.TimeoutExpired:
-            logging.error(f"{name} timed out after 10 minutes")
-        except Exception as e:
-            logging.error(f"Error running {name}: {e}")
-            continue
-    
-    logging.error("All monitor scripts failed")
-    return False
-
 def main():
-    logging.info("=== DHgate Monitor Daily Run Started ===")
-    logging.info(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    
+    """Run automated DHgate monitoring"""
     try:
-        success = run_monitor()
-        if success:
-            logging.info("Monitor run completed successfully")
-        else:
-            logging.error("Monitor run failed")
+        logging.info("🤖 Starting automated DHgate monitoring...")
+        logging.info(f"⏰ Timestamp: {datetime.now()}")
+        logging.info(f"📁 Working directory: {os.getcwd()}")
+        
+        # Import and run selenium monitor
+        from selenium_monitor import DHgateSeleniumMonitor
+        
+        monitor = DHgateSeleniumMonitor()
+        logging.info("📦 Monitor instance created")
+        
+        # Run the check
+        new_products = monitor.check_for_new_products()
+        
+        if new_products:
+            total_new = sum(len(products) for products in new_products.values())
+            logging.info(f"🎉 Found {total_new} new kids products!")
             
+            # Products will be automatically emailed by check_for_new_products()
+            for seller_name, products in new_products.items():
+                logging.info(f"📦 {seller_name}: {len(products)} products")
+                for product in products:
+                    logging.info(f"   - {product['title'][:50]}...")
+        else:
+            logging.info("ℹ️  No new kids products found")
+        
+        logging.info("✅ Automated monitoring completed successfully")
+        
     except Exception as e:
-        logging.error(f"Unexpected error in main: {e}")
-    
-    logging.info("=== DHgate Monitor Daily Run Finished ===\n")
+        logging.error(f"❌ Error during automated monitoring: {e}")
+        logging.exception("Full error traceback:")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
