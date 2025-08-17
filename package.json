@@ -1,0 +1,12 @@
+{
+  "name": "dhgate-monitor",
+  "version": "1.0.0",
+  "description": "DHgate Kids Monitor Web Application",
+  "scripts": {
+    "build": "echo 'No build step needed for Python Flask app'",
+    "start": "python3 app.py"
+  },
+  "engines": {
+    "python": "3.11"
+  }
+}
