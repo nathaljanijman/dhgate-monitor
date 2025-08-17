@@ -1,9 +1,11 @@
 name = "dhgate-monitor"
+main = "worker_simple.js"
 compatibility_date = "2024-01-01"
 
-[env.production]
-name = "dhgate-monitor"
+[vars]
+ENVIRONMENT = "production"
+BACKEND_URL = "https://your-python-app.railway.app"
 
-[[env.production.routes]]
+[[routes]]
 pattern = "dhgate-monitor.com/*"
 zone_name = "dhgate-monitor.com"
