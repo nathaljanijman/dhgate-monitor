@@ -1,320 +1,162 @@
-# 👶 DHgate Kids Monitor
+# 🚀 DHgate Monitor
 
-Een Python-applicatie die automatisch DHgate doorzoekt naar nieuwe kinderproducten van specifieke verkopers en je hiervan op de hoogte brengt via email.
+Een moderne, cloud-native applicatie die automatisch DHgate doorzoekt naar nieuwe producten van specifieke verkopers en je hiervan op de hoogte brengt via email.
 
-## 🎯 Doel
+## 🎯 Overzicht
 
-Deze applicatie helpt je om nieuwe kids/kinderproducten te ontdekken zodra ze door jouw gekozen verkopers worden geüpload op DHgate. Perfect voor mensen die snel willen zijn bij het vinden van nieuwe kinderkleding en -producten.
+Deze applicatie helpt je om nieuwe producten te ontdekken zodra ze door jouw gekozen verkopers worden geüpload op DHgate. Volledig geautomatiseerd en draait 100% in de cloud zonder dat je computer aan hoeft te staan.
 
 ## ✨ Functies
 
-- **Automatische monitoring**: Dagelijkse controle om 09:00 (configureerbaar)
-- **Slimme filtering**: Zoekt specifiek naar producten met "kids" gerelateerde keywords
-- **Email notificaties**: Krijg mooie HTML emails met alle nieuwe producten
-- **Dubbele implementatie**: Zowel requests-based als Selenium-based versie
-- **Verkoper tracking**: Monitor meerdere verkopers tegelijkelijk
-- **Data opslag**: Houdt bij welke producten al eerder zijn gevonden
+- **🌩️ Cloud-native**: Draait volledig op Cloudflare Workers + GitHub Actions
+- **🎯 Dynamische tags**: Configureer welke producten gedetecteerd worden via web interface
+- **📧 Professional emails**: Mooie HTML emails met winter-thema design
+- **🤖 Selenium automation**: Echte browser automation voor betrouwbare monitoring
+- **📱 Responsive dashboard**: Beheer shops en instellingen via web interface
+- **🆓 100% gratis**: Gebruik gratis tiers van Cloudflare en GitHub
+
+## 🏗️ Architectuur
+
+```
+┌─────────────────────┐    ┌──────────────────────┐    ┌─────────────────────┐
+│   Cloudflare        │    │   GitHub Actions     │    │   Email Service     │
+│   Workers           │    │   (Daily 09:00 UTC)  │    │   (SMTP)            │
+│                     │    │                      │    │                     │
+│ • Web Dashboard     │    │ • Selenium Monitor   │    │ • Professional      │
+│ • Shop Management   │    │ • DHgate Scraping    │    │   HTML Templates    │
+│ • Tag Management    │    │ • Product Detection  │    │ • New Product       │
+│ • Settings          │    │ • Email Sending      │    │   Notifications     │
+│ • KV Storage        │    │                      │    │                     │
+└─────────────────────┘    └──────────────────────┘    └─────────────────────┘
+```
 
 ## 📂 Projectstructuur
 
 ```
 dhgate-monitor/
-├── dhgate_monitor.py       # Hoofd monitor (requests-based)
-├── selenium_monitor.py     # Selenium-based monitor (robuuster)
-├── config.json            # Email en verkoper configuratie
-├── product_data.json       # Opgeslagen productdata
-├── email_test.py           # Test email functionaliteit
-├── simple_test.py          # Basis test script
-├── simple_selenium_test.py # Selenium test script
+├── cloudflare_app.js         # Cloudflare Workers web applicatie
+├── selenium_monitor.py       # Core monitoring logica (Selenium)
+├── run_monitor.py           # GitHub Actions runner
+├── update_config_secrets.py # GitHub Secrets configuratie
+├── requirements-full.txt    # Python dependencies
+├── package.json            # Node.js/Wrangler configuratie
+├── wrangler.toml           # Cloudflare Workers configuratie
+├── .github/workflows/      # GitHub Actions workflows
 └── README.md              # Deze documentatie
 ```
 
-## 🚀 Installatie
+## 🚀 Deployment
 
-### Vereisten
+### Live Applicatie
+- **Website**: https://dhgate-monitor.com
+- **Monitoring**: Dagelijks om 09:00 UTC via GitHub Actions
+- **Status**: Volledig operationeel
 
-- Python 3.7+
-- Chrome browser (voor Selenium versie)
+### Technische Details
+- **Frontend**: Cloudflare Workers met embedded HTML/CSS/JS
+- **Backend**: Cloudflare KV voor data opslag
+- **Monitoring**: GitHub Actions met Ubuntu + Chrome + Selenium
+- **Email**: SMTP via Gmail met app-specifieke wachtwoorden
 
-### Stap 1: Clone repository
+## 📊 Features
 
-```bash
-git clone https://github.com/nathaljanijman/dhgate-monitor.git
-cd dhgate-monitor
+### Web Dashboard
+- **Shop Management**: Voeg DHgate shops toe voor monitoring
+- **Tag Management**: Configureer welke producten gedetecteerd worden
+- **Settings**: Email configuratie en monitoring instellingen
+- **Status Overview**: Real-time status van alle componenten
+
+### Cloud Monitoring
+- **Betrouwbaar**: Echte browser automation via Selenium
+- **Schaalbaar**: Draait op GitHub's infrastructure
+- **Logs**: Volledige monitoring logs beschikbaar in GitHub Actions
+- **Fallback**: Automatische fallback naar default tags bij API problemen
+
+### Email Notificaties
+- **Professional Design**: Winter-thema met Raleway font
+- **Mobile-friendly**: Responsive HTML emails
+- **Product Details**: Titel, URL, afbeelding, en metadata
+- **Batch Updates**: Groepeer alle nieuwe producten in één email
+
+## 🔧 Configuratie
+
+### GitHub Secrets
+```
+SENDER_EMAIL = jouw-email@gmail.com
+SENDER_PASSWORD = app-specifiek-wachtwoord  
+RECIPIENT_EMAIL = ontvanger@email.com
 ```
 
-### Stap 2: Installeer dependencies
+### Tag Management
+Ga naar https://dhgate-monitor.com/tags om te configureren welke producten gedetecteerd worden:
+- kids, children, youth (default)
+- baby, toddler
+- of elke andere gewenste tag
 
+## 📈 Monitoring
+
+### GitHub Actions
+- **Dagelijkse runs**: Elke dag om 09:00 UTC
+- **Manual trigger**: Via GitHub Actions interface
+- **Logs**: Volledige output beschikbaar voor 30 dagen
+- **Status badges**: Zie laatste run status in repository
+
+### Cloudflare Analytics
+- **Real-time metrics**: Via Cloudflare dashboard
+- **Performance**: Response times en error rates
+- **Usage**: API calls en KV operations
+
+## 🛠️ Development
+
+### Local Development
 ```bash
-pip install requests beautifulsoup4 schedule selenium webdriver-manager
-```
+# Cloudflare Workers development
+npm install
+npm run dev
 
-### Stap 3: Configuratie
-
-Bij eerste gebruik wordt automatisch een `config.json` bestand aangemaakt. Pas dit aan:
-
-```json
-{
-  "email": {
-    "smtp_server": "smtp.gmail.com",
-    "smtp_port": 587,
-    "sender_email": "jouw_email@gmail.com",
-    "sender_password": "jouw_app_wachtwoord",
-    "recipient_email": "ontvanger@gmail.com"
-  },
-  "sellers": [
-    {
-      "name": "Verkoper Naam",
-      "search_url": "https://www.dhgate.com/store/12345678"
-    }
-  ],
-  "schedule": {"time": "09:00"},
-  "filters": {"keywords": ["kids"], "case_sensitive": false},
-  "max_products_to_check": 50
-}
-```
-
-### ⚠️ Gmail App Wachtwoord
-
-Voor Gmail moet je een **App Wachtwoord** aanmaken:
-
-1. Ga naar [Google Account beveiligingsinstellingen](https://myaccount.google.com/security)
-2. Zet 2-factor authenticatie aan (vereist)
-3. Zoek naar "App wachtwoorden"
-4. Maak een nieuw app wachtwoord voor "Mail"
-5. Gebruik dit wachtwoord in de config
-
-## 🎮 Gebruik
-
-### Basis Monitor (Requests)
-
-```bash
-python dhgate_monitor.py
-```
-
-**Menu opties:**
-1. **Eenmalige check** - Test de monitor direct
-2. **Dagelijks monitoren** - Start continue monitoring
-3. **Configuratie tonen** - Bekijk huidige instellingen
-
-### Selenium Monitor (Robuuster)
-
-```bash
+# Python monitoring testing
+pip install -r requirements-full.txt
 python selenium_monitor.py
 ```
 
-**Extra functies:**
-- Beter omgaan met JavaScript-heavy websites
-- Human-like browsing gedrag
-- CAPTCHA/block detectie
-- Meer geavanceerde product extractie
-
-**Menu opties:**
-1. **Eenmalige check** - Test de monitor direct
-2. **Dagelijks monitoren** - Start continue monitoring  
-3. **Configuratie tonen** - Bekijk huidige instellingen
-4. **Test Selenium** - Controleer of Chrome driver werkt
-
-## 📧 Email Notificaties
-
-Wanneer nieuwe kids producten worden gevonden, krijg je een professioneel opgemaakte HTML email met:
-
-- **Product details**: Titel, prijs (indien beschikbaar), link
-- **Verkoper informatie**: Per verkoper gegroepeerd
-- **Tijdstempel**: Wanneer het product is gevonden
-- **Direct links**: Klik om het product te bekijken
-
-### Email Voorbeeld
-
-```
-📧 Onderwerp: "2 nieuwe producten geüpload door spider_jerseys"
-
-✨ Inhoud:
-- Overzichtelijke tabel met alle nieuwe producten
-- Directe links naar de DHgate productpagina's
-- Kids label voor gemakkelijke herkenning
-- Moderne, mobiel-vriendelijke opmaak
-```
-
-## ⚙️ Configuratie Opties
-
-### Verkopers Configureren
-
-Voeg verkopers toe aan `config.json`:
-
-```json
-"sellers": [
-  {
-    "name": "Verkoper A",
-    "search_url": "https://www.dhgate.com/store/12345678"
-  },
-  {
-    "name": "Verkoper B", 
-    "search_url": "https://www.dhgate.com/wholesale/kids+jersey.html"
-  }
-]
-```
-
-### Filter Instellingen
-
-```json
-"filters": {
-  "keywords": ["kids", "child", "youth"],
-  "case_sensitive": false
-},
-"max_products_to_check": 50
-```
-
-### Schedule Aanpassen
-
-```json
-"schedule": {"time": "14:30"}  // Andere tijd instellen
-```
-
-### Selenium Instellingen
-
-```json
-"selenium": {
-  "headless": true,           // Browser zichtbaar of niet
-  "wait_time": 10,           // Maximale wachttijd
-  "page_load_timeout": 30,   // Pagina laadtijd
-  "min_delay": 2,            // Minimale vertraging
-  "max_delay": 8,            // Maximale vertraging
-  "scroll_pause": 3          // Scroll pauze
-}
-```
-
-## 🔧 Test Scripts
-
-### Email Test
-
+### Deployment
 ```bash
-python email_test.py
+# Automatisch via git push
+git push origin main
+
+# Handmatig via Wrangler
+npm run deploy
 ```
 
-Test of email configuratie werkt zonder producten te zoeken.
+## 📝 API Endpoints
 
-### Basis Functionaliteit Test
+### Public API
+- `GET /api/shops` - Lijst van geregistreerde shops
+- `GET /api/tags` - Huidige monitoring tags
+- `GET /api/status` - Service status
 
-```bash
-python simple_test.py
-```
+### Web Interface
+- `/` - Dashboard
+- `/add_shop` - Shop toevoegen
+- `/settings` - Configuratie
+- `/tags` - Tag management
 
-Test basis DHgate connectiviteit.
+## 🔒 Security
 
-### Selenium Test
+- **GitHub Secrets**: Gevoelige data veilig opgeslagen
+- **Environment Variables**: Automatische configuratie voor cloud deployment
+- **CORS Headers**: Veilige API access
+- **Rate Limiting**: Ingebouwde bescherming tegen misbruik
 
-```bash
-python simple_selenium_test.py
-```
+## 📞 Support
 
-Test Selenium setup en Chrome driver.
+Voor vragen of problemen:
+- **Issues**: GitHub Issues in deze repository
+- **Logs**: Check GitHub Actions voor monitoring logs
+- **Status**: https://dhgate-monitor.com/api/status
 
-## 📊 Data Opslag
+---
 
-Het systeem slaat productdata op in `product_data.json`:
-
-```json
-{
-  "verkoper_naam": {
-    "product_id_1": {
-      "id": "product_id_1",
-      "title": "Kids Nike Jersey",
-      "link": "https://...",
-      "price": "$19.99",
-      "found_at": "2024-01-15T09:00:00"
-    }
-  }
-}
-```
-
-## 🔍 Hoe het werkt
-
-1. **Product Zoeken**: Monitor doorzoekt verkoper pagina's of zoekresultaten
-2. **Kids Filtering**: Alleen producten met "kids" keywords worden opgeslagen
-3. **Duplicaat Detectie**: Vergelijkt met eerder gevonden producten
-4. **Email Verzenden**: Bij nieuwe producten wordt email notificatie verstuurd
-5. **Data Update**: Nieuwe producten worden opgeslagen voor volgende run
-
-## 🚨 Troubleshooting
-
-### Geen producten gevonden
-
-- Controleer of verkoper URL's correct zijn
-- Test met `simple_test.py` voor basis connectiviteit
-- Probeer Selenium versie voor moeilijke websites
-
-### Email werkt niet
-
-- Controleer Gmail app wachtwoord instellingen
-- Test met `email_test.py`
-- Controleer firewall/antivirus instellingen
-
-### Selenium problemen
-
-- Controleer of Chrome browser geïnstalleerd is
-- Run `selenium_monitor.py` optie 4 voor setup test
-- Chrome driver wordt automatisch gedownload
-
-### Te veel CAPTCHA's
-
-- Gebruik `headless: false` in selenium config
-- Verhoog delays in selenium instellingen
-- Gebruik VPN of ander IP adres
-
-## 🔄 Automatisering
-
-### Windows (Task Scheduler)
-
-1. Open Task Scheduler
-2. Maak nieuwe Basic Task
-3. Trigger: Daily 09:00
-4. Action: Start programma
-5. Program: `python`
-6. Arguments: `C:\pad\naar\dhgate_monitor.py`
-
-### macOS/Linux (Crontab)
-
-```bash
-# Edit crontab
-crontab -e
-
-# Voeg toe (dagelijks om 09:00):
-0 9 * * * /usr/bin/python3 /pad/naar/dhgate_monitor.py
-```
-
-### Docker (Optioneel)
-
-```dockerfile
-FROM python:3.9-slim
-
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
-COPY . .
-CMD ["python", "dhgate_monitor.py"]
-```
-
-## 📈 Uitbreidingsmogelijkheden
-
-- **Meer platforms**: AliExpress, Taobao monitoring
-- **Price tracking**: Prijsveranderingen bijhouden
-- **Telegram bot**: Notificaties via Telegram
-- **Web interface**: GUI voor configuratie
-- **Machine learning**: Verbeterde product classificatie
-
-## 🤝 Bijdragen
-
-Voel je vrij om issues te rapporteren of pull requests in te dienen op GitHub.
-
-## 📜 Licentie
-
-Dit project is ontwikkeld voor persoonlijk gebruik. Gebruik op eigen risico en respecteer DHgate's robots.txt en terms of service.
-
-## 👩‍💻 Auteur
-
-**Nathalja Nijman**
-- GitHub: [@nathaljanijman](https://github.com/nathaljanijman)
-- Email: nathaljanijman@gmail.com
-
+**Status**: ✅ Actief en operationeel  
+**Laatste Update**: 2025-08-17  
+**Versie**: 3.0.0 (Cloud-native)

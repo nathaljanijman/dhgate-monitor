@@ -4,7 +4,6 @@ import time
 import smtplib
 import hashlib
 import os
-import schedule
 import random
 import logging
 import requests
