@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Instellingen - DHgate Monitor{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2><i class="fas fa-cog"></i> Monitor Instellingen</h2>
+        <p class="text-muted">Pas zoektermen, schema en andere instellingen aan</p>
+
+        <form method="POST" class="mt-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-search"></i> Zoek Instellingen</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="keywords" class="form-label">
+                            <i class="fas fa-tags"></i> Zoektermen *
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="keywords" 
+                               name="keywords" 
+                               value="{{ keywords }}"
+                               placeholder="kids, child, youth"
+                               required>
+                        <div class="form-text">
+                            Komma-gescheiden lijst van woorden. Producten met deze woorden worden gevonden.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="max_products" class="form-label">
+                            <i class="fas fa-list-ol"></i> Max Producten per Shop
+                        </label>
+                        <input type="number" 
+                               class="form-control" 
+                               id="max_products" 
+                               name="max_products" 
+                               value="{{ max_products }}"
+                               min="10" 
+                               max="200">
+                        <div class="form-text">
+                            Hoeveel producten maximaal controleren per shop (10-200)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-clock"></i> Schema Instellingen</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="schedule_time" class="form-label">
+                            <i class="fas fa-alarm-clock"></i> Dagelijkse Check Tijd
+                        </label>
+                        <input type="time" 
+                               class="form-control" 
+                               id="schedule_time" 
+                               name="schedule_time" 
+                               value="{{ schedule_time }}">
+                        <div class="form-text">
+                            Tijdstip waarop de monitor dagelijks controleert op nieuwe producten
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-gradient">
+                    <i class="fas fa-save"></i> Instellingen Opslaan
+                </button>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Terug naar Dashboard
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-info-circle"></i> Zoekterm Tips</h6>
+            </div>
+            <div class="card-body">
+                <h6 class="small">Effectieve zoektermen:</h6>
+                <ul class="small mb-3">
+                    <li><code>kids</code> - Algemene kinderproducten</li>
+                    <li><code>child</code> - Alternative voor kids</li>
+                    <li><code>youth</code> - Jeugd/tiener producten</li>
+                    <li><code>junior</code> - Junior maten</li>
+                    <li><code>toddler</code> - Peuter producten</li>
+                </ul>
+                
+                <h6 class="small">Combinaties:</h6>
+                <ul class="small mb-0">
+                    <li><code>kids, child, youth</code></li>
+                    <li><code>kids jersey, child shirt</code></li>
+                    <li><code>youth soccer, junior football</code></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-chart-line"></i> Performance Tips</h6>
+            </div>
+            <div class="card-body">
+                <ul class="small mb-0">
+                    <li class="mb-2">
+                        <strong>Max Producten:</strong> Lagere waarden = sneller, maar minder kans op nieuwe items
+                    </li>
+                    <li class="mb-2">
+                        <strong>Schema:</strong> Vroege ochtend (07:00-09:00) werkt het beste
+                    </li>
+                    <li class="mb-2">
+                        <strong>Zoektermen:</strong> Meer termen = meer resultaten, maar ook meer ruis
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Let Op</h6>
+            </div>
+            <div class="card-body">
+                <p class="small text-warning mb-0">
+                    <strong>Schema wijzigingen:</strong> Na het wijzigen van de tijd 
+                    moet je de automatisering opnieuw opstarten voor macOS launchd.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Preview keywords as tags
+document.getElementById('keywords').addEventListener('input', function() {
+    const keywords = this.value.split(',').map(k => k.trim()).filter(k => k);
+    // Could add visual preview here
+});
+</script>
+{% endblock %}

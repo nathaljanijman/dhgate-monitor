@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - DHgate Monitor{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="no-text-transform"><i class="fas fa-store"></i> Gevolgde shops ({{ sellers|length }})</h2>
+            <a href="{{ url_for('add_shop') }}" class="btn btn-gradient no-text-transform">
+                <i class="fas fa-plus"></i> Shop toevoegen
+            </a>
+        </div>
+
+        {% if sellers %}
+            {% for seller in sellers %}
+            <div class="shop-card no-text-transform">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <h5 class="mb-2 no-text-transform">
+                            <i class="fas fa-shop"></i> {{ seller.name }}
+                        </h5>
+                        <p class="text-muted mb-2 no-text-transform">
+                            <i class="fas fa-link"></i> 
+                            <a href="{{ seller.search_url }}" target="_blank" class="text-decoration-none no-text-transform">
+                                {{ seller.search_url }}
+                            </a>
+                        </p>
+                        {% if seller.added_at %}
+                        <small class="text-muted no-text-transform">
+                            <i class="fas fa-calendar"></i> 
+                            Toegevoegd: {{ seller.added_at[:10] }}
+                        </small>
+                        {% endif %}
+                    </div>
+                    <div class="ms-3">
+                        <a href="{{ url_for('remove_shop', shop_index=loop.index0) }}" 
+                           class="btn btn-outline-danger btn-sm"
+                           onclick="return confirm('Weet je zeker dat je deze shop wilt verwijderen?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-store fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">Nog geen shops toegevoegd</h4>
+                <p class="text-muted">Voeg je eerste DHgate shop toe om te beginnen met monitoren.</p>
+                <a href="{{ url_for('add_shop') }}" class="btn btn-gradient no-text-transform">
+                    <i class="fas fa-plus"></i> Eerste shop toevoegen
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <div class="qr-section mb-4">
+            <h5 class="no-text-transform"><i class="fas fa-qrcode"></i> Mobiele toegang</h5>
+            <p class="small text-muted mb-3 no-text-transform">Scan met je telefoon voor snelle toegang</p>
+            <img src="{{ qr_code }}" class="img-fluid" style="max-width: 200px;" alt="QR Code">
+            <div class="mt-2">
+                <small class="text-muted">{{ request.url }}</small>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0 no-text-transform"><i class="fas fa-info-circle"></i> Huidige instellingen</h6>
+            </div>
+            <div class="card-body no-text-transform">
+                <div class="mb-2">
+                    <strong>Zoektermen:</strong><br>
+                    <span class="text-muted">{{ config.get('filters', {}).get('keywords', ['kids'])|join(', ') }}</span>
+                </div>
+                <div class="mb-2">
+                    <strong>Schema:</strong><br>
+                    <span class="text-muted">Dagelijks om {{ config.get('schedule', {}).get('time', '09:00') }}</span>
+                </div>
+                <div class="mb-2">
+                    <strong>Max producten:</strong><br>
+                    <span class="text-muted">{{ config.get('max_products_to_check', 50) }} per shop</span>
+                </div>
+                <a href="{{ url_for('settings') }}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-edit"></i> Aanpassen
+                </a>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0 no-text-transform"><i class="fas fa-rocket"></i> Snelle acties</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-success btn-sm" onclick="runMonitor()">
+                        <i class="fas fa-play"></i> Test Run
+                    </button>
+                    <button class="btn btn-outline-info btn-sm" onclick="viewLogs()">
+                        <i class="fas fa-file-alt"></i> Bekijk Logs
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function runMonitor() {
+    alert('Test run wordt gestart in de achtergrond. Check de logs voor resultaten.');
+    // Hier kun je later een AJAX call maken naar een test endpoint
+}
+
+function viewLogs() {
+    window.open('/logs', '_blank');
+}
+</script>
+{% endblock %}

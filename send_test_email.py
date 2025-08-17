@@ -155,6 +155,34 @@ def create_test_email_html():
                             </td>
                         </tr>
                         
+                        <!-- Action Buttons -->
+                        <tr>
+                            <td style="background-color: #e9ecef; padding: 25px 30px; text-align: center; border-top: 1px solid #dee2e6;">
+                                <h6 style="margin: 0 0 15px 0; color: #495057; font-size: 16px;">
+                                    🎯 Beheer je monitor
+                                </h6>
+                                <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                                    <tr>
+                                        <td style="text-align: center; padding: 0 10px;">
+                                            <a href="http://localhost:5001/add_shop" style="display: inline-block; background: linear-gradient(45deg, #28a745, #20c997); color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: 500; margin: 5px;">
+                                                <span style="margin-right: 5px;">🏪</span> Voeg Shop Toe
+                                            </a>
+                                        </td>
+                                        <td style="text-align: center; padding: 0 10px;">
+                                            <a href="http://localhost:5001/settings" style="display: inline-block; background: linear-gradient(45deg, #007bff, #6610f2); color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: 500; margin: 5px;">
+                                                <span style="margin-right: 5px;">⚙️</span> Pas Zoekterm Aan
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <div style="margin-top: 15px;">
+                                    <p style="margin: 0; color: #6c757d; font-size: 12px;">
+                                        📱 Scan QR code op dashboard voor mobiele toegang
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                        
                         <!-- Footer -->
                         <tr>
                             <td style="background-color: #f8f9fa; padding: 20px 30px; text-align: center; border-top: 1px solid #e9ecef;">
