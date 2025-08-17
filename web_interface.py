@@ -18,6 +18,12 @@ app.secret_key = 'dhgate-monitor-secret-key-2024'
 
 CONFIG_FILE = 'config.json'
 
+def get_base_url():
+    """Get the base URL for the application"""
+    if os.getenv('ENVIRONMENT') == 'production':
+        return 'https://dhgate-monitor.com'
+    return 'http://localhost:5001'
+
 def load_config():
     """Load configuration from JSON file"""
     if os.path.exists(CONFIG_FILE):

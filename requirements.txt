@@ -1,0 +1,8 @@
+flask==3.1.1
+requests==2.32.4
+beautifulsoup4==4.13.4
+schedule==1.2.2
+selenium==4.35.0
+webdriver-manager==4.0.2
+qrcode==8.2
+pillow==11.3.0
