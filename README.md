@@ -318,6 +318,3 @@ Dit project is ontwikkeld voor persoonlijk gebruik. Gebruik op eigen risico en r
 - GitHub: [@nathaljanijman](https://github.com/nathaljanijman)
 - Email: nathaljanijman@gmail.com
 
----
-
-*Ontwikkeld met ❤️ voor alle ouders die de beste deals willen voor hun kinderen!*
