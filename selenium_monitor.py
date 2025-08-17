@@ -458,41 +458,28 @@ class DHgateSeleniumMonitor:
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>DHgate Kids Monitor - Nieuwe Producten</title>
-            <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         </head>
-        <body style="margin: 0; padding: 0; background-color: #f4f6f9; font-family: 'Raleway', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f4f6f9; padding: 30px 0;">
+        <body style="margin: 0; padding: 0; background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%); font-family: 'Raleway', Arial, sans-serif;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%); min-height: 100vh;">
                 <tr>
-                    <td align="center">
-                        <table cellpadding="0" cellspacing="0" border="0" width="600" style="background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden;">
+                    <td align="center" style="padding: 40px 20px;">
+                        <table cellpadding="0" cellspacing="0" border="0" width="600" style="background-color: #ffffff; margin: 0 auto; border-radius: 16px; box-shadow: 0 20px 40px rgba(71, 85, 105, 0.1); overflow: hidden;">
                             
                             <!-- Header -->
                             <tr>
-                                <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
-                                    <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 300; letter-spacing: 1px;">
-                                        DHGate tenue monitor
+                                <td style="background-color: #ffffff; padding: 60px 40px; text-align: center;">
+                                    <h1 style="margin: 0 0 20px 0; color: #1e40af; font-size: 32px; font-weight: 700; letter-spacing: 2px;">
+                                        DHGate monitor
                                     </h1>
-                                    <p style="margin: 10px 0 0 0; color: #e8eaf6; font-size: 16px; opacity: 0.9;">
-                                        Er zijn nieuwe items toegevoegd
-                                    </p>
-                                </td>
-                            </tr>
-                            
-                            <!-- Summary Banner -->
-                            <tr>
-                                <td style="background-color: #f8f9fa; padding: 25px 30px; border-bottom: 1px solid #e9ecef;">
-                                    <table cellpadding="0" cellspacing="0" border="0" width="100%">
-                                        <tr>
-                                            <td style="text-align: center;">
-                                                <div style="display: inline-block; background-color: #f8f9fa; color: #495057; padding: 10px 20px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 18px; font-weight: 600;">
-                                                    {total_new} nieuwe kids producten
-                                                </div>
-                                                <p style="margin: 15px 0 0 0; color: #6c757d; font-size: 14px;">
-                                                    Scan uitgevoerd op {datetime.now().strftime('%d %B %Y om %H:%M')}
-                                                </p>
-                                            </td>
-                                        </tr>
-                                    </table>
+                                    <div style="background-color: #f8fafc; border-left: 4px solid #ff6b35; padding: 20px 30px; margin: 30px auto 0 auto; max-width: 400px; text-align: left;">
+                                        <h2 style="margin: 0 0 8px 0; color: #1e293b; font-size: 18px; font-weight: 600;">
+                                            {total_new} nieuwe kids producten
+                                        </h2>
+                                        <p style="margin: 0; color: #64748b; font-size: 14px; font-weight: 400;">
+                                            Ontdekt op {datetime.now().strftime('%d %B %Y')}
+                                        </p>
+                                    </div>
                                 </td>
                             </tr>
                             
@@ -502,80 +489,82 @@ class DHgateSeleniumMonitor:
         
         for seller_name, products in new_products.items():
             html += f"""
-                                    <!-- Seller Section -->
-                                    <div style="margin-bottom: 35px;">
-                                        <div style="background: linear-gradient(90deg, #6c757d, #495057); color: white; padding: 15px 20px; border-radius: 8px 8px 0 0; margin-bottom: 0;">
-                                            <h2 style="margin: 0; font-size: 20px; font-weight: 500;">
-                                                {seller_name}
-                                            </h2>
-                                            <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">
-                                                {len(products)} nieuwe producten gevonden
-                                            </p>
-                                        </div>
-                                        
-                                        <div style="border: 1px solid #dee2e6; border-top: none; border-radius: 0 0 8px 8px; overflow: hidden;">"""
+                                <!-- Seller Section -->
+                                <div style="margin-bottom: 50px;">
+                                    <div style="text-align: center; margin-bottom: 30px;">
+                                        <h2 style="margin: 0 0 10px 0; color: #1e3a8a; font-size: 24px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                                            {seller_name}
+                                        </h2>
+                                        <div style="width: 60px; height: 3px; background: linear-gradient(90deg, #ff6b35, #ff8c00); margin: 0 auto 20px auto; border-radius: 2px;"></div>
+                                        <p style="margin: 0; color: #64748b; font-size: 14px; font-weight: 500;">
+                                            {len(products)} nieuwe producten ontdekt
+                                        </p>
+                                    </div>
+                                    
+                                    <div style="background-color: #ffffff;">"""
             
             for i, product in enumerate(products):
-                border_top = "border-top: 1px solid #f8f9fa;" if i > 0 else ""
-                price_display = f'<div style="color: #28a745; font-weight: 600; font-size: 16px; margin: 8px 0;">{product["price"]}</div>' if product.get('price') else ''
+                margin_bottom = "margin-bottom: 25px;" if i < len(products) - 1 else ""
                 
                 html += f"""
-                                            <div style="padding: 20px; background-color: #ffffff; {border_top}">
-                                                <table cellpadding="0" cellspacing="0" border="0" width="100%">
-                                                    <tr>
-                                                        <td style="vertical-align: top; width: 70%;">
-                                                            <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #212529; line-height: 1.4;">
-                                                                {product['title']}
-                                                            </h3>
-                                                            {price_display}
-                                                            <p style="margin: 5px 0 0 0; color: #868e96; font-size: 12px;">
-                                                                Gevonden: {datetime.fromisoformat(product['found_at']).strftime('%d-%m-%Y %H:%M')}
-                                                            </p>
-                                                        </td>
-                                                        <td style="vertical-align: middle; text-align: right; width: 30%;">
-                                                            <a href="{product['link']}" style="display: inline-block; background: linear-gradient(135deg, #007bff, #6610f2); color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: 500; transition: all 0.3s ease;">
-                                                                Bekijk Product
-                                                            </a>
-                                                            <div style="margin-top: 8px;">
-                                                                <span style="background-color: #e7f3ff; color: #0066cc; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; text-transform: uppercase;">
-                                                                    KIDS
-                                                                </span>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </div>"""
+                                        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; {margin_bottom} box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all 0.3s ease;">
+                                            <div style="margin-bottom: 15px;">
+                                                <h3 style="margin: 0 0 12px 0; font-size: 18px; font-weight: 600; color: #1e293b; line-height: 1.4; font-family: 'Raleway', Arial, sans-serif;">
+                                                    {product['title']}
+                                                </h3>
+                                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                                                    <div style="background: linear-gradient(45deg, #ff6b35, #ff8c00); color: white; padding: 8px 16px; border-radius: 20px; font-size: 20px; font-weight: 700; letter-spacing: 0.5px;">
+                                                        {product['price'] if product.get('price') else 'Prijs op aanvraag'}
+                                                    </div>
+                                                    <div style="background-color: #eff6ff; color: #1e40af; padding: 6px 12px; border-radius: 15px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                                                        KIDS COLLECTIE
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div style="text-align: center;">
+                                                <a href="{product['link']}" style="display: inline-block; background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; font-family: 'Raleway', Arial, sans-serif;">
+                                                    Bekijk Nu
+                                                </a>
+                                            </div>
+                                        </div>"""
             
             html += """
-                                        </div>
-                                    </div>"""
+                                    </div>
+                                </div>"""
         
         html += f"""
-                                </td>
-                            </tr>
-                            
-                            <!-- Footer -->
-                            <tr>
-                                <td style="background-color: #f8f9fa; padding: 20px 30px; text-align: center; border-top: 1px solid #e9ecef;">
-                                    <p style="margin: 0 0 12px 0; color: #6c757d; font-size: 13px;">
-                                        <a href="http://localhost:5001/add_shop" style="color: #ff6b35; text-decoration: none; font-weight: 500;">Voeg shop toe</a>
-                                        <span style="color: #dee2e6; margin: 0 12px;">|</span>
-                                        <a href="http://localhost:5001/settings" style="color: #007bff; text-decoration: none; font-weight: 500;">Pas zoekterm aan</a>
-                                    </p>
-                                    <p style="margin: 0; color: #6c757d; font-size: 12px; line-height: 1.5;">
+                            </td>
+                        </tr>
+                        
+                        <!-- Footer -->
+                        <tr>
+                            <td style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 40px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+                                <div style="margin-bottom: 25px;">
+                                    <a href="http://localhost:5001/add_shop" style="display: inline-block; color: #ff6b35; text-decoration: none; font-weight: 600; margin: 0 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Raleway', Arial, sans-serif;">
+                                        Shop toevoegen
+                                    </a>
+                                    <span style="color: #cbd5e1; margin: 0 5px; font-size: 16px;">•</span>
+                                    <a href="http://localhost:5001/settings" style="display: inline-block; color: #1e40af; text-decoration: none; font-weight: 600; margin: 0 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Raleway', Arial, sans-serif;">
+                                        Instellingen
+                                    </a>
+                                </div>
+                                <div style="border-top: 1px solid #e2e8f0; padding-top: 25px;">
+                                    <p style="margin: 0; color: #64748b; font-size: 12px; line-height: 1.6; font-family: 'Raleway', Arial, sans-serif;">
+                                        <strong style="color: #374151;">DHGATE TENUE MONITOR</strong><br>
                                         Automatisch gegenereerd door Nathalja Nijman<br>
                                         Volgende scan: morgen om 09:00
                                     </p>
-                                </td>
-                            </tr>
-                            
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        </body>
-        </html>
-        """
+                                </div>
+                            </td>
+                        </tr>
+                        
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>
+    """
         
         return html
 
