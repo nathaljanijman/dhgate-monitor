@@ -470,7 +470,7 @@ class DHgateSeleniumMonitor:
                             <tr>
                                 <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
                                     <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 300; letter-spacing: 1px;">
-                                        DHGate Tenue Monitor
+                                        DHGate tenue monitor
                                     </h1>
                                     <p style="margin: 10px 0 0 0; color: #e8eaf6; font-size: 16px; opacity: 0.9;">
                                         Er zijn nieuwe items toegevoegd
