@@ -1,7 +1,10 @@
 name: 'Selenium DHgate Check'
 
 on:
-  workflow_dispatch: # Manual trigger only for now
+  schedule:
+    # Runs daily at 09:00 UTC (10:00 CET in winter, 11:00 CEST in summer)
+    - cron: '0 9 * * *'
+  workflow_dispatch: # Manual trigger
 
 jobs:
   check:
@@ -19,10 +22,17 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements-full.txt
         
-    - name: Install Chrome
+    - name: Install Chrome and ChromeDriver
       run: |
         sudo apt-get update
         sudo apt-get install -y google-chrome-stable
+        
+        # Install ChromeDriver
+        CHROME_VERSION=$(google-chrome --version | cut -d' ' -f3 | cut -d'.' -f1-3)
+        wget -O /tmp/chromedriver.zip "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}/chromedriver_linux64.zip"
+        unzip /tmp/chromedriver.zip -d /tmp/
+        sudo mv /tmp/chromedriver /usr/local/bin/
+        sudo chmod +x /usr/local/bin/chromedriver
         
     - name: Run monitoring
       env:
@@ -31,7 +41,29 @@ jobs:
         SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
         RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
       run: |
-        echo "Starting monitoring..."
+        echo "🤖 Starting GitHub Actions DHgate monitoring..."
+        echo "⏰ Timestamp: $(date)"
+        echo "🌍 Environment: $ENVIRONMENT"
+        
+        # Update config with secrets
         python3 update_config_secrets.py
+        
+        # Run Selenium monitoring
         python3 run_monitor.py
-        echo "Monitoring completed!"
+        
+        echo "✅ Monitoring completed!"
+        
+    - name: Show results
+      if: always()
+      run: |
+        echo "📊 Monitoring Results:"
+        if [ -d "logs" ]; then
+          echo "=== Logs found ==="
+          ls -la logs/
+          if [ -f "logs/monitor.log" ]; then
+            echo "=== Latest Monitor Log ==="
+            tail -20 logs/monitor.log
+          fi
+        else
+          echo "No logs directory found"
+        fi
