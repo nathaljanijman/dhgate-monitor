@@ -494,7 +494,7 @@ function generateSettingsHTML(config) {
                     </div>
                     <div class="card-body">
                         <form method="POST">
-                            <h5>Email Configuratie</h5>
+                            <h5>Email configuratie</h5>
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Verzender Email</label>
@@ -506,7 +506,7 @@ function generateSettingsHTML(config) {
                                 </div>
                             </div>
                             
-                            <h5>Schedule</h5>
+                            <h5>Planning</h5>
                             <div class="mb-3">
                                 <label class="form-label">Dagelijkse Scan Tijd</label>
                                 <input type="time" name="schedule_time" class="form-control" value="${config.schedule.time}" required>
@@ -520,7 +520,7 @@ function generateSettingsHTML(config) {
                             <div class="mb-3">
                                 <div class="form-check">
                                     <input type="checkbox" name="case_sensitive" class="form-check-input" ${config.filters.case_sensitive ? 'checked' : ''}>
-                                    <label class="form-check-label">Case Sensitive</label>
+                                    <label class="form-check-label">Hoofdlettergevoelig</label>
                                 </div>
                             </div>
                             
@@ -580,7 +580,7 @@ function generateTagsHTML(tags) {
                     </div>
                     <div class="card-body">
                         <div class="mb-4">
-                            <h5>Huidige Tags</h5>
+                            <h5>Huidige tags</h5>
                             <div class="border rounded p-3 mb-3" style="background-color: #f8fafc;">
                                 ${tags.map(tag => `
                                     <span class="tag-item">
@@ -603,7 +603,7 @@ function generateTagsHTML(tags) {
                             </div>
                             
                             <div class="alert alert-info">
-                                <strong>💡 Tip:</strong> Tags werden gebruikt om te zoeken naar producten die relevante woorden bevatten. 
+                                <strong>💡 Tip:</strong> Tags worden gebruikt om te zoeken naar producten die relevante woorden bevatten. 
                                 Bijvoorbeeld: "kids", "children", "youth", "baby", "toddler".
                             </div>
                             
