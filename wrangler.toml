@@ -1,5 +1,5 @@
 name = "dhgate-monitor"
-main = "cloudflare_cron.js"
+main = "cloudflare_app.js"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
