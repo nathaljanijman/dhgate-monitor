@@ -3,7 +3,6 @@
  * Uses D1 Database and KV Storage for data persistence
  */
 
-import html from './templates/index.html';
 
 export default {
   async fetch(request, env, ctx) {
