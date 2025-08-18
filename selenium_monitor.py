@@ -570,7 +570,7 @@ class DHgateSeleniumMonitor:
                                     </a>
                                     <span style="color: #cbd5e1; margin: 0 5px; font-size: 16px;">•</span>
                                     <a href="https://dhgate-monitor.com/settings" style="display: inline-block; color: #1e40af; text-decoration: none; font-weight: 600; margin: 0 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Raleway', Arial, sans-serif;">
-                                        Instellingen
+                                        instellingen
                                     </a>
                                 </div>
                                 <div style="border-top: 1px solid #e2e8f0; padding-top: 25px;">
