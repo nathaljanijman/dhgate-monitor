@@ -3754,8 +3754,18 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             color: white;
         }
         
-        .step-item.completed .step-number::before {
+        .step-item.completed .step-number {
+            position: relative;
+        }
+        
+        .step-item.completed .step-number::after {
             content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: bold;
         }
         
         .step-label {
@@ -5044,15 +5054,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                             <div id="store_results" class="store-results"></div>
                                             <input type="hidden" name="store_url" id="selected_store_url">
                                         </div>
-                                        <div class="store-options">
-                                            <button type="button" class="store-option" onclick="selectAllStores()">
-                                                <div class="store-option-icon">🌐</div>
-                                                <div class="store-option-text">
-                                                    <div class="store-option-title">${lang === 'nl' ? 'Alle winkels' : 'All stores'}</div>
-                                                    <div class="store-option-desc">${lang === 'nl' ? 'Monitor alle DHgate winkels' : 'Monitor all DHgate stores'}</div>
-                                                </div>
-                                            </button>
-                                        </div>
                                     </div>
                                     
                                     <div class="form-group">
@@ -5266,6 +5267,14 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     return;
                 }
             } else if (currentStep === 2) {
+                const storeUrl = document.getElementById('selected_store_url').value;
+                
+                if (!storeUrl) {
+                    alert('${lang}' === 'nl' ? 'Selecteer eerst een winkel' : 'Please select a store first');
+                    document.getElementById('store_search').focus();
+                    return;
+                }
+                
                 if (!tagsInput.value || !tagsInput.checkValidity()) {
                     tagsInput.focus();
                     tagsInput.reportValidity();
@@ -5334,15 +5343,48 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         let storeDatabase = [];
         let selectedStore = null;
         
-        // Mock store database (in real implementation, fetch from DHgate sitemap)
+        // Extended mock store database (in real implementation, fetch from DHgate sitemap/API)
         function initStoreDatabase() {
             storeDatabase = [
-                { name: "SportStyle Store", url: "https://dhgate.com/store/sportstyle" },
-                { name: "Fashion Hub", url: "https://dhgate.com/store/fashionhub" },
-                { name: "TechGear Shop", url: "https://dhgate.com/store/techgear" },
-                { name: "Kids World", url: "https://dhgate.com/store/kidsworld" },
-                { name: "Home Essentials", url: "https://dhgate.com/store/homeessentials" },
-                { name: "Jewelry Palace", url: "https://dhgate.com/store/jewelrypalace" }
+                // Sports & Outdoor stores
+                { name: "SportStyle Store", url: "https://dhgate.com/store/20062458" },
+                { name: "Athletic Pro Shop", url: "https://dhgate.com/store/20156392" },
+                { name: "Soccer World", url: "https://dhgate.com/store/20089456" },
+                { name: "Jersey Kings", url: "https://dhgate.com/store/20123789" },
+                
+                // Fashion stores
+                { name: "Fashion Hub", url: "https://dhgate.com/store/20045623" },
+                { name: "Style Central", url: "https://dhgate.com/store/20067891" },
+                { name: "Urban Trends", url: "https://dhgate.com/store/20098234" },
+                { name: "Chic Boutique", url: "https://dhgate.com/store/20112456" },
+                
+                // Electronics
+                { name: "TechGear Shop", url: "https://dhgate.com/store/20034567" },
+                { name: "Digital World", url: "https://dhgate.com/store/20078912" },
+                { name: "Gadget Palace", url: "https://dhgate.com/store/20091234" },
+                
+                // Kids & Baby
+                { name: "Kids World", url: "https://dhgate.com/store/20023456" },
+                { name: "Baby Essentials", url: "https://dhgate.com/store/20056789" },
+                { name: "Children Paradise", url: "https://dhgate.com/store/20089123" },
+                
+                // Home & Garden
+                { name: "Home Essentials", url: "https://dhgate.com/store/20012345" },
+                { name: "Garden Plus", url: "https://dhgate.com/store/20045678" },
+                { name: "Decor World", url: "https://dhgate.com/store/20078901" },
+                
+                // Jewelry & Accessories
+                { name: "Jewelry Palace", url: "https://dhgate.com/store/20001234" },
+                { name: "Luxury Gems", url: "https://dhgate.com/store/20034789" },
+                { name: "Fashion Accessories", url: "https://dhgate.com/store/20067123" },
+                
+                // Automotive
+                { name: "Auto Parts Pro", url: "https://dhgate.com/store/20090123" },
+                { name: "Car Accessories", url: "https://dhgate.com/store/20123456" },
+                
+                // Beauty & Health
+                { name: "Beauty Central", url: "https://dhgate.com/store/20056123" },
+                { name: "Health Plus", url: "https://dhgate.com/store/20089456" }
             ];
         }
         
@@ -5385,18 +5427,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             });
         }
         
-        function selectAllStores() {
-            selectedStore = null;
-            document.getElementById('store_search').value = '';
-            document.getElementById('selected_store_url').value = '';
-            document.getElementById('store_results').classList.remove('show');
-            
-            // Update visual state
-            document.querySelectorAll('.store-option').forEach(option => {
-                option.classList.remove('selected');
-            });
-            event.target.closest('.store-option').classList.add('selected');
-        }
         
         // Hide results when clicking outside
         document.addEventListener('click', function(e) {
