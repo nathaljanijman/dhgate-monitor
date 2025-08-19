@@ -4378,8 +4378,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             </a>
             
             <div class="navbar-menu">
-                <a href="#features" class="nav-link">${lang === 'nl' ? 'Features' : 'Features'}</a>
-                <a href="#how-it-works" class="nav-link">${lang === 'nl' ? 'Hoe het werkt' : 'How it works'}</a>
+                <a href="#features" class="nav-link" onclick="scrollToSection('features'); return false;">${lang === 'nl' ? 'Features' : 'Features'}</a>
+                <a href="#how-it-works" class="nav-link" onclick="scrollToSection('how-it-works'); return false;">${lang === 'nl' ? 'Hoe het werkt' : 'How it works'}</a>
                 <a href="/contact?lang=${lang}&theme=${theme}" class="nav-link">${lang === 'nl' ? 'Contact' : 'Contact'}</a>
             </div>
             
@@ -4400,7 +4400,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     </div>
                 </div>
                 
-                <a href="#subscription-form" class="nav-cta-button" onclick="scrollToSubscription()">
+                <a href="#subscription-form" class="nav-cta-button" onclick="scrollToSubscription(); return false;">
                     ${lang === 'nl' ? 'START' : 'START'}
                 </a>
             </div>
@@ -4450,7 +4450,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     </div>
                     
                     <div class="hero-actions animate-fade-in-up" style="animation-delay: 0.4s;">
-                        <a href="#subscription-form" class="hero-cta-primary" onclick="scrollToSubscription()">
+                        <a href="#subscription-form" class="hero-cta-primary" onclick="scrollToSubscription(); return false;">
                             ${lang === 'nl' ? 'Start Gratis Trial' : 'Start Free Trial'}
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -5320,10 +5320,30 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         
         function scrollToSubscription() {
             const subscriptionForm = document.getElementById('subscription-form');
+            const navbar = document.querySelector('.professional-navbar');
+            
             if (subscriptionForm) {
-                subscriptionForm.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
+                const navbarHeight = navbar ? navbar.offsetHeight : 80;
+                const targetPosition = subscriptionForm.getBoundingClientRect().top + window.pageYOffset - navbarHeight - 20;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+        
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const navbar = document.querySelector('.professional-navbar');
+            
+            if (section) {
+                const navbarHeight = navbar ? navbar.offsetHeight : 80;
+                const targetPosition = section.getBoundingClientRect().top + window.pageYOffset - navbarHeight - 20;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
                 });
             }
         }
