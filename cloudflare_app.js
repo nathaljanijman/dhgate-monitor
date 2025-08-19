@@ -4907,12 +4907,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                     <h3 class="step-title">
                                         ${lang === 'nl' ? 'Wat is je email adres?' : 'What\'s your email address?'}
                                     </h3>
-                                    <p class="step-description">
-                                        ${lang === 'nl' ? 
-                                            'We gebruiken dit om je alerts te sturen wanneer nieuwe producten worden gevonden.' :
-                                            'We\'ll use this to send you alerts when new products are found.'
-                                        }
-                                    </p>
                                     <div class="form-group">
                                         <div class="input-wrapper">
                                             <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -5156,18 +5150,11 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         }
         
         function scrollToSubscription() {
-            const subscriptionForm = document.getElementById('subscription-form');
-            const navbar = document.querySelector('.professional-navbar');
-            
-            if (subscriptionForm) {
-                const navbarHeight = navbar ? navbar.offsetHeight : 80;
-                const targetPosition = subscriptionForm.getBoundingClientRect().top + window.pageYOffset - navbarHeight - 20;
-                
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
-            }
+            // Simply scroll to top of page instead of to form
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         }
         
         function scrollToSection(sectionId) {
