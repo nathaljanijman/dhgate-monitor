@@ -767,6 +767,12 @@ export default {
           }
           break;
         
+        case '/subscribe':
+          if (method === 'POST') {
+            return await handleSubscription(request, env);
+          }
+          break;
+        
         case '/api/shops':
           if (method === 'GET') {
             return await handleGetShops(request, env);
@@ -995,6 +1001,154 @@ async function handleUpdateTags(request, env) {
   } catch (error) {
     return new Response('Error updating tags: ' + error.message, { status: 400 });
   }
+}
+
+async function handleSubscription(request, env) {
+  try {
+    const formData = await request.formData();
+    const lang = getLanguage(request);
+    const t = getTranslations(lang);
+    
+    // Extract form data
+    const subscription = {
+      email: formData.get('email'),
+      store_url: formData.get('store_url'),
+      tags: formData.get('tags').split(',').map(tag => tag.trim()),
+      frequency: formData.get('frequency'),
+      notification_time: formData.get('notification_time'),
+      min_price: formData.get('min_price') ? parseFloat(formData.get('min_price')) : null,
+      max_price: formData.get('max_price') ? parseFloat(formData.get('max_price')) : null,
+      keywords: formData.get('keywords') ? formData.get('keywords').split(',').map(k => k.trim()) : [],
+      created_at: new Date().toISOString(),
+      status: 'active'
+    };
+    
+    // Validate required fields
+    if (!subscription.email || !subscription.store_url || !subscription.tags.length) {
+      return new Response(generateErrorResponse(lang, 'Missing required fields'), { 
+        status: 400,
+        headers: { 'Content-Type': 'text/html' }
+      });
+    }
+    
+    // Store subscription in KV
+    const subscriptionId = `subscription_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    await env.DHGATE_MONITOR_KV.put(subscriptionId, JSON.stringify(subscription));
+    
+    // Also store by email for easy lookup
+    const emailKey = `email_${subscription.email.replace(/[^a-zA-Z0-9]/g, '_')}`;
+    await env.DHGATE_MONITOR_KV.put(emailKey, subscriptionId);
+    
+    // Generate success page
+    return new Response(generateSuccessResponse(lang, subscription), {
+      headers: { 'Content-Type': 'text/html' }
+    });
+    
+  } catch (error) {
+    return new Response('Error processing subscription: ' + error.message, { status: 500 });
+  }
+}
+
+function generateSuccessResponse(lang, subscription) {
+  return `
+<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${lang === 'nl' ? 'Monitoring Gestart!' : 'Monitoring Started!'}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    ${generateGlobalCSS()}
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-4">
+                            <div style="font-size: 4rem; color: var(--accent-color); margin-bottom: 1rem;">✓</div>
+                            <h1 style="color: var(--text-primary); margin-bottom: 1rem;">
+                                ${lang === 'nl' ? 'Monitoring Gestart!' : 'Monitoring Started!'}
+                            </h1>
+                            <p style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2rem;">
+                                ${lang === 'nl' ? 
+                                    'Je DHgate monitoring is succesvol ingesteld. Je ontvangt binnenkort de eerste update!' :
+                                    'Your DHgate monitoring has been successfully set up. You will receive the first update soon!'
+                                }
+                            </p>
+                        </div>
+                        
+                        <div class="row text-start">
+                            <div class="col-md-6 mb-3">
+                                <strong>${lang === 'nl' ? 'Email' : 'Email'}:</strong><br>
+                                <span class="text-muted">${maskEmail(subscription.email)}</span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <strong>${lang === 'nl' ? 'Frequentie' : 'Frequency'}:</strong><br>
+                                <span class="text-muted">${subscription.frequency}</span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <strong>${lang === 'nl' ? 'Tags' : 'Tags'}:</strong><br>
+                                <span class="text-muted">${subscription.tags.join(', ')}</span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <strong>${lang === 'nl' ? 'Tijd' : 'Time'}:</strong><br>
+                                <span class="text-muted">${subscription.notification_time || 'Direct'}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <a href="/?lang=${lang}" class="btn btn-primary btn-lg me-3" style="border-radius: 12px;">
+                                ${lang === 'nl' ? 'Terug naar Home' : 'Back to Home'}
+                            </a>
+                            <a href="mailto:support@dhgate-monitor.com" class="btn btn-outline-primary btn-lg" style="border-radius: 12px;">
+                                ${lang === 'nl' ? 'Contact Support' : 'Contact Support'}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+  `;
+}
+
+function generateErrorResponse(lang, message) {
+  return `
+<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${lang === 'nl' ? 'Fout' : 'Error'}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    ${generateGlobalCSS()}
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                    <div class="card-body p-5 text-center">
+                        <div style="font-size: 4rem; color: #dc3545; margin-bottom: 1rem;">⚠</div>
+                        <h1 style="color: var(--text-primary);">${lang === 'nl' ? 'Oops!' : 'Oops!'}</h1>
+                        <p style="color: var(--text-muted); margin-bottom: 2rem;">${message}</p>
+                        <a href="/?lang=${lang}" class="btn btn-primary btn-lg" style="border-radius: 12px;">
+                            ${lang === 'nl' ? 'Probeer Opnieuw' : 'Try Again'}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+  `;
 }
 
 async function handleGetShops(request, env) {
@@ -2925,26 +3079,109 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section style="padding: 120px 0; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); text-align: center;">
+    <!-- Subscription Form Section -->
+    <section style="padding: 80px 0; background: var(--card-bg);">
         <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">
-                        ${lang === 'nl' ? 'Klaar om te beginnen?' : 'Ready to get started?'}
-                    </h2>
-                    <p style="font-size: 1.2rem; color: #64748b; margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto;">
-                        ${lang === 'nl' ? 
-                            'Log in en stel je eerste monitoring in binnen 2 minuten.' :
-                            'Log in and set up your first monitoring in under 2 minutes.'
-                        }
-                    </p>
-                    <a href="/login?lang=${lang}&theme=${theme}" class="cta-button" style="margin-right: 20px;">
-                        ${lang === 'nl' ? 'Inloggen' : 'Login'}
-                    </a>
-                    <a href="/dashboard?lang=${lang}&theme=${theme}" class="btn btn-outline-dark btn-lg" style="padding: 16px 40px; border-radius: 12px;">
-                        ${lang === 'nl' ? 'Dashboard Preview' : 'Dashboard Preview'}
-                    </a>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="text-center mb-5">
+                        <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; color: var(--text-primary);">
+                            ${lang === 'nl' ? 'Start je monitoring' : 'Start your monitoring'}
+                        </h2>
+                        <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto;">
+                            ${lang === 'nl' ? 
+                                'Vul onderstaand formulier in en ontvang direct alerts wanneer nieuwe producten worden geüpload.' :
+                                'Fill out the form below and receive instant alerts when new products are uploaded.'
+                            }
+                        </p>
+                    </div>
+                    
+                    <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                        <div class="card-body p-4 p-md-5">
+                            <form method="POST" action="/subscribe" id="subscriptionForm">
+                                <input type="hidden" name="lang" value="${lang}">
+                                
+                                <div class="row mb-4">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">${lang === 'nl' ? 'Email adres' : 'Email address'}</label>
+                                        <input type="email" name="email" class="form-control form-control-lg" 
+                                               placeholder="${lang === 'nl' ? 'jouw@email.com' : 'your@email.com'}" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">${lang === 'nl' ? 'DHgate Store URL' : 'DHgate Store URL'}</label>
+                                        <input type="url" name="store_url" class="form-control form-control-lg" 
+                                               placeholder="https://dhgate.com/store/..." required>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">${lang === 'nl' ? 'Monitoring tags' : 'Monitoring tags'}</label>
+                                    <input type="text" name="tags" class="form-control form-control-lg" 
+                                           placeholder="${lang === 'nl' ? 'kids, children, baby, youth' : 'kids, children, baby, youth'}" required>
+                                    <div class="form-text">${lang === 'nl' ? 'Gescheiden door komma\'s. Deze woorden worden gezocht in producttitels.' : 'Separated by commas. These words will be searched in product titles.'}</div>
+                                </div>
+                                
+                                <div class="row mb-4">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">${lang === 'nl' ? 'Notificatie frequentie' : 'Notification frequency'}</label>
+                                        <select name="frequency" class="form-select form-select-lg" required>
+                                            <option value="immediate">${lang === 'nl' ? 'Direct - Real-time alerts' : 'Immediate - Real-time alerts'}</option>
+                                            <option value="daily" selected>${lang === 'nl' ? 'Dagelijks - 1x per dag' : 'Daily - Once per day'}</option>
+                                            <option value="weekly">${lang === 'nl' ? 'Wekelijks - 1x per week' : 'Weekly - Once per week'}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">${lang === 'nl' ? 'Tijd (voor dagelijks/wekelijks)' : 'Time (for daily/weekly)'}</label>
+                                        <select name="notification_time" class="form-select form-select-lg">
+                                            <option value="09:00" selected>09:00</option>
+                                            <option value="12:00">12:00</option>
+                                            <option value="15:00">15:00</option>
+                                            <option value="18:00">18:00</option>
+                                            <option value="21:00">21:00</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-4">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">${lang === 'nl' ? 'Min prijs (optioneel)' : 'Min price (optional)'}</label>
+                                        <input type="number" name="min_price" class="form-control form-control-lg" 
+                                               placeholder="${lang === 'nl' ? '10.00' : '10.00'}" step="0.01" min="0">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">${lang === 'nl' ? 'Max prijs (optioneel)' : 'Max price (optional)'}</label>
+                                        <input type="number" name="max_price" class="form-control form-control-lg" 
+                                               placeholder="${lang === 'nl' ? '100.00' : '100.00'}" step="0.01" min="0">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">${lang === 'nl' ? 'Extra keywords (optioneel)' : 'Extra keywords (optional)'}</label>
+                                    <input type="text" name="keywords" class="form-control form-control-lg" 
+                                           placeholder="${lang === 'nl' ? 'sport, voetbal, basketbal' : 'sport, football, basketball'}">
+                                    <div class="form-text">${lang === 'nl' ? 'Aanvullende zoektermen om producten te filteren.' : 'Additional search terms to filter products.'}</div>
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-success btn-lg" style="padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: 600;">
+                                        ${lang === 'nl' ? 'Start Monitoring' : 'Start Monitoring'}
+                                    </button>
+                                </div>
+                                
+                                <div class="text-center mt-4">
+                                    <small class="text-muted">
+                                        ${lang === 'nl' ? 
+                                            'Door te registreren ga je akkoord met onze ' :
+                                            'By registering you agree to our '
+                                        }
+                                        <a href="/terms?lang=${lang}" class="text-decoration-none">${lang === 'nl' ? 'voorwaarden' : 'terms'}</a>
+                                        ${lang === 'nl' ? ' en ' : ' and '}
+                                        <a href="/privacy?lang=${lang}" class="text-decoration-none">${lang === 'nl' ? 'privacybeleid' : 'privacy policy'}</a>.
+                                    </small>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
