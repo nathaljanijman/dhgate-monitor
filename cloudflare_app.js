@@ -3719,6 +3719,143 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             margin: 0;
         }
         
+        /* Subscription Form Section */
+        .subscription-section {
+            padding: 120px 0;
+            background: var(--card-bg);
+        }
+        
+        .subscription-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .subscription-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--btn-primary-bg);
+        }
+        
+        .subscription-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: rgba(37, 99, 235, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .subscription-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .subscription-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .subscription-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .subscription-form .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.95rem;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            z-index: 2;
+        }
+        
+        .subscription-form .form-control {
+            width: 100%;
+            padding: 12px 16px 12px 45px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .subscription-form .form-control:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: var(--card-bg);
+        }
+        
+        .subscription-form .form-control::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+        
+        .btn-subscribe {
+            width: 100%;
+            background: var(--btn-primary-bg);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .btn-subscribe:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+            background: var(--btn-primary-hover);
+        }
+        
+        .btn-subscribe:active {
+            transform: translateY(0);
+        }
+        
+        .form-notice {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 1.5rem;
+            margin-bottom: 0;
+        }
+        
         .feature-card {
             background: var(--card-bg);
             border: none;
@@ -4203,6 +4340,18 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             
             .step-title {
                 font-size: 1.2rem;
+            }
+            
+            .subscription-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .subscription-title {
+                font-size: 1.6rem;
+            }
+            
+            .subscription-description {
+                font-size: 1rem;
             }
         }
     </style>
@@ -4980,6 +5129,121 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             }
         });
     </script>
+
+    <!-- Subscription Form Section -->
+    <section id="subscription-form" class="subscription-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="subscription-card">
+                        <div class="text-center mb-4">
+                            <div class="subscription-icon">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                                    <defs>
+                                        <linearGradient id="subscriptionGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#2563EB"/>
+                                            <stop offset="100%" style="stop-color:#EA580C"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <path d="M4 4H20C20.55 4 21 4.45 21 5V19C21 19.55 20.55 20 20 20H4C3.45 20 3 19.55 3 19V5C3 4.45 3.45 4 4 4Z" stroke="url(#subscriptionGradient)" stroke-width="2" fill="none"/>
+                                    <path d="M8 10L12 14L16 10" stroke="url(#subscriptionGradient)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <h2 class="subscription-title">
+                                ${lang === 'nl' ? 'Start je gratis monitoring' : 'Start your free monitoring'}
+                            </h2>
+                            <p class="subscription-description">
+                                ${lang === 'nl' ? 
+                                    'Voer je email in en ontvang een link om je monitoring voorkeuren in te stellen. Geen account nodig!' :
+                                    'Enter your email and receive a link to set up your monitoring preferences. No account needed!'
+                                }
+                            </p>
+                        </div>
+                        
+                        <form method="POST" action="/subscribe" class="subscription-form">
+                            <input type="hidden" name="lang" value="${lang}">
+                            <input type="hidden" name="theme" value="${theme}">
+                            
+                            <div class="form-step active" data-step="1">
+                                <div class="form-group">
+                                    <label for="email" class="form-label">
+                                        ${lang === 'nl' ? 'Email adres' : 'Email address'}
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                            <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2"/>
+                                            <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="2"/>
+                                        </svg>
+                                        <input 
+                                            type="email" 
+                                            id="email" 
+                                            name="email" 
+                                            class="form-control" 
+                                            placeholder="${lang === 'nl' ? 'je@email.com' : 'your@email.com'}" 
+                                            required
+                                        >
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="store_url" class="form-label">
+                                        ${lang === 'nl' ? 'DHgate winkel URL (optioneel)' : 'DHgate store URL (optional)'}
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                            <path d="M10 13C10 14.1 10.9 15 12 15S14 14.1 14 13C14 11.9 13.1 11 12 11S10 11.9 10 13Z" stroke="currentColor" stroke-width="2"/>
+                                            <path d="M12 2L19.07 8.75C19.66 9.32 20 10.12 20 10.96V20C20 21.1 19.1 22 18 22H6C4.9 22 4 21.1 4 20V10.96C4 10.12 4.34 9.32 4.93 8.75L12 2Z" stroke="currentColor" stroke-width="2"/>
+                                        </svg>
+                                        <input 
+                                            type="url" 
+                                            id="store_url" 
+                                            name="store_url" 
+                                            class="form-control" 
+                                            placeholder="${lang === 'nl' ? 'https://dhgate.com/store/...' : 'https://dhgate.com/store/...'}"
+                                        >
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="tags" class="form-label">
+                                        ${lang === 'nl' ? 'Zoektermen (gescheiden door komma\'s)' : 'Search terms (separated by commas)'}
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                            <path d="M20.59 13.41L13.42 20.58C13.05 20.95 12.55 21.16 12.02 21.16C11.49 21.16 10.99 20.95 10.62 20.58L7.41 17.37C6.99 16.95 6.76 16.37 6.76 15.76V10.58L2.29 4.11C2.1 3.81 2 3.46 2 3.1V2C2 1.45 2.45 1 3 1H21C21.55 1 22 1.45 22 2V3.1C22 3.46 21.9 3.81 21.71 4.11L20.59 13.41Z" stroke="currentColor" stroke-width="2"/>
+                                        </svg>
+                                        <input 
+                                            type="text" 
+                                            id="tags" 
+                                            name="tags" 
+                                            class="form-control" 
+                                            placeholder="${lang === 'nl' ? 'jersey, shirt, voetbal' : 'jersey, shirt, soccer'}" 
+                                            required
+                                        >
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="btn-subscribe">
+                                    ${lang === 'nl' ? 'Start monitoring' : 'Start monitoring'}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                        <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                        <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                </button>
+                                
+                                <p class="form-notice">
+                                    ${lang === 'nl' ? 
+                                        'Door te subscriben ontvang je een email met een link om je voorkeuren aan te passen.' :
+                                        'By subscribing you will receive an email with a link to customize your preferences.'
+                                    }
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <div class="container py-5">
         <!-- Legal Footer -->
