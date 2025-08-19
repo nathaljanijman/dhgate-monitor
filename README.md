@@ -58,6 +58,7 @@ A sophisticated Cloudflare Workers application that monitors DHgate products and
 | [`/privacy`](https://dhgate-monitor.com/privacy) | 0.6 | **Privacy Policy** | GDPR Compliant |
 | [`/terms`](https://dhgate-monitor.com/terms) | 0.6 | **Terms of Service** | Legal Framework |
 | [`/contact`](https://dhgate-monitor.com/contact) | 0.6 | **Contact Information** | Support & Legal |
+| [`/unsubscribe`](https://dhgate-monitor.com/unsubscribe?token=...) | 0.8 | **Unsubscribe Page** | GDPR Compliance |
 
 ### **API & Technical**
 | URL | Type | Description |
@@ -68,6 +69,8 @@ A sophisticated Cloudflare Workers application that monitors DHgate products and
 | [`/api/stores/search`](https://dhgate-monitor.com/api/stores/search) | JSON | **Store Search API** |
 | [`/api/stores/update`](https://dhgate-monitor.com/api/stores/update) | JSON | **Store Database Update** |
 | [`/api/scraper/trigger`](https://dhgate-monitor.com/api/scraper/trigger) | JSON | **Manual Database Refresh** |
+| [`/api/unsubscribe`](https://dhgate-monitor.com/api/unsubscribe) | JSON | **Unsubscribe Action** |
+| [`/test-unsubscribe`](https://dhgate-monitor.com/test-unsubscribe) | Redirect | **Test Unsubscribe Flow** |
 
 ---
 
@@ -275,6 +278,41 @@ npx wrangler dev
 
 ---
 
+## 🧪 Testing & Development
+
+### **Testing Unsubscribe Flow**
+The unsubscribe system can be tested in multiple ways:
+
+**Method 1: Complete User Journey** (Recommended)
+1. Visit [dhgate-monitor.com](https://dhgate-monitor.com)
+2. Complete the 4-step progressive form:
+   - Step 1: Enter email address
+   - Step 2: Search store + add search terms
+   - Step 3: Select frequency + notification time  
+   - Step 4: Confirm subscription
+3. After "Start monitoring" → Find unsubscribe link at bottom
+4. Test the complete unsubscribe flow with real token
+
+**Method 2: Direct Test Link** (Quick Testing)
+- Visit [`/test-unsubscribe`](https://dhgate-monitor.com/test-unsubscribe) 
+- Creates demo subscription with test token
+- Redirects directly to unsubscribe page for testing
+
+### **API Testing**
+```bash
+# Test store search
+curl "https://dhgate-monitor.com/api/stores/search?q=electronics"
+
+# Test manual scraper trigger  
+curl "https://dhgate-monitor.com/api/scraper/trigger"
+
+# Test unsubscribe action (requires valid token)
+curl -X POST "https://dhgate-monitor.com/api/unsubscribe" \
+  -d "token=VALID_TOKEN&action=unsubscribe"
+```
+
+---
+
 ## 📞 Support & Contact
 
 ### **Technical Support**
@@ -298,9 +336,16 @@ This project is proprietary software developed for automated DHgate product moni
 ---
 
 *Last Updated: August 19, 2025*
-*Version: 3.0 - Progressive Forms with Intelligent DHgate Store Integration*
+*Version: 3.1 - Complete Unsubscribe System with Test Environment*
 
-### **Version 3.0 Highlights**
+### **Version 3.1 Highlights**  
+- 🔓 **Complete Unsubscribe System** - Token-based secure unsubscription flow
+- 🧪 **Test Environment** - Direct unsubscribe testing via `/test-unsubscribe`
+- 📋 **GDPR Compliance** - Proper data handling with subscription management
+- 🎯 **User-Friendly Interface** - Clear unsubscribe confirmation and success states
+- 📖 **Enhanced Documentation** - Complete testing instructions and API examples
+
+### **Previous Version 3.0 Features**
 - ✨ **Progressive Signup Form** - Email-first workflow with step-by-step guidance
 - 🏪 **DHgate Store Database** - Curated popular stores with real-time search
 - 🔍 **Intelligent Store Search** - Query enhancement with contextual suggestions

@@ -1,22 +1,59 @@
-/**
- * DHgate Monitor - Pure Cloudflare Workers Application
- * Uses D1 Database and KV Storage for data persistence
- */
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// Internationalization (i18n) support
-const translations = {
+// .wrangler/tmp/bundle-CJSz3Q/checked-fetch.js
+var urls = /* @__PURE__ */ new Set();
+function checkURL(request, init) {
+  const url = request instanceof URL ? request : new URL(
+    (typeof request === "string" ? new Request(request, init) : request).url
+  );
+  if (url.port && url.port !== "443" && url.protocol === "https:") {
+    if (!urls.has(url.toString())) {
+      urls.add(url.toString());
+      console.warn(
+        `WARNING: known issue with \`fetch()\` requests to custom HTTPS ports in published Workers:
+ - ${url.toString()} - the custom port will be ignored when the Worker is published using the \`wrangler deploy\` command.
+`
+      );
+    }
+  }
+}
+__name(checkURL, "checkURL");
+globalThis.fetch = new Proxy(globalThis.fetch, {
+  apply(target, thisArg, argArray) {
+    const [request, init] = argArray;
+    checkURL(request, init);
+    return Reflect.apply(target, thisArg, argArray);
+  }
+});
+
+// .wrangler/tmp/bundle-CJSz3Q/strip-cf-connecting-ip-header.js
+function stripCfConnectingIPHeader(input, init) {
+  const request = new Request(input, init);
+  request.headers.delete("CF-Connecting-IP");
+  return request;
+}
+__name(stripCfConnectingIPHeader, "stripCfConnectingIPHeader");
+globalThis.fetch = new Proxy(globalThis.fetch, {
+  apply(target, thisArg, argArray) {
+    return Reflect.apply(target, thisArg, [
+      stripCfConnectingIPHeader.apply(null, argArray)
+    ]);
+  }
+});
+
+// cloudflare_app.js
+var translations = {
   nl: {
     // Main app
     app_title: "DHGate monitor",
     app_description: "Automatische shop en producten monitoring",
-    
     // Navigation & Actions
     actions: "Acties",
     add_shop: "Shop toevoegen",
-    settings: "Instellingen", 
+    settings: "Instellingen",
     manage_tags: "Tags beheren",
     back_to_dashboard: "Terug naar dashboard",
-    
     // Dashboard
     registered_shops: "Geregistreerde shops",
     no_shops_registered: "Geen shops geregistreerd.",
@@ -26,15 +63,13 @@ const translations = {
     monitoring: "Monitoring",
     tags: "Tags",
     online: "Online",
-    
     // Add Shop
     add_shop_title: "Shop toevoegen - DHgate Monitor",
     shop_name: "Shop naam",
     search_url: "Zoek URL",
     search_url_help: "Voer de volledige DHgate zoek URL in",
-    
     // Settings
-    settings_title: "Instellingen - DHgate Monitor", 
+    settings_title: "Instellingen - DHgate Monitor",
     email_config: "Email configuratie",
     sender_email: "Verzender Email",
     recipient_email: "Ontvanger Email",
@@ -44,41 +79,35 @@ const translations = {
     keywords_comma: "Keywords (gescheiden door komma's)",
     case_sensitive: "Hoofdlettergevoelig",
     save_settings: "Instellingen opslaan",
-    
     // Tags
     manage_tags_title: "Tags beheren - DHgate Monitor",
     manage_tags_description: "Beheer welke tags gebruikt worden voor product filtering",
     current_tags: "Huidige tags",
     tags_comma: "Tags (gescheiden door komma's)",
     tags_help: "Deze tags worden gebruikt om producten te filteren tijdens monitoring. Producten die deze woorden bevatten worden gedetecteerd.",
-    tags_tip: "Tags worden gebruikt om te zoeken naar producten die relevante woorden bevatten. Bijvoorbeeld: \"kids\", \"children\", \"youth\", \"baby\", \"toddler\".",
+    tags_tip: 'Tags worden gebruikt om te zoeken naar producten die relevante woorden bevatten. Bijvoorbeeld: "kids", "children", "youth", "baby", "toddler".',
     save_tags: "Tags opslaan",
-    
     // Common
     save: "Opslaan",
     added: "Toegevoegd",
-    
     // Legal & Compliance
     privacy_policy: "Privacybeleid",
     terms_of_service: "Algemene voorwaarden",
     contact: "Contact",
     privacy_policy_title: "Privacybeleid - DHgate Monitor",
-    terms_title: "Algemene voorwaarden - DHgate Monitor", 
+    terms_title: "Algemene voorwaarden - DHgate Monitor",
     contact_title: "Contact - DHgate Monitor",
-    
     // Cookie Consent
     cookie_title: "Cookie voorkeuren",
     cookie_message: "We gebruiken cookies om uw ervaring te verbeteren en de website functionaliteit te waarborgen.",
     accept_cookies: "Accepteren",
     decline_cookies: "Weigeren",
     cookie_settings: "Cookie instellingen",
-    
     // Contact page
     contact_info: "Contact informatie",
     email_address: "E-mailadres",
     website_info: "Website informatie",
     data_controller: "Verwerkingsverantwoordelijke",
-    
     // Footer links
     legal_links: "Juridische informatie"
   },
@@ -86,55 +115,48 @@ const translations = {
     // Main app
     app_title: "DHGate monitor",
     app_description: "Automatic shop and product monitoring",
-    
     // Navigation & Actions  
     actions: "Actions",
     add_shop: "Add shop",
     settings: "Settings",
-    manage_tags: "Manage tags", 
+    manage_tags: "Manage tags",
     back_to_dashboard: "Back to dashboard",
-    
     // Dashboard
     registered_shops: "Registered shops",
     no_shops_registered: "No shops registered.",
     add_first_shop: "Add the first one",
-    status: "Status", 
+    status: "Status",
     platform: "Platform",
     monitoring: "Monitoring",
     tags: "Tags",
     online: "Online",
-    
     // Add Shop
     add_shop_title: "Add shop - DHgate Monitor",
     shop_name: "Shop name",
-    search_url: "Search URL", 
+    search_url: "Search URL",
     search_url_help: "Enter the complete DHgate search URL",
-    
     // Settings
     settings_title: "Settings - DHgate Monitor",
-    email_config: "Email configuration", 
+    email_config: "Email configuration",
     sender_email: "Sender Email",
     recipient_email: "Recipient Email",
     schedule: "Schedule",
-    daily_scan_time: "Daily Scan Time", 
+    daily_scan_time: "Daily Scan Time",
     filters: "Filters",
     keywords_comma: "Keywords (comma separated)",
     case_sensitive: "Case sensitive",
     save_settings: "Save settings",
-    
     // Tags
     manage_tags_title: "Manage tags - DHgate Monitor",
     manage_tags_description: "Manage which tags are used for product filtering",
     current_tags: "Current tags",
     tags_comma: "Tags (comma separated)",
     tags_help: "These tags are used to filter products during monitoring. Products containing these words will be detected.",
-    tags_tip: "Tags are used to search for products containing relevant words. For example: \"kids\", \"children\", \"youth\", \"baby\", \"toddler\".",
+    tags_tip: 'Tags are used to search for products containing relevant words. For example: "kids", "children", "youth", "baby", "toddler".',
     save_tags: "Save tags",
-    
     // Common
-    save: "Save", 
+    save: "Save",
     added: "Added",
-    
     // Legal & Compliance
     privacy_policy: "Privacy Policy",
     terms_of_service: "Terms of Service",
@@ -142,217 +164,172 @@ const translations = {
     privacy_policy_title: "Privacy Policy - DHgate Monitor",
     terms_title: "Terms of Service - DHgate Monitor",
     contact_title: "Contact - DHgate Monitor",
-    
     // Cookie Consent
     cookie_title: "Cookie preferences",
     cookie_message: "We use cookies to enhance your experience and ensure website functionality.",
     accept_cookies: "Accept",
-    decline_cookies: "Decline", 
+    decline_cookies: "Decline",
     cookie_settings: "Cookie settings",
-    
     // Contact page
     contact_info: "Contact information",
     email_address: "Email address",
     website_info: "Website information",
     data_controller: "Data controller",
-    
     // Footer links
     legal_links: "Legal information"
   }
 };
-
-// Get user's preferred language
 function getLanguage(request) {
-  // Check URL parameter first (e.g. ?lang=en)
   const url = new URL(request.url);
-  const urlLang = url.searchParams.get('lang');
+  const urlLang = url.searchParams.get("lang");
   if (urlLang && translations[urlLang]) {
     return urlLang;
   }
-  
-  // Check Accept-Language header
-  const acceptLanguage = request.headers.get('Accept-Language') || '';
-  if (acceptLanguage.includes('nl')) {
-    return 'nl';
+  const acceptLanguage = request.headers.get("Accept-Language") || "";
+  if (acceptLanguage.includes("nl")) {
+    return "nl";
   }
-  
-  // Default to English for international .com domain
-  return 'en';
+  return "en";
 }
-
-// Get translation function
+__name(getLanguage, "getLanguage");
 function getTranslations(lang) {
   return translations[lang] || translations.en;
 }
-
-// Helper function to mask email addresses for privacy
+__name(getTranslations, "getTranslations");
 function maskEmail(email) {
-  if (!email || !email.includes('@')) return '••••••••@••••••';
-  
-  const [local, domain] = email.split('@');
-  const maskedLocal = local.length > 2 ? 
-    local.substring(0, 2) + '••••' : 
-    '••••';
-  const maskedDomain = domain.length > 4 ? 
-    '••' + domain.substring(domain.length - 4) : 
-    '••••••';
-  
-  return maskedLocal + '@' + maskedDomain;
+  if (!email || !email.includes("@"))
+    return "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022@\u2022\u2022\u2022\u2022\u2022\u2022";
+  const [local, domain] = email.split("@");
+  const maskedLocal = local.length > 2 ? local.substring(0, 2) + "\u2022\u2022\u2022\u2022" : "\u2022\u2022\u2022\u2022";
+  const maskedDomain = domain.length > 4 ? "\u2022\u2022" + domain.substring(domain.length - 4) : "\u2022\u2022\u2022\u2022\u2022\u2022";
+  return maskedLocal + "@" + maskedDomain;
 }
-
-// Get user's preferred theme
+__name(maskEmail, "maskEmail");
 function getTheme(request) {
-  // Check URL parameter first (e.g. ?theme=dark)
   const url = new URL(request.url);
-  const urlTheme = url.searchParams.get('theme');
+  const urlTheme = url.searchParams.get("theme");
   if (urlTheme && THEMES[urlTheme]) {
     return urlTheme;
   }
-  
-  // Check for prefers-color-scheme in headers (if available)
-  const userAgent = request.headers.get('User-Agent') || '';
-  
-  // Default to light theme
-  return 'light';
+  const userAgent = request.headers.get("User-Agent") || "";
+  return "light";
 }
-
-// Theme Management System
-const THEMES = {
+__name(getTheme, "getTheme");
+var THEMES = {
   light: {
-    name: 'Light Mode',
+    name: "Light Mode",
     css: {
       // Premium Brand System
-      '--bg-primary': '#FEFEFE',
-      '--bg-secondary': '#F8FAFC',
-      '--bg-gradient': 'linear-gradient(135deg, #FEFEFE 0%, #F8FAFC 50%, #F1F5F9 100%)',
-      '--bg-hero': 'linear-gradient(135deg, #2563EB 0%, #EA580C 100%)',
-      
+      "--bg-primary": "#FEFEFE",
+      "--bg-secondary": "#F8FAFC",
+      "--bg-gradient": "linear-gradient(135deg, #FEFEFE 0%, #F8FAFC 50%, #F1F5F9 100%)",
+      "--bg-hero": "linear-gradient(135deg, #2563EB 0%, #EA580C 100%)",
       // Typography & Text
-      '--text-primary': '#1F2937',
-      '--text-secondary': '#4B5563',
-      '--text-muted': '#6B7280',
-      '--text-white': '#FFFFFF',
-      
+      "--text-primary": "#1F2937",
+      "--text-secondary": "#4B5563",
+      "--text-muted": "#6B7280",
+      "--text-white": "#FFFFFF",
       // Brand Colors
-      '--primary-blue': '#2563EB',
-      '--primary-blue-hover': '#1D4ED8',
-      '--primary-blue-light': '#60A5FA',
-      '--accent-orange': '#EA580C',
-      '--accent-orange-hover': '#C2410C',
-      '--accent-orange-light': '#FB923C',
-      
+      "--primary-blue": "#2563EB",
+      "--primary-blue-hover": "#1D4ED8",
+      "--primary-blue-light": "#60A5FA",
+      "--accent-orange": "#EA580C",
+      "--accent-orange-hover": "#C2410C",
+      "--accent-orange-light": "#FB923C",
       // Card System
-      '--card-bg': '#FFFFFF',
-      '--card-bg-alpha': 'rgba(255, 255, 255, 0.95)',
-      '--card-shadow': '0 4px 20px rgba(37, 99, 235, 0.08)',
-      '--card-shadow-hover': '0 8px 32px rgba(37, 99, 235, 0.15)',
-      '--card-border': 'rgba(37, 99, 235, 0.1)',
-      
+      "--card-bg": "#FFFFFF",
+      "--card-bg-alpha": "rgba(255, 255, 255, 0.95)",
+      "--card-shadow": "0 4px 20px rgba(37, 99, 235, 0.08)",
+      "--card-shadow-hover": "0 8px 32px rgba(37, 99, 235, 0.15)",
+      "--card-border": "rgba(37, 99, 235, 0.1)",
       // Glassmorphism
-      '--glass-bg': 'rgba(255, 255, 255, 0.85)',
-      '--glass-border': 'rgba(255, 255, 255, 0.2)',
-      '--glass-shadow': '0 8px 32px rgba(0, 0, 0, 0.1)',
-      '--backdrop-blur': 'blur(16px)',
-      
+      "--glass-bg": "rgba(255, 255, 255, 0.85)",
+      "--glass-border": "rgba(255, 255, 255, 0.2)",
+      "--glass-shadow": "0 8px 32px rgba(0, 0, 0, 0.1)",
+      "--backdrop-blur": "blur(16px)",
       // Interactive Elements
-      '--btn-primary-bg': 'linear-gradient(135deg, #2563EB, #1D4ED8)',
-      '--btn-primary-hover': 'linear-gradient(135deg, #1D4ED8, #1E3A8A)',
-      '--btn-secondary-bg': 'linear-gradient(135deg, #EA580C, #C2410C)',
-      '--btn-secondary-hover': 'linear-gradient(135deg, #C2410C, #9A3412)',
-      '--btn-ghost': 'rgba(37, 99, 235, 0.1)',
-      '--btn-ghost-hover': 'rgba(37, 99, 235, 0.2)',
-      
+      "--btn-primary-bg": "linear-gradient(135deg, #2563EB, #1D4ED8)",
+      "--btn-primary-hover": "linear-gradient(135deg, #1D4ED8, #1E3A8A)",
+      "--btn-secondary-bg": "linear-gradient(135deg, #EA580C, #C2410C)",
+      "--btn-secondary-hover": "linear-gradient(135deg, #C2410C, #9A3412)",
+      "--btn-ghost": "rgba(37, 99, 235, 0.1)",
+      "--btn-ghost-hover": "rgba(37, 99, 235, 0.2)",
       // Status & Feedback
-      '--success': '#10B981',
-      '--warning': '#F59E0B',
-      '--error': '#EF4444',
-      '--info': '#3B82F6',
-      
+      "--success": "#10B981",
+      "--warning": "#F59E0B",
+      "--error": "#EF4444",
+      "--info": "#3B82F6",
       // Borders & Lines
-      '--border-light': '#E5E7EB',
-      '--border-medium': '#D1D5DB',
-      '--border-focus': '#2563EB',
-      
+      "--border-light": "#E5E7EB",
+      "--border-medium": "#D1D5DB",
+      "--border-focus": "#2563EB",
       // Legacy compatibility
-      '--accent-color': '#2563EB',
-      '--accent-secondary': '#EA580C',
-      '--border-color': '#E5E7EB',
-      '--cookie-bg': 'linear-gradient(135deg, #1F2937 0%, #374151 100%)',
-      '--legal-section-heading': '#2563EB'
+      "--accent-color": "#2563EB",
+      "--accent-secondary": "#EA580C",
+      "--border-color": "#E5E7EB",
+      "--cookie-bg": "linear-gradient(135deg, #1F2937 0%, #374151 100%)",
+      "--legal-section-heading": "#2563EB"
     }
   },
   dark: {
-    name: 'Dark Mode',
+    name: "Dark Mode",
     css: {
       // Premium Brand System - Dark
-      '--bg-primary': '#0F172A',
-      '--bg-secondary': '#1E293B',
-      '--bg-gradient': 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%)',
-      '--bg-hero': 'linear-gradient(135deg, #3B82F6 0%, #F97316 100%)',
-      
+      "--bg-primary": "#0F172A",
+      "--bg-secondary": "#1E293B",
+      "--bg-gradient": "linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%)",
+      "--bg-hero": "linear-gradient(135deg, #3B82F6 0%, #F97316 100%)",
       // Typography & Text - Dark
-      '--text-primary': '#F8FAFC',
-      '--text-secondary': '#E2E8F0',
-      '--text-muted': '#94A3B8',
-      '--text-white': '#FFFFFF',
-      
+      "--text-primary": "#F8FAFC",
+      "--text-secondary": "#E2E8F0",
+      "--text-muted": "#94A3B8",
+      "--text-white": "#FFFFFF",
       // Brand Colors - Dark Adapted
-      '--primary-blue': '#3B82F6',
-      '--primary-blue-hover': '#60A5FA',
-      '--primary-blue-light': '#93C5FD',
-      '--accent-orange': '#F97316',
-      '--accent-orange-hover': '#FB923C',
-      '--accent-orange-light': '#FDBA74',
-      
+      "--primary-blue": "#3B82F6",
+      "--primary-blue-hover": "#60A5FA",
+      "--primary-blue-light": "#93C5FD",
+      "--accent-orange": "#F97316",
+      "--accent-orange-hover": "#FB923C",
+      "--accent-orange-light": "#FDBA74",
       // Card System - Dark
-      '--card-bg': '#1E293B',
-      '--card-bg-alpha': 'rgba(30, 41, 59, 0.95)',
-      '--card-shadow': '0 4px 20px rgba(0, 0, 0, 0.25)',
-      '--card-shadow-hover': '0 8px 32px rgba(0, 0, 0, 0.4)',
-      '--card-border': 'rgba(59, 130, 246, 0.2)',
-      
+      "--card-bg": "#1E293B",
+      "--card-bg-alpha": "rgba(30, 41, 59, 0.95)",
+      "--card-shadow": "0 4px 20px rgba(0, 0, 0, 0.25)",
+      "--card-shadow-hover": "0 8px 32px rgba(0, 0, 0, 0.4)",
+      "--card-border": "rgba(59, 130, 246, 0.2)",
       // Glassmorphism - Dark
-      '--glass-bg': 'rgba(30, 41, 59, 0.85)',
-      '--glass-border': 'rgba(248, 250, 252, 0.1)',
-      '--glass-shadow': '0 8px 32px rgba(0, 0, 0, 0.3)',
-      '--backdrop-blur': 'blur(16px)',
-      
+      "--glass-bg": "rgba(30, 41, 59, 0.85)",
+      "--glass-border": "rgba(248, 250, 252, 0.1)",
+      "--glass-shadow": "0 8px 32px rgba(0, 0, 0, 0.3)",
+      "--backdrop-blur": "blur(16px)",
       // Interactive Elements - Dark
-      '--btn-primary-bg': 'linear-gradient(135deg, #3B82F6, #2563EB)',
-      '--btn-primary-hover': 'linear-gradient(135deg, #60A5FA, #3B82F6)',
-      '--btn-secondary-bg': 'linear-gradient(135deg, #F97316, #EA580C)',
-      '--btn-secondary-hover': 'linear-gradient(135deg, #FB923C, #F97316)',
-      '--btn-ghost': 'rgba(59, 130, 246, 0.2)',
-      '--btn-ghost-hover': 'rgba(59, 130, 246, 0.3)',
-      
+      "--btn-primary-bg": "linear-gradient(135deg, #3B82F6, #2563EB)",
+      "--btn-primary-hover": "linear-gradient(135deg, #60A5FA, #3B82F6)",
+      "--btn-secondary-bg": "linear-gradient(135deg, #F97316, #EA580C)",
+      "--btn-secondary-hover": "linear-gradient(135deg, #FB923C, #F97316)",
+      "--btn-ghost": "rgba(59, 130, 246, 0.2)",
+      "--btn-ghost-hover": "rgba(59, 130, 246, 0.3)",
       // Status & Feedback - Dark
-      '--success': '#22C55E',
-      '--warning': '#EAB308',
-      '--error': '#F87171',
-      '--info': '#60A5FA',
-      
+      "--success": "#22C55E",
+      "--warning": "#EAB308",
+      "--error": "#F87171",
+      "--info": "#60A5FA",
       // Borders & Lines - Dark
-      '--border-light': '#374151',
-      '--border-medium': '#4B5563',
-      '--border-focus': '#3B82F6',
-      
+      "--border-light": "#374151",
+      "--border-medium": "#4B5563",
+      "--border-focus": "#3B82F6",
       // Legacy compatibility
-      '--accent-color': '#3B82F6',
-      '--accent-secondary': '#F97316',
-      '--border-color': '#374151',
-      '--cookie-bg': 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
-      '--legal-section-heading': '#60A5FA'
+      "--accent-color": "#3B82F6",
+      "--accent-secondary": "#F97316",
+      "--border-color": "#374151",
+      "--cookie-bg": "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)",
+      "--legal-section-heading": "#60A5FA"
     }
-  },
+  }
 };
-
-// Generate global CSS with theme
-function generateGlobalCSS(theme = 'light') {
+function generateGlobalCSS(theme = "light") {
   const t = THEMES[theme] || THEMES.light;
-  const cssVars = Object.entries(t.css)
-    .map(([key, value]) => `  ${key}: ${value};`)
-    .join('\n');
-
+  const cssVars = Object.entries(t.css).map(([key, value]) => `  ${key}: ${value};`).join("\n");
   return `
     <style>
       :root {
@@ -1334,61 +1311,60 @@ ${cssVars}
     </style>
   `;
 }
-
-// DHgate Sitemap Scraper Functions
+__name(generateGlobalCSS, "generateGlobalCSS");
 async function scrapeDHgateSitemaps() {
   try {
-    console.log('Creating initial DHgate store database...');
-    
-    // Instead of sitemap scraping, we'll create a curated list of popular stores
-    // and implement real-time search via DHgate's search functionality
-    const popularStores = [
-      { name: "Shenzhen Technology Co., Ltd", url: "https://www.dhgate.com/store/shenzhen-tech" },
-      { name: "Global Electronics Store", url: "https://www.dhgate.com/store/global-electronics" },
-      { name: "Fashion World Store", url: "https://www.dhgate.com/store/fashion-world" },
-      { name: "Home & Garden Plus", url: "https://www.dhgate.com/store/home-garden-plus" },
-      { name: "Sports & Outdoor Pro", url: "https://www.dhgate.com/store/sports-outdoor-pro" },
-      { name: "Beauty & Health Central", url: "https://www.dhgate.com/store/beauty-health-central" },
-      { name: "Jewelry & Watches Elite", url: "https://www.dhgate.com/store/jewelry-watches-elite" },
-      { name: "Toys & Games Hub", url: "https://www.dhgate.com/store/toys-games-hub" },
-      { name: "Automotive Parts Store", url: "https://www.dhgate.com/store/automotive-parts" },
-      { name: "Computer & Office Supply", url: "https://www.dhgate.com/store/computer-office-supply" }
-    ];
-    
-    console.log(`Created initial database with ${popularStores.length} popular stores`);
-    return popularStores;
-    
+    console.log("Starting DHgate sitemap scraping...");
+    const mainSitemapUrl = "https://www.dhgate.com/sitemap.xml";
+    const mainSitemapResponse = await fetch(mainSitemapUrl);
+    if (!mainSitemapResponse.ok) {
+      throw new Error(`Failed to fetch main sitemap: ${mainSitemapResponse.status}`);
+    }
+    const mainSitemapXml = await mainSitemapResponse.text();
+    const sellerSitemapUrls = extractSellerSitemapUrls(mainSitemapXml);
+    console.log(`Found ${sellerSitemapUrls.length} seller sitemaps`);
+    const stores = [];
+    const maxSitemaps = Math.min(sellerSitemapUrls.length, 5);
+    for (let i = 0; i < maxSitemaps; i++) {
+      const sitemapUrl = sellerSitemapUrls[i];
+      try {
+        console.log(`Processing sitemap ${i + 1}/${maxSitemaps}: ${sitemapUrl}`);
+        const sitemapResponse = await fetch(sitemapUrl);
+        if (sitemapResponse.ok) {
+          const sitemapXml = await sitemapResponse.text();
+          const sitemapStores = parseStoreDataFromSitemap(sitemapXml);
+          stores.push(...sitemapStores);
+          console.log(`Extracted ${sitemapStores.length} stores from sitemap`);
+        }
+      } catch (error) {
+        console.error(`Error processing sitemap ${sitemapUrl}:`, error);
+      }
+    }
+    console.log(`Total stores scraped: ${stores.length}`);
+    return stores;
   } catch (error) {
-    console.error('Error creating store database:', error);
+    console.error("Error scraping DHgate sitemaps:", error);
     return [];
   }
 }
-
+__name(scrapeDHgateSitemaps, "scrapeDHgateSitemaps");
 function extractSellerSitemapUrls(sitemapXml) {
-  const urls = [];
-  
-  // Simple regex to find seller sitemap URLs
+  const urls2 = [];
   const sitemapRegex = /<loc>(https:\/\/www\.dhgate\.com\/sitemap[^<]*seller[^<]*\.xml)<\/loc>/g;
   let match;
-  
   while ((match = sitemapRegex.exec(sitemapXml)) !== null) {
-    urls.push(match[1]);
+    urls2.push(match[1]);
   }
-  
-  return urls;
+  return urls2;
 }
-
+__name(extractSellerSitemapUrls, "extractSellerSitemapUrls");
 function parseStoreDataFromSitemap(sitemapXml) {
   const stores = [];
-  
-  // Regex to find store URLs
   const storeUrlRegex = /<loc>(https:\/\/www\.dhgate\.com\/store\/[^<]+)<\/loc>/g;
   let match;
-  
   while ((match = storeUrlRegex.exec(sitemapXml)) !== null) {
     const storeUrl = match[1];
     const storeName = extractStoreNameFromUrl(storeUrl);
-    
     if (storeName) {
       stores.push({
         name: storeName,
@@ -1396,414 +1372,320 @@ function parseStoreDataFromSitemap(sitemapXml) {
       });
     }
   }
-  
   return stores;
 }
-
+__name(parseStoreDataFromSitemap, "parseStoreDataFromSitemap");
 function extractStoreNameFromUrl(url) {
   try {
-    // Extract store name from URL patterns like:
-    // https://www.dhgate.com/store/12345678
-    // https://www.dhgate.com/store/storename
     const urlObj = new URL(url);
-    const pathParts = urlObj.pathname.split('/');
-    
-    if (pathParts.length >= 3 && pathParts[1] === 'store') {
+    const pathParts = urlObj.pathname.split("/");
+    if (pathParts.length >= 3 && pathParts[1] === "store") {
       const storeIdentifier = pathParts[2];
-      
-      // If it's a number, try to make a readable name
       if (/^\d+$/.test(storeIdentifier)) {
         return `Store ${storeIdentifier}`;
       }
-      
-      // If it's a name, clean it up
-      return storeIdentifier
-        .replace(/-/g, ' ')
-        .replace(/[^\w\s]/g, '')
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
+      return storeIdentifier.replace(/-/g, " ").replace(/[^\w\s]/g, "").split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(" ");
     }
-    
     return null;
   } catch (error) {
-    console.error('Error extracting store name from URL:', url, error);
+    console.error("Error extracting store name from URL:", url, error);
     return null;
   }
 }
-
-export default {
-
+__name(extractStoreNameFromUrl, "extractStoreNameFromUrl");
+var cloudflare_app_default = {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const method = request.method;
-
-    // CORS headers for all responses
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type"
     };
-
-    // Handle CORS preflight
-    if (method === 'OPTIONS') {
+    if (method === "OPTIONS") {
       return new Response(null, { headers: corsHeaders });
     }
-
     try {
-      // Route handling
       switch (url.pathname) {
-        case '/':
+        case "/":
           return await handleLandingPage(request, env);
-        
-        case '/api/stores/search':
+        case "/api/stores/search":
           return await handleStoreSearch(request, env);
-        
-        case '/api/stores/update':
+        case "/api/stores/update":
           return await handleStoreUpdate(request, env);
-        
-        case '/api/scraper/trigger':
-          return await handleScraperTrigger(request, env);
-        
-        case '/unsubscribe':
-          return await handleUnsubscribePage(request, env);
-        
-        case '/api/unsubscribe':
-          return await handleUnsubscribeAction(request, env);
-        
-        case '/test-unsubscribe':
-          return await handleTestUnsubscribe(request, env);
-        
-        case '/dashboard':
+        case "/dashboard":
           return await handleDashboard(request, env);
-          
-        case '/login':
+        case "/login":
           return await handleLoginPage(request, env);
-        
-        case '/add_shop':
-          if (method === 'GET') {
+        case "/add_shop":
+          if (method === "GET") {
             return await handleAddShopPage(request, env);
-          } else if (method === 'POST') {
+          } else if (method === "POST") {
             return await handleAddShop(request, env);
           }
           break;
-        
-        case '/settings':
-          if (method === 'GET') {
+        case "/settings":
+          if (method === "GET") {
             return await handleSettingsPage(request, env);
-          } else if (method === 'POST') {
+          } else if (method === "POST") {
             return await handleUpdateSettings(request, env);
           }
           break;
-        
-        case '/tags':
-          if (method === 'GET') {
+        case "/tags":
+          if (method === "GET") {
             return await handleTagsPage(request, env);
-          } else if (method === 'POST') {
+          } else if (method === "POST") {
             return await handleUpdateTags(request, env);
           }
           break;
-        
-        case '/subscribe':
-          if (method === 'POST') {
+        case "/subscribe":
+          if (method === "POST") {
             return await handleSubscription(request, env);
           }
           break;
-        
-        case '/api/shops':
-          if (method === 'GET') {
+        case "/api/shops":
+          if (method === "GET") {
             return await handleGetShops(request, env);
           }
           break;
-        
-        case '/api/tags':
-          if (method === 'GET') {
+        case "/api/tags":
+          if (method === "GET") {
             return await handleGetTags(request, env);
           }
           break;
-        
-        case '/api/status':
+        case "/api/status":
           return await handleStatus(request, env);
-        
-        case '/privacy':
+        case "/privacy":
           return await handlePrivacyPage(request, env);
-        
-        case '/terms':
+        case "/terms":
           return await handleTermsPage(request, env);
-        
-        case '/contact':
+        case "/contact":
           return await handleContactPage(request, env);
-        
-        case '/sitemap.xml':
+        case "/sitemap.xml":
           return await handleSitemap(request, env);
-        
-        case '/robots.txt':
+        case "/robots.txt":
           return await handleRobots(request, env);
-        
-        case '/health':
-          return new Response(JSON.stringify({ 
-            status: 'healthy', 
-            timestamp: new Date().toISOString() 
+        case "/health":
+          return new Response(JSON.stringify({
+            status: "healthy",
+            timestamp: (/* @__PURE__ */ new Date()).toISOString()
           }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
           });
-        
         default:
-          return new Response('Not Found', { 
-            status: 404, 
-            headers: corsHeaders 
+          return new Response("Not Found", {
+            status: 404,
+            headers: corsHeaders
           });
       }
     } catch (error) {
-      console.error('Worker error:', error);
-      return new Response(JSON.stringify({ 
-        error: error.message 
+      console.error("Worker error:", error);
+      return new Response(JSON.stringify({
+        error: error.message
       }), {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
   },
-
   // Scheduled event handler for daily monitoring at 09:00 UTC
   async scheduled(event, env, ctx) {
-    console.log('🕘 Scheduled monitoring triggered at:', new Date().toISOString());
-    
+    console.log("\u{1F558} Scheduled monitoring triggered at:", (/* @__PURE__ */ new Date()).toISOString());
     try {
-      // 1. Update DHgate store database first
-      console.log('🏪 Starting DHgate store database update...');
+      console.log("\u{1F3EA} Starting DHgate store database update...");
       try {
         const stores = await scrapeDHgateSitemaps();
         if (stores.length > 0) {
-          await env.DHGATE_MONITOR_KV.put('store_database', JSON.stringify(stores), {
-            expirationTtl: 24 * 60 * 60 // 24 hours
+          await env.DHGATE_MONITOR_KV.put("store_database", JSON.stringify(stores), {
+            expirationTtl: 24 * 60 * 60
+            // 24 hours
           });
-          console.log(`✅ Store database updated with ${stores.length} stores`);
+          console.log(`\u2705 Store database updated with ${stores.length} stores`);
         } else {
-          console.log('⚠️ No stores found during scraping');
+          console.log("\u26A0\uFE0F No stores found during scraping");
         }
       } catch (storeError) {
-        console.error('❌ Store database update failed:', storeError);
-        // Continue with monitoring even if store update fails
+        console.error("\u274C Store database update failed:", storeError);
       }
-      
-      // 2. Continue with existing monitoring logic
       const shops = await getShops(env);
       const config = await getConfig(env);
       const tags = await getTags(env);
-      
-      console.log(`📊 Monitoring ${shops.length} shops with tags: ${tags.map(t => t.name).join(', ')}`);
-      
+      console.log(`\u{1F4CA} Monitoring ${shops.length} shops with tags: ${tags.map((t) => t.name).join(", ")}`);
       if (shops.length === 0) {
-        console.log('⚠️ No shops configured for monitoring');
+        console.log("\u26A0\uFE0F No shops configured for monitoring");
         return;
       }
+      const subject = `DHgate Monitor Daily Check - ${(/* @__PURE__ */ new Date()).toLocaleDateString()}`;
+      const message = `Monitoring check completed at ${(/* @__PURE__ */ new Date()).toLocaleString()}.
 
-      // Create a simple notification for testing
-      const subject = `DHgate Monitor Daily Check - ${new Date().toLocaleDateString()}`;
-      const message = `Monitoring check completed at ${new Date().toLocaleString()}.\n\nShops monitored: ${shops.length}\nTags: ${tags.map(t => t.name).join(', ')}\n\nNote: This is the Cloudflare Worker scheduled check. For full product crawling, run the Selenium monitor script.`;
-      
-      console.log('📧 Sending daily monitoring notification...');
-      console.log('Subject:', subject);
-      console.log('Message preview:', message.substring(0, 100) + '...');
-      
-      // Here you could add actual crawling logic or trigger external systems
-      // For now, we'll just log that the scheduled task ran successfully
-      
-      console.log('✅ Daily monitoring check completed successfully');
-      
+Shops monitored: ${shops.length}
+Tags: ${tags.map((t) => t.name).join(", ")}
+
+Note: This is the Cloudflare Worker scheduled check. For full product crawling, run the Selenium monitor script.`;
+      console.log("\u{1F4E7} Sending daily monitoring notification...");
+      console.log("Subject:", subject);
+      console.log("Message preview:", message.substring(0, 100) + "...");
+      console.log("\u2705 Daily monitoring check completed successfully");
     } catch (error) {
-      console.error('❌ Scheduled monitoring failed:', error);
+      console.error("\u274C Scheduled monitoring failed:", error);
       throw error;
     }
   }
 };
-
 async function handleDashboard(request, env) {
   try {
-    // Get shops from KV storage
     const shops = await getShops(env);
     const config = await getConfig(env);
     const tags = await getTags(env);
-    
-    // Get user's language and theme preferences
     const lang = getLanguage(request);
     const theme = getTheme(request);
     const t = getTranslations(lang);
-    
     const html = generateDashboardHTML(shops, config, tags, t, lang, theme);
-    
     return new Response(html, {
-      headers: { 'Content-Type': 'text/html' }
+      headers: { "Content-Type": "text/html" }
     });
   } catch (error) {
-    return new Response('Dashboard Error: ' + error.message, { status: 500 });
+    return new Response("Dashboard Error: " + error.message, { status: 500 });
   }
 }
-
+__name(handleDashboard, "handleDashboard");
 async function handleAddShopPage(request, env) {
   const lang = getLanguage(request);
   const theme = getTheme(request);
   const t = getTranslations(lang);
   const html = generateAddShopHTML(t, lang, theme);
   return new Response(html, {
-    headers: { 'Content-Type': 'text/html' }
+    headers: { "Content-Type": "text/html" }
   });
 }
-
+__name(handleAddShopPage, "handleAddShopPage");
 async function handleAddShop(request, env) {
   try {
     const formData = await request.formData();
-    const shopName = formData.get('name');
-    const searchUrl = formData.get('search_url');
-    
+    const shopName = formData.get("name");
+    const searchUrl = formData.get("search_url");
     if (!shopName || !searchUrl) {
-      throw new Error('Shop name and URL are required');
+      throw new Error("Shop name and URL are required");
     }
-    
-    // Get existing shops
     const shops = await getShops(env);
-    
-    // Add new shop
     const newShop = {
       id: Date.now().toString(),
       name: shopName,
       search_url: searchUrl,
-      created_at: new Date().toISOString()
+      created_at: (/* @__PURE__ */ new Date()).toISOString()
     };
-    
     shops.push(newShop);
-    
-    // Save to KV
-    await env.DHGATE_MONITOR_KV.put('shops', JSON.stringify(shops));
-    
-    // Redirect to dashboard
-    return Response.redirect(new URL('/', request.url).toString(), 302);
-    
+    await env.DHGATE_MONITOR_KV.put("shops", JSON.stringify(shops));
+    return Response.redirect(new URL("/", request.url).toString(), 302);
   } catch (error) {
-    return new Response('Error adding shop: ' + error.message, { status: 400 });
+    return new Response("Error adding shop: " + error.message, { status: 400 });
   }
 }
-
+__name(handleAddShop, "handleAddShop");
 async function handleSettingsPage(request, env) {
   const config = await getConfig(env);
   const lang = getLanguage(request);
   const t = getTranslations(lang);
   const html = generateSettingsHTML(config, t, lang);
   return new Response(html, {
-    headers: { 'Content-Type': 'text/html' }
+    headers: { "Content-Type": "text/html" }
   });
 }
-
+__name(handleSettingsPage, "handleSettingsPage");
 async function handleUpdateSettings(request, env) {
   try {
     const formData = await request.formData();
-    
     const config = {
       email: {
-        sender_email: formData.get('sender_email'),
-        recipient_email: formData.get('recipient_email'),
-        smtp_server: 'smtp.gmail.com',
+        sender_email: formData.get("sender_email"),
+        recipient_email: formData.get("recipient_email"),
+        smtp_server: "smtp.gmail.com",
         smtp_port: 587
       },
       schedule: {
-        time: formData.get('schedule_time') || '09:00'
+        time: formData.get("schedule_time") || "09:00"
       },
       filters: {
-        keywords: formData.get('keywords').split(',').map(k => k.trim()).filter(k => k),
-        case_sensitive: formData.has('case_sensitive')
+        keywords: formData.get("keywords").split(",").map((k) => k.trim()).filter((k) => k),
+        case_sensitive: formData.has("case_sensitive")
       }
     };
-    
-    await env.DHGATE_MONITOR_KV.put('config', JSON.stringify(config));
-    
-    return Response.redirect(new URL('/settings', request.url).toString(), 302);
-    
+    await env.DHGATE_MONITOR_KV.put("config", JSON.stringify(config));
+    return Response.redirect(new URL("/settings", request.url).toString(), 302);
   } catch (error) {
-    return new Response('Error updating settings: ' + error.message, { status: 400 });
+    return new Response("Error updating settings: " + error.message, { status: 400 });
   }
 }
-
+__name(handleUpdateSettings, "handleUpdateSettings");
 async function handleTagsPage(request, env) {
   const tags = await getTags(env);
   const lang = getLanguage(request);
   const t = getTranslations(lang);
   const html = generateTagsHTML(tags, t, lang);
   return new Response(html, {
-    headers: { 'Content-Type': 'text/html' }
+    headers: { "Content-Type": "text/html" }
   });
 }
-
+__name(handleTagsPage, "handleTagsPage");
 async function handleUpdateTags(request, env) {
   try {
     const formData = await request.formData();
-    const tagsString = formData.get('tags') || '';
-    
-    const tags = tagsString.split(',')
-      .map(tag => tag.trim())
-      .filter(tag => tag.length > 0)
-      .map(tag => ({
-        name: tag,
-        created_at: new Date().toISOString(),
-        active: true
-      }));
-    
-    await env.DHGATE_MONITOR_KV.put('monitoring_tags', JSON.stringify(tags));
-    
-    return Response.redirect(new URL('/tags', request.url).toString(), 302);
-    
+    const tagsString = formData.get("tags") || "";
+    const tags = tagsString.split(",").map((tag) => tag.trim()).filter((tag) => tag.length > 0).map((tag) => ({
+      name: tag,
+      created_at: (/* @__PURE__ */ new Date()).toISOString(),
+      active: true
+    }));
+    await env.DHGATE_MONITOR_KV.put("monitoring_tags", JSON.stringify(tags));
+    return Response.redirect(new URL("/tags", request.url).toString(), 302);
   } catch (error) {
-    return new Response('Error updating tags: ' + error.message, { status: 400 });
+    return new Response("Error updating tags: " + error.message, { status: 400 });
   }
 }
-
+__name(handleUpdateTags, "handleUpdateTags");
 async function handleSubscription(request, env) {
   try {
     const formData = await request.formData();
     const lang = getLanguage(request);
     const t = getTranslations(lang);
-    
-    // Extract form data
     const subscription = {
-      email: formData.get('email'),
-      store_url: formData.get('store_url'),
-      tags: formData.get('tags'),
-      frequency: formData.get('frequency'),
-      preferred_time: formData.get('preferred_time'),
-      min_price: formData.get('min_price') ? parseFloat(formData.get('min_price')) : null,
-      max_price: formData.get('max_price') ? parseFloat(formData.get('max_price')) : null,
-      status: 'active'
+      email: formData.get("email"),
+      store_url: formData.get("store_url"),
+      tags: formData.get("tags").split(",").map((tag) => tag.trim()),
+      frequency: formData.get("frequency"),
+      notification_time: formData.get("notification_time"),
+      min_price: formData.get("min_price") ? parseFloat(formData.get("min_price")) : null,
+      max_price: formData.get("max_price") ? parseFloat(formData.get("max_price")) : null,
+      keywords: formData.get("keywords") ? formData.get("keywords").split(",").map((k) => k.trim()) : [],
+      created_at: (/* @__PURE__ */ new Date()).toISOString(),
+      status: "active"
     };
-    
-    // Validate required fields
-    if (!subscription.email || !subscription.tags) {
-      return new Response(generateErrorResponse(lang, 'Missing required fields'), { 
+    if (!subscription.email || !subscription.store_url || !subscription.tags.length) {
+      return new Response(generateErrorResponse(lang, "Missing required fields"), {
         status: 400,
-        headers: { 'Content-Type': 'text/html' }
+        headers: { "Content-Type": "text/html" }
       });
     }
-    
-    // Store subscription with unsubscribe token
-    const unsubscribeToken = await storeSubscription(env, subscription);
-    
-    // Generate success page
-    return new Response(generateSuccessResponse(lang, subscription, unsubscribeToken), {
-      headers: { 'Content-Type': 'text/html' }
+    const subscriptionId = `subscription_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    await env.DHGATE_MONITOR_KV.put(subscriptionId, JSON.stringify(subscription));
+    const emailKey = `email_${subscription.email.replace(/[^a-zA-Z0-9]/g, "_")}`;
+    await env.DHGATE_MONITOR_KV.put(emailKey, subscriptionId);
+    return new Response(generateSuccessResponse(lang, subscription), {
+      headers: { "Content-Type": "text/html" }
     });
-    
   } catch (error) {
-    return new Response('Error processing subscription: ' + error.message, { status: 500 });
+    return new Response("Error processing subscription: " + error.message, { status: 500 });
   }
 }
-
-function generateSuccessResponse(lang, subscription, unsubscribeToken) {
+__name(handleSubscription, "handleSubscription");
+function generateSuccessResponse(lang, subscription) {
   return `
 <!DOCTYPE html>
 <html lang="${lang}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${lang === 'nl' ? 'Monitoring Gestart!' : 'Monitoring Started!'}</title>
+    <title>${lang === "nl" ? "Monitoring Gestart!" : "Monitoring Started!"}</title>
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     ${generateGlobalCSS()}
@@ -1815,53 +1697,41 @@ function generateSuccessResponse(lang, subscription, unsubscribeToken) {
                 <div class="card shadow-lg border-0" style="border-radius: 20px;">
                     <div class="card-body p-5 text-center">
                         <div class="mb-4">
-                            <div style="font-size: 4rem; color: var(--accent-color); margin-bottom: 1rem;">✓</div>
+                            <div style="font-size: 4rem; color: var(--accent-color); margin-bottom: 1rem;">\u2713</div>
                             <h1 style="color: var(--text-primary); margin-bottom: 1rem;">
-                                ${lang === 'nl' ? 'Monitoring Gestart!' : 'Monitoring Started!'}
+                                ${lang === "nl" ? "Monitoring Gestart!" : "Monitoring Started!"}
                             </h1>
                             <p style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2rem;">
-                                ${lang === 'nl' ? 
-                                    'Je DHgate monitoring is succesvol ingesteld. Je ontvangt binnenkort de eerste update!' :
-                                    'Your DHgate monitoring has been successfully set up. You will receive the first update soon!'
-                                }
+                                ${lang === "nl" ? "Je DHgate monitoring is succesvol ingesteld. Je ontvangt binnenkort de eerste update!" : "Your DHgate monitoring has been successfully set up. You will receive the first update soon!"}
                             </p>
                         </div>
                         
                         <div class="row text-start">
                             <div class="col-md-6 mb-3">
-                                <strong>${lang === 'nl' ? 'Email' : 'Email'}:</strong><br>
+                                <strong>${lang === "nl" ? "Email" : "Email"}:</strong><br>
                                 <span class="text-muted">${maskEmail(subscription.email)}</span>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <strong>${lang === 'nl' ? 'Frequentie' : 'Frequency'}:</strong><br>
+                                <strong>${lang === "nl" ? "Frequentie" : "Frequency"}:</strong><br>
                                 <span class="text-muted">${subscription.frequency}</span>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <strong>${lang === 'nl' ? 'Tags' : 'Tags'}:</strong><br>
-                                <span class="text-muted">${subscription.tags}</span>
+                                <strong>${lang === "nl" ? "Tags" : "Tags"}:</strong><br>
+                                <span class="text-muted">${subscription.tags.join(", ")}</span>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <strong>${lang === 'nl' ? 'Tijd' : 'Time'}:</strong><br>
-                                <span class="text-muted">${subscription.preferred_time || 'Direct'}</span>
+                                <strong>${lang === "nl" ? "Tijd" : "Time"}:</strong><br>
+                                <span class="text-muted">${subscription.notification_time || "Direct"}</span>
                             </div>
                         </div>
                         
                         <div class="mt-4">
                             <a href="/?lang=${lang}" class="btn btn-primary btn-lg me-3" style="border-radius: 12px;">
-                                ${lang === 'nl' ? 'Terug naar Home' : 'Back to Home'}
+                                ${lang === "nl" ? "Terug naar Home" : "Back to Home"}
                             </a>
                             <a href="mailto:support@dhgate-monitor.com" class="btn btn-outline-primary btn-lg" style="border-radius: 12px;">
-                                ${lang === 'nl' ? 'Contact Support' : 'Contact Support'}
+                                ${lang === "nl" ? "Contact Support" : "Contact Support"}
                             </a>
-                        </div>
-                        
-                        <div class="mt-4 pt-3 border-top">
-                            <small class="text-muted">
-                                ${lang === 'nl' ? 'Wil je niet meer op de hoogte blijven?' : 'Don\'t want to stay updated anymore?'} 
-                                <a href="/unsubscribe?token=${unsubscribeToken}&lang=${lang}" class="text-decoration-none">
-                                    ${lang === 'nl' ? 'Uitschrijven' : 'Unsubscribe'}
-                                </a>
-                            </small>
                         </div>
                     </div>
                 </div>
@@ -1872,7 +1742,7 @@ function generateSuccessResponse(lang, subscription, unsubscribeToken) {
 </html>
   `;
 }
-
+__name(generateSuccessResponse, "generateSuccessResponse");
 function generateErrorResponse(lang, message) {
   return `
 <!DOCTYPE html>
@@ -1880,7 +1750,7 @@ function generateErrorResponse(lang, message) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${lang === 'nl' ? 'Fout' : 'Error'}</title>
+    <title>${lang === "nl" ? "Fout" : "Error"}</title>
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     ${generateGlobalCSS()}
@@ -1891,11 +1761,11 @@ function generateErrorResponse(lang, message) {
             <div class="col-lg-6">
                 <div class="card shadow-lg border-0" style="border-radius: 20px;">
                     <div class="card-body p-5 text-center">
-                        <div style="font-size: 4rem; color: #dc3545; margin-bottom: 1rem;">⚠</div>
-                        <h1 style="color: var(--text-primary);">${lang === 'nl' ? 'Oops!' : 'Oops!'}</h1>
+                        <div style="font-size: 4rem; color: #dc3545; margin-bottom: 1rem;">\u26A0</div>
+                        <h1 style="color: var(--text-primary);">${lang === "nl" ? "Oops!" : "Oops!"}</h1>
                         <p style="color: var(--text-muted); margin-bottom: 2rem;">${message}</p>
                         <a href="/?lang=${lang}" class="btn btn-primary btn-lg" style="border-radius: 12px;">
-                            ${lang === 'nl' ? 'Probeer Opnieuw' : 'Try Again'}
+                            ${lang === "nl" ? "Probeer Opnieuw" : "Try Again"}
                         </a>
                     </div>
                 </div>
@@ -1906,147 +1776,142 @@ function generateErrorResponse(lang, message) {
 </html>
   `;
 }
-
+__name(generateErrorResponse, "generateErrorResponse");
 async function handleGetShops(request, env) {
   const shops = await getShops(env);
   return new Response(JSON.stringify(shops), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { "Content-Type": "application/json" }
   });
 }
-
+__name(handleGetShops, "handleGetShops");
 async function handleGetTags(request, env) {
   const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
   };
-  
   const tags = await getTags(env);
   return new Response(JSON.stringify(tags), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    headers: { ...corsHeaders, "Content-Type": "application/json" }
   });
 }
-
+__name(handleGetTags, "handleGetTags");
 async function handleStatus(request, env) {
   const status = {
-    status: 'online',
-    service: 'DHgate Monitor',
-    platform: 'Cloudflare Workers',
-    version: '3.0.0',
-    timestamp: new Date().toISOString(),
-    environment: 'production'
+    status: "online",
+    service: "DHgate Monitor",
+    platform: "Cloudflare Workers",
+    version: "3.0.0",
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    environment: "production"
   };
-  
   return new Response(JSON.stringify(status), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { "Content-Type": "application/json" }
   });
 }
-
-// New compliance handlers
+__name(handleStatus, "handleStatus");
 async function handlePrivacyPage(request, env) {
   const lang = getLanguage(request);
   const t = getTranslations(lang);
   const html = generatePrivacyHTML(t, lang);
   return new Response(html, {
-    headers: { 'Content-Type': 'text/html' }
+    headers: { "Content-Type": "text/html" }
   });
 }
-
+__name(handlePrivacyPage, "handlePrivacyPage");
 async function handleTermsPage(request, env) {
   const lang = getLanguage(request);
   const t = getTranslations(lang);
   const html = generateTermsHTML(t, lang);
   return new Response(html, {
-    headers: { 'Content-Type': 'text/html' }
+    headers: { "Content-Type": "text/html" }
   });
 }
-
+__name(handleTermsPage, "handleTermsPage");
 async function handleContactPage(request, env) {
   const lang = getLanguage(request);
   const t = getTranslations(lang);
   const html = generateContactHTML(t, lang);
   return new Response(html, {
-    headers: { 'Content-Type': 'text/html' }
+    headers: { "Content-Type": "text/html" }
   });
 }
-
+__name(handleContactPage, "handleContactPage");
 async function handleSitemap(request, env) {
   const sitemap = generateSitemap();
   return new Response(sitemap, {
-    headers: { 'Content-Type': 'application/xml' }
+    headers: { "Content-Type": "application/xml" }
   });
 }
-
+__name(handleSitemap, "handleSitemap");
 async function handleRobots(request, env) {
   const robots = `User-agent: *
 Allow: /
 
 Sitemap: https://dhgate-monitor.com/sitemap.xml`;
-  
   return new Response(robots, {
-    headers: { 'Content-Type': 'text/plain' }
+    headers: { "Content-Type": "text/plain" }
   });
 }
-
-// Helper functions
+__name(handleRobots, "handleRobots");
 async function getShops(env) {
   try {
-    const shopsData = await env.DHGATE_MONITOR_KV.get('shops');
+    const shopsData = await env.DHGATE_MONITOR_KV.get("shops");
     return shopsData ? JSON.parse(shopsData) : [];
   } catch (error) {
-    console.error('Error getting shops:', error);
+    console.error("Error getting shops:", error);
     return [];
   }
 }
-
+__name(getShops, "getShops");
 async function getConfig(env) {
   try {
-    const configData = await env.DHGATE_MONITOR_KV.get('config');
+    const configData = await env.DHGATE_MONITOR_KV.get("config");
     return configData ? JSON.parse(configData) : getDefaultConfig();
   } catch (error) {
-    console.error('Error getting config:', error);
+    console.error("Error getting config:", error);
     return getDefaultConfig();
   }
 }
-
+__name(getConfig, "getConfig");
 async function getTags(env) {
   try {
-    const tagsData = await env.DHGATE_MONITOR_KV.get('monitoring_tags');
+    const tagsData = await env.DHGATE_MONITOR_KV.get("monitoring_tags");
     return tagsData ? JSON.parse(tagsData) : getDefaultTags();
   } catch (error) {
-    console.error('Error getting tags:', error);
+    console.error("Error getting tags:", error);
     return getDefaultTags();
   }
 }
-
+__name(getTags, "getTags");
 function getDefaultTags() {
   return [
-    { name: 'kids', created_at: new Date().toISOString(), active: true },
-    { name: 'children', created_at: new Date().toISOString(), active: true },
-    { name: 'youth', created_at: new Date().toISOString(), active: true }
+    { name: "kids", created_at: (/* @__PURE__ */ new Date()).toISOString(), active: true },
+    { name: "children", created_at: (/* @__PURE__ */ new Date()).toISOString(), active: true },
+    { name: "youth", created_at: (/* @__PURE__ */ new Date()).toISOString(), active: true }
   ];
 }
-
+__name(getDefaultTags, "getDefaultTags");
 function getDefaultConfig() {
   return {
     email: {
-      sender_email: 'noreply@dhgate-monitor.com',
-      recipient_email: 'info@dhgate-monitor.com',
-      smtp_server: 'smtp.gmail.com',
+      sender_email: "noreply@dhgate-monitor.com",
+      recipient_email: "info@dhgate-monitor.com",
+      smtp_server: "smtp.gmail.com",
       smtp_port: 587,
-      smtp_password: 'zech lame cvnz prxu'
+      smtp_password: "zech lame cvnz prxu"
     },
     schedule: {
-      time: '09:00'
+      time: "09:00"
     },
     filters: {
-      keywords: ['kids'],
+      keywords: ["kids"],
       case_sensitive: false
     }
   };
 }
-
-function generateDashboardHTML(shops, config, tags, t, lang, theme = 'light') {
+__name(getDefaultConfig, "getDefaultConfig");
+function generateDashboardHTML(shops, config, tags, t, lang, theme = "light") {
   return `
 <!DOCTYPE html>
 <html lang="${lang}">
@@ -2064,9 +1929,9 @@ function generateDashboardHTML(shops, config, tags, t, lang, theme = 'light') {
         <div class="theme-switcher">
             <div class="theme-toggle">
                 <span class="theme-label">Light</span>
-                <div class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" onclick="toggleTheme()" aria-label="Toggle theme">
+                <div class="theme-toggle-switch ${theme === "dark" ? "dark" : ""}" onclick="toggleTheme()" aria-label="Toggle theme">
                     <div class="theme-toggle-slider">
-                        ${theme === 'dark' ? '●' : '○'}
+                        ${theme === "dark" ? "\u25CF" : "\u25CB"}
                     </div>
                 </div>
                 <span class="theme-label">Dark</span>
@@ -2076,9 +1941,9 @@ function generateDashboardHTML(shops, config, tags, t, lang, theme = 'light') {
         <!-- Language Switcher -->
         <div class="lang-switcher">
             <div class="lang-options">
-                <a href="?lang=en&theme=${theme}" class="lang-option ${lang === 'en' ? 'active' : ''}">EN</a>
+                <a href="?lang=en&theme=${theme}" class="lang-option ${lang === "en" ? "active" : ""}">EN</a>
                 <span class="lang-separator">|</span>
-                <a href="?lang=nl&theme=${theme}" class="lang-option ${lang === 'nl' ? 'active' : ''}">NL</a>
+                <a href="?lang=nl&theme=${theme}" class="lang-option ${lang === "nl" ? "active" : ""}">NL</a>
             </div>
         </div>
         <div class="row g-3 g-md-4">
@@ -2088,16 +1953,13 @@ function generateDashboardHTML(shops, config, tags, t, lang, theme = 'light') {
                         <h3>${t.registered_shops} (${shops.length})</h3>
                     </div>
                     <div class="card-body">
-                        ${shops.length === 0 ? 
-                          `<p class="text-muted">${t.no_shops_registered} <a href="/add_shop?lang=${lang}">${t.add_first_shop}</a>.</p>` :
-                          shops.map(shop => `
+                        ${shops.length === 0 ? `<p class="text-muted">${t.no_shops_registered} <a href="/add_shop?lang=${lang}">${t.add_first_shop}</a>.</p>` : shops.map((shop) => `
                             <div class="border rounded p-3 mb-2">
                                 <h5>${shop.name}</h5>
                                 <p class="text-muted small">${shop.search_url}</p>
-                                <small class="text-secondary">${t.added}: ${new Date(shop.created_at).toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-US')}</small>
+                                <small class="text-secondary">${t.added}: ${new Date(shop.created_at).toLocaleDateString(lang === "nl" ? "nl-NL" : "en-US")}</small>
                             </div>
-                          `).join('')
-                        }
+                          `).join("")}
                     </div>
                 </div>
             </div>
@@ -2121,7 +1983,7 @@ function generateDashboardHTML(shops, config, tags, t, lang, theme = 'light') {
                     <div class="card-body">
                         <p><strong>${t.platform}:</strong> Cloudflare Workers</p>
                         <p><strong>${t.monitoring}:</strong> ${config.schedule.time}</p>
-                        <p><strong>${t.tags}:</strong> ${tags.map(tag => tag.name).join(', ')}</p>
+                        <p><strong>${t.tags}:</strong> ${tags.map((tag) => tag.name).join(", ")}</p>
                         <p><strong>${t.status}:</strong> <span class="text-success">${t.online}</span></p>
                     </div>
                 </div>
@@ -2137,7 +1999,7 @@ function generateDashboardHTML(shops, config, tags, t, lang, theme = 'light') {
                     <a href="/contact?lang=${lang}" class="text-muted">${t.contact}</a>
                 </div>
                 <div class="text-muted small mt-2">
-                    © ${new Date().getFullYear()} DHgate Monitor - ${t.legal_links}
+                    \xA9 ${(/* @__PURE__ */ new Date()).getFullYear()} DHgate Monitor - ${t.legal_links}
                 </div>
             </div>
         </div>
@@ -2205,13 +2067,13 @@ function generateDashboardHTML(shops, config, tags, t, lang, theme = 'light') {
         
         // Show consent banner on page load
         document.addEventListener('DOMContentLoaded', showCookieConsent);
-    </script>
+    <\/script>
 </body>
 </html>
   `;
 }
-
-function generateAddShopHTML(t, lang, theme = 'light') {
+__name(generateDashboardHTML, "generateDashboardHTML");
+function generateAddShopHTML(t, lang, theme = "light") {
   return `
 <!DOCTYPE html>
 <html lang="${lang}">
@@ -2228,9 +2090,9 @@ function generateAddShopHTML(t, lang, theme = 'light') {
     <div class="theme-switcher">
         <div class="theme-toggle">
             <span class="theme-label">Light</span>
-            <div class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" onclick="toggleTheme()" aria-label="Toggle theme">
+            <div class="theme-toggle-switch ${theme === "dark" ? "dark" : ""}" onclick="toggleTheme()" aria-label="Toggle theme">
                 <div class="theme-toggle-slider">
-                    ${theme === 'dark' ? '●' : '○'}
+                    ${theme === "dark" ? "\u25CF" : "\u25CB"}
                 </div>
             </div>
             <span class="theme-label">Dark</span>
@@ -2240,9 +2102,9 @@ function generateAddShopHTML(t, lang, theme = 'light') {
     <!-- Language Switcher -->
     <div class="lang-switcher">
         <div class="lang-options">
-            <a href="/add_shop?lang=en&theme=${theme}" class="lang-option ${lang === 'en' ? 'active' : ''}">EN</a>
+            <a href="/add_shop?lang=en&theme=${theme}" class="lang-option ${lang === "en" ? "active" : ""}">EN</a>
             <span class="lang-separator">|</span>
-            <a href="/add_shop?lang=nl&theme=${theme}" class="lang-option ${lang === 'nl' ? 'active' : ''}">NL</a>
+            <a href="/add_shop?lang=nl&theme=${theme}" class="lang-option ${lang === "nl" ? "active" : ""}">NL</a>
         </div>
     </div>
 
@@ -2340,12 +2202,12 @@ function generateAddShopHTML(t, lang, theme = 'light') {
         
         // Show consent banner on page load
         document.addEventListener('DOMContentLoaded', showCookieConsent);
-    </script>
+    <\/script>
 </body>
 </html>
   `;
 }
-
+__name(generateAddShopHTML, "generateAddShopHTML");
 function generateSettingsHTML(config, t, lang) {
   return `
 <!DOCTYPE html>
@@ -2416,14 +2278,14 @@ function generateSettingsHTML(config, t, lang) {
                                     <input type="password" name="sender_email" class="form-control email-masked" value="${config.email.sender_email}" required 
                                            onclick="this.type='email'; this.select();" 
                                            onblur="if(this.value) this.type='password';" 
-                                           placeholder="••••••••@••••••">
+                                           placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022@\u2022\u2022\u2022\u2022\u2022\u2022">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">${t.recipient_email}</label>
                                     <input type="password" name="recipient_email" class="form-control email-masked" value="${config.email.recipient_email}" required 
                                            onclick="this.type='email'; this.select();" 
                                            onblur="if(this.value) this.type='password';" 
-                                           placeholder="••••••••@••••••">
+                                           placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022@\u2022\u2022\u2022\u2022\u2022\u2022">
                                 </div>
                             </div>
                             
@@ -2436,11 +2298,11 @@ function generateSettingsHTML(config, t, lang) {
                             <h5>${t.filters}</h5>
                             <div class="mb-3">
                                 <label class="form-label">${t.keywords_comma}</label>
-                                <input type="text" name="keywords" class="form-control" value="${config.filters.keywords.join(', ')}" required>
+                                <input type="text" name="keywords" class="form-control" value="${config.filters.keywords.join(", ")}" required>
                             </div>
                             <div class="mb-3">
                                 <div class="form-check">
-                                    <input type="checkbox" name="case_sensitive" class="form-check-input" ${config.filters.case_sensitive ? 'checked' : ''}>
+                                    <input type="checkbox" name="case_sensitive" class="form-check-input" ${config.filters.case_sensitive ? "checked" : ""}>
                                     <label class="form-check-label">${t.case_sensitive}</label>
                                 </div>
                             </div>
@@ -2461,7 +2323,7 @@ function generateSettingsHTML(config, t, lang) {
 </html>
   `;
 }
-
+__name(generateSettingsHTML, "generateSettingsHTML");
 function generateTagsHTML(tags, t, lang) {
   return `
 <!DOCTYPE html>
@@ -2526,11 +2388,11 @@ function generateTagsHTML(tags, t, lang) {
                         <div class="mb-4">
                             <h5>${t.current_tags}</h5>
                             <div class="border rounded p-3 mb-3" style="background-color: #f8fafc;">
-                                ${tags.map(tag => `
+                                ${tags.map((tag) => `
                                     <span class="tag-item">
                                         ${tag.name}
                                     </span>
-                                `).join('')}
+                                `).join("")}
                             </div>
                         </div>
                         
@@ -2538,7 +2400,7 @@ function generateTagsHTML(tags, t, lang) {
                             <div class="mb-3">
                                 <label class="form-label">${t.tags_comma}</label>
                                 <input type="text" name="tags" class="form-control" 
-                                       value="${tags.map(tag => tag.name).join(', ')}" 
+                                       value="${tags.map((tag) => tag.name).join(", ")}" 
                                        placeholder="kids, children, youth, baby, toddler" required>
                                 <div class="form-text">
                                     ${t.tags_help}
@@ -2546,7 +2408,7 @@ function generateTagsHTML(tags, t, lang) {
                             </div>
                             
                             <div class="alert alert-info">
-                                <strong>💡 Tip:</strong> ${t.tags_tip}
+                                <strong>\u{1F4A1} Tip:</strong> ${t.tags_tip}
                             </div>
                             
                             <div class="d-grid gap-2">
@@ -2565,7 +2427,7 @@ function generateTagsHTML(tags, t, lang) {
 </html>
   `;
 }
-// Compliance page generators
+__name(generateTagsHTML, "generateTagsHTML");
 function generatePrivacyHTML(t, lang) {
   return `
 <!DOCTYPE html>
@@ -2611,7 +2473,7 @@ function generatePrivacyHTML(t, lang) {
                 <div class="card">
                     <div class="card-header">
                         <h2>${t.privacy_policy}</h2>
-                        <small class="text-muted">${lang === "nl" ? "Laatst bijgewerkt" : "Last updated"}: ${new Date().toLocaleDateString(lang === "nl" ? "nl-NL" : "en-US")}</small>
+                        <small class="text-muted">${lang === "nl" ? "Laatst bijgewerkt" : "Last updated"}: ${(/* @__PURE__ */ new Date()).toLocaleDateString(lang === "nl" ? "nl-NL" : "en-US")}</small>
                     </div>
                     <div class="card-body">
                         ${lang === "nl" ? generatePrivacyContentNL() : generatePrivacyContentEN()}
@@ -2630,7 +2492,7 @@ function generatePrivacyHTML(t, lang) {
 </html>
   `;
 }
-
+__name(generatePrivacyHTML, "generatePrivacyHTML");
 function generateTermsHTML(t, lang) {
   return `
 <!DOCTYPE html>
@@ -2676,10 +2538,10 @@ function generateTermsHTML(t, lang) {
                 <div class="card">
                     <div class="card-header">
                         <h2>${t.terms_of_service}</h2>
-                        <small class="text-muted">${lang === 'nl' ? 'Laatst bijgewerkt' : 'Last updated'}: ${new Date().toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-US')}</small>
+                        <small class="text-muted">${lang === "nl" ? "Laatst bijgewerkt" : "Last updated"}: ${(/* @__PURE__ */ new Date()).toLocaleDateString(lang === "nl" ? "nl-NL" : "en-US")}</small>
                     </div>
                     <div class="card-body">
-                        ${lang === 'nl' ? generateTermsContentNL() : generateTermsContentEN()}
+                        ${lang === "nl" ? generateTermsContentNL() : generateTermsContentEN()}
                         
                         <div class="mt-4 pt-4 border-top">
                             <a href="/?lang=${lang}" class="btn btn-primary">${t.back_to_dashboard}</a>
@@ -2695,7 +2557,7 @@ function generateTermsHTML(t, lang) {
 </html>
   `;
 }
-
+__name(generateTermsHTML, "generateTermsHTML");
 function generateContactHTML(t, lang) {
   return `
 <!DOCTYPE html>
@@ -2752,11 +2614,8 @@ function generateContactHTML(t, lang) {
                                 <strong>${t.data_controller}:</strong> Nathalja Nijman</p>
                             </div>
                             <div class="col-md-6">
-                                <h4>${lang === 'nl' ? 'Over deze service' : 'About this service'}</h4>
-                                <p>${lang === 'nl' ? 
-                                  'DHgate Monitor is een gratis service voor het monitoren van DHgate producten. We verzamelen alleen de gegevens die nodig zijn voor de functionaliteit van de service.' :
-                                  'DHgate Monitor is a free service for monitoring DHgate products. We only collect data necessary for the functionality of the service.'
-                                }</p>
+                                <h4>${lang === "nl" ? "Over deze service" : "About this service"}</h4>
+                                <p>${lang === "nl" ? "DHgate Monitor is een gratis service voor het monitoren van DHgate producten. We verzamelen alleen de gegevens die nodig zijn voor de functionaliteit van de service." : "DHgate Monitor is a free service for monitoring DHgate products. We only collect data necessary for the functionality of the service."}</p>
                             </div>
                         </div>
                         
@@ -2774,35 +2633,32 @@ function generateContactHTML(t, lang) {
 </html>
   `;
 }
-
+__name(generateContactHTML, "generateContactHTML");
 function generateSitemap() {
-  const baseUrl = 'https://dhgate-monitor.com';
-  const urls = [
-    { loc: '/', priority: '1.0', description: 'Landing Page with DHgate Monitor Features' },
-    { loc: '/login', priority: '0.9', description: 'User Login' },
-    { loc: '/dashboard', priority: '0.9', description: 'Main Dashboard (requires authentication)' },
-    { loc: '/add_shop', priority: '0.8', description: 'Add DHgate Shop for Monitoring' },
-    { loc: '/settings', priority: '0.8', description: 'Configuration Settings' },
-    { loc: '/tags', priority: '0.8', description: 'Tag Management' },
-    { loc: '/privacy', priority: '0.6', description: 'Privacy Policy' },
-    { loc: '/terms', priority: '0.6', description: 'Terms of Service' },
-    { loc: '/contact', priority: '0.6', description: 'Contact Information' }
+  const baseUrl = "https://dhgate-monitor.com";
+  const urls2 = [
+    { loc: "/", priority: "1.0", description: "Landing Page with DHgate Monitor Features" },
+    { loc: "/login", priority: "0.9", description: "User Login" },
+    { loc: "/dashboard", priority: "0.9", description: "Main Dashboard (requires authentication)" },
+    { loc: "/add_shop", priority: "0.8", description: "Add DHgate Shop for Monitoring" },
+    { loc: "/settings", priority: "0.8", description: "Configuration Settings" },
+    { loc: "/tags", priority: "0.8", description: "Tag Management" },
+    { loc: "/privacy", priority: "0.6", description: "Privacy Policy" },
+    { loc: "/terms", priority: "0.6", description: "Terms of Service" },
+    { loc: "/contact", priority: "0.6", description: "Contact Information" }
   ];
-  
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(url => `  <url>
+${urls2.map((url) => `  <url>
     <loc>${baseUrl}${url.loc}</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <lastmod>${(/* @__PURE__ */ new Date()).toISOString().split("T")[0]}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>${url.priority}</priority>
-  </url>`).join('\n')}
+  </url>`).join("\n")}
 </urlset>`;
-  
   return sitemap;
 }
-
-// Cookie consent banner generator
+__name(generateSitemap, "generateSitemap");
 function generateCookieConsent(t, lang) {
   return `
     <!-- Cookie Consent Banner -->
@@ -2889,11 +2745,10 @@ function generateCookieConsent(t, lang) {
         
         // Apply theme on page load
         document.addEventListener('DOMContentLoaded', applyTheme);
-    </script>
+    <\/script>
   `;
 }
-
-// Legal content generators
+__name(generateCookieConsent, "generateCookieConsent");
 function generatePrivacyContentNL() {
   return `
     <div class="legal-section">
@@ -2966,7 +2821,7 @@ function generatePrivacyContentNL() {
     </div>
   `;
 }
-
+__name(generatePrivacyContentNL, "generatePrivacyContentNL");
 function generatePrivacyContentEN() {
   return `
     <div class="legal-section">
@@ -3039,7 +2894,7 @@ function generatePrivacyContentEN() {
     </div>
   `;
 }
-
+__name(generatePrivacyContentEN, "generatePrivacyContentEN");
 function generateTermsContentNL() {
   return `
     <div class="legal-section">
@@ -3058,7 +2913,7 @@ function generateTermsContentNL() {
         <ul>
             <li>Het verstrekken van juiste en actuele informatie</li>
             <li>Het respecteren van DHgate's gebruiksvoorwaarden</li>
-            <li>Het niet misbruiken van de service voor commerciële doeleinden</li>
+            <li>Het niet misbruiken van de service voor commerci\xEBle doeleinden</li>
             <li>Het niet overbelasten van de service</li>
         </ul>
     </div>
@@ -3080,8 +2935,8 @@ function generateTermsContentNL() {
     </div>
     
     <div class="legal-section">
-        <h4>6. Beëindiging</h4>
-        <p>Wij kunnen de service te allen tijde beëindigen of uw toegang beperken zonder voorafgaande kennisgeving.</p>
+        <h4>6. Be\xEBindiging</h4>
+        <p>Wij kunnen de service te allen tijde be\xEBindigen of uw toegang beperken zonder voorafgaande kennisgeving.</p>
     </div>
     
     <div class="legal-section">
@@ -3090,7 +2945,7 @@ function generateTermsContentNL() {
     </div>
   `;
 }
-
+__name(generateTermsContentNL, "generateTermsContentNL");
 function generateTermsContentEN() {
   return `
     <div class="legal-section">
@@ -3141,610 +2996,113 @@ function generateTermsContentEN() {
     </div>
   `;
 }
-
-// New Landing Page Handler
+__name(generateTermsContentEN, "generateTermsContentEN");
 async function handleLandingPage(request, env) {
   const lang = getLanguage(request);
   const theme = getTheme(request);
   const t = getTranslations(lang);
-  
   const html = generateLandingPageHTML(t, lang, theme);
   return new Response(html, {
-    headers: { 'Content-Type': 'text/html' }
+    headers: { "Content-Type": "text/html" }
   });
 }
-
-// New Login Page Handler  
+__name(handleLandingPage, "handleLandingPage");
 async function handleLoginPage(request, env) {
   const lang = getLanguage(request);
   const theme = getTheme(request);
   const t = getTranslations(lang);
-  
   const html = generateLoginPageHTML(t, lang, theme);
   return new Response(html, {
-    headers: { 'Content-Type': 'text/html' }
+    headers: { "Content-Type": "text/html" }
   });
 }
-
-// API Handler for store search
+__name(handleLoginPage, "handleLoginPage");
 async function handleStoreSearch(request, env) {
   try {
     const url = new URL(request.url);
-    const query = url.searchParams.get('q');
-    
+    const query = url.searchParams.get("q");
     if (!query || query.length < 2) {
       return new Response(JSON.stringify([]), {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" }
       });
     }
-    
-    // Try to get stores from KV cache first
     let stores = [];
     try {
-      const cachedStores = await env.DHGATE_MONITOR_KV.get('store_database');
+      const cachedStores = await env.DHGATE_MONITOR_KV.get("store_database");
       if (cachedStores) {
         stores = JSON.parse(cachedStores);
       }
     } catch (error) {
-      console.log('No cached stores found, will use fallback');
+      console.log("No cached stores found, will use fallback");
     }
-    
-    // If no cached stores, try to scrape some fresh ones
     if (stores.length === 0) {
-      console.log('No cached stores, attempting fresh scrape...');
+      console.log("No cached stores, attempting fresh scrape...");
       stores = await scrapeDHgateSitemaps();
-      
-      // Cache the results for future use
       if (stores.length > 0) {
-        await env.DHGATE_MONITOR_KV.put('store_database', JSON.stringify(stores), {
-          expirationTtl: 6 * 60 * 60 // 6 hours
+        await env.DHGATE_MONITOR_KV.put("store_database", JSON.stringify(stores), {
+          expirationTtl: 6 * 60 * 60
+          // 6 hours
         });
       }
     }
-    
-    // Filter stores based on query
-    let filteredStores = stores.filter(store => 
-      store.name.toLowerCase().includes(query.toLowerCase())
-    ).slice(0, 20); // Limit to 20 results
-    
-    // If we have few results, try to enhance with DHgate search
-    if (filteredStores.length < 5 && query.length > 2) {
-      console.log(`Enhancing search results with DHgate search for: ${query}`);
-      const additionalStores = await searchDHgateStores(query);
-      
-      // Add unique stores that aren't already in our results
-      for (const store of additionalStores) {
-        const exists = filteredStores.some(existing => existing.name.toLowerCase() === store.name.toLowerCase());
-        if (!exists) {
-          filteredStores.push(store);
-        }
-      }
-      
-      // Limit total results
-      filteredStores = filteredStores.slice(0, 20);
-    }
-    
+    const filteredStores = stores.filter(
+      (store) => store.name.toLowerCase().includes(query.toLowerCase())
+    ).slice(0, 20);
     return new Response(JSON.stringify(filteredStores), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=3600' // Cache for 1 hour
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "public, max-age=3600"
+        // Cache for 1 hour
       }
     });
-    
   } catch (error) {
-    console.error('Error in store search:', error);
-    return new Response(JSON.stringify({ error: 'Search failed' }), {
+    console.error("Error in store search:", error);
+    return new Response(JSON.stringify({ error: "Search failed" }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" }
     });
   }
 }
-
-// API Handler for manual store database update
+__name(handleStoreSearch, "handleStoreSearch");
 async function handleStoreUpdate(request, env) {
   try {
-    console.log('Manual store database update requested...');
-    
+    console.log("Manual store database update requested...");
     const stores = await scrapeDHgateSitemaps();
-    
     if (stores.length > 0) {
-      await env.DHGATE_MONITOR_KV.put('store_database', JSON.stringify(stores), {
-        expirationTtl: 24 * 60 * 60 // 24 hours
+      await env.DHGATE_MONITOR_KV.put("store_database", JSON.stringify(stores), {
+        expirationTtl: 24 * 60 * 60
+        // 24 hours
       });
-      
       return new Response(JSON.stringify({
         success: true,
         message: `Successfully updated database with ${stores.length} stores`,
         storeCount: stores.length
       }), {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" }
       });
     } else {
       return new Response(JSON.stringify({
         success: false,
-        message: 'No stores found during scraping'
+        message: "No stores found during scraping"
       }), {
         status: 500,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" }
       });
     }
-    
   } catch (error) {
-    console.error('Error in manual store update:', error);
+    console.error("Error in manual store update:", error);
     return new Response(JSON.stringify({
       success: false,
-      error: 'Update failed',
+      error: "Update failed",
       message: error.message
     }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" }
     });
   }
 }
-
-// Real-time DHgate store search
-async function searchDHgateStores(query) {
-  try {
-    console.log(`Searching DHgate for stores matching: ${query}`);
-    
-    // Simulate DHgate search - in reality this would query their search API
-    // For now, we'll generate realistic store names based on the search query
-    const searchResults = [];
-    
-    const storeCategories = ['Electronics', 'Fashion', 'Home & Garden', 'Sports', 'Beauty', 'Jewelry', 'Toys'];
-    const storeSuffixes = ['Store', 'Shop', 'Market', 'Trading Co.', 'Supply Co.', 'Wholesale', 'Direct'];
-    
-    // Generate realistic store names based on query
-    for (let i = 0; i < 5; i++) {
-      const category = storeCategories[Math.floor(Math.random() * storeCategories.length)];
-      const suffix = storeSuffixes[Math.floor(Math.random() * storeSuffixes.length)];
-      
-      const storeName = `${query.charAt(0).toUpperCase() + query.slice(1)} ${category} ${suffix}`;
-      const storeUrl = `https://www.dhgate.com/store/${query.toLowerCase()}-${category.toLowerCase()}-${i}`;
-      
-      searchResults.push({
-        name: storeName,
-        url: storeUrl
-      });
-    }
-    
-    console.log(`Found ${searchResults.length} additional stores from DHgate search`);
-    return searchResults;
-    
-  } catch (error) {
-    console.error('Error searching DHgate stores:', error);
-    return [];
-  }
-}
-
-// Subscription management functions
-function generateUnsubscribeToken(email) {
-  // Generate a secure token based on email and current time
-  const data = email + Date.now() + Math.random();
-  return btoa(data).replace(/[+/=]/g, '').substring(0, 32);
-}
-
-async function storeSubscription(env, subscription) {
-  const token = generateUnsubscribeToken(subscription.email);
-  const subscriptionData = {
-    ...subscription,
-    token,
-    subscribed: true,
-    created_at: new Date().toISOString()
-  };
-  
-  // Store by email and by token for easy lookup
-  await env.DHGATE_MONITOR_KV.put(`subscription:${subscription.email}`, JSON.stringify(subscriptionData));
-  await env.DHGATE_MONITOR_KV.put(`token:${token}`, subscription.email);
-  
-  return token;
-}
-
-async function getSubscriptionByToken(env, token) {
-  try {
-    const email = await env.DHGATE_MONITOR_KV.get(`token:${token}`);
-    if (!email) return null;
-    
-    const subscription = await env.DHGATE_MONITOR_KV.get(`subscription:${email}`);
-    return subscription ? JSON.parse(subscription) : null;
-  } catch (error) {
-    console.error('Error getting subscription by token:', error);
-    return null;
-  }
-}
-
-async function unsubscribeUser(env, token) {
-  try {
-    const email = await env.DHGATE_MONITOR_KV.get(`token:${token}`);
-    if (!email) return false;
-    
-    // Mark as unsubscribed instead of deleting (for compliance)
-    const subscription = await env.DHGATE_MONITOR_KV.get(`subscription:${email}`);
-    if (subscription) {
-      const data = JSON.parse(subscription);
-      data.subscribed = false;
-      data.unsubscribed_at = new Date().toISOString();
-      await env.DHGATE_MONITOR_KV.put(`subscription:${email}`, JSON.stringify(data));
-    }
-    
-    return true;
-  } catch (error) {
-    console.error('Error unsubscribing user:', error);
-    return false;
-  }
-}
-
-// Handle manual scraper trigger
-async function handleScraperTrigger(request, env) {
-  try {
-    console.log('Manual scraper trigger initiated...');
-    
-    // Run the DHgate sitemap scraper
-    const stores = await scrapeDHgateSitemaps();
-    console.log(`Successfully scraped ${stores.length} stores`);
-    
-    // Store in KV
-    await env.DHGATE_MONITOR_KV.put('store_database', JSON.stringify(stores));
-    console.log('Store database updated in KV storage');
-    
-    return new Response(JSON.stringify({
-      success: true,
-      message: `Successfully updated store database with ${stores.length} stores`,
-      timestamp: new Date().toISOString()
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-    
-  } catch (error) {
-    console.error('Error in manual scraper trigger:', error);
-    return new Response(JSON.stringify({
-      success: false,
-      error: error.message
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-}
-
-// Handle unsubscribe page
-async function handleUnsubscribePage(request, env) {
-  const url = new URL(request.url);
-  const token = url.searchParams.get('token');
-  const lang = url.searchParams.get('lang') || 'nl';
-  const theme = url.searchParams.get('theme') || 'light';
-  
-  if (!token) {
-    return new Response('Missing token', { status: 400 });
-  }
-  
-  const subscription = await getSubscriptionByToken(env, token);
-  if (!subscription) {
-    return new Response('Invalid or expired token', { status: 404 });
-  }
-  
-  const t = translations[lang] || translations.nl;
-  
-  const html = generateUnsubscribePageHTML(subscription, token, t, lang, theme);
-  
-  return new Response(html, {
-    headers: { 'Content-Type': 'text/html' }
-  });
-}
-
-// Handle unsubscribe action
-async function handleUnsubscribeAction(request, env) {
-  try {
-    const formData = await request.formData();
-    const token = formData.get('token');
-    const action = formData.get('action');
-    
-    if (!token) {
-      return new Response('Missing token', { status: 400 });
-    }
-    
-    if (action === 'unsubscribe') {
-      const success = await unsubscribeUser(env, token);
-      
-      if (success) {
-        return new Response(JSON.stringify({ 
-          success: true, 
-          message: 'Successfully unsubscribed' 
-        }), {
-          headers: { 'Content-Type': 'application/json' }
-        });
-      } else {
-        return new Response(JSON.stringify({ 
-          success: false, 
-          error: 'Failed to unsubscribe' 
-        }), {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' }
-        });
-      }
-    }
-    
-    return new Response('Invalid action', { status: 400 });
-    
-  } catch (error) {
-    console.error('Error in unsubscribe action:', error);
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: 'Internal server error' 
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-}
-
-// Handle test unsubscribe (creates a demo subscription for testing)
-async function handleTestUnsubscribe(request, env) {
-  try {
-    const url = new URL(request.url);
-    const lang = url.searchParams.get('lang') || 'nl';
-    
-    // Create a demo subscription for testing
-    const testSubscription = {
-      email: 'test@example.com',
-      store_url: 'https://www.dhgate.com/store/test-store',
-      tags: 'jersey, shirt, soccer',
-      frequency: 'daily',
-      preferred_time: 'immediate',
-      status: 'active'
-    };
-    
-    // Generate token and store
-    const token = await storeSubscription(env, testSubscription);
-    
-    // Redirect to unsubscribe page with test token
-    return Response.redirect(`/unsubscribe?token=${token}&lang=${lang}`, 302);
-    
-  } catch (error) {
-    console.error('Error creating test unsubscribe:', error);
-    return new Response('Error creating test subscription', { status: 500 });
-  }
-}
-
-// Generate Unsubscribe Page HTML
-function generateUnsubscribePageHTML(subscription, token, t, lang, theme = 'light') {
-  return `
-<!DOCTYPE html>
-<html lang="${lang}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${lang === 'nl' ? 'Uitschrijven - DHgate Monitor' : 'Unsubscribe - DHgate Monitor'}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    ${generateGlobalCSS(theme)}
-    
-    <style>
-        .unsubscribe-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 0;
-        }
-        
-        .unsubscribe-card {
-            max-width: 500px;
-            width: 100%;
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 3rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        
-        .unsubscribe-icon {
-            width: 64px;
-            height: 64px;
-            background: #ef4444;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-        }
-        
-        .unsubscribe-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-        }
-        
-        .unsubscribe-description {
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-        
-        .subscription-details {
-            background: var(--border-light);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            text-align: left;
-        }
-        
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .detail-row:last-child {
-            border-bottom: none;
-        }
-        
-        .detail-label {
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-        
-        .detail-value {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        .unsubscribe-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .btn-unsubscribe {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-unsubscribe:hover {
-            background: #dc2626;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
-        }
-        
-        .btn-cancel {
-            background: var(--card-bg);
-            color: var(--text-secondary);
-            border: 2px solid var(--border-color);
-            padding: 10px 24px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-        }
-        
-        .btn-cancel:hover {
-            background: var(--border-color);
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-    </style>
-</head>
-<body>
-    <div class="unsubscribe-container">
-        <div class="unsubscribe-card">
-            <div class="unsubscribe-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
-                    <path d="M3 8L10.89 13.26C11.2187 13.4793 11.6049 13.5963 12 13.5963C12.3951 13.5963 12.7813 13.4793 13.11 13.26L21 8M5 19H19C20.1046 19 21 18.1046 21 17V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V17C3 18.1046 3.89543 19 5 19Z" stroke="currentColor" stroke-width="2" fill="none"/>
-                    <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2"/>
-                </svg>
-            </div>
-            
-            <h1 class="unsubscribe-title">
-                ${lang === 'nl' ? 'Uitschrijven van DHgate Monitor' : 'Unsubscribe from DHgate Monitor'}
-            </h1>
-            
-            <p class="unsubscribe-description">
-                ${lang === 'nl' ? 
-                    'Je staat op het punt je uit te schrijven van alle DHgate monitoring alerts. Dit betekent dat je geen meldingen meer ontvangt over nieuwe producten.' :
-                    'You are about to unsubscribe from all DHgate monitoring alerts. This means you will no longer receive notifications about new products.'
-                }
-            </p>
-            
-            <div class="subscription-details">
-                <div class="detail-row">
-                    <div class="detail-label">${lang === 'nl' ? 'Email:' : 'Email:'}</div>
-                    <div class="detail-value">${subscription.email}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">${lang === 'nl' ? 'Zoektermen:' : 'Search terms:'}</div>
-                    <div class="detail-value">${subscription.tags || '-'}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">${lang === 'nl' ? 'Frequentie:' : 'Frequency:'}</div>
-                    <div class="detail-value">${subscription.frequency || '-'}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">${lang === 'nl' ? 'Aangemeld sinds:' : 'Subscribed since:'}</div>
-                    <div class="detail-value">${new Date(subscription.created_at).toLocaleDateString(lang)}</div>
-                </div>
-            </div>
-            
-            <form id="unsubscribeForm" method="POST" action="/api/unsubscribe">
-                <input type="hidden" name="token" value="${token}">
-                <input type="hidden" name="action" value="unsubscribe">
-                
-                <div class="unsubscribe-actions">
-                    <button type="submit" class="btn-unsubscribe">
-                        ${lang === 'nl' ? 'Ja, uitschrijven' : 'Yes, unsubscribe'}
-                    </button>
-                    <a href="/" class="btn-cancel">
-                        ${lang === 'nl' ? 'Annuleren' : 'Cancel'}
-                    </a>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <script>
-        document.getElementById('unsubscribeForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            
-            try {
-                const response = await fetch('/api/unsubscribe', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    document.querySelector('.unsubscribe-card').innerHTML = \`
-                        <div class="unsubscribe-icon" style="background: #10b981;">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
-                                <path d="M5 13L9 17L19 7" stroke="currentColor" stroke-width="3" fill="none"/>
-                            </svg>
-                        </div>
-                        <h1 class="unsubscribe-title">
-                            ${'${lang}' === 'nl' ? 'Succesvol uitgeschreven!' : 'Successfully unsubscribed!'}
-                        </h1>
-                        <p class="unsubscribe-description">
-                            ${'${lang}' === 'nl' ? 
-                                'Je ontvangt geen DHgate monitoring alerts meer. Je kunt je altijd weer opnieuw aanmelden op onze homepage.' :
-                                'You will no longer receive DHgate monitoring alerts. You can always subscribe again on our homepage.'
-                            }
-                        </p>
-                        <div class="unsubscribe-actions">
-                            <a href="/" class="btn-cancel">
-                                ${'${lang}' === 'nl' ? 'Terug naar homepage' : 'Back to homepage'}
-                            </a>
-                        </div>
-                    \`;
-                } else {
-                    alert('${lang}' === 'nl' ? 'Er is een fout opgetreden. Probeer het opnieuw.' : 'An error occurred. Please try again.');
-                }
-            } catch (error) {
-                alert('${lang}' === 'nl' ? 'Er is een fout opgetreden. Probeer het opnieuw.' : 'An error occurred. Please try again.');
-            }
-        });
-    </script>
-</body>
-</html>
-  `;
-}
-
-// Generate Landing Page HTML
-function generateLandingPageHTML(t, lang, theme = 'light') {
+__name(handleStoreUpdate, "handleStoreUpdate");
+function generateLandingPageHTML(t, lang, theme = "light") {
   return `
 <!DOCTYPE html>
 <html lang="${lang}">
@@ -4564,33 +3922,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
-        /* Select Wrapper Styles */
-        .select-wrapper {
-            position: relative;
-        }
-        
-        .select-wrapper select {
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background: transparent;
-            width: 100%;
-            padding-right: 40px;
-        }
-        
-        .select-arrow {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            color: var(--text-secondary);
-        }
-        
-        .select-wrapper:hover .select-arrow {
-            color: var(--text-primary);
-        }
-        
         .store-results.show {
             display: block;
         }
@@ -4907,7 +4238,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         }
         
         .product-image::after {
-            content: '👕';
+            content: '\u{1F455}';
             position: absolute;
             top: 50%;
             left: 50%;
@@ -5243,30 +4574,30 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             </a>
             
             <div class="navbar-menu">
-                <a href="#features" class="nav-link" onclick="scrollToSection('features'); return false;">${lang === 'nl' ? 'Features' : 'Features'}</a>
-                <a href="#how-it-works" class="nav-link" onclick="scrollToSection('how-it-works'); return false;">${lang === 'nl' ? 'Hoe het werkt' : 'How it works'}</a>
-                <a href="/contact?lang=${lang}&theme=${theme}" class="nav-link">${lang === 'nl' ? 'Contact' : 'Contact'}</a>
+                <a href="#features" class="nav-link" onclick="scrollToSection('features'); return false;">${lang === "nl" ? "Features" : "Features"}</a>
+                <a href="#how-it-works" class="nav-link" onclick="scrollToSection('how-it-works'); return false;">${lang === "nl" ? "Hoe het werkt" : "How it works"}</a>
+                <a href="/contact?lang=${lang}&theme=${theme}" class="nav-link">${lang === "nl" ? "Contact" : "Contact"}</a>
             </div>
             
             <div class="navbar-controls">
                 <!-- Language Switcher -->
                 <div class="nav-lang-switcher">
-                    <a href="/?lang=en&theme=${theme}" class="nav-lang-option ${lang === 'en' ? 'active' : ''}">EN</a>
+                    <a href="/?lang=en&theme=${theme}" class="nav-lang-option ${lang === "en" ? "active" : ""}">EN</a>
                     <span class="nav-lang-separator">|</span>
-                    <a href="/?lang=nl&theme=${theme}" class="nav-lang-option ${lang === 'nl' ? 'active' : ''}">NL</a>
+                    <a href="/?lang=nl&theme=${theme}" class="nav-lang-option ${lang === "nl" ? "active" : ""}">NL</a>
                 </div>
                 
                 <!-- Theme Toggle -->
                 <div class="nav-theme-toggle">
-                    <div class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <div class="theme-toggle-switch ${theme === "dark" ? "dark" : ""}" onclick="toggleTheme()" aria-label="Toggle theme">
                         <div class="theme-toggle-slider">
-                            ${theme === 'dark' ? '🌙' : '☀️'}
+                            ${theme === "dark" ? "\u{1F319}" : "\u2600\uFE0F"}
                         </div>
                     </div>
                 </div>
                 
                 <a href="#subscription-form" class="nav-cta-button" onclick="scrollToSubscription(); return false;">
-                    ${lang === 'nl' ? 'START' : 'START'}
+                    ${lang === "nl" ? "START" : "START"}
                 </a>
             </div>
         </div>
@@ -5282,47 +4613,41 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 <div class="hero-main-content">
                     <div class="hero-badge animate-fade-in-up">
                         <span class="status-indicator"></span>
-                        ${lang === 'nl' ? '24/7 Live Monitoring' : '24/7 Live Monitoring'}
+                        ${lang === "nl" ? "24/7 Live Monitoring" : "24/7 Live Monitoring"}
                     </div>
                     
                     <h1 class="hero-main-title animate-fade-in-up" style="animation-delay: 0.1s;">
-                        ${lang === 'nl' ? 
-                            'Professionele <span class="gradient-text-hero">DHgate Monitoring</span> voor E-commerce' :
-                            'Professional <span class="gradient-text-hero">DHgate Monitoring</span> for E-commerce'
-                        }
+                        ${lang === "nl" ? 'Professionele <span class="gradient-text-hero">DHgate Monitoring</span> voor E-commerce' : 'Professional <span class="gradient-text-hero">DHgate Monitoring</span> for E-commerce'}
                     </h1>
                     
                     <p class="hero-main-description animate-fade-in-up" style="animation-delay: 0.2s;">
-                        ${lang === 'nl' ? 
-                            'Automatiseer je productonderzoek met geavanceerde monitoring tools. Ontvang real-time notifications wanneer nieuwe producten worden geüpload die aan jouw criteria voldoen.' :
-                            'Automate your product research with advanced monitoring tools. Receive real-time notifications when new products matching your criteria are uploaded.'
-                        }
+                        ${lang === "nl" ? "Automatiseer je productonderzoek met geavanceerde monitoring tools. Ontvang real-time notifications wanneer nieuwe producten worden ge\xFCpload die aan jouw criteria voldoen." : "Automate your product research with advanced monitoring tools. Receive real-time notifications when new products matching your criteria are uploaded."}
                     </p>
                     
                     <div class="hero-stats animate-fade-in-up" style="animation-delay: 0.3s;">
                         <div class="stat-item">
                             <div class="stat-number">24/7</div>
-                            <div class="stat-label">${lang === 'nl' ? 'Monitoring' : 'Monitoring'}</div>
+                            <div class="stat-label">${lang === "nl" ? "Monitoring" : "Monitoring"}</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-number">&lt;30s</div>
-                            <div class="stat-label">${lang === 'nl' ? 'Response' : 'Response'}</div>
+                            <div class="stat-label">${lang === "nl" ? "Response" : "Response"}</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-number">99.9%</div>
-                            <div class="stat-label">${lang === 'nl' ? 'Uptime' : 'Uptime'}</div>
+                            <div class="stat-label">${lang === "nl" ? "Uptime" : "Uptime"}</div>
                         </div>
                     </div>
                     
                     <div class="hero-actions animate-fade-in-up" style="animation-delay: 0.4s;">
                         <a href="#subscription-form" class="hero-cta-primary" onclick="scrollToSubscription(); return false;">
-                            ${lang === 'nl' ? 'Start Gratis Trial' : 'Start Free Trial'}
+                            ${lang === "nl" ? "Start Gratis Trial" : "Start Free Trial"}
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </a>
                         <a href="/dashboard?lang=${lang}&theme=${theme}" class="hero-cta-secondary">
-                            ${lang === 'nl' ? 'View Dashboard' : 'View Dashboard'}
+                            ${lang === "nl" ? "View Dashboard" : "View Dashboard"}
                         </a>
                     </div>
                 </div>
@@ -5372,13 +4697,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             <div class="row text-center mb-5">
                 <div class="col-12">
                     <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">
-                        ${lang === 'nl' ? 'Waarom DHgate Monitor?' : 'Why DHgate Monitor?'}
+                        ${lang === "nl" ? "Waarom DHgate Monitor?" : "Why DHgate Monitor?"}
                     </h2>
                     <p style="font-size: 1.2rem; color: #64748b; max-width: 600px; margin: 0 auto;">
-                        ${lang === 'nl' ? 
-                            'Automatiseer je product monitoring met geavanceerde filters en real-time notificaties.' :
-                            'Automate your product monitoring with advanced filters and real-time notifications.'
-                        }
+                        ${lang === "nl" ? "Automatiseer je product monitoring met geavanceerde filters en real-time notificaties." : "Automate your product monitoring with advanced filters and real-time notifications."}
                     </p>
                 </div>
             </div>
@@ -5388,13 +4710,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     <div class="feature-card">
                         <div class="feature-icon">FILTER</div>
                         <h3 class="feature-title">
-                            ${lang === 'nl' ? 'Smart Filtering' : 'Smart Filtering'}
+                            ${lang === "nl" ? "Smart Filtering" : "Smart Filtering"}
                         </h3>
                         <p>
-                            ${lang === 'nl' ? 
-                                'Stel specifieke zoektermen en filters in om alleen relevante producten te vinden die voldoen aan jouw criteria.' :
-                                'Set specific search terms and filters to find only relevant products that match your criteria.'
-                            }
+                            ${lang === "nl" ? "Stel specifieke zoektermen en filters in om alleen relevante producten te vinden die voldoen aan jouw criteria." : "Set specific search terms and filters to find only relevant products that match your criteria."}
                         </p>
                     </div>
                 </div>
@@ -5403,13 +4722,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     <div class="feature-card">
                         <div class="feature-icon">ALERT</div>
                         <h3 class="feature-title">
-                            ${lang === 'nl' ? 'Real-time Alerts' : 'Real-time Alerts'}
+                            ${lang === "nl" ? "Real-time Alerts" : "Real-time Alerts"}
                         </h3>
                         <p>
-                            ${lang === 'nl' ? 
-                                'Ontvang direct email notificaties wanneer nieuwe producten worden gevonden die aan je filters voldoen.' :
-                                'Receive instant email notifications when new products are discovered that match your filters.'
-                            }
+                            ${lang === "nl" ? "Ontvang direct email notificaties wanneer nieuwe producten worden gevonden die aan je filters voldoen." : "Receive instant email notifications when new products are discovered that match your filters."}
                         </p>
                     </div>
                 </div>
@@ -5418,13 +4734,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     <div class="feature-card">
                         <div class="feature-icon">24/7</div>
                         <h3 class="feature-title">
-                            ${lang === 'nl' ? 'Continuous Monitoring' : 'Continuous Monitoring'}
+                            ${lang === "nl" ? "Continuous Monitoring" : "Continuous Monitoring"}
                         </h3>
                         <p>
-                            ${lang === 'nl' ? 
-                                'Volledig geautomatiseerde monitoring die continu draait, onafhankelijk van je locatie of tijdstip.' :
-                                'Fully automated monitoring that runs continuously, regardless of your location or time of day.'
-                            }
+                            ${lang === "nl" ? "Volledig geautomatiseerde monitoring die continu draait, onafhankelijk van je locatie of tijdstip." : "Fully automated monitoring that runs continuously, regardless of your location or time of day."}
                         </p>
                     </div>
                 </div>
@@ -5438,13 +4751,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             <div class="row text-center mb-5">
                 <div class="col-12">
                     <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; color: var(--text-primary);">
-                        ${lang === 'nl' ? 'Hoe het werkt' : 'How it works'}
+                        ${lang === "nl" ? "Hoe het werkt" : "How it works"}
                     </h2>
                     <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 700px; margin: 0 auto;">
-                        ${lang === 'nl' ? 
-                            'In drie eenvoudige stappen naar geautomatiseerde DHgate monitoring' :
-                            'Three simple steps to automated DHgate monitoring'
-                        }
+                        ${lang === "nl" ? "In drie eenvoudige stappen naar geautomatiseerde DHgate monitoring" : "Three simple steps to automated DHgate monitoring"}
                     </p>
                 </div>
             </div>
@@ -5466,13 +4776,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                             </svg>
                         </div>
                         <h3 class="step-title">
-                            ${lang === 'nl' ? 'Vul je email in' : 'Enter your email'}
+                            ${lang === "nl" ? "Vul je email in" : "Enter your email"}
                         </h3>
                         <p class="step-description">
-                            ${lang === 'nl' ? 
-                                'Voer je email adres in om te starten met monitoring. Volledig gratis, geen account nodig.' :
-                                'Enter your email address to start monitoring. Completely free, no account needed.'
-                            }
+                            ${lang === "nl" ? "Voer je email adres in om te starten met monitoring. Volledig gratis, geen account nodig." : "Enter your email address to start monitoring. Completely free, no account needed."}
                         </p>
                     </div>
                 </div>
@@ -5492,13 +4799,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                             </svg>
                         </div>
                         <h3 class="step-title">
-                            ${lang === 'nl' ? 'Stel je voorkeuren in' : 'Set your preferences'}
+                            ${lang === "nl" ? "Stel je voorkeuren in" : "Set your preferences"}
                         </h3>
                         <p class="step-description">
-                            ${lang === 'nl' ? 
-                                'Ontvang een email met een link om je monitoring voorkeuren in te stellen: shops, tags en tijden.' :
-                                'Receive an email with a link to set your monitoring preferences: shops, tags and times.'
-                            }
+                            ${lang === "nl" ? "Ontvang een email met een link om je monitoring voorkeuren in te stellen: shops, tags en tijden." : "Receive an email with a link to set your monitoring preferences: shops, tags and times."}
                         </p>
                     </div>
                 </div>
@@ -5519,13 +4823,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                             </svg>
                         </div>
                         <h3 class="step-title">
-                            ${lang === 'nl' ? 'Ontvang alerts' : 'Receive alerts'}
+                            ${lang === "nl" ? "Ontvang alerts" : "Receive alerts"}
                         </h3>
                         <p class="step-description">
-                            ${lang === 'nl' ? 
-                                'Automatische monitoring start direct. Ontvang real-time email alerts bij nieuwe producten die matchen.' :
-                                'Automatic monitoring starts immediately. Receive real-time email alerts for new matching products.'
-                            }
+                            ${lang === "nl" ? "Automatische monitoring start direct. Ontvang real-time email alerts bij nieuwe producten die matchen." : "Automatic monitoring starts immediately. Receive real-time email alerts for new matching products."}
                         </p>
                     </div>
                 </div>
@@ -5539,13 +4840,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             <div class="row text-center mb-5">
                 <div class="col-12">
                     <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; color: var(--text-primary);">
-                        ${lang === 'nl' ? 'DHgate Product Tracking' : 'DHgate Product Tracking'}
+                        ${lang === "nl" ? "DHgate Product Tracking" : "DHgate Product Tracking"}
                     </h2>
                     <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 600px; margin: 0 auto;">
-                        ${lang === 'nl' ? 
-                            'Monitor automatisch DHgate producten en ontvang meldingen van nieuwe uploads.' :
-                            'Automatically monitor DHgate products and receive notifications of new uploads.'
-                        }
+                        ${lang === "nl" ? "Monitor automatisch DHgate producten en ontvang meldingen van nieuwe uploads." : "Automatically monitor DHgate products and receive notifications of new uploads."}
                     </p>
                 </div>
             </div>
@@ -5578,7 +4876,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                         <div class="product-image"></div>
                                         <div class="product-title">Kids Soccer Jersey 2025</div>
                                         <div class="product-price">$19.99</div>
-                                        <div class="monitor-indicator">✓ Monitored</div>
+                                        <div class="monitor-indicator">\u2713 Monitored</div>
                                     </div>
                                     <div class="product-item">
                                         <div class="product-image"></div>
@@ -5590,7 +4888,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                         <div class="product-image"></div>
                                         <div class="product-title">Children Football Kit</div>
                                         <div class="product-price">$22.00</div>
-                                        <div class="monitor-indicator">✓ Monitored</div>
+                                        <div class="monitor-indicator">\u2713 Monitored</div>
                                     </div>
                                     <div class="product-item">
                                         <div class="product-image"></div>
@@ -5622,13 +4920,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                             <div class="form-step active" data-step="1">
                                 <div class="step-content">
                                     <h3 class="step-title">
-                                        ${lang === 'nl' ? 'Wat is je email adres?' : 'What\'s your email address?'}
+                                        ${lang === "nl" ? "Wat is je email adres?" : "What's your email address?"}
                                     </h3>
                                     <p class="step-description">
-                                        ${lang === 'nl' ? 
-                                            'We sturen je alerts wanneer nieuwe producten worden gevonden die aan jouw criteria voldoen.' :
-                                            'We\'ll send you alerts when new products are found that match your criteria.'
-                                        }
+                                        ${lang === "nl" ? "We sturen je alerts wanneer nieuwe producten worden gevonden die aan jouw criteria voldoen." : "We'll send you alerts when new products are found that match your criteria."}
                                     </p>
                                     <div class="form-group">
                                         <div class="input-wrapper">
@@ -5641,7 +4936,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                                 id="email" 
                                                 name="email" 
                                                 class="form-control form-control-lg" 
-                                                placeholder="${lang === 'nl' ? 'jouw@email.com' : 'your@email.com'}" 
+                                                placeholder="${lang === "nl" ? "jouw@email.com" : "your@email.com"}" 
                                                 required
                                             >
                                         </div>
@@ -5649,7 +4944,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                 </div>
                                 <div class="step-actions">
                                     <button type="button" class="btn-primary btn-next" onclick="nextStep()">
-                                        ${lang === 'nl' ? 'Volgende' : 'Next'}
+                                        ${lang === "nl" ? "Volgende" : "Next"}
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                             <path d="M5 12H19" stroke="currentColor" stroke-width="2"/>
                                             <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
@@ -5662,13 +4957,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                             <div class="form-step" data-step="2">
                                 <div class="step-content">
                                     <h3 class="step-title">
-                                        ${lang === 'nl' ? 'Welke winkel wil je monitoren?' : 'Which store do you want to monitor?'}
+                                        ${lang === "nl" ? "Welke winkel wil je monitoren?" : "Which store do you want to monitor?"}
                                     </h3>
                                     <p class="step-description">
-                                        ${lang === 'nl' ? 
-                                            'Selecteer een specifieke DHgate winkel om te monitoren, of voeg zoektermen toe om producten te vinden.' :
-                                            'Select a specific DHgate store to monitor, or add search terms to find products.'
-                                        }
+                                        ${lang === "nl" ? "Selecteer een specifieke DHgate winkel om te monitoren, of voeg zoektermen toe om producten te vinden." : "Select a specific DHgate store to monitor, or add search terms to find products."}
                                     </p>
                                     
                                     <div class="form-group">
@@ -5682,7 +4974,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                                     type="text" 
                                                     id="store_search" 
                                                     class="form-control" 
-                                                    placeholder="${lang === 'nl' ? 'Zoek winkel naam...' : 'Search store name...'}" 
+                                                    placeholder="${lang === "nl" ? "Zoek winkel naam..." : "Search store name..."}" 
                                                     onkeyup="searchStores(this.value)"
                                                     autocomplete="off"
                                                 >
@@ -5694,7 +4986,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                     
                                     <div class="form-group">
                                         <label for="tags" class="form-label">
-                                            ${lang === 'nl' ? 'Zoektermen' : 'Search terms'}
+                                            ${lang === "nl" ? "Zoektermen" : "Search terms"}
                                         </label>
                                         <div class="input-wrapper">
                                             <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -5705,15 +4997,12 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                                 id="tags" 
                                                 name="tags" 
                                                 class="form-control" 
-                                                placeholder="${lang === 'nl' ? 'jersey, shirt, voetbal' : 'jersey, shirt, soccer'}" 
+                                                placeholder="${lang === "nl" ? "jersey, shirt, voetbal" : "jersey, shirt, soccer"}" 
                                                 required
                                             >
                                         </div>
                                         <div class="form-text">
-                                            ${lang === 'nl' ? 
-                                                'We controleren producttitels en beschrijvingen op deze woorden' :
-                                                'We\'ll check product titles and descriptions for these words'
-                                            }
+                                            ${lang === "nl" ? "We controleren producttitels en beschrijvingen op deze woorden" : "We'll check product titles and descriptions for these words"}
                                         </div>
                                     </div>
                                 </div>
@@ -5723,10 +5012,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                             <path d="M19 12H5" stroke="currentColor" stroke-width="2"/>
                                             <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2"/>
                                         </svg>
-                                        ${lang === 'nl' ? 'Terug' : 'Back'}
+                                        ${lang === "nl" ? "Terug" : "Back"}
                                     </button>
                                     <button type="button" class="btn-primary btn-next" onclick="nextStep()">
-                                        ${lang === 'nl' ? 'Volgende' : 'Next'}
+                                        ${lang === "nl" ? "Volgende" : "Next"}
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                             <path d="M5 12H19" stroke="currentColor" stroke-width="2"/>
                                             <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
@@ -5735,110 +5024,27 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                 </div>
                             </div>
                             
-                            <!-- Step 3: Monitoring Settings -->
+                            <!-- Step 3: Confirmation -->
                             <div class="form-step" data-step="3">
                                 <div class="step-content">
                                     <h3 class="step-title">
-                                        ${lang === 'nl' ? 'Hoe vaak wil je updates ontvangen?' : 'How often do you want to receive updates?'}
+                                        ${lang === "nl" ? "Klaar om te starten!" : "Ready to start!"}
                                     </h3>
                                     <p class="step-description">
-                                        ${lang === 'nl' ? 
-                                            'Kies hoe vaak we moeten controleren op nieuwe producten en wanneer je een melding wilt ontvangen.' :
-                                            'Choose how often we should check for new products and when you want to be notified.'
-                                        }
-                                    </p>
-                                    
-                                    <div class="form-group">
-                                        <label for="frequency" class="form-label">
-                                            ${lang === 'nl' ? 'Controle frequentie' : 'Check frequency'}
-                                        </label>
-                                        <div class="select-wrapper">
-                                            <select id="frequency" name="frequency" class="form-control" required>
-                                                <option value="">${lang === 'nl' ? 'Selecteer frequentie...' : 'Select frequency...'}</option>
-                                                <option value="hourly">${lang === 'nl' ? 'Elk uur' : 'Every hour'}</option>
-                                                <option value="every_4_hours">${lang === 'nl' ? 'Elke 4 uur' : 'Every 4 hours'}</option>
-                                                <option value="daily">${lang === 'nl' ? 'Dagelijks' : 'Daily'}</option>
-                                                <option value="weekly">${lang === 'nl' ? 'Wekelijks' : 'Weekly'}</option>
-                                            </select>
-                                            <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none">
-                                                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2"/>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="preferred_time" class="form-label">
-                                            ${lang === 'nl' ? 'Voorkeurstijd voor meldingen' : 'Preferred notification time'}
-                                        </label>
-                                        <div class="select-wrapper">
-                                            <select id="preferred_time" name="preferred_time" class="form-control">
-                                                <option value="immediate">${lang === 'nl' ? 'Direct' : 'Immediately'}</option>
-                                                <option value="morning">${lang === 'nl' ? 'Ochtend (09:00)' : 'Morning (09:00)'}</option>
-                                                <option value="afternoon">${lang === 'nl' ? 'Middag (14:00)' : 'Afternoon (14:00)'}</option>
-                                                <option value="evening">${lang === 'nl' ? 'Avond (18:00)' : 'Evening (18:00)'}</option>
-                                            </select>
-                                            <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none">
-                                                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2"/>
-                                            </svg>
-                                        </div>
-                                        <div class="form-text">
-                                            ${lang === 'nl' ? 
-                                                'Bij "Direct" krijg je een melding zodra er nieuwe producten zijn gevonden' :
-                                                'With "Immediately" you\'ll get notified as soon as new products are found'
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="step-actions">
-                                    <button type="button" class="btn-secondary btn-back" onclick="previousStep()">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M19 12H5" stroke="currentColor" stroke-width="2"/>
-                                            <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2"/>
-                                        </svg>
-                                        ${lang === 'nl' ? 'Terug' : 'Back'}
-                                    </button>
-                                    <button type="button" class="btn-primary btn-next" onclick="nextStep()">
-                                        ${lang === 'nl' ? 'Volgende' : 'Next'}
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M5 12H19" stroke="currentColor" stroke-width="2"/>
-                                            <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Step 4: Confirmation -->
-                            <div class="form-step" data-step="4">
-                                <div class="step-content">
-                                    <h3 class="step-title">
-                                        ${lang === 'nl' ? 'Klaar om te starten!' : 'Ready to start!'}
-                                    </h3>
-                                    <p class="step-description">
-                                        ${lang === 'nl' ? 
-                                            'We gaan je monitoring nu instellen. Je ontvangt een email zodra nieuwe producten worden gevonden.' :
-                                            'We\'ll set up your monitoring now. You\'ll receive an email as soon as new products are found.'
-                                        }
+                                        ${lang === "nl" ? "We gaan je monitoring nu instellen. Je ontvangt een email zodra nieuwe producten worden gevonden." : "We'll set up your monitoring now. You'll receive an email as soon as new products are found."}
                                     </p>
                                     <div class="summary-card">
                                         <div class="summary-item">
-                                            <div class="summary-label">${lang === 'nl' ? 'Email:' : 'Email:'}</div>
+                                            <div class="summary-label">${lang === "nl" ? "Email:" : "Email:"}</div>
                                             <div class="summary-value" id="summaryEmail">-</div>
                                         </div>
                                         <div class="summary-item">
-                                            <div class="summary-label">${lang === 'nl' ? 'Winkel:' : 'Store:'}</div>
-                                            <div class="summary-value" id="summaryStore">${lang === 'nl' ? 'Alle winkels' : 'All stores'}</div>
+                                            <div class="summary-label">${lang === "nl" ? "Winkel:" : "Store:"}</div>
+                                            <div class="summary-value" id="summaryStore">${lang === "nl" ? "Alle winkels" : "All stores"}</div>
                                         </div>
                                         <div class="summary-item">
-                                            <div class="summary-label">${lang === 'nl' ? 'Zoektermen:' : 'Search terms:'}</div>
+                                            <div class="summary-label">${lang === "nl" ? "Zoektermen:" : "Search terms:"}</div>
                                             <div class="summary-value" id="summaryTags">-</div>
-                                        </div>
-                                        <div class="summary-item">
-                                            <div class="summary-label">${lang === 'nl' ? 'Frequentie:' : 'Frequency:'}</div>
-                                            <div class="summary-value" id="summaryFrequency">-</div>
-                                        </div>
-                                        <div class="summary-item">
-                                            <div class="summary-label">${lang === 'nl' ? 'Tijd:' : 'Time:'}</div>
-                                            <div class="summary-value" id="summaryTime">-</div>
                                         </div>
                                     </div>
                                 </div>
@@ -5848,10 +5054,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                             <path d="M19 12H5" stroke="currentColor" stroke-width="2"/>
                                             <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2"/>
                                         </svg>
-                                        ${lang === 'nl' ? 'Terug' : 'Back'}
+                                        ${lang === "nl" ? "Terug" : "Back"}
                                     </button>
                                     <button type="submit" class="btn-success btn-submit">
-                                        ${lang === 'nl' ? 'Start monitoring' : 'Start monitoring'}
+                                        ${lang === "nl" ? "Start monitoring" : "Start monitoring"}
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                             <path d="M5 12H19" stroke="currentColor" stroke-width="2"/>
                                             <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
@@ -5861,13 +5067,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                             </div>
                             
                             <p class="form-notice">
-                                ${lang === 'nl' ? 
-                                    'Door te subscriben ga je akkoord met onze ' :
-                                    'By subscribing you agree to our '
-                                }
-                                <a href="/terms?lang=${lang}&theme=${theme}" target="_blank">${lang === 'nl' ? 'voorwaarden' : 'terms'}</a>
-                                ${lang === 'nl' ? ' en ' : ' and '}
-                                <a href="/privacy?lang=${lang}&theme=${theme}" target="_blank">${lang === 'nl' ? 'privacybeleid' : 'privacy policy'}</a>.
+                                ${lang === "nl" ? "Door te subscriben ga je akkoord met onze " : "By subscribing you agree to our "}
+                                <a href="/terms?lang=${lang}&theme=${theme}" target="_blank">${lang === "nl" ? "voorwaarden" : "terms"}</a>
+                                ${lang === "nl" ? " en " : " and "}
+                                <a href="/privacy?lang=${lang}&theme=${theme}" target="_blank">${lang === "nl" ? "privacybeleid" : "privacy policy"}</a>.
                             </p>
                         </form>
                     </div>
@@ -5881,12 +5084,12 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         <div class="row mt-4 mt-md-5">
             <div class="col text-center">
                 <div class="text-muted small d-flex flex-column flex-md-row justify-content-center gap-2 gap-md-3">
-                    <a href="/privacy?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Privacybeleid' : 'Privacy Policy'}</a>
-                    <a href="/terms?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Algemene Voorwaarden' : 'Terms of Service'}</a>
-                    <a href="/contact?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Contact' : 'Contact'}</a>
+                    <a href="/privacy?lang=${lang}&theme=${theme}" class="text-muted">${lang === "nl" ? "Privacybeleid" : "Privacy Policy"}</a>
+                    <a href="/terms?lang=${lang}&theme=${theme}" class="text-muted">${lang === "nl" ? "Algemene Voorwaarden" : "Terms of Service"}</a>
+                    <a href="/contact?lang=${lang}&theme=${theme}" class="text-muted">${lang === "nl" ? "Contact" : "Contact"}</a>
                 </div>
                 <div class="text-muted small mt-2">
-                    © ${new Date().getFullYear()} DHgate Monitor - ${lang === 'nl' ? 'Juridische informatie' : 'Legal information'}
+                    \xA9 ${(/* @__PURE__ */ new Date()).getFullYear()} DHgate Monitor - ${lang === "nl" ? "Juridische informatie" : "Legal information"}
                 </div>
             </div>
         </div>
@@ -5897,12 +5100,12 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h6 class="mb-2">${lang === 'nl' ? 'Cookie voorkeuren' : 'Cookie preferences'}</h6>
-                    <p class="mb-0 small">${lang === 'nl' ? 'We gebruiken cookies om je ervaring te verbeteren en functionaliteit te waarborgen.' : 'We use cookies to enhance your experience and ensure website functionality.'}</p>
+                    <h6 class="mb-2">${lang === "nl" ? "Cookie voorkeuren" : "Cookie preferences"}</h6>
+                    <p class="mb-0 small">${lang === "nl" ? "We gebruiken cookies om je ervaring te verbeteren en functionaliteit te waarborgen." : "We use cookies to enhance your experience and ensure website functionality."}</p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <button onclick="acceptCookies()" class="btn btn-success btn-sm">${lang === 'nl' ? 'Accepteren' : 'Accept'}</button>
-                    <button onclick="declineCookies()" class="btn btn-outline-light btn-sm">${lang === 'nl' ? 'Weigeren' : 'Decline'}</button>
+                    <button onclick="acceptCookies()" class="btn btn-success btn-sm">${lang === "nl" ? "Accepteren" : "Accept"}</button>
+                    <button onclick="declineCookies()" class="btn btn-outline-light btn-sm">${lang === "nl" ? "Weigeren" : "Decline"}</button>
                 </div>
             </div>
         </div>
@@ -5974,7 +5177,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         
         // Progressive Form Functionality
         let currentStep = 1;
-        const totalSteps = 4;
+        const totalSteps = 3;
         
         function nextStep() {
             const currentStepElement = document.querySelector(\`.form-step[data-step="\${currentStep}"]\`);
@@ -6002,14 +5205,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     tagsInput.reportValidity();
                     return;
                 }
-            } else if (currentStep === 3) {
-                const frequencySelect = document.getElementById('frequency');
-                
-                if (!frequencySelect.value) {
-                    alert('${lang}' === 'nl' ? 'Selecteer een controle frequentie' : 'Please select a check frequency');
-                    frequencySelect.focus();
-                    return;
-                }
             }
             
             if (currentStep < totalSteps) {
@@ -6024,8 +5219,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     nextStepElement.classList.add('active');
                 }, 150);
                 
-                // Update summary on step 4
-                if (currentStep === 4) {
+                // Update summary on step 3
+                if (currentStep === 3) {
                     updateSummary();
                 }
             }
@@ -6052,49 +5247,11 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             const storeUrl = document.getElementById('selected_store_url').value;
             const storeName = document.getElementById('store_search').value;
             const tags = document.getElementById('tags').value;
-            const frequency = document.getElementById('frequency').value;
-            const preferredTime = document.getElementById('preferred_time').value;
-            
-            // Frequency translation map
-            const frequencyMap = {
-                'nl': {
-                    'hourly': 'Elk uur',
-                    'every_4_hours': 'Elke 4 uur',
-                    'daily': 'Dagelijks',
-                    'weekly': 'Wekelijks'
-                },
-                'en': {
-                    'hourly': 'Every hour',
-                    'every_4_hours': 'Every 4 hours',
-                    'daily': 'Daily',
-                    'weekly': 'Weekly'
-                }
-            };
-            
-            // Time translation map
-            const timeMap = {
-                'nl': {
-                    'immediate': 'Direct',
-                    'morning': 'Ochtend (09:00)',
-                    'afternoon': 'Middag (14:00)',
-                    'evening': 'Avond (18:00)'
-                },
-                'en': {
-                    'immediate': 'Immediately',
-                    'morning': 'Morning (09:00)',
-                    'afternoon': 'Afternoon (14:00)',
-                    'evening': 'Evening (18:00)'
-                }
-            };
             
             document.getElementById('summaryEmail').textContent = email;
             document.getElementById('summaryStore').textContent = storeName || 
                 ('${lang}' === 'nl' ? 'Alle winkels' : 'All stores');
             document.getElementById('summaryTags').textContent = tags;
-            document.getElementById('summaryFrequency').textContent = 
-                frequencyMap['${lang}'][frequency] || frequency;
-            document.getElementById('summaryTime').textContent = 
-                timeMap['${lang}'][preferredTime] || preferredTime;
         }
         
         // Store Search Functionality
@@ -6186,21 +5343,20 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         document.addEventListener('DOMContentLoaded', function() {
             showCookieConsent();
         });
-    </script>
+    <\/script>
 </body>
 </html>
   `;
 }
-
-// Generate Login Page HTML
-function generateLoginPageHTML(t, lang, theme = 'light') {
+__name(generateLandingPageHTML, "generateLandingPageHTML");
+function generateLoginPageHTML(t, lang, theme = "light") {
   return `
 <!DOCTYPE html>
 <html lang="${lang}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${lang === 'nl' ? 'Inloggen - DHgate Monitor' : 'Login - DHgate Monitor'}</title>
+    <title>${lang === "nl" ? "Inloggen - DHgate Monitor" : "Login - DHgate Monitor"}</title>
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     ${generateGlobalCSS(theme)}
@@ -6291,9 +5447,9 @@ function generateLoginPageHTML(t, lang, theme = 'light') {
     <div class="theme-switcher">
         <div class="theme-toggle">
             <span class="theme-label">Light</span>
-            <div class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" onclick="toggleTheme()" aria-label="Toggle theme">
+            <div class="theme-toggle-switch ${theme === "dark" ? "dark" : ""}" onclick="toggleTheme()" aria-label="Toggle theme">
                 <div class="theme-toggle-slider">
-                    ${theme === 'dark' ? '●' : '○'}
+                    ${theme === "dark" ? "\u25CF" : "\u25CB"}
                 </div>
             </div>
             <span class="theme-label">Dark</span>
@@ -6303,42 +5459,42 @@ function generateLoginPageHTML(t, lang, theme = 'light') {
     <!-- Language Switcher -->
     <div class="lang-switcher">
         <div class="lang-options">
-            <a href="/login?lang=en&theme=${theme}" class="lang-option ${lang === 'en' ? 'active' : ''}">EN</a>
+            <a href="/login?lang=en&theme=${theme}" class="lang-option ${lang === "en" ? "active" : ""}">EN</a>
             <span class="lang-separator">|</span>
-            <a href="/login?lang=nl&theme=${theme}" class="lang-option ${lang === 'nl' ? 'active' : ''}">NL</a>
+            <a href="/login?lang=nl&theme=${theme}" class="lang-option ${lang === "nl" ? "active" : ""}">NL</a>
         </div>
     </div>
 
     <div class="login-card">
         <h1 class="login-title">
-            ${lang === 'nl' ? 'Inloggen' : 'Login'}
+            ${lang === "nl" ? "Inloggen" : "Login"}
         </h1>
         
         <form action="/dashboard" method="get">
             <input type="hidden" name="lang" value="${lang}">
             
             <div class="mb-3">
-                <input type="email" class="form-control" placeholder="${lang === 'nl' ? 'E-mailadres' : 'Email address'}" required>
+                <input type="email" class="form-control" placeholder="${lang === "nl" ? "E-mailadres" : "Email address"}" required>
             </div>
             
             <div class="mb-3">
-                <input type="password" class="form-control" placeholder="${lang === 'nl' ? 'Wachtwoord' : 'Password'}" required>
+                <input type="password" class="form-control" placeholder="${lang === "nl" ? "Wachtwoord" : "Password"}" required>
             </div>
             
             <button type="submit" class="btn btn-login">
-                ${lang === 'nl' ? '🚀 Inloggen' : '🚀 Login'}
+                ${lang === "nl" ? "\u{1F680} Inloggen" : "\u{1F680} Login"}
             </button>
             
             <div class="text-center">
                 <small class="text-muted">
-                    ${lang === 'nl' ? 'Demo: gebruik willekeurige gegevens' : 'Demo: use any credentials'}
+                    ${lang === "nl" ? "Demo: gebruik willekeurige gegevens" : "Demo: use any credentials"}
                 </small>
             </div>
         </form>
         
         <div class="back-link">
             <a href="/?lang=${lang}&theme=${theme}">
-                ← ${lang === 'nl' ? 'Terug naar homepage' : 'Back to homepage'}
+                \u2190 ${lang === "nl" ? "Terug naar homepage" : "Back to homepage"}
             </a>
         </div>
     </div>
@@ -6357,8 +5513,199 @@ function generateLoginPageHTML(t, lang, theme = 'light') {
             url.searchParams.set('lang', currentLang);
             window.location.href = url.toString();
         }
-    </script>
+    <\/script>
 </body>
 </html>
   `;
 }
+__name(generateLoginPageHTML, "generateLoginPageHTML");
+
+// node_modules/wrangler/templates/middleware/middleware-ensure-req-body-drained.ts
+var drainBody = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx) => {
+  try {
+    return await middlewareCtx.next(request, env);
+  } finally {
+    try {
+      if (request.body !== null && !request.bodyUsed) {
+        const reader = request.body.getReader();
+        while (!(await reader.read()).done) {
+        }
+      }
+    } catch (e) {
+      console.error("Failed to drain the unused request body.", e);
+    }
+  }
+}, "drainBody");
+var middleware_ensure_req_body_drained_default = drainBody;
+
+// node_modules/wrangler/templates/middleware/middleware-scheduled.ts
+var scheduled = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx) => {
+  const url = new URL(request.url);
+  if (url.pathname === "/__scheduled") {
+    const cron = url.searchParams.get("cron") ?? "";
+    await middlewareCtx.dispatch("scheduled", { cron });
+    return new Response("Ran scheduled event");
+  }
+  const resp = await middlewareCtx.next(request, env);
+  if (request.headers.get("referer")?.endsWith("/__scheduled") && url.pathname === "/favicon.ico" && resp.status === 500) {
+    return new Response(null, { status: 404 });
+  }
+  return resp;
+}, "scheduled");
+var middleware_scheduled_default = scheduled;
+
+// node_modules/wrangler/templates/middleware/middleware-miniflare3-json-error.ts
+function reduceError(e) {
+  return {
+    name: e?.name,
+    message: e?.message ?? String(e),
+    stack: e?.stack,
+    cause: e?.cause === void 0 ? void 0 : reduceError(e.cause)
+  };
+}
+__name(reduceError, "reduceError");
+var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx) => {
+  try {
+    return await middlewareCtx.next(request, env);
+  } catch (e) {
+    const error = reduceError(e);
+    return Response.json(error, {
+      status: 500,
+      headers: { "MF-Experimental-Error-Stack": "true" }
+    });
+  }
+}, "jsonError");
+var middleware_miniflare3_json_error_default = jsonError;
+
+// .wrangler/tmp/bundle-CJSz3Q/middleware-insertion-facade.js
+var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
+  middleware_ensure_req_body_drained_default,
+  middleware_scheduled_default,
+  middleware_miniflare3_json_error_default
+];
+var middleware_insertion_facade_default = cloudflare_app_default;
+
+// node_modules/wrangler/templates/middleware/common.ts
+var __facade_middleware__ = [];
+function __facade_register__(...args) {
+  __facade_middleware__.push(...args.flat());
+}
+__name(__facade_register__, "__facade_register__");
+function __facade_invokeChain__(request, env, ctx, dispatch, middlewareChain) {
+  const [head, ...tail] = middlewareChain;
+  const middlewareCtx = {
+    dispatch,
+    next(newRequest, newEnv) {
+      return __facade_invokeChain__(newRequest, newEnv, ctx, dispatch, tail);
+    }
+  };
+  return head(request, env, ctx, middlewareCtx);
+}
+__name(__facade_invokeChain__, "__facade_invokeChain__");
+function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
+  return __facade_invokeChain__(request, env, ctx, dispatch, [
+    ...__facade_middleware__,
+    finalMiddleware
+  ]);
+}
+__name(__facade_invoke__, "__facade_invoke__");
+
+// .wrangler/tmp/bundle-CJSz3Q/middleware-loader.entry.ts
+var __Facade_ScheduledController__ = class {
+  constructor(scheduledTime, cron, noRetry) {
+    this.scheduledTime = scheduledTime;
+    this.cron = cron;
+    this.#noRetry = noRetry;
+  }
+  #noRetry;
+  noRetry() {
+    if (!(this instanceof __Facade_ScheduledController__)) {
+      throw new TypeError("Illegal invocation");
+    }
+    this.#noRetry();
+  }
+};
+__name(__Facade_ScheduledController__, "__Facade_ScheduledController__");
+function wrapExportedHandler(worker) {
+  if (__INTERNAL_WRANGLER_MIDDLEWARE__ === void 0 || __INTERNAL_WRANGLER_MIDDLEWARE__.length === 0) {
+    return worker;
+  }
+  for (const middleware of __INTERNAL_WRANGLER_MIDDLEWARE__) {
+    __facade_register__(middleware);
+  }
+  const fetchDispatcher = /* @__PURE__ */ __name(function(request, env, ctx) {
+    if (worker.fetch === void 0) {
+      throw new Error("Handler does not export a fetch() function.");
+    }
+    return worker.fetch(request, env, ctx);
+  }, "fetchDispatcher");
+  return {
+    ...worker,
+    fetch(request, env, ctx) {
+      const dispatcher = /* @__PURE__ */ __name(function(type, init) {
+        if (type === "scheduled" && worker.scheduled !== void 0) {
+          const controller = new __Facade_ScheduledController__(
+            Date.now(),
+            init.cron ?? "",
+            () => {
+            }
+          );
+          return worker.scheduled(controller, env, ctx);
+        }
+      }, "dispatcher");
+      return __facade_invoke__(request, env, ctx, dispatcher, fetchDispatcher);
+    }
+  };
+}
+__name(wrapExportedHandler, "wrapExportedHandler");
+function wrapWorkerEntrypoint(klass) {
+  if (__INTERNAL_WRANGLER_MIDDLEWARE__ === void 0 || __INTERNAL_WRANGLER_MIDDLEWARE__.length === 0) {
+    return klass;
+  }
+  for (const middleware of __INTERNAL_WRANGLER_MIDDLEWARE__) {
+    __facade_register__(middleware);
+  }
+  return class extends klass {
+    #fetchDispatcher = (request, env, ctx) => {
+      this.env = env;
+      this.ctx = ctx;
+      if (super.fetch === void 0) {
+        throw new Error("Entrypoint class does not define a fetch() function.");
+      }
+      return super.fetch(request);
+    };
+    #dispatcher = (type, init) => {
+      if (type === "scheduled" && super.scheduled !== void 0) {
+        const controller = new __Facade_ScheduledController__(
+          Date.now(),
+          init.cron ?? "",
+          () => {
+          }
+        );
+        return super.scheduled(controller);
+      }
+    };
+    fetch(request) {
+      return __facade_invoke__(
+        request,
+        this.env,
+        this.ctx,
+        this.#dispatcher,
+        this.#fetchDispatcher
+      );
+    }
+  };
+}
+__name(wrapWorkerEntrypoint, "wrapWorkerEntrypoint");
+var WRAPPED_ENTRY;
+if (typeof middleware_insertion_facade_default === "object") {
+  WRAPPED_ENTRY = wrapExportedHandler(middleware_insertion_facade_default);
+} else if (typeof middleware_insertion_facade_default === "function") {
+  WRAPPED_ENTRY = wrapWorkerEntrypoint(middleware_insertion_facade_default);
+}
+var middleware_loader_entry_default = WRAPPED_ENTRY;
+export {
+  __INTERNAL_WRANGLER_MIDDLEWARE__,
+  middleware_loader_entry_default as default
+};
+//# sourceMappingURL=cloudflare_app.js.map
