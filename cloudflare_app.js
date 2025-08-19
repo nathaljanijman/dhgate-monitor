@@ -3648,6 +3648,70 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             background: var(--card-bg);
         }
         
+        /* How It Works Section */
+        .how-it-works-section {
+            padding: 120px 0;
+            background: var(--bg-gradient);
+        }
+        
+        .how-it-works-step {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            height: 100%;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .how-it-works-step:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.15);
+        }
+        
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: 3px solid var(--card-bg);
+        }
+        
+        .step-icon {
+            margin: 1.5rem auto 1.5rem;
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .step-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .step-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+        
         .feature-card {
             background: var(--card-bg);
             border: none;
@@ -4120,6 +4184,19 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             .dashboard-chart {
                 height: 60px;
             }
+            
+            .how-it-works-step {
+                margin-bottom: 2rem;
+                padding: 2rem 1.5rem;
+            }
+            
+            .step-icon {
+                margin: 1rem auto;
+            }
+            
+            .step-title {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
@@ -4146,8 +4223,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             
             <div class="navbar-menu">
                 <a href="#features" class="nav-link">${lang === 'nl' ? 'Features' : 'Features'}</a>
-                <a href="#how-it-works" class="nav-link">${lang === 'nl' ? 'Hoe het Werkt' : 'How it Works'}</a>
-                <a href="#pricing" class="nav-link">${lang === 'nl' ? 'Prijzen' : 'Pricing'}</a>
+                <a href="#how-it-works" class="nav-link">${lang === 'nl' ? 'Hoe het werkt' : 'How it works'}</a>
                 <a href="/contact?lang=${lang}&theme=${theme}" class="nav-link">${lang === 'nl' ? 'Contact' : 'Contact'}</a>
             </div>
             
@@ -4168,8 +4244,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     </div>
                 </div>
                 
-                <a href="/login?lang=${lang}&theme=${theme}" class="nav-cta-button">
-                    ${lang === 'nl' ? 'Inloggen' : 'Login'}
+                <a href="#subscription-form" class="nav-cta-button" onclick="scrollToSubscription()">
+                    ${lang === 'nl' ? 'START' : 'START'}
                 </a>
             </div>
         </div>
@@ -4270,7 +4346,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
     </section>
 
     <!-- Features Section -->
-    <section class="features-section">
+    <section id="features" class="features-section">
         <div class="container">
             <div class="row text-center mb-5">
                 <div class="col-12">
@@ -4327,6 +4403,107 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                             ${lang === 'nl' ? 
                                 'Volledig geautomatiseerde monitoring die continu draait, onafhankelijk van je locatie of tijdstip.' :
                                 'Fully automated monitoring that runs continuously, regardless of your location or time of day.'
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works-section">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-12">
+                    <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; color: var(--text-primary);">
+                        ${lang === 'nl' ? 'Hoe het werkt' : 'How it works'}
+                    </h2>
+                    <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 700px; margin: 0 auto;">
+                        ${lang === 'nl' ? 
+                            'In drie eenvoudige stappen naar geautomatiseerde DHgate monitoring' :
+                            'Three simple steps to automated DHgate monitoring'
+                        }
+                    </p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="how-it-works-step">
+                        <div class="step-number">1</div>
+                        <div class="step-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                                <defs>
+                                    <linearGradient id="step1Gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#2563EB"/>
+                                        <stop offset="100%" style="stop-color:#3B82F6"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M4 4H20C20.55 4 21 4.45 21 5V19C21 19.55 20.55 20 20 20H4C3.45 20 3 19.55 3 19V5C3 4.45 3.45 4 4 4Z" stroke="url(#step1Gradient)" stroke-width="2" fill="none"/>
+                                <path d="M8 10L12 14L16 10" stroke="url(#step1Gradient)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3 class="step-title">
+                            ${lang === 'nl' ? 'Vul je email in' : 'Enter your email'}
+                        </h3>
+                        <p class="step-description">
+                            ${lang === 'nl' ? 
+                                'Voer je email adres in om te starten met monitoring. Volledig gratis, geen account nodig.' :
+                                'Enter your email address to start monitoring. Completely free, no account needed.'
+                            }
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 mb-4">
+                    <div class="how-it-works-step">
+                        <div class="step-number">2</div>
+                        <div class="step-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                                <defs>
+                                    <linearGradient id="step2Gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#EA580C"/>
+                                        <stop offset="100%" style="stop-color:#F97316"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z" stroke="url(#step2Gradient)" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                        <h3 class="step-title">
+                            ${lang === 'nl' ? 'Stel je voorkeuren in' : 'Set your preferences'}
+                        </h3>
+                        <p class="step-description">
+                            ${lang === 'nl' ? 
+                                'Ontvang een email met een link om je monitoring voorkeuren in te stellen: shops, tags en tijden.' :
+                                'Receive an email with a link to set your monitoring preferences: shops, tags and times.'
+                            }
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 mb-4">
+                    <div class="how-it-works-step">
+                        <div class="step-number">3</div>
+                        <div class="step-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                                <defs>
+                                    <linearGradient id="step3Gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#10B981"/>
+                                        <stop offset="100%" style="stop-color:#059669"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M21 11.5C21.03 12.18 21.03 12.82 21 13.5C20.9896 14.6105 20.6168 15.6918 19.9323 16.5787C19.2477 17.4656 18.2877 18.1088 17.2 18.42L16.67 19.08C16.5684 19.2054 16.4325 19.2998 16.2781 19.3522C16.1237 19.4045 15.9569 19.4124 15.7981 19.375C15.6393 19.3375 15.4951 19.2563 15.3804 19.1406C15.2656 19.0249 15.1845 18.8807 15.147 18.722L14.9 17.5C14.7 17.5 14.4 17.5 14.1 17.5C13.8 17.5 13.5 17.5 13.3 17.5L13.05 18.72C13.0125 18.8787 12.9314 19.0229 12.8167 19.1386C12.7019 19.2544 12.5577 19.3355 12.3989 19.373C12.2402 19.4105 12.0734 19.4026 11.919 19.3503C11.7646 19.2979 11.6287 19.2035 11.527 19.078L11 18.42C9.91233 18.1088 8.95234 17.4656 8.26777 16.5787C7.58321 15.6918 7.21042 14.6105 7.2 13.5C7.17 12.82 7.17 12.18 7.2 11.5L7.73 10.92C7.83166 10.7946 7.96758 10.7002 8.12193 10.6478C8.27628 10.5955 8.44307 10.5876 8.60193 10.625C8.76079 10.6625 8.90497 10.7437 9.01967 10.8594C9.13437 10.9751 9.21552 11.1193 9.253 11.278L9.5 12.5C9.7 12.5 10 12.5 10.3 12.5C10.6 12.5 10.9 12.5 11.1 12.5L11.35 11.28C11.3875 11.1213 11.4686 10.9771 11.5834 10.8614C11.6981 10.7456 11.8423 10.6645 12.0011 10.627C12.1598 10.5895 12.3266 10.5974 12.481 10.6497C12.6354 10.7021 12.7713 10.7965 12.873 10.922L13.4 11.5C14.4877 11.8112 15.4477 12.4544 16.1323 13.3413C16.8168 14.2282 17.1896 15.3095 17.2 16.42C17.23 17.1 17.23 17.74 17.2 18.42" stroke="url(#step3Gradient)" stroke-width="2" fill="none"/>
+                                <circle cx="12" cy="12" r="3" stroke="url(#step3Gradient)" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                        <h3 class="step-title">
+                            ${lang === 'nl' ? 'Ontvang alerts' : 'Receive alerts'}
+                        </h3>
+                        <p class="step-description">
+                            ${lang === 'nl' ? 
+                                'Automatische monitoring start direct. Ontvang real-time email alerts bij nieuwe producten die matchen.' :
+                                'Automatic monitoring starts immediately. Receive real-time email alerts for new matching products.'
                             }
                         </p>
                     </div>
