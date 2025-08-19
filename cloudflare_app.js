@@ -4453,129 +4453,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             min-height: 20%;
         }
         
-        /* Device Mockups - Chrome What's New Style */
-        .device-mockups {
-            display: flex;
-            gap: 3rem;
-            align-items: flex-start;
-            justify-content: center;
-            flex-wrap: wrap;
-            perspective: 1200px;
-        }
         
-        .device-desktop {
-            transform: perspective(1000px) rotateY(-8deg) rotateX(2deg);
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        .device-mobile {
-            transform: perspective(1000px) rotateY(8deg) rotateX(-2deg) translateY(2rem);
-            animation: float 6s ease-in-out infinite reverse;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: perspective(1000px) rotateY(-8deg) rotateX(2deg) translateY(0px); }
-            50% { transform: perspective(1000px) rotateY(-8deg) rotateX(2deg) translateY(-10px); }
-        }
-        
-        .desktop-frame {
-            width: 320px;
-            height: 200px;
-            background: linear-gradient(145deg, #f0f0f0, #d0d0d0);
-            border-radius: 8px;
-            padding: 6px;
-            box-shadow: 
-                0 0 0 1px rgba(0,0,0,0.1),
-                0 4px 20px rgba(0,0,0,0.15),
-                0 8px 40px rgba(0,0,0,0.1);
-        }
-        
-        .mobile-frame {
-            width: 160px;
-            height: 320px;
-            background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
-            border-radius: 20px;
-            padding: 8px;
-            box-shadow: 
-                0 0 0 1px rgba(255,255,255,0.1),
-                0 4px 20px rgba(0,0,0,0.3),
-                0 8px 40px rgba(0,0,0,0.2);
-        }
-        
-        .device-screen {
-            width: 100%;
-            height: 100%;
-            background: var(--card-bg);
-            border-radius: 4px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .mobile-frame .device-screen {
-            border-radius: 16px;
-        }
-        
-        .mockup-navbar {
-            background: var(--card-bg);
-            border-bottom: 1px solid var(--border-light);
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 32px;
-        }
-        
-        .nav-dots {
-            display: flex;
-            gap: 4px;
-        }
-        
-        .nav-dots span {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--border-medium);
-        }
-        
-        .nav-title {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        .nav-toggle {
-            display: flex;
-            align-items: center;
-        }
-        
-        .toggle-switch {
-            width: 24px;
-            height: 12px;
-            background: var(--border-light);
-            border-radius: 6px;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-        
-        .toggle-switch.active {
-            background: var(--accent-color);
-        }
-        
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            left: 2px;
-            top: 2px;
-            width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-        
-        .toggle-switch.active::after {
-            left: 14px;
-        }
         
         .mockup-content {
             padding: 12px;
@@ -4936,6 +4814,173 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             margin: 0;
         }
         
+
+        /* Clean Device Mockup */
+        .clean-device-mockup {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 0;
+        }
+        
+        .mockup-container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .mockup-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-light);
+            background: var(--card-bg);
+        }
+        
+        .mockup-dots {
+            display: flex;
+            gap: 0.375rem;
+        }
+        
+        .mockup-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border-medium);
+        }
+        
+        .mockup-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .mockup-content {
+            padding: 1.5rem 1.25rem;
+        }
+        
+        .mockup-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .metric {
+            text-align: center;
+            padding: 1rem 0.5rem;
+            background: rgba(138, 180, 248, 0.05);
+            border: 1px solid rgba(138, 180, 248, 0.1);
+            border-radius: 8px;
+        }
+        
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+        
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        .mockup-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .feed-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            border-radius: 8px;
+        }
+        
+        .feed-indicator {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: pulse 2s infinite;
+        }
+        
+        .feed-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .feed-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.2;
+            margin-bottom: 0.125rem;
+        }
+        
+        .feed-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.2;
+        }
+        
+        .feed-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+        
+        /* Mobile positioning for device mockup */
+        @media (max-width: 768px) {
+            .clean-device-mockup {
+                order: -1;
+                margin-bottom: 2rem;
+                padding: 1rem 0;
+            }
+            
+            .mockup-container {
+                max-width: 360px;
+            }
+            
+            .mockup-metrics {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.75rem;
+            }
+            
+            .metric {
+                padding: 0.75rem 0.25rem;
+            }
+            
+            .metric-value {
+                font-size: 1rem;
+            }
+            
+            .metric-label {
+                font-size: 0.6875rem;
+            }
+            
+            .feed-title {
+                font-size: 0.8125rem;
+            }
+            
+            .feed-subtitle {
+                font-size: 0.6875rem;
+            }
+        }
 
         /* Subscription Form Section */
         .subscription-section {
@@ -5948,87 +5993,48 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 </div>
                 
                 <div class="hero-visual">
-                    <div class="device-mockups">
-                        <!-- Desktop Mockup -->
-                        <div class="device-desktop">
-                            <div class="device-frame desktop-frame">
-                                <div class="device-screen">
-                                    <div class="mockup-navbar">
-                                        <div class="nav-dots">
-                                            <span></span><span></span><span></span>
-                                        </div>
-                                        <div class="nav-title">DHgate Monitor</div>
-                                        <div class="nav-toggle">
-                                            <div class="toggle-switch ${theme === 'dark' ? 'active' : ''}"></div>
-                                        </div>
+                    <!-- Clean Device Mockup -->
+                    <div class="clean-device-mockup">
+                        <div class="mockup-container">
+                            <div class="mockup-header">
+                                <div class="mockup-dots">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                                <span class="mockup-title">DHgate Monitor</span>
+                            </div>
+                            <div class="mockup-content">
+                                <div class="mockup-metrics">
+                                    <div class="metric">
+                                        <div class="metric-value">2,847</div>
+                                        <div class="metric-label">${lang === 'nl' ? 'Monitors' : 'Monitors'}</div>
                                     </div>
-                                    <div class="mockup-content desktop-content">
-                                        <div class="mockup-header">
-                                            <h3>${lang === 'nl' ? 'Live Dashboard' : 'Live Dashboard'}</h3>
-                                        </div>
-                                        <div class="mockup-stats">
-                                            <div class="stat-card">
-                                                <div class="stat-number">2,847</div>
-                                                <div class="stat-label">${lang === 'nl' ? 'Actieve Monitors' : 'Active Monitors'}</div>
-                                            </div>
-                                            <div class="stat-card">
-                                                <div class="stat-number">124</div>
-                                                <div class="stat-label">${lang === 'nl' ? 'Nieuwe Alerts' : 'New Alerts'}</div>
-                                            </div>
-                                        </div>
-                                        <div class="mockup-recent-alerts">
-                                            <div class="alert-item">
-                                                <div class="alert-dot"></div>
-                                                <div class="alert-text">
-                                                    <div class="alert-title">${lang === 'nl' ? 'Nieuw: iPhone Case' : 'New: iPhone Case'}</div>
-                                                    <div class="alert-time">2 ${lang === 'nl' ? 'min geleden' : 'min ago'}</div>
-                                                </div>
-                                            </div>
-                                            <div class="alert-item">
-                                                <div class="alert-dot"></div>
-                                                <div class="alert-text">
-                                                    <div class="alert-title">${lang === 'nl' ? 'Nieuw: Gaming Setup' : 'New: Gaming Setup'}</div>
-                                                    <div class="alert-time">8 ${lang === 'nl' ? 'min geleden' : 'min ago'}</div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div class="metric">
+                                        <div class="metric-value">124</div>
+                                        <div class="metric-label">${lang === 'nl' ? 'Alerts' : 'Alerts'}</div>
+                                    </div>
+                                    <div class="metric">
+                                        <div class="metric-value">2min</div>
+                                        <div class="metric-label">${lang === 'nl' ? 'Gemiddeld' : 'Average'}</div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Mobile Mockup -->
-                        <div class="device-mobile">
-                            <div class="device-frame mobile-frame">
-                                <div class="device-screen">
-                                    <div class="mobile-status-bar">
-                                        <span>9:41</span>
-                                        <div class="status-icons">
-                                            <span class="signal"></span>
-                                            <span class="wifi"></span>
-                                            <span class="battery"></span>
+                                <div class="mockup-feed">
+                                    <div class="feed-item">
+                                        <div class="feed-indicator"></div>
+                                        <div class="feed-content">
+                                            <div class="feed-title">${lang === 'nl' ? 'Nieuw product gevonden' : 'New product found'}</div>
+                                            <div class="feed-subtitle">iPhone 15 Case - €12.99</div>
                                         </div>
+                                        <div class="feed-time">2m</div>
                                     </div>
-                                    <div class="mockup-content mobile-content">
-                                        <div class="mobile-form-step">
-                                            <div class="step-title">${lang === 'nl' ? 'Start monitoring' : 'Start monitoring'}</div>
-                                            <div class="form-field">
-                                                <input type="text" placeholder="${lang === 'nl' ? 'jouw@email.com' : 'your@email.com'}" readonly>
-                                            </div>
-                                            <div class="form-button">
-                                                ${lang === 'nl' ? 'Volgende' : 'Next'}
-                                            </div>
+                                    <div class="feed-item">
+                                        <div class="feed-indicator"></div>
+                                        <div class="feed-content">
+                                            <div class="feed-title">${lang === 'nl' ? 'Nieuw product gevonden' : 'New product found'}</div>
+                                            <div class="feed-subtitle">Gaming Headset - €29.50</div>
                                         </div>
-                                        <div class="mobile-features">
-                                            <div class="feature-item">
-                                                <div class="feature-icon">📧</div>
-                                                <span>${lang === 'nl' ? 'Email alerts' : 'Email alerts'}</span>
-                                            </div>
-                                            <div class="feature-item">
-                                                <div class="feature-icon">⚡</div>
-                                                <span>${lang === 'nl' ? 'Real-time' : 'Real-time'}</span>
-                                            </div>
-                                        </div>
+                                        <div class="feed-time">8m</div>
                                     </div>
                                 </div>
                             </div>
