@@ -3499,7 +3499,8 @@ async function handleTestUnsubscribe(request, env) {
     const token = await storeSubscription(env, testSubscription);
     
     // Redirect to unsubscribe page with test token
-    return Response.redirect(`/unsubscribe?token=${token}&lang=${lang}`, 302);
+    const baseUrl = new URL(request.url).origin;
+    return Response.redirect(`${baseUrl}/unsubscribe?token=${token}&lang=${lang}`, 302);
     
   } catch (error) {
     console.error('Error creating test unsubscribe:', error);
