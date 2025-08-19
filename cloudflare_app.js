@@ -221,37 +221,125 @@ const THEMES = {
   light: {
     name: 'Light Mode',
     css: {
-      '--bg-primary': '#ffffff',
-      '--bg-gradient': 'linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%)',
-      '--text-primary': '#1e293b',
-      '--text-muted': '#64748b',
-      '--accent-color': '#1e40af',
-      '--accent-secondary': '#ff6b35',
-      '--card-bg': '#ffffff',
-      '--card-shadow': '0 4px 12px rgba(0,0,0,0.1)',
-      '--border-color': '#e2e8f0',
-      '--btn-primary-bg': 'linear-gradient(135deg, #1e3a8a, #2563eb)',
-      '--btn-success-bg': 'linear-gradient(45deg, #ff6b35, #ff8c00)',
-      '--cookie-bg': 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-      '--legal-section-heading': '#1e40af'
+      // Premium Brand System
+      '--bg-primary': '#FEFEFE',
+      '--bg-secondary': '#F8FAFC',
+      '--bg-gradient': 'linear-gradient(135deg, #FEFEFE 0%, #F8FAFC 50%, #F1F5F9 100%)',
+      '--bg-hero': 'linear-gradient(135deg, #2563EB 0%, #EA580C 100%)',
+      
+      // Typography & Text
+      '--text-primary': '#1F2937',
+      '--text-secondary': '#4B5563',
+      '--text-muted': '#6B7280',
+      '--text-white': '#FFFFFF',
+      
+      // Brand Colors
+      '--primary-blue': '#2563EB',
+      '--primary-blue-hover': '#1D4ED8',
+      '--primary-blue-light': '#60A5FA',
+      '--accent-orange': '#EA580C',
+      '--accent-orange-hover': '#C2410C',
+      '--accent-orange-light': '#FB923C',
+      
+      // Card System
+      '--card-bg': '#FFFFFF',
+      '--card-shadow': '0 4px 20px rgba(37, 99, 235, 0.08)',
+      '--card-shadow-hover': '0 8px 32px rgba(37, 99, 235, 0.15)',
+      '--card-border': 'rgba(37, 99, 235, 0.1)',
+      
+      // Glassmorphism
+      '--glass-bg': 'rgba(255, 255, 255, 0.85)',
+      '--glass-border': 'rgba(255, 255, 255, 0.2)',
+      '--glass-shadow': '0 8px 32px rgba(0, 0, 0, 0.1)',
+      '--backdrop-blur': 'blur(16px)',
+      
+      // Interactive Elements
+      '--btn-primary-bg': 'linear-gradient(135deg, #2563EB, #1D4ED8)',
+      '--btn-primary-hover': 'linear-gradient(135deg, #1D4ED8, #1E3A8A)',
+      '--btn-secondary-bg': 'linear-gradient(135deg, #EA580C, #C2410C)',
+      '--btn-secondary-hover': 'linear-gradient(135deg, #C2410C, #9A3412)',
+      '--btn-ghost': 'rgba(37, 99, 235, 0.1)',
+      '--btn-ghost-hover': 'rgba(37, 99, 235, 0.2)',
+      
+      // Status & Feedback
+      '--success': '#10B981',
+      '--warning': '#F59E0B',
+      '--error': '#EF4444',
+      '--info': '#3B82F6',
+      
+      // Borders & Lines
+      '--border-light': '#E5E7EB',
+      '--border-medium': '#D1D5DB',
+      '--border-focus': '#2563EB',
+      
+      // Legacy compatibility
+      '--accent-color': '#2563EB',
+      '--accent-secondary': '#EA580C',
+      '--border-color': '#E5E7EB',
+      '--cookie-bg': 'linear-gradient(135deg, #1F2937 0%, #374151 100%)',
+      '--legal-section-heading': '#2563EB'
     }
   },
   dark: {
     name: 'Dark Mode',
     css: {
-      '--bg-primary': '#1e293b',
-      '--bg-gradient': 'linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
-      '--text-primary': '#f8fafc',
-      '--text-muted': '#94a3b8',
-      '--accent-color': '#3b82f6',
-      '--accent-secondary': '#f97316',
-      '--card-bg': '#334155',
-      '--card-shadow': '0 4px 12px rgba(0,0,0,0.3)',
-      '--border-color': '#475569',
-      '--btn-primary-bg': 'linear-gradient(135deg, #3b82f6, #1e40af)',
-      '--btn-success-bg': 'linear-gradient(45deg, #f97316, #ea580c)',
-      '--cookie-bg': 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-      '--legal-section-heading': '#60a5fa'
+      // Premium Brand System - Dark
+      '--bg-primary': '#0F172A',
+      '--bg-secondary': '#1E293B',
+      '--bg-gradient': 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%)',
+      '--bg-hero': 'linear-gradient(135deg, #3B82F6 0%, #F97316 100%)',
+      
+      // Typography & Text - Dark
+      '--text-primary': '#F8FAFC',
+      '--text-secondary': '#E2E8F0',
+      '--text-muted': '#94A3B8',
+      '--text-white': '#FFFFFF',
+      
+      // Brand Colors - Dark Adapted
+      '--primary-blue': '#3B82F6',
+      '--primary-blue-hover': '#60A5FA',
+      '--primary-blue-light': '#93C5FD',
+      '--accent-orange': '#F97316',
+      '--accent-orange-hover': '#FB923C',
+      '--accent-orange-light': '#FDBA74',
+      
+      // Card System - Dark
+      '--card-bg': '#1E293B',
+      '--card-shadow': '0 4px 20px rgba(0, 0, 0, 0.25)',
+      '--card-shadow-hover': '0 8px 32px rgba(0, 0, 0, 0.4)',
+      '--card-border': 'rgba(59, 130, 246, 0.2)',
+      
+      // Glassmorphism - Dark
+      '--glass-bg': 'rgba(30, 41, 59, 0.85)',
+      '--glass-border': 'rgba(248, 250, 252, 0.1)',
+      '--glass-shadow': '0 8px 32px rgba(0, 0, 0, 0.3)',
+      '--backdrop-blur': 'blur(16px)',
+      
+      // Interactive Elements - Dark
+      '--btn-primary-bg': 'linear-gradient(135deg, #3B82F6, #2563EB)',
+      '--btn-primary-hover': 'linear-gradient(135deg, #60A5FA, #3B82F6)',
+      '--btn-secondary-bg': 'linear-gradient(135deg, #F97316, #EA580C)',
+      '--btn-secondary-hover': 'linear-gradient(135deg, #FB923C, #F97316)',
+      '--btn-ghost': 'rgba(59, 130, 246, 0.2)',
+      '--btn-ghost-hover': 'rgba(59, 130, 246, 0.3)',
+      
+      // Status & Feedback - Dark
+      '--success': '#22C55E',
+      '--warning': '#EAB308',
+      '--error': '#F87171',
+      '--info': '#60A5FA',
+      
+      // Borders & Lines - Dark
+      '--border-light': '#374151',
+      '--border-medium': '#4B5563',
+      '--border-focus': '#3B82F6',
+      
+      // Legacy compatibility
+      '--accent-color': '#3B82F6',
+      '--accent-secondary': '#F97316',
+      '--border-color': '#374151',
+      '--cookie-bg': 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+      '--legal-section-heading': '#60A5FA'
     }
   },
 };
@@ -278,12 +366,39 @@ ${cssVars}
         --font-size-desktop: 16px;
       }
       
+      /* Premium Reset & Base Styles */
+      * {
+        box-sizing: border-box;
+      }
+      
       body { 
-        font-family: 'Raleway', sans-serif;
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         background: var(--bg-gradient);
         min-height: 100vh;
         color: var(--text-primary);
-        transition: background 0.3s ease, color 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        font-weight: 400;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      
+      /* Premium Typography System */
+      h1, h2, h3, h4, h5, h6 {
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -0.025em;
+        margin-bottom: 0.75em;
+      }
+      
+      h1 { font-size: clamp(2rem, 5vw, 3rem); }
+      h2 { font-size: clamp(1.5rem, 4vw, 2.25rem); }
+      h3 { font-size: clamp(1.25rem, 3vw, 1.875rem); }
+      h4 { font-size: clamp(1.125rem, 2.5vw, 1.5rem); }
+      
+      p, li {
+        font-size: clamp(0.875rem, 1.5vw, 1rem);
+        line-height: 1.7;
       }
       
       .main-header {
@@ -294,36 +409,540 @@ ${cssVars}
         color: var(--text-primary);
       }
       
+      /* Premium Card System */
       .card {
         border: none;
-        border-radius: 12px;
+        border-radius: 20px;
         box-shadow: var(--card-shadow);
         background: var(--card-bg);
         color: var(--text-primary);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: var(--card-border);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .card:hover {
+        box-shadow: var(--card-shadow-hover);
+        transform: translateY(-2px);
+      }
+      
+      .card:hover::before {
+        opacity: 1;
       }
       
       .card-header {
-        background: var(--card-bg);
-        border-bottom: 1px solid var(--border-color);
+        background: transparent;
+        border-bottom: 1px solid var(--border-light);
         color: var(--text-primary);
+        font-weight: 600;
+        padding: 1.5rem 2rem 1rem;
+      }
+      
+      .card-body {
+        padding: 1.5rem 2rem 2rem;
+      }
+      
+      /* Premium Button System */
+      .btn {
+        font-family: 'Raleway', sans-serif;
+        font-weight: 600;
+        letter-spacing: 0.025em;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      
+      .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s ease;
+      }
+      
+      .btn:hover::before {
+        left: 100%;
       }
       
       .btn-primary {
         background: var(--btn-primary-bg);
-        border: none;
-        font-weight: 600;
-        color: white;
+        color: var(--text-white);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      }
+      
+      .btn-primary:hover {
+        background: var(--btn-primary-hover);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        transform: translateY(-1px);
       }
       
       .btn-success {
-        background: var(--btn-success-bg);
-        border: none;
-        font-weight: 600;
-        color: white;
+        background: var(--btn-secondary-bg);
+        color: var(--text-white);
+        box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+      }
+      
+      .btn-success:hover {
+        background: var(--btn-secondary-hover);
+        box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
+        transform: translateY(-1px);
+      }
+      
+      .btn-outline-primary {
+        background: var(--btn-ghost);
+        color: var(--primary-blue);
+        border: 1px solid var(--primary-blue);
+      }
+      
+      .btn-outline-primary:hover {
+        background: var(--btn-ghost-hover);
+        color: var(--primary-blue-hover);
+        border-color: var(--primary-blue-hover);
+      }
+      
+      .btn-lg {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+      }
+      
+      .btn-sm {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
       }
       
       .text-muted {
         color: var(--text-muted) !important;
+      }
+      
+      /* Premium Form System */
+      .form-control, .form-select {
+        background: var(--card-bg);
+        border: 2px solid var(--border-light);
+        border-radius: 12px;
+        color: var(--text-primary);
+        font-size: 1rem;
+        padding: 0.875rem 1.25rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-family: 'Raleway', sans-serif;
+      }
+      
+      .form-control:focus, .form-select:focus {
+        background: var(--card-bg);
+        border-color: var(--border-focus);
+        color: var(--text-primary);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        outline: none;
+      }
+      
+      .form-control-lg, .form-select-lg {
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+        border-radius: 16px;
+      }
+      
+      .form-label {
+        color: var(--text-primary);
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+        letter-spacing: 0.025em;
+      }
+      
+      .form-text {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        line-height: 1.5;
+      }
+      
+      /* Glassmorphism Components */
+      .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: var(--backdrop-blur);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        box-shadow: var(--glass-shadow);
+      }
+      
+      .glass-header {
+        background: var(--glass-bg);
+        backdrop-filter: var(--backdrop-blur);
+        border: 1px solid var(--glass-border);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      
+      /* Premium Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      @keyframes slideInRight {
+        from {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+      
+      @keyframes shimmer {
+        0% {
+          background-position: -200% 0;
+        }
+        100% {
+          background-position: 200% 0;
+        }
+      }
+      
+      .animate-fade-in-up {
+        animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .animate-slide-in-right {
+        animation: slideInRight 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .animate-pulse {
+        animation: pulse 2s infinite;
+      }
+      
+      /* Loading & Skeleton States */
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          var(--border-light) 25%,
+          var(--border-medium) 50%,
+          var(--border-light) 75%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+        border-radius: 8px;
+      }
+      
+      .loading-ring {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid transparent;
+        border-top: 2px solid currentColor;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* Premium Micro-Interactions */
+      .hover-lift {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .hover-lift:hover {
+        transform: translateY(-4px);
+      }
+      
+      .hover-scale {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .hover-scale:hover {
+        transform: scale(1.02);
+      }
+      
+      /* Status Indicators */
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.375rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        letter-spacing: 0.025em;
+      }
+      
+      .status-success {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+      }
+      
+      .status-warning {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+      }
+      
+      .status-error {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--error);
+      }
+      
+      /* Premium Hero Section */
+      .hero-section {
+        position: relative;
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+        margin-bottom: 4rem;
+        overflow: hidden;
+        border-radius: 24px;
+      }
+      
+      .hero-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--bg-hero);
+        background-image: 
+          radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+        border-radius: inherit;
+        z-index: -2;
+      }
+      
+      .hero-background::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.08;
+        border-radius: inherit;
+        z-index: -1;
+      }
+      
+      .hero-content {
+        max-width: 800px;
+        z-index: 1;
+        color: var(--text-white);
+      }
+      
+      .hero-badge {
+        margin-bottom: 2rem;
+      }
+      
+      .hero-title {
+        font-size: clamp(2.5rem, 8vw, 4rem);
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        letter-spacing: -0.02em;
+      }
+      
+      .gradient-text {
+        background: linear-gradient(135deg, #FBBF24, #F59E0B);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      
+      .hero-subtitle {
+        font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+        line-height: 1.6;
+        margin-bottom: 3rem;
+        opacity: 0.9;
+        font-weight: 400;
+      }
+      
+      .hero-stats {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 3rem;
+      }
+      
+      .stat-item {
+        text-align: center;
+      }
+      
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--text-white);
+        margin-bottom: 0.25rem;
+      }
+      
+      .stat-label {
+        font-size: 0.875rem;
+        opacity: 0.8;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      
+      .stat-divider {
+        width: 1px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.3);
+      }
+      
+      /* Hero Icons Section */
+      .hero-icons {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .hero-icon-item {
+        text-align: center;
+        padding: 1.5rem;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .hero-icon-item:hover {
+        transform: translateY(-8px);
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      }
+      
+      .hero-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .hero-icon::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(from 0deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        animation: rotate 3s linear infinite;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .hero-icon-item:hover .hero-icon::before {
+        opacity: 1;
+      }
+      
+      @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      .hero-icon svg {
+        z-index: 1;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+      }
+      
+      .hero-icon-label {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-white);
+        letter-spacing: 0.025em;
+        line-height: 1.4;
+      }
+      
+      /* Mobile Hero Icons */
+      @media (max-width: 768px) {
+        .hero-icons {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1.5rem;
+          margin-bottom: 3rem;
+        }
+        
+        .hero-icon-item {
+          padding: 1rem;
+        }
+        
+        .hero-icon {
+          width: 64px;
+          height: 64px;
+        }
+        
+        .hero-icon svg {
+          width: 32px;
+          height: 32px;
+        }
+        
+        .hero-icon-label {
+          font-size: 0.9rem;
+        }
+        
+        .hero-stats {
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+        
+        .stat-divider {
+          width: 40px;
+          height: 1px;
+        }
       }
       
       /* Language Switcher - Simple Text */
@@ -1325,11 +1944,122 @@ function generateDashboardHTML(shops, config, tags, t, lang, theme = 'light') {
                 <a href="?lang=nl&theme=${theme}" class="lang-option ${lang === 'nl' ? 'active' : ''}">NL</a>
             </div>
         </div>
-        <div class="main-header p-3 p-md-5 text-center">
-            <h1 style="color: var(--accent-color); font-weight: 700; font-size: 2.5rem; letter-spacing: 2px;">
-                ${t.app_title} <!-- THEME TEST -->
-            </h1>
-            <p class="text-muted">${t.app_description}</p>
+        <!-- Premium Hero Section -->
+        <div class="hero-section">
+            <div class="hero-background"></div>
+            <div class="hero-content">
+                <div class="hero-badge animate-fade-in-up">
+                    <span class="status-badge status-success">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        ${lang === 'nl' ? 'Live Monitoring Actief' : 'Live Monitoring Active'}
+                    </span>
+                </div>
+                
+                <h1 class="hero-title animate-fade-in-up" style="animation-delay: 0.1s;">
+                    ${lang === 'nl' ? 
+                        'Automatiseer je <span class="gradient-text">DHgate Monitoring</span>' :
+                        'Automate your <span class="gradient-text">DHgate Monitoring</span>'
+                    }
+                </h1>
+                
+                <p class="hero-subtitle animate-fade-in-up" style="animation-delay: 0.2s;">
+                    ${lang === 'nl' ? 
+                        'Ontvang real-time notificaties wanneer nieuwe producten worden geüpload die overeenkomen met jouw criteria. Professioneel, betrouwbaar en volledig geautomatiseerd.' :
+                        'Receive real-time notifications when new products matching your criteria are uploaded. Professional, reliable and fully automated.'
+                    }
+                </p>
+                
+                <!-- Hero Icons Section -->
+                <div class="hero-icons animate-fade-in-up" style="animation-delay: 0.3s;">
+                    <div class="hero-icon-item">
+                        <div class="hero-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                                <defs>
+                                    <linearGradient id="monitorGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#FBBF24"/>
+                                        <stop offset="100%" style="stop-color:#F59E0B"/>
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="12" cy="12" r="9" stroke="url(#monitorGradient)" stroke-width="1.5" fill="none"/>
+                                <path d="M12 7v5l3 3" stroke="url(#monitorGradient)" stroke-width="1.5" fill="none"/>
+                                <circle cx="12" cy="12" r="1" fill="url(#monitorGradient)"/>
+                            </svg>
+                        </div>
+                        <div class="hero-icon-label">${lang === 'nl' ? '24/7 Monitoring' : '24/7 Monitoring'}</div>
+                    </div>
+                    
+                    <div class="hero-icon-item">
+                        <div class="hero-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                                <defs>
+                                    <linearGradient id="alertGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#FBBF24"/>
+                                        <stop offset="100%" style="stop-color:#F59E0B"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="url(#alertGradient)" stroke-width="1.5" fill="none"/>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="url(#alertGradient)" stroke-width="1.5" fill="none"/>
+                                <circle cx="18" cy="6" r="3" fill="url(#alertGradient)"/>
+                            </svg>
+                        </div>
+                        <div class="hero-icon-label">${lang === 'nl' ? 'Instant Alerts' : 'Instant Alerts'}</div>
+                    </div>
+                    
+                    <div class="hero-icon-item">
+                        <div class="hero-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                                <defs>
+                                    <linearGradient id="filterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#FBBF24"/>
+                                        <stop offset="100%" style="stop-color:#F59E0B"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z" stroke="url(#filterGradient)" stroke-width="1.5" fill="none"/>
+                                <path d="M8 21v-4a2 2 0 012-2h4a2 2 0 012 2v4" stroke="url(#filterGradient)" stroke-width="1.5" fill="none"/>
+                                <path d="M21 7L12 3 3 7" stroke="url(#filterGradient)" stroke-width="1.5" fill="none"/>
+                                <circle cx="16" cy="10" r="2" stroke="url(#filterGradient)" stroke-width="1.5" fill="none"/>
+                            </svg>
+                        </div>
+                        <div class="hero-icon-label">${lang === 'nl' ? 'Smart Filtering' : 'Smart Filtering'}</div>
+                    </div>
+                    
+                    <div class="hero-icon-item">
+                        <div class="hero-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                                <defs>
+                                    <linearGradient id="automationGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#FBBF24"/>
+                                        <stop offset="100%" style="stop-color:#F59E0B"/>
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="12" cy="12" r="3" stroke="url(#automationGradient)" stroke-width="1.5" fill="none"/>
+                                <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1" stroke="url(#automationGradient)" stroke-width="1.5" fill="none"/>
+                                <path d="M20.5 7.5L16 12l4.5 4.5M3.5 16.5L8 12 3.5 7.5" stroke="url(#automationGradient)" stroke-width="1.5" fill="none"/>
+                            </svg>
+                        </div>
+                        <div class="hero-icon-label">${lang === 'nl' ? 'Full Automation' : 'Full Automation'}</div>
+                    </div>
+                </div>
+                
+                <div class="hero-stats animate-fade-in-up" style="animation-delay: 0.4s;">
+                    <div class="stat-item">
+                        <div class="stat-number">< 30s</div>
+                        <div class="stat-label">${lang === 'nl' ? 'Reactietijd' : 'Response Time'}</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-number">99.9%</div>
+                        <div class="stat-label">${lang === 'nl' ? 'Uptime' : 'Uptime'}</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">${lang === 'nl' ? 'Monitored Stores' : 'Monitored Stores'}</div>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <div class="row g-3 g-md-4">
@@ -3098,74 +3828,211 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <div class="card shadow-lg border-0" style="border-radius: 20px;">
                         <div class="card-body p-4 p-md-5">
-                            <form method="POST" action="/subscribe" id="subscriptionForm">
+                            <form method="POST" action="/subscribe" id="progressiveForm">
                                 <input type="hidden" name="lang" value="${lang}">
                                 
-                                <div class="row mb-4">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-semibold">${lang === 'nl' ? 'Email adres' : 'Email address'}</label>
-                                        <input type="email" name="email" class="form-control form-control-lg" 
-                                               placeholder="${lang === 'nl' ? 'jouw@email.com' : 'your@email.com'}" required>
+                                <!-- Step 1: Email Only -->
+                                <div id="step1" class="form-step active">
+                                    <div class="text-center mb-4">
+                                        <div class="step-indicator">
+                                            <span class="step-number active">1</span>
+                                            <span class="step-number">2</span>
+                                            <span class="step-number">3</span>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-semibold">${lang === 'nl' ? 'DHgate Store URL' : 'DHgate Store URL'}</label>
+                                    
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold">
+                                            <svg width="16" height="16" style="margin-right: 8px; vertical-align: -2px;" viewBox="0 0 24 24" fill="none">
+                                                <defs>
+                                                    <linearGradient id="emailGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                        <stop offset="0%" style="stop-color:#3b82f6"/>
+                                                        <stop offset="100%" style="stop-color:#1e40af"/>
+                                                    </linearGradient>
+                                                </defs>
+                                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="url(#emailGradient)" stroke-width="1.5" fill="none"/>
+                                                <polyline points="22,6 12,13 2,6" stroke="url(#emailGradient)" stroke-width="1.5" fill="none"/>
+                                            </svg>
+                                            ${lang === 'nl' ? 'Email adres' : 'Email address'}
+                                        </label>
+                                        <input type="email" name="email" id="emailInput" class="form-control form-control-lg" 
+                                               placeholder="${lang === 'nl' ? 'jouw@email.com' : 'your@email.com'}" required style="font-size: 16px;">
+                                        <style>
+                                            #emailInput::placeholder {
+                                                font-size: 14px !important;
+                                                opacity: 0.6;
+                                            }
+                                        </style>
+                                    </div>
+                                    
+                                    <div class="d-grid">
+                                        <button type="button" class="btn btn-success btn-lg" onclick="nextStep(1)" style="border-radius: 12px;">
+                                            ${lang === 'nl' ? 'Volgende →' : 'Next →'}
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 2: Store & Tags -->
+                                <div id="step2" class="form-step">
+                                    <div class="text-center mb-4">
+                                        <div class="step-indicator">
+                                            <span class="step-number completed">1</span>
+                                            <span class="step-number active">2</span>
+                                            <span class="step-number">3</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold">
+                                            <svg width="16" height="16" style="margin-right: 8px; vertical-align: -2px;" viewBox="0 0 24 24" fill="none">
+                                                <defs>
+                                                    <linearGradient id="storeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                        <stop offset="0%" style="stop-color:#f97316"/>
+                                                        <stop offset="100%" style="stop-color:#ea580c"/>
+                                                    </linearGradient>
+                                                </defs>
+                                                <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z" stroke="url(#storeGradient)" stroke-width="1.5" fill="none"/>
+                                                <path d="M8 21v-4a2 2 0 012-2h4a2 2 0 012 2v4" stroke="url(#storeGradient)" stroke-width="1.5" fill="none"/>
+                                                <path d="M21 7L12 3 3 7" stroke="url(#storeGradient)" stroke-width="1.5" fill="none"/>
+                                            </svg>
+                                            ${lang === 'nl' ? 'DHgate Store URL' : 'DHgate Store URL'}
+                                        </label>
                                         <input type="url" name="store_url" class="form-control form-control-lg" 
                                                placeholder="https://dhgate.com/store/..." required>
+                                        <div class="form-text">${lang === 'nl' ? 'De volledige URL van de DHgate winkel die je wilt monitoren' : 'The complete URL of the DHgate store you want to monitor'}</div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold">
+                                            <svg width="16" height="16" style="margin-right: 8px; vertical-align: -2px;" viewBox="0 0 24 24" fill="none">
+                                                <defs>
+                                                    <linearGradient id="tagGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                        <stop offset="0%" style="stop-color:#10b981"/>
+                                                        <stop offset="100%" style="stop-color:#059669"/>
+                                                    </linearGradient>
+                                                </defs>
+                                                <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" stroke="url(#tagGradient)" stroke-width="1.5" fill="none"/>
+                                                <line x1="7" y1="7" x2="7.01" y2="7" stroke="url(#tagGradient)" stroke-width="2"/>
+                                            </svg>
+                                            ${lang === 'nl' ? 'Monitoring tags' : 'Monitoring tags'}
+                                        </label>
+                                        <input type="text" name="tags" class="form-control form-control-lg" 
+                                               placeholder="${lang === 'nl' ? 'kids, children, baby, youth' : 'kids, children, baby, youth'}" required>
+                                        <div class="form-text">${lang === 'nl' ? 'Woorden gescheiden door komma\'s. Producten met deze woorden worden gedetecteerd.' : 'Words separated by commas. Products containing these words will be detected.'}</div>
+                                    </div>
+                                    
+                                    <div class="d-flex gap-3">
+                                        <button type="button" class="btn btn-outline-secondary flex-fill" onclick="prevStep(2)" style="border-radius: 12px;">
+                                            ← ${lang === 'nl' ? 'Terug' : 'Back'}
+                                        </button>
+                                        <button type="button" class="btn btn-success flex-fill" onclick="nextStep(2)" style="border-radius: 12px;">
+                                            ${lang === 'nl' ? 'Volgende →' : 'Next →'}
+                                        </button>
                                     </div>
                                 </div>
                                 
-                                <div class="mb-4">
-                                    <label class="form-label fw-semibold">${lang === 'nl' ? 'Monitoring tags' : 'Monitoring tags'}</label>
-                                    <input type="text" name="tags" class="form-control form-control-lg" 
-                                           placeholder="${lang === 'nl' ? 'kids, children, baby, youth' : 'kids, children, baby, youth'}" required>
-                                    <div class="form-text">${lang === 'nl' ? 'Gescheiden door komma\'s. Deze woorden worden gezocht in producttitels.' : 'Separated by commas. These words will be searched in product titles.'}</div>
-                                </div>
-                                
-                                <div class="row mb-4">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-semibold">${lang === 'nl' ? 'Notificatie frequentie' : 'Notification frequency'}</label>
-                                        <select name="frequency" class="form-select form-select-lg" required>
-                                            <option value="immediate">${lang === 'nl' ? 'Direct - Real-time alerts' : 'Immediate - Real-time alerts'}</option>
-                                            <option value="daily" selected>${lang === 'nl' ? 'Dagelijks - 1x per dag' : 'Daily - Once per day'}</option>
-                                            <option value="weekly">${lang === 'nl' ? 'Wekelijks - 1x per week' : 'Weekly - Once per week'}</option>
-                                        </select>
+                                <!-- Step 3: Preferences -->
+                                <div id="step3" class="form-step">
+                                    <div class="text-center mb-4">
+                                        <div class="step-indicator">
+                                            <span class="step-number completed">1</span>
+                                            <span class="step-number completed">2</span>
+                                            <span class="step-number active">3</span>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-semibold">${lang === 'nl' ? 'Tijd (voor dagelijks/wekelijks)' : 'Time (for daily/weekly)'}</label>
-                                        <select name="notification_time" class="form-select form-select-lg">
-                                            <option value="09:00" selected>09:00</option>
-                                            <option value="12:00">12:00</option>
-                                            <option value="15:00">15:00</option>
-                                            <option value="18:00">18:00</option>
-                                            <option value="21:00">21:00</option>
-                                        </select>
+                                    
+                                    <div class="row mb-4">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-semibold">
+                                                <svg width="16" height="16" style="margin-right: 8px; vertical-align: -2px;" viewBox="0 0 24 24" fill="none">
+                                                    <defs>
+                                                        <linearGradient id="frequencyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                            <stop offset="0%" style="stop-color:#8b5cf6"/>
+                                                            <stop offset="100%" style="stop-color:#7c3aed"/>
+                                                        </linearGradient>
+                                                    </defs>
+                                                    <circle cx="12" cy="12" r="9" stroke="url(#frequencyGradient)" stroke-width="1.5" fill="none"/>
+                                                    <polyline points="12,6 12,12 16,14" stroke="url(#frequencyGradient)" stroke-width="1.5" fill="none"/>
+                                                </svg>
+                                                ${lang === 'nl' ? 'Hoe vaak?' : 'How often?'}
+                                            </label>
+                                            <select name="frequency" class="form-select form-select-lg" required>
+                                                <option value="immediate">${lang === 'nl' ? 'Direct' : 'Immediate'}</option>
+                                                <option value="daily" selected>${lang === 'nl' ? 'Dagelijks' : 'Daily'}</option>
+                                                <option value="weekly">${lang === 'nl' ? 'Wekelijks' : 'Weekly'}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-semibold">
+                                                <svg width="16" height="16" style="margin-right: 8px; vertical-align: -2px;" viewBox="0 0 24 24" fill="none">
+                                                    <defs>
+                                                        <linearGradient id="timeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                            <stop offset="0%" style="stop-color:#06b6d4"/>
+                                                            <stop offset="100%" style="stop-color:#0891b2"/>
+                                                        </linearGradient>
+                                                    </defs>
+                                                    <circle cx="12" cy="12" r="9" stroke="url(#timeGradient)" stroke-width="1.5" fill="none"/>
+                                                    <polyline points="12,6 12,12 8,14" stroke="url(#timeGradient)" stroke-width="1.5" fill="none"/>
+                                                </svg>
+                                                ${lang === 'nl' ? 'Tijdstip' : 'Time'}
+                                            </label>
+                                            <select name="notification_time" class="form-select form-select-lg">
+                                                <option value="09:00" selected>09:00</option>
+                                                <option value="12:00">12:00</option>
+                                                <option value="15:00">15:00</option>
+                                                <option value="18:00">18:00</option>
+                                                <option value="21:00">21:00</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                
-                                <div class="row mb-4">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-semibold">${lang === 'nl' ? 'Min prijs (optioneel)' : 'Min price (optional)'}</label>
-                                        <input type="number" name="min_price" class="form-control form-control-lg" 
-                                               placeholder="${lang === 'nl' ? '10.00' : '10.00'}" step="0.01" min="0">
+                                    
+                                    <div class="row mb-4">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-semibold">
+                                                <svg width="16" height="16" style="margin-right: 8px; vertical-align: -2px;" viewBox="0 0 24 24" fill="none">
+                                                    <defs>
+                                                        <linearGradient id="priceMinGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                            <stop offset="0%" style="stop-color:#f59e0b"/>
+                                                            <stop offset="100%" style="stop-color:#d97706"/>
+                                                        </linearGradient>
+                                                    </defs>
+                                                    <circle cx="12" cy="12" r="9" stroke="url(#priceMinGradient)" stroke-width="1.5" fill="none"/>
+                                                    <line x1="9" y1="9" x2="15" y2="15" stroke="url(#priceMinGradient)" stroke-width="1.5"/>
+                                                    <line x1="15" y1="9" x2="9" y2="15" stroke="url(#priceMinGradient)" stroke-width="1.5"/>
+                                                </svg>
+                                                ${lang === 'nl' ? 'Min prijs €' : 'Min price €'}
+                                            </label>
+                                            <input type="number" name="min_price" class="form-control form-control-lg" 
+                                                   placeholder="10.00" step="0.01" min="0">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-semibold">
+                                                <svg width="16" height="16" style="margin-right: 8px; vertical-align: -2px;" viewBox="0 0 24 24" fill="none">
+                                                    <defs>
+                                                        <linearGradient id="priceMaxGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                            <stop offset="0%" style="stop-color:#ef4444"/>
+                                                            <stop offset="100%" style="stop-color:#dc2626"/>
+                                                        </linearGradient>
+                                                    </defs>
+                                                    <circle cx="12" cy="12" r="9" stroke="url(#priceMaxGradient)" stroke-width="1.5" fill="none"/>
+                                                    <line x1="12" y1="8" x2="12" y2="16" stroke="url(#priceMaxGradient)" stroke-width="1.5"/>
+                                                    <line x1="8" y1="12" x2="16" y2="12" stroke="url(#priceMaxGradient)" stroke-width="1.5"/>
+                                                </svg>
+                                                ${lang === 'nl' ? 'Max prijs €' : 'Max price €'}
+                                            </label>
+                                            <input type="number" name="max_price" class="form-control form-control-lg" 
+                                                   placeholder="100.00" step="0.01" min="0">
+                                        </div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-semibold">${lang === 'nl' ? 'Max prijs (optioneel)' : 'Max price (optional)'}</label>
-                                        <input type="number" name="max_price" class="form-control form-control-lg" 
-                                               placeholder="${lang === 'nl' ? '100.00' : '100.00'}" step="0.01" min="0">
+                                    
+                                    <div class="d-flex gap-3">
+                                        <button type="button" class="btn btn-outline-secondary flex-fill" onclick="prevStep(3)" style="border-radius: 12px;">
+                                            ← ${lang === 'nl' ? 'Terug' : 'Back'}
+                                        </button>
+                                        <button type="submit" class="btn btn-success flex-fill" style="border-radius: 12px; font-weight: 600;">
+                                            ${lang === 'nl' ? 'Start Monitoring' : 'Start Monitoring'}
+                                        </button>
                                     </div>
-                                </div>
-                                
-                                <div class="mb-4">
-                                    <label class="form-label fw-semibold">${lang === 'nl' ? 'Extra keywords (optioneel)' : 'Extra keywords (optional)'}</label>
-                                    <input type="text" name="keywords" class="form-control form-control-lg" 
-                                           placeholder="${lang === 'nl' ? 'sport, voetbal, basketbal' : 'sport, football, basketball'}">
-                                    <div class="form-text">${lang === 'nl' ? 'Aanvullende zoektermen om producten te filteren.' : 'Additional search terms to filter products.'}</div>
-                                </div>
-                                
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-success btn-lg" style="padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: 600;">
-                                        ${lang === 'nl' ? 'Start Monitoring' : 'Start Monitoring'}
-                                    </button>
                                 </div>
                                 
                                 <div class="text-center mt-4">
@@ -3186,6 +4053,150 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             </div>
         </div>
     </section>
+    
+    <!-- Progressive Form Styling & JavaScript -->
+    <style>
+        .form-step {
+            display: none;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.3s ease;
+        }
+        
+        .form-step.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 2rem;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border-color);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .step-number.active {
+            background: var(--accent-color);
+            color: white;
+            box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.2);
+        }
+        
+        .step-number.completed {
+            background: var(--accent-color);
+            color: white;
+        }
+        
+        .step-number.completed::after {
+            content: '✓';
+            font-size: 12px;
+        }
+        
+        .step-number:not(.completed)::after {
+            content: attr(data-step);
+        }
+        
+        @media (max-width: 767px) {
+            .step-number {
+                width: 35px;
+                height: 35px;
+                font-size: 12px;
+            }
+            
+            .step-indicator {
+                gap: 10px;
+            }
+        }
+    </style>
+    
+    <script>
+        let currentStep = 1;
+        const totalSteps = 3;
+        
+        function validateStep(step) {
+            const stepElement = document.getElementById('step' + step);
+            const requiredInputs = stepElement.querySelectorAll('input[required], select[required]');
+            
+            for (let input of requiredInputs) {
+                if (!input.value.trim()) {
+                    input.focus();
+                    input.classList.add('is-invalid');
+                    setTimeout(() => input.classList.remove('is-invalid'), 3000);
+                    return false;
+                }
+                
+                if (input.type === 'email' && !input.validity.valid) {
+                    input.focus();
+                    input.classList.add('is-invalid');
+                    setTimeout(() => input.classList.remove('is-invalid'), 3000);
+                    return false;
+                }
+                
+                if (input.type === 'url' && !input.validity.valid) {
+                    input.focus();
+                    input.classList.add('is-invalid');
+                    setTimeout(() => input.classList.remove('is-invalid'), 3000);
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        function nextStep(step) {
+            if (!validateStep(step)) return;
+            
+            if (step < totalSteps) {
+                document.getElementById('step' + step).classList.remove('active');
+                document.getElementById('step' + (step + 1)).classList.add('active');
+                
+                // Update step indicators
+                document.querySelectorAll('.step-number')[step - 1].classList.remove('active');
+                document.querySelectorAll('.step-number')[step - 1].classList.add('completed');
+                document.querySelectorAll('.step-number')[step].classList.add('active');
+                
+                currentStep = step + 1;
+            }
+        }
+        
+        function prevStep(step) {
+            if (step > 1) {
+                document.getElementById('step' + step).classList.remove('active');
+                document.getElementById('step' + (step - 1)).classList.add('active');
+                
+                // Update step indicators
+                document.querySelectorAll('.step-number')[step - 1].classList.remove('active');
+                document.querySelectorAll('.step-number')[step - 2].classList.remove('completed');
+                document.querySelectorAll('.step-number')[step - 2].classList.add('active');
+                
+                currentStep = step - 1;
+            }
+        }
+        
+        // Auto-focus email input on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailInput = document.getElementById('emailInput');
+            if (emailInput) {
+                emailInput.focus();
+            }
+        });
+    </script>
 
     <div class="container py-5">
         <!-- Legal Footer -->
