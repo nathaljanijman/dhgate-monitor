@@ -4885,6 +4885,12 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                     <h3 class="step-title">
                                         ${lang === 'nl' ? 'Wat is je email adres?' : 'What\'s your email address?'}
                                     </h3>
+                                    <p class="step-description">
+                                        ${lang === 'nl' ? 
+                                            'We sturen je alerts wanneer nieuwe producten worden gevonden die aan jouw criteria voldoen.' :
+                                            'We\'ll send you alerts when new products are found that match your criteria.'
+                                        }
+                                    </p>
                                     <div class="form-group">
                                         <div class="input-wrapper">
                                             <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -4919,6 +4925,12 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                     <h3 class="step-title">
                                         ${lang === 'nl' ? 'Welke winkel wil je monitoren?' : 'Which store do you want to monitor?'}
                                     </h3>
+                                    <p class="step-description">
+                                        ${lang === 'nl' ? 
+                                            'Selecteer een specifieke DHgate winkel om te monitoren, of voeg zoektermen toe om producten te vinden.' :
+                                            'Select a specific DHgate store to monitor, or add search terms to find products.'
+                                        }
+                                    </p>
                                     
                                     <div class="form-group">
                                         <div class="store-search-wrapper">
@@ -4957,6 +4969,12 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                                 placeholder="${lang === 'nl' ? 'jersey, shirt, voetbal' : 'jersey, shirt, soccer'}" 
                                                 required
                                             >
+                                        </div>
+                                        <div class="form-text">
+                                            ${lang === 'nl' ? 
+                                                'We controleren producttitels en beschrijvingen op deze woorden' :
+                                                'We\'ll check product titles and descriptions for these words'
+                                            }
                                         </div>
                                     </div>
                                 </div>
