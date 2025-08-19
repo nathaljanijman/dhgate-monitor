@@ -336,9 +336,16 @@ This project is proprietary software developed for automated DHgate product moni
 ---
 
 *Last Updated: August 19, 2025*
-*Version: 3.1 - Complete Unsubscribe System with Test Environment*
+*Version: 3.2 - Chrome What's New Styling + Dashboard Foundation*
 
-### **Version 3.1 Highlights**  
+### **Version 3.2 Highlights**  
+- 🎨 **Chrome What's New Dark Mode** - Updated with official Chrome color palette (#1f1f1f, #8ab4f8)
+- 📱 **Device Mockups** - Desktop and mobile previews with light/dark mode demonstrations  
+- 🔐 **Dashboard Token System** - Secure individual dashboard access for each subscriber
+- 🎯 **Visual USP Enhancement** - Device mockups showcase real interface functionality
+- 🏗️ **Dashboard Foundation** - Token-based authentication infrastructure ready
+
+### **Previous Version 3.1 Features**
 - 🔓 **Complete Unsubscribe System** - Token-based secure unsubscription flow
 - 🧪 **Test Environment** - Direct unsubscribe testing via `/test-unsubscribe`
 - 📋 **GDPR Compliance** - Proper data handling with subscription management

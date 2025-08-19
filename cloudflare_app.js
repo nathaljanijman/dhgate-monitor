@@ -282,66 +282,66 @@ const THEMES = {
     }
   },
   dark: {
-    name: 'Dark Mode',
+    name: 'Dark Mode - Chrome What\'s New Inspired',
     css: {
-      // Premium Brand System - Dark
-      '--bg-primary': '#0F172A',
-      '--bg-secondary': '#1E293B',
-      '--bg-gradient': 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%)',
-      '--bg-hero': 'linear-gradient(135deg, #3B82F6 0%, #F97316 100%)',
+      // Chrome What's New Dark Theme
+      '--bg-primary': '#1f1f1f',
+      '--bg-secondary': '#2d2d2d',
+      '--bg-gradient': 'linear-gradient(135deg, #1f1f1f 0%, #2d2d2d 50%, #3c4043 100%)',
+      '--bg-hero': 'linear-gradient(135deg, #8ab4f8 0%, #f28b82 100%)',
       
-      // Typography & Text - Dark
-      '--text-primary': '#F8FAFC',
-      '--text-secondary': '#E2E8F0',
-      '--text-muted': '#94A3B8',
-      '--text-white': '#FFFFFF',
+      // Chrome Typography & Text
+      '--text-primary': '#e8eaed',
+      '--text-secondary': '#9aa0a6',
+      '--text-muted': '#80868b',
+      '--text-white': '#ffffff',
       
-      // Brand Colors - Dark Adapted
-      '--primary-blue': '#3B82F6',
-      '--primary-blue-hover': '#60A5FA',
-      '--primary-blue-light': '#93C5FD',
-      '--accent-orange': '#F97316',
-      '--accent-orange-hover': '#FB923C',
-      '--accent-orange-light': '#FDBA74',
+      // Chrome Brand Colors
+      '--primary-blue': '#8ab4f8',
+      '--primary-blue-hover': '#aecbfa',
+      '--primary-blue-light': '#c8e6c9',
+      '--accent-orange': '#f28b82',
+      '--accent-orange-hover': '#f6aea9',
+      '--accent-orange-light': '#ffccbc',
       
-      // Card System - Dark
-      '--card-bg': '#1E293B',
-      '--card-bg-alpha': 'rgba(30, 41, 59, 0.95)',
-      '--card-shadow': '0 4px 20px rgba(0, 0, 0, 0.25)',
+      // Chrome Card System
+      '--card-bg': '#2d2d2d',
+      '--card-bg-alpha': 'rgba(45, 45, 45, 0.95)',
+      '--card-shadow': '0 4px 20px rgba(0, 0, 0, 0.3)',
       '--card-shadow-hover': '0 8px 32px rgba(0, 0, 0, 0.4)',
-      '--card-border': 'rgba(59, 130, 246, 0.2)',
+      '--card-border': 'rgba(138, 180, 248, 0.2)',
       
-      // Glassmorphism - Dark
-      '--glass-bg': 'rgba(30, 41, 59, 0.85)',
-      '--glass-border': 'rgba(248, 250, 252, 0.1)',
-      '--glass-shadow': '0 8px 32px rgba(0, 0, 0, 0.3)',
+      // Chrome Glassmorphism
+      '--glass-bg': 'rgba(45, 45, 45, 0.9)',
+      '--glass-border': 'rgba(232, 234, 237, 0.1)',
+      '--glass-shadow': '0 8px 32px rgba(0, 0, 0, 0.4)',
       '--backdrop-blur': 'blur(16px)',
       
-      // Interactive Elements - Dark
-      '--btn-primary-bg': 'linear-gradient(135deg, #3B82F6, #2563EB)',
-      '--btn-primary-hover': 'linear-gradient(135deg, #60A5FA, #3B82F6)',
-      '--btn-secondary-bg': 'linear-gradient(135deg, #F97316, #EA580C)',
-      '--btn-secondary-hover': 'linear-gradient(135deg, #FB923C, #F97316)',
-      '--btn-ghost': 'rgba(59, 130, 246, 0.2)',
-      '--btn-ghost-hover': 'rgba(59, 130, 246, 0.3)',
+      // Chrome Interactive Elements
+      '--btn-primary-bg': 'linear-gradient(135deg, #8ab4f8, #5f9ea0)',
+      '--btn-primary-hover': 'linear-gradient(135deg, #aecbfa, #8ab4f8)',
+      '--btn-secondary-bg': 'linear-gradient(135deg, #f28b82, #e57373)',
+      '--btn-secondary-hover': 'linear-gradient(135deg, #f6aea9, #f28b82)',
+      '--btn-ghost': 'rgba(138, 180, 248, 0.2)',
+      '--btn-ghost-hover': 'rgba(138, 180, 248, 0.3)',
       
-      // Status & Feedback - Dark
-      '--success': '#22C55E',
-      '--warning': '#EAB308',
-      '--error': '#F87171',
-      '--info': '#60A5FA',
+      // Chrome Status & Feedback
+      '--success': '#81c995',
+      '--warning': '#fdd663',
+      '--error': '#f28b82',
+      '--info': '#8ab4f8',
       
-      // Borders & Lines - Dark
-      '--border-light': '#374151',
-      '--border-medium': '#4B5563',
-      '--border-focus': '#3B82F6',
+      // Chrome Borders & Lines
+      '--border-light': '#404040',
+      '--border-medium': '#5f6368',
+      '--border-focus': '#8ab4f8',
       
       // Legacy compatibility
-      '--accent-color': '#3B82F6',
-      '--accent-secondary': '#F97316',
-      '--border-color': '#374151',
-      '--cookie-bg': 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
-      '--legal-section-heading': '#60A5FA'
+      '--accent-color': '#8ab4f8',
+      '--accent-secondary': '#f28b82',
+      '--border-color': '#404040',
+      '--cookie-bg': 'linear-gradient(135deg, #1f1f1f 0%, #2d2d2d 100%)',
+      '--legal-section-heading': '#8ab4f8'
     }
   },
 };
@@ -1621,22 +1621,36 @@ export default {
 
 async function handleDashboard(request, env) {
   try {
-    // Get shops from KV storage
-    const shops = await getShops(env);
-    const config = await getConfig(env);
-    const tags = await getTags(env);
+    const url = new URL(request.url);
+    const dashboardKey = url.searchParams.get('key');
+    const lang = url.searchParams.get('lang') || 'nl';
+    const theme = url.searchParams.get('theme') || 'light';
     
-    // Get user's language and theme preferences
-    const lang = getLanguage(request);
-    const theme = getTheme(request);
+    // Validate dashboard key
+    if (!dashboardKey) {
+      return new Response(generateDashboardErrorHTML(lang, theme, 'missing_key'), {
+        status: 400,
+        headers: { 'Content-Type': 'text/html' }
+      });
+    }
+    
+    // Get subscription by dashboard token
+    const subscription = await getSubscriptionByDashboardToken(env, dashboardKey);
+    if (!subscription || !subscription.subscribed) {
+      return new Response(generateDashboardErrorHTML(lang, theme, 'invalid_key'), {
+        status: 404,
+        headers: { 'Content-Type': 'text/html' }
+      });
+    }
+    
     const t = getTranslations(lang);
-    
-    const html = generateDashboardHTML(shops, config, tags, t, lang, theme);
+    const html = generateDashboardHTML(subscription, t, lang, theme);
     
     return new Response(html, {
       headers: { 'Content-Type': 'text/html' }
     });
   } catch (error) {
+    console.error('Dashboard Error:', error);
     return new Response('Dashboard Error: ' + error.message, { status: 500 });
   }
 }
@@ -1783,11 +1797,11 @@ async function handleSubscription(request, env) {
       });
     }
     
-    // Store subscription with unsubscribe token
-    const unsubscribeToken = await storeSubscription(env, subscription);
+    // Store subscription with tokens
+    const { unsubscribeToken, dashboardToken } = await storeSubscription(env, subscription);
     
-    // Generate success page
-    return new Response(generateSuccessResponse(lang, subscription, unsubscribeToken), {
+    // Generate success page with both tokens
+    return new Response(generateSuccessResponse(lang, subscription, unsubscribeToken, dashboardToken), {
       headers: { 'Content-Type': 'text/html' }
     });
     
@@ -1796,7 +1810,7 @@ async function handleSubscription(request, env) {
   }
 }
 
-function generateSuccessResponse(lang, subscription, unsubscribeToken) {
+function generateSuccessResponse(lang, subscription, unsubscribeToken, dashboardToken) {
   return `
 <!DOCTYPE html>
 <html lang="${lang}">
@@ -1847,11 +1861,11 @@ function generateSuccessResponse(lang, subscription, unsubscribeToken) {
                         </div>
                         
                         <div class="mt-4">
-                            <a href="/?lang=${lang}" class="btn btn-primary btn-lg me-3" style="border-radius: 12px;">
-                                ${lang === 'nl' ? 'Terug naar Home' : 'Back to Home'}
+                            <a href="/dashboard?key=${dashboardToken}&lang=${lang}" class="btn btn-primary btn-lg me-3" style="border-radius: 12px;">
+                                ${lang === 'nl' ? 'Open Dashboard' : 'Open Dashboard'}
                             </a>
-                            <a href="mailto:support@dhgate-monitor.com" class="btn btn-outline-primary btn-lg" style="border-radius: 12px;">
-                                ${lang === 'nl' ? 'Contact Support' : 'Contact Support'}
+                            <a href="/?lang=${lang}" class="btn btn-outline-primary btn-lg" style="border-radius: 12px;">
+                                ${lang === 'nl' ? 'Terug naar Home' : 'Back to Home'}
                             </a>
                         </div>
                         
@@ -3324,20 +3338,31 @@ function generateUnsubscribeToken(email) {
   return btoa(data).replace(/[+/=]/g, '').substring(0, 32);
 }
 
+function generateDashboardToken(email) {
+  // Generate a separate dashboard access token
+  const data = 'dashboard_' + email + Date.now() + Math.random();
+  return btoa(data).replace(/[+/=]/g, '').substring(0, 40);
+}
+
 async function storeSubscription(env, subscription) {
-  const token = generateUnsubscribeToken(subscription.email);
+  const unsubscribeToken = generateUnsubscribeToken(subscription.email);
+  const dashboardToken = generateDashboardToken(subscription.email);
+  
   const subscriptionData = {
     ...subscription,
-    token,
+    unsubscribe_token: unsubscribeToken,
+    dashboard_token: dashboardToken,
     subscribed: true,
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
+    last_updated: new Date().toISOString()
   };
   
-  // Store by email and by token for easy lookup
+  // Store by email and by both tokens for easy lookup
   await env.DHGATE_MONITOR_KV.put(`subscription:${subscription.email}`, JSON.stringify(subscriptionData));
-  await env.DHGATE_MONITOR_KV.put(`token:${token}`, subscription.email);
+  await env.DHGATE_MONITOR_KV.put(`token:${unsubscribeToken}`, subscription.email);
+  await env.DHGATE_MONITOR_KV.put(`dashboard:${dashboardToken}`, subscription.email);
   
-  return token;
+  return { unsubscribeToken, dashboardToken };
 }
 
 async function getSubscriptionByToken(env, token) {
@@ -3349,6 +3374,19 @@ async function getSubscriptionByToken(env, token) {
     return subscription ? JSON.parse(subscription) : null;
   } catch (error) {
     console.error('Error getting subscription by token:', error);
+    return null;
+  }
+}
+
+async function getSubscriptionByDashboardToken(env, dashboardToken) {
+  try {
+    const email = await env.DHGATE_MONITOR_KV.get(`dashboard:${dashboardToken}`);
+    if (!email) return null;
+    
+    const subscription = await env.DHGATE_MONITOR_KV.get(`subscription:${email}`);
+    return subscription ? JSON.parse(subscription) : null;
+  } catch (error) {
+    console.error('Error getting subscription by dashboard token:', error);
     return null;
   }
 }
@@ -3495,12 +3533,12 @@ async function handleTestUnsubscribe(request, env) {
       status: 'active'
     };
     
-    // Generate token and store
-    const token = await storeSubscription(env, testSubscription);
+    // Generate tokens and store
+    const { unsubscribeToken } = await storeSubscription(env, testSubscription);
     
     // Redirect to unsubscribe page with test token
     const baseUrl = new URL(request.url).origin;
-    return Response.redirect(`${baseUrl}/unsubscribe?token=${token}&lang=${lang}`, 302);
+    return Response.redirect(`${baseUrl}/unsubscribe?token=${unsubscribeToken}&lang=${lang}`, 302);
     
   } catch (error) {
     console.error('Error creating test unsubscribe:', error);
@@ -4165,6 +4203,298 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             background: linear-gradient(to top, var(--accent-color), var(--accent-secondary));
             border-radius: 2px 2px 0 0;
             min-height: 20%;
+        }
+        
+        /* Device Mockups - Chrome What's New Style */
+        .device-mockups {
+            display: flex;
+            gap: 3rem;
+            align-items: flex-start;
+            justify-content: center;
+            flex-wrap: wrap;
+            perspective: 1200px;
+        }
+        
+        .device-desktop {
+            transform: perspective(1000px) rotateY(-8deg) rotateX(2deg);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .device-mobile {
+            transform: perspective(1000px) rotateY(8deg) rotateX(-2deg) translateY(2rem);
+            animation: float 6s ease-in-out infinite reverse;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: perspective(1000px) rotateY(-8deg) rotateX(2deg) translateY(0px); }
+            50% { transform: perspective(1000px) rotateY(-8deg) rotateX(2deg) translateY(-10px); }
+        }
+        
+        .desktop-frame {
+            width: 320px;
+            height: 200px;
+            background: linear-gradient(145deg, #f0f0f0, #d0d0d0);
+            border-radius: 8px;
+            padding: 6px;
+            box-shadow: 
+                0 0 0 1px rgba(0,0,0,0.1),
+                0 4px 20px rgba(0,0,0,0.15),
+                0 8px 40px rgba(0,0,0,0.1);
+        }
+        
+        .mobile-frame {
+            width: 160px;
+            height: 320px;
+            background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+            border-radius: 20px;
+            padding: 8px;
+            box-shadow: 
+                0 0 0 1px rgba(255,255,255,0.1),
+                0 4px 20px rgba(0,0,0,0.3),
+                0 8px 40px rgba(0,0,0,0.2);
+        }
+        
+        .device-screen {
+            width: 100%;
+            height: 100%;
+            background: var(--card-bg);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .mobile-frame .device-screen {
+            border-radius: 16px;
+        }
+        
+        .mockup-navbar {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-light);
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 32px;
+        }
+        
+        .nav-dots {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .nav-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--border-medium);
+        }
+        
+        .nav-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .nav-toggle {
+            display: flex;
+            align-items: center;
+        }
+        
+        .toggle-switch {
+            width: 24px;
+            height: 12px;
+            background: var(--border-light);
+            border-radius: 6px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-switch.active {
+            background: var(--accent-color);
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-switch.active::after {
+            left: 14px;
+        }
+        
+        .mockup-content {
+            padding: 12px;
+            height: calc(100% - 32px);
+        }
+        
+        .desktop-content .mockup-header h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 12px 0;
+        }
+        
+        .mockup-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .stat-card {
+            background: rgba(138, 180, 248, 0.1);
+            border: 1px solid rgba(138, 180, 248, 0.2);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        .stat-card .stat-number {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            line-height: 1;
+        }
+        
+        .stat-card .stat-label {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        
+        .mockup-chart {
+            background: var(--border-light);
+            border-radius: 4px;
+            padding: 8px;
+            height: 60px;
+            display: flex;
+            align-items: end;
+        }
+        
+        .mockup-chart .chart-bars {
+            display: flex;
+            align-items: end;
+            gap: 4px;
+            height: 100%;
+            width: 100%;
+        }
+        
+        .mockup-chart .bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--accent-color), rgba(138, 180, 248, 0.6));
+            border-radius: 1px 1px 0 0;
+            min-height: 20%;
+        }
+        
+        .mobile-status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            background: var(--card-bg);
+            height: 20px;
+        }
+        
+        .status-icons {
+            display: flex;
+            gap: 4px;
+            font-size: 0.6rem;
+        }
+        
+        .mobile-content {
+            padding: 16px 12px;
+        }
+        
+        .mobile-form-step {
+            margin-bottom: 20px;
+        }
+        
+        .step-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .form-field {
+            margin-bottom: 12px;
+        }
+        
+        .form-field input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            font-size: 0.8rem;
+        }
+        
+        .form-button {
+            background: var(--accent-color);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        
+        .mobile-features {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+        
+        .feature-icon {
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .device-mockups {
+                flex-direction: column;
+                gap: 2rem;
+                align-items: center;
+            }
+            
+            .device-desktop {
+                transform: none;
+                order: 2;
+            }
+            
+            .device-mobile {
+                transform: none;
+                order: 1;
+            }
+            
+            .desktop-frame {
+                width: 280px;
+                height: 180px;
+            }
+            
+            .mobile-frame {
+                width: 140px;
+                height: 280px;
+            }
         }
         
         .hero-content h1 {
@@ -5329,7 +5659,87 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 </div>
                 
                 <div class="hero-visual">
-                    <div class="hero-dashboard-preview">
+                    <div class="device-mockups">
+                        <!-- Desktop Mockup -->
+                        <div class="device-desktop">
+                            <div class="device-frame desktop-frame">
+                                <div class="device-screen">
+                                    <div class="mockup-navbar">
+                                        <div class="nav-dots">
+                                            <span></span><span></span><span></span>
+                                        </div>
+                                        <div class="nav-title">DHgate Monitor</div>
+                                        <div class="nav-toggle">
+                                            <div class="toggle-switch ${theme === 'dark' ? 'active' : ''}"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mockup-content desktop-content">
+                                        <div class="mockup-header">
+                                            <h3>${lang === 'nl' ? 'Live Dashboard' : 'Live Dashboard'}</h3>
+                                        </div>
+                                        <div class="mockup-stats">
+                                            <div class="stat-card">
+                                                <div class="stat-number">1,247</div>
+                                                <div class="stat-label">${lang === 'nl' ? 'Producten' : 'Products'}</div>
+                                            </div>
+                                            <div class="stat-card">
+                                                <div class="stat-number">89</div>
+                                                <div class="stat-label">${lang === 'nl' ? 'Deze week' : 'This week'}</div>
+                                            </div>
+                                        </div>
+                                        <div class="mockup-chart">
+                                            <div class="chart-bars">
+                                                <div class="bar" style="height: 60%"></div>
+                                                <div class="bar" style="height: 80%"></div>
+                                                <div class="bar" style="height: 45%"></div>
+                                                <div class="bar" style="height: 90%"></div>
+                                                <div class="bar" style="height: 70%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Mobile Mockup -->
+                        <div class="device-mobile">
+                            <div class="device-frame mobile-frame">
+                                <div class="device-screen">
+                                    <div class="mobile-status-bar">
+                                        <span>9:41</span>
+                                        <div class="status-icons">
+                                            <span class="signal"></span>
+                                            <span class="wifi"></span>
+                                            <span class="battery"></span>
+                                        </div>
+                                    </div>
+                                    <div class="mockup-content mobile-content">
+                                        <div class="mobile-form-step">
+                                            <div class="step-title">${lang === 'nl' ? 'Start monitoring' : 'Start monitoring'}</div>
+                                            <div class="form-field">
+                                                <input type="text" placeholder="${lang === 'nl' ? 'jouw@email.com' : 'your@email.com'}" readonly>
+                                            </div>
+                                            <div class="form-button">
+                                                ${lang === 'nl' ? 'Volgende' : 'Next'}
+                                            </div>
+                                        </div>
+                                        <div class="mobile-features">
+                                            <div class="feature-item">
+                                                <div class="feature-icon">📧</div>
+                                                <span>${lang === 'nl' ? 'Email alerts' : 'Email alerts'}</span>
+                                            </div>
+                                            <div class="feature-item">
+                                                <div class="feature-icon">⚡</div>
+                                                <span>${lang === 'nl' ? 'Real-time' : 'Real-time'}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-dashboard-preview" style="display: none;">
                         <div class="dashboard-window">
                             <div class="dashboard-header">
                                 <div class="window-controls">
