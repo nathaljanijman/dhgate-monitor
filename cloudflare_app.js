@@ -3907,6 +3907,104 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             padding: 14px 16px 14px 45px;
         }
         
+        /* Store Search Styles */
+        .store-search-wrapper {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        
+        .store-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .store-results.show {
+            display: block;
+        }
+        
+        .store-result-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+        
+        .store-result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .store-result-item:hover {
+            background: var(--border-light);
+        }
+        
+        .store-result-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        .store-result-url {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        
+        .store-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .store-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .store-option:hover {
+            border-color: var(--accent-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+        
+        .store-option.selected {
+            border-color: var(--accent-color);
+            background: rgba(37, 99, 235, 0.1);
+        }
+        
+        .store-option-icon {
+            font-size: 20px;
+        }
+        
+        .store-option-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        .store-option-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        
         @media (max-width: 768px) {
             .step-indicator {
                 gap: 0.5rem;
@@ -3926,6 +4024,14 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             
             .btn-primary, .btn-secondary, .btn-success {
                 width: 100%;
+            }
+            
+            .store-options {
+                flex-direction: column;
+            }
+            
+            .store-option {
+                min-width: auto;
             }
         }
         
@@ -4912,50 +5018,50 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                 </div>
                             </div>
                             
-                            <!-- Step 2: Store URL and Search Terms -->
+                            <!-- Step 2: Store Search and Keywords -->
                             <div class="form-step" data-step="2">
                                 <div class="step-content">
                                     <h3 class="step-title">
-                                        ${lang === 'nl' ? 'Monitoring details' : 'Monitoring details'}
+                                        ${lang === 'nl' ? 'Welke winkel wil je monitoren?' : 'Which store do you want to monitor?'}
                                     </h3>
-                                    <p class="step-description">
-                                        ${lang === 'nl' ? 
-                                            'Geef aan welke DHgate winkel en zoektermen je wilt monitoren.' :
-                                            'Specify which DHgate store and search terms you want to monitor.'
-                                        }
-                                    </p>
+                                    
                                     <div class="form-group">
-                                        <label for="store_url" class="form-label">
-                                            ${lang === 'nl' ? 'DHgate winkel URL (optioneel)' : 'DHgate store URL (optional)'}
-                                        </label>
-                                        <div class="input-wrapper">
-                                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                                <path d="M10 13C10 14.1 10.9 15 12 15S14 14.1 14 13C14 11.9 13.1 11 12 11S10 11.9 10 13Z" stroke="currentColor" stroke-width="2"/>
-                                                <path d="M12 2L19.07 8.75C19.66 9.32 20 10.12 20 10.96V20C20 21.1 19.1 22 18 22H6C4.9 22 4 21.1 4 20V10.96C4 10.12 4.34 9.32 4.93 8.75L12 2Z" stroke="currentColor" stroke-width="2"/>
-                                            </svg>
-                                            <input 
-                                                type="url" 
-                                                id="store_url" 
-                                                name="store_url" 
-                                                class="form-control" 
-                                                placeholder="${lang === 'nl' ? 'https://dhgate.com/store/...' : 'https://dhgate.com/store/...'}"
-                                            >
+                                        <div class="store-search-wrapper">
+                                            <div class="input-wrapper">
+                                                <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                                                    <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2"/>
+                                                </svg>
+                                                <input 
+                                                    type="text" 
+                                                    id="store_search" 
+                                                    class="form-control" 
+                                                    placeholder="${lang === 'nl' ? 'Zoek winkel naam...' : 'Search store name...'}" 
+                                                    onkeyup="searchStores(this.value)"
+                                                    autocomplete="off"
+                                                >
+                                            </div>
+                                            <div id="store_results" class="store-results"></div>
+                                            <input type="hidden" name="store_url" id="selected_store_url">
                                         </div>
-                                        <div class="form-text">
-                                            ${lang === 'nl' ? 
-                                                'Laat leeg om alle DHgate winkels te monitoren' :
-                                                'Leave empty to monitor all DHgate stores'
-                                            }
+                                        <div class="store-options">
+                                            <button type="button" class="store-option" onclick="selectAllStores()">
+                                                <div class="store-option-icon">🌐</div>
+                                                <div class="store-option-text">
+                                                    <div class="store-option-title">${lang === 'nl' ? 'Alle winkels' : 'All stores'}</div>
+                                                    <div class="store-option-desc">${lang === 'nl' ? 'Monitor alle DHgate winkels' : 'Monitor all DHgate stores'}</div>
+                                                </div>
+                                            </button>
                                         </div>
                                     </div>
                                     
                                     <div class="form-group">
                                         <label for="tags" class="form-label">
-                                            ${lang === 'nl' ? 'Zoektermen *' : 'Search terms *'}
+                                            ${lang === 'nl' ? 'Zoektermen' : 'Search terms'}
                                         </label>
                                         <div class="input-wrapper">
                                             <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                                <path d="M20.59 13.41L13.42 20.58C13.05 20.95 12.55 21.16 12.02 21.16C11.49 21.16 10.99 20.95 10.62 20.58L7.41 17.37C6.99 16.95 6.76 16.37 6.76 15.76V10.58L2.29 4.11C2.1 3.81 2 3.46 2 3.1V2C2 1.45 2.45 1 3 1H21C21.55 1 22 1.45 22 2V3.1C22 3.46 21.9 3.81 21.71 4.11L20.59 13.41Z" stroke="currentColor" stroke-width="2"/>
+                                                <path d="M7 7h.01M7 3h5c1.1 0 2 .9 2 2v5l-2.3 2.3c-.7.7-1.8.7-2.5 0L7 10V5c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2"/>
                                             </svg>
                                             <input 
                                                 type="text" 
@@ -4965,12 +5071,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                                 placeholder="${lang === 'nl' ? 'jersey, shirt, voetbal' : 'jersey, shirt, soccer'}" 
                                                 required
                                             >
-                                        </div>
-                                        <div class="form-text">
-                                            ${lang === 'nl' ? 
-                                                'Voer woorden in gescheiden door komma\'s. Producten met deze woorden worden gedetecteerd.' :
-                                                'Enter words separated by commas. Products containing these words will be detected.'
-                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -5220,14 +5320,90 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         
         function updateSummary() {
             const email = document.getElementById('email').value;
-            const storeUrl = document.getElementById('store_url').value;
+            const storeUrl = document.getElementById('selected_store_url').value;
+            const storeName = document.getElementById('store_search').value;
             const tags = document.getElementById('tags').value;
             
             document.getElementById('summaryEmail').textContent = email;
-            document.getElementById('summaryStore').textContent = storeUrl || 
+            document.getElementById('summaryStore').textContent = storeName || 
                 ('${lang}' === 'nl' ? 'Alle winkels' : 'All stores');
             document.getElementById('summaryTags').textContent = tags;
         }
+        
+        // Store Search Functionality
+        let storeDatabase = [];
+        let selectedStore = null;
+        
+        // Mock store database (in real implementation, fetch from DHgate sitemap)
+        function initStoreDatabase() {
+            storeDatabase = [
+                { name: "SportStyle Store", url: "https://dhgate.com/store/sportstyle" },
+                { name: "Fashion Hub", url: "https://dhgate.com/store/fashionhub" },
+                { name: "TechGear Shop", url: "https://dhgate.com/store/techgear" },
+                { name: "Kids World", url: "https://dhgate.com/store/kidsworld" },
+                { name: "Home Essentials", url: "https://dhgate.com/store/homeessentials" },
+                { name: "Jewelry Palace", url: "https://dhgate.com/store/jewelrypalace" }
+            ];
+        }
+        
+        function searchStores(query) {
+            const resultsDiv = document.getElementById('store_results');
+            
+            if (!query || query.length < 2) {
+                resultsDiv.classList.remove('show');
+                return;
+            }
+            
+            const filteredStores = storeDatabase.filter(store => 
+                store.name.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            if (filteredStores.length > 0) {
+                resultsDiv.innerHTML = filteredStores.map(store => 
+                    \`<div class="store-result-item" onclick="selectStore('\${store.name}', '\${store.url}')">
+                        <div class="store-result-name">\${store.name}</div>
+                        <div class="store-result-url">\${store.url}</div>
+                    </div>\`
+                ).join('');
+                resultsDiv.classList.add('show');
+            } else {
+                resultsDiv.innerHTML = '<div class="store-result-item" style="opacity: 0.6; cursor: default;">' + 
+                    ('${lang}' === 'nl' ? 'Geen winkels gevonden' : 'No stores found') + '</div>';
+                resultsDiv.classList.add('show');
+            }
+        }
+        
+        function selectStore(storeName, storeUrl) {
+            selectedStore = { name: storeName, url: storeUrl };
+            document.getElementById('store_search').value = storeName;
+            document.getElementById('selected_store_url').value = storeUrl;
+            document.getElementById('store_results').classList.remove('show');
+            
+            // Update store options visual state
+            document.querySelectorAll('.store-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+        }
+        
+        function selectAllStores() {
+            selectedStore = null;
+            document.getElementById('store_search').value = '';
+            document.getElementById('selected_store_url').value = '';
+            document.getElementById('store_results').classList.remove('show');
+            
+            // Update visual state
+            document.querySelectorAll('.store-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.target.closest('.store-option').classList.add('selected');
+        }
+        
+        // Hide results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.store-search-wrapper')) {
+                document.getElementById('store_results').classList.remove('show');
+            }
+        });
         
         // Allow Enter key to advance steps
         document.addEventListener('keydown', function(e) {
@@ -5241,8 +5417,11 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             }
         });
         
-        // Show consent banner on page load
-        document.addEventListener('DOMContentLoaded', showCookieConsent);
+        // Show consent banner on page load and initialize store database
+        document.addEventListener('DOMContentLoaded', function() {
+            showCookieConsent();
+            initStoreDatabase();
+        });
     </script>
 </body>
 </html>
