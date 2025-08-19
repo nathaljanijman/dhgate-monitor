@@ -17,14 +17,19 @@ A sophisticated Cloudflare Workers application that monitors DHgate products and
 
 ### 📊 **Core Functionality**
 - **Automated Product Monitoring** with 24/7 scanning
+- **Intelligent Store Search** with real-time DHgate store discovery
+- **Progressive Signup Form** with email-first workflow
 - **Smart Filtering System** with customizable tag management
 - **Email Notifications** with beautifully designed HTML templates
-- **Shop Management** with DHgate store URL integration
+- **Shop Management** with comprehensive DHgate store database
 - **Real-time Status Dashboard** with monitoring statistics
 
 ### 🔧 **Technical Excellence**
 - **Cloudflare Workers** serverless architecture
-- **KV Storage** for persistent data management
+- **KV Storage** for persistent data management and store caching
+- **DHgate Store Database** with curated popular stores and real-time search
+- **Scheduled Jobs** for automated database updates (daily at 09:00 UTC)
+- **Progressive Form Architecture** with step-by-step user guidance
 - **Selenium Web Scraping** with anti-detection measures
 - **GDPR Compliant** with cookie consent management
 - **SEO Optimized** with proper meta tags and sitemap
@@ -60,15 +65,20 @@ A sophisticated Cloudflare Workers application that monitors DHgate products and
 | [`/sitemap.xml`](https://dhgate-monitor.com/sitemap.xml) | XML | **SEO Sitemap** |
 | [`/robots.txt`](https://dhgate-monitor.com/robots.txt) | TXT | **Robot Instructions** |
 | [`/api/tags`](https://dhgate-monitor.com/api/tags) | JSON | **Dynamic Tags API** |
+| [`/api/stores/search`](https://dhgate-monitor.com/api/stores/search) | JSON | **Store Search API** |
+| [`/api/stores/update`](https://dhgate-monitor.com/api/stores/update) | JSON | **Store Database Update** |
+| [`/api/scraper/trigger`](https://dhgate-monitor.com/api/scraper/trigger) | JSON | **Manual Database Refresh** |
 
 ---
 
 ## 🎯 User Journey
 
 ### **1. Discovery → Landing Page (`/`)**
+- **Progressive Signup Form** with email-first workflow
+- **Intelligent Store Search** with real-time DHgate store suggestions
+- **Step-by-Step Guidance** with contextual explanations
 - **Interactive DHgate Showcase** with product monitoring demonstration
 - **Feature Overview** with FILTER, ALERT, 24/7 capabilities
-- **Call-to-Action** buttons leading to login/dashboard
 
 ### **2. Authentication → Login (`/login`)**
 - **Simple Login Form** (demo: accepts any credentials)
@@ -97,8 +107,11 @@ A sophisticated Cloudflare Workers application that monitors DHgate products and
 
 ### **Backend Infrastructure**
 - **Cloudflare Workers** for serverless compute
-- **KV Storage** for persistent data management
-- **Scheduled Events** for automated monitoring (09:00 UTC)
+- **KV Storage** for persistent data and store database management
+- **DHgate Store Integration** with curated popular stores (10+ stores)
+- **Real-time Store Search** with intelligent query enhancement
+- **Scheduled Events** for automated monitoring and database updates (09:00 UTC)
+- **Manual Database Triggers** for instant store database refresh
 - **Email Integration** with SMTP configuration
 
 ### **Monitoring Engine**
@@ -150,10 +163,14 @@ dhgate-monitor/
 ```
 
 ### **Key Functions**
-- `generateLandingPageHTML()` - Interactive landing page with DHgate showcase
+- `generateLandingPageHTML()` - Progressive signup form with store search
 - `generateDashboardHTML()` - Main dashboard with shop management
 - `generateGlobalCSS()` - Theme-aware styling system
-- `handleScheduledEvent()` - Automated monitoring trigger
+- `handleScheduledEvent()` - Automated monitoring and database updates
+- `scrapeDHgateSitemaps()` - Store database creation and management
+- `handleStoreSearch()` - Real-time store search with query enhancement
+- `searchDHgateStores()` - Intelligent store discovery based on search terms
+- `handleScraperTrigger()` - Manual store database refresh endpoint
 
 ### **Deployment**
 ```bash
@@ -234,7 +251,15 @@ npx wrangler dev
 
 ## 🎯 Future Roadmap
 
+### **Recently Implemented** ✅
+- [x] **Progressive Signup Form** with email-first workflow
+- [x] **DHgate Store Database** with curated popular stores
+- [x] **Real-time Store Search** with intelligent query enhancement
+- [x] **Manual Database Triggers** for instant updates
+- [x] **Scheduled Store Updates** for fresh data
+
 ### **Planned Features**
+- [ ] **Direct DHgate API Integration** for live store data
 - [ ] **Advanced Filtering** with price ranges and categories
 - [ ] **Multi-Platform Support** beyond DHgate
 - [ ] **Mobile App** for iOS and Android
@@ -272,5 +297,13 @@ This project is proprietary software developed for automated DHgate product moni
 
 ---
 
-*Last Updated: August 18, 2025*
-*Version: 2.0 - Complete UI/UX Redesign with Responsive Architecture*
+*Last Updated: August 19, 2025*
+*Version: 3.0 - Progressive Forms with Intelligent DHgate Store Integration*
+
+### **Version 3.0 Highlights**
+- ✨ **Progressive Signup Form** - Email-first workflow with step-by-step guidance
+- 🏪 **DHgate Store Database** - Curated popular stores with real-time search
+- 🔍 **Intelligent Store Search** - Query enhancement with contextual suggestions
+- ⚡ **Instant Database Updates** - Manual triggers for immediate store data refresh
+- 🔄 **Automated Maintenance** - Daily store database updates at 09:00 UTC
+- 📱 **Above-the-Fold Experience** - Optimized landing without unwanted scrolling

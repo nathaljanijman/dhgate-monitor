@@ -62,4 +62,4 @@ geckodriver*
 screenshots/
 *.png
 *.jpg
-*.jpeg
+*.jpeg.wrangler/
