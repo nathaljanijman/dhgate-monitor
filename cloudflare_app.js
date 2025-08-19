@@ -5957,8 +5957,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <p class="hero-main-description animate-fade-in-up" style="animation-delay: 0.2s;">
                         ${lang === 'nl' ? 
-                            'Automatiseer je productonderzoek met geavanceerde monitoring tools. Ontvang real-time notifications wanneer nieuwe producten worden geüpload die aan jouw criteria voldoen.' :
-                            'Automate your product research with advanced monitoring tools. Receive real-time notifications when new products matching your criteria are uploaded.'
+                            'Automatiseer je productonderzoek met geavanceerde monitoring tools. Ontvang real-time meldingen wanneer nieuwe producten aan jouw criteria voldoen.' :
+                            'Automate your product research with advanced monitoring tools. Receive real-time notifications when new products match your criteria.'
                         }
                     </p>
                     
@@ -5979,13 +5979,13 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <div class="hero-actions animate-fade-in-up" style="animation-delay: 0.4s;">
                         <a href="#subscription-form" class="hero-cta-primary" onclick="scrollToSubscription(); return false;">
-                            ${lang === 'nl' ? 'Start Gratis Trial' : 'Start Free Trial'}
+                            ${lang === 'nl' ? 'Meld je aan' : 'Sign Up'}
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </a>
-                        <a href="/dashboard?lang=${lang}&theme=${theme}" class="hero-cta-secondary">
-                            ${lang === 'nl' ? 'View Dashboard' : 'View Dashboard'}
+                        <a href="/contact?lang=${lang}&theme=${theme}" class="hero-cta-secondary">
+                            ${lang === 'nl' ? 'Meer informatie' : 'Learn More'}
                         </a>
                     </div>
                 </div>
