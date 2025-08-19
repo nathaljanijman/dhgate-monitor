@@ -5912,8 +5912,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             </a>
             
             <div class="navbar-menu">
-                <a href="#features" class="nav-link" onclick="scrollToSection('features'); return false;">${lang === 'nl' ? 'Features' : 'Features'}</a>
-                <a href="#how-it-works" class="nav-link" onclick="scrollToSection('how-it-works'); return false;">${lang === 'nl' ? 'Hoe het werkt' : 'How it works'}</a>
+                <a href="#subscription-form" class="nav-link" onclick="scrollToSubscription(); return false;">${lang === 'nl' ? 'Beginnen' : 'Get Started'}</a>
+                <a href="/dashboard?lang=${lang}&theme=${theme}" class="nav-link">${lang === 'nl' ? 'Dashboard' : 'Dashboard'}</a>
                 <a href="/contact?lang=${lang}&theme=${theme}" class="nav-link">${lang === 'nl' ? 'Contact' : 'Contact'}</a>
             </div>
             
@@ -6505,11 +6505,18 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         }
         
         function scrollToSubscription() {
-            // Simply scroll to top of page instead of to form
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            const subscriptionSection = document.getElementById('subscription-form');
+            const navbar = document.querySelector('.professional-navbar');
+            
+            if (subscriptionSection) {
+                const navbarHeight = navbar ? navbar.offsetHeight : 80;
+                const targetPosition = subscriptionSection.getBoundingClientRect().top + window.pageYOffset - navbarHeight - 20;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            }
         }
         
         function scrollToSection(sectionId) {
