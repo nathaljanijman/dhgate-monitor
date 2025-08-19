@@ -243,6 +243,7 @@ const THEMES = {
       
       // Card System
       '--card-bg': '#FFFFFF',
+      '--card-bg-alpha': 'rgba(255, 255, 255, 0.95)',
       '--card-shadow': '0 4px 20px rgba(37, 99, 235, 0.08)',
       '--card-shadow-hover': '0 8px 32px rgba(37, 99, 235, 0.15)',
       '--card-border': 'rgba(37, 99, 235, 0.1)',
@@ -305,6 +306,7 @@ const THEMES = {
       
       // Card System - Dark
       '--card-bg': '#1E293B',
+      '--card-bg-alpha': 'rgba(30, 41, 59, 0.95)',
       '--card-shadow': '0 4px 20px rgba(0, 0, 0, 0.25)',
       '--card-shadow-hover': '0 8px 32px rgba(0, 0, 0, 0.4)',
       '--card-border': 'rgba(59, 130, 246, 0.2)',
@@ -3179,7 +3181,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             left: 0;
             right: 0;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--card-bg-alpha);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-color);
             padding: 0;
@@ -3199,6 +3201,11 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             align-items: center;
             gap: 12px;
             text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .navbar-brand:hover {
+            opacity: 0.8;
         }
         
         .brand-name {
@@ -4204,7 +4211,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
     <!-- Professional Navigation Bar -->
     <nav class="professional-navbar">
         <div class="navbar-container">
-            <div class="navbar-brand">
+            <a href="/?lang=${lang}&theme=${theme}" class="navbar-brand">
                 <div class="brand-logo">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
                         <defs>
@@ -4219,7 +4226,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     </svg>
                 </div>
                 <span class="brand-name">DHgate Monitor</span>
-            </div>
+            </a>
             
             <div class="navbar-menu">
                 <a href="#features" class="nav-link">${lang === 'nl' ? 'Features' : 'Features'}</a>
