@@ -185,6 +185,21 @@ function getTranslations(lang) {
   return translations[lang] || translations.en;
 }
 
+// Helper function to mask email addresses for privacy
+function maskEmail(email) {
+  if (!email || !email.includes('@')) return '••••••••@••••••';
+  
+  const [local, domain] = email.split('@');
+  const maskedLocal = local.length > 2 ? 
+    local.substring(0, 2) + '••••' : 
+    '••••';
+  const maskedDomain = domain.length > 4 ? 
+    '••' + domain.substring(domain.length - 4) : 
+    '••••••';
+  
+  return maskedLocal + '@' + maskedDomain;
+}
+
 // Get user's preferred theme
 function getTheme(request) {
   // Check URL parameter first (e.g. ?theme=dark)
@@ -1105,10 +1120,11 @@ function getDefaultTags() {
 function getDefaultConfig() {
   return {
     email: {
-      sender_email: 'nathaljanijman@gmail.com',
-      recipient_email: 'nathaljanijman@gmail.com',
+      sender_email: 'noreply@dhgate-monitor.com',
+      recipient_email: 'info@dhgate-monitor.com',
       smtp_server: 'smtp.gmail.com',
-      smtp_port: 587
+      smtp_port: 587,
+      smtp_password: 'zech lame cvnz prxu'
     },
     schedule: {
       time: '09:00'
@@ -1446,6 +1462,18 @@ function generateSettingsHTML(config, t, lang) {
         .card { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .btn-primary { background: linear-gradient(135deg, #1e3a8a, #2563eb); border: none; font-weight: 600; }
         
+        /* Email masking styles */
+        .email-masked {
+            font-family: monospace;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+        
+        .email-masked:focus {
+            letter-spacing: normal;
+            font-family: 'Raleway', sans-serif;
+        }
+        
         /* Cookie Consent Styles */
         .cookie-consent {
             position: fixed;
@@ -1482,11 +1510,17 @@ function generateSettingsHTML(config, t, lang) {
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">${t.sender_email}</label>
-                                    <input type="email" name="sender_email" class="form-control" value="${config.email.sender_email}" required>
+                                    <input type="password" name="sender_email" class="form-control email-masked" value="${config.email.sender_email}" required 
+                                           onclick="this.type='email'; this.select();" 
+                                           onblur="if(this.value) this.type='password';" 
+                                           placeholder="••••••••@••••••">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">${t.recipient_email}</label>
-                                    <input type="email" name="recipient_email" class="form-control" value="${config.email.recipient_email}" required>
+                                    <input type="password" name="recipient_email" class="form-control email-masked" value="${config.email.recipient_email}" required 
+                                           onclick="this.type='email'; this.select();" 
+                                           onblur="if(this.value) this.type='password';" 
+                                           placeholder="••••••••@••••••">
                                 </div>
                             </div>
                             
@@ -1808,7 +1842,7 @@ function generateContactHTML(t, lang) {
                             <div class="col-md-6">
                                 <h4>${t.contact_info}</h4>
                                 <p><strong>${t.email_address}:</strong><br>
-                                nathaljanijman@gmail.com</p>
+                                support@dhgate-monitor.com</p>
                                 
                                 <h5>${t.website_info}</h5>
                                 <p><strong>Website:</strong> dhgate-monitor.com<br>
@@ -2012,7 +2046,7 @@ function generatePrivacyContentNL() {
         <ul>
             <li>De lokale opslag van uw browser te wissen (via browser instellingen)</li>
             <li>In de browser console het commando <code>resetCookieConsent()</code> uit te voeren</li>
-            <li>Contact op te nemen via nathaljanijman@gmail.com voor ondersteuning</li>
+            <li>Contact op te nemen via support@dhgate-monitor.com voor ondersteuning</li>
         </ul>
     </div>
     
@@ -2025,7 +2059,7 @@ function generatePrivacyContentNL() {
     
     <div class="legal-section">
         <h4>7. Contact</h4>
-        <p>Voor vragen over dit privacybeleid kunt u contact opnemen via: nathaljanijman@gmail.com</p>
+        <p>Voor vragen over dit privacybeleid kunt u contact opnemen via: support@dhgate-monitor.com</p>
     </div>
   `;
 }
@@ -2085,7 +2119,7 @@ function generatePrivacyContentEN() {
         <ul>
             <li>Clearing your browser's local storage (via browser settings)</li>
             <li>Running the command <code>resetCookieConsent()</code> in your browser console</li>
-            <li>Contacting us at nathaljanijman@gmail.com for support</li>
+            <li>Contacting us at support@dhgate-monitor.com for support</li>
         </ul>
     </div>
     
@@ -2098,7 +2132,7 @@ function generatePrivacyContentEN() {
     
     <div class="legal-section">
         <h4>7. Contact</h4>
-        <p>For questions about this privacy policy, you can contact us at: nathaljanijman@gmail.com</p>
+        <p>For questions about this privacy policy, you can contact us at: support@dhgate-monitor.com</p>
     </div>
   `;
 }

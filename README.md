@@ -253,7 +253,7 @@ npx wrangler dev
 ## 📞 Support & Contact
 
 ### **Technical Support**
-- **Email**: [nathaljanijman@gmail.com](mailto:nathaljanijman@gmail.com)
+- **Email**: [support@dhgate-monitor.com](mailto:support@dhgate-monitor.com)
 - **Documentation**: Available in dashboard settings
 - **Status Page**: Real-time system status monitoring
 
