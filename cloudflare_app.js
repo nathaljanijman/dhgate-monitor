@@ -4855,29 +4855,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <div class="subscription-card">
-                        <div class="text-center mb-4">
-                            <div class="subscription-icon">
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
-                                    <defs>
-                                        <linearGradient id="subscriptionGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                            <stop offset="0%" style="stop-color:#2563EB"/>
-                                            <stop offset="100%" style="stop-color:#EA580C"/>
-                                        </linearGradient>
-                                    </defs>
-                                    <path d="M4 4H20C20.55 4 21 4.45 21 5V19C21 19.55 20.55 20 20 20H4C3.45 20 3 19.55 3 19V5C3 4.45 3.45 4 4 4Z" stroke="url(#subscriptionGradient)" stroke-width="2" fill="none"/>
-                                    <path d="M8 10L12 14L16 10" stroke="url(#subscriptionGradient)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            <h2 class="subscription-title">
-                                ${lang === 'nl' ? 'Start je gratis monitoring' : 'Start your free monitoring'}
-                            </h2>
-                            <p class="subscription-description">
-                                ${lang === 'nl' ? 
-                                    'Voer je email in en ontvang een link om je monitoring voorkeuren in te stellen. Geen account nodig!' :
-                                    'Enter your email and receive a link to set up your monitoring preferences. No account needed!'
-                                }
-                            </p>
-                        </div>
                         
                         <form method="POST" action="/subscribe" class="subscription-form" id="progressiveForm">
                             <input type="hidden" name="lang" value="${lang}">
