@@ -3704,92 +3704,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         }
         
         /* Progressive Form Styles */
-        .step-indicator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 2rem;
-            gap: 1rem;
-        }
-        
-        .step-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            opacity: 0.5;
-            transition: all 0.3s ease;
-        }
-        
-        .step-item.active {
-            opacity: 1;
-        }
-        
-        .step-item.completed {
-            opacity: 1;
-        }
-        
-        .step-number {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--border-color);
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-        
-        .step-item.active .step-number {
-            background: var(--accent-color);
-            color: white;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
-        }
-        
-        .step-item.completed .step-number {
-            background: #10b981;
-            color: white;
-        }
-        
-        .step-item.completed .step-number {
-            position: relative;
-        }
-        
-        .step-item.completed .step-number::after {
-            content: '✓';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        .step-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .step-item.active .step-label {
-            color: var(--accent-color);
-        }
-        
-        .step-item.completed .step-label {
-            color: #10b981;
-        }
-        
-        .step-connector {
-            flex: 1;
-            height: 2px;
-            background: var(--border-color);
-            max-width: 80px;
-        }
         
         .form-step {
             display: none;
@@ -4016,18 +3930,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         }
         
         @media (max-width: 768px) {
-            .step-indicator {
-                gap: 0.5rem;
-            }
-            
-            .step-connector {
-                max-width: 40px;
-            }
-            
-            .step-label {
-                font-size: 10px;
-            }
-            
             .step-actions {
                 flex-direction: column;
             }
@@ -4976,23 +4878,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                             <input type="hidden" name="lang" value="${lang}">
                             <input type="hidden" name="theme" value="${theme}">
                             
-                            <!-- Step Indicator -->
-                            <div class="step-indicator">
-                                <div class="step-item active" data-step="1">
-                                    <div class="step-number">1</div>
-                                    <div class="step-label">${lang === 'nl' ? 'Email' : 'Email'}</div>
-                                </div>
-                                <div class="step-connector"></div>
-                                <div class="step-item" data-step="2">
-                                    <div class="step-number">2</div>
-                                    <div class="step-label">${lang === 'nl' ? 'Details' : 'Details'}</div>
-                                </div>
-                                <div class="step-connector"></div>
-                                <div class="step-item" data-step="3">
-                                    <div class="step-number">3</div>
-                                    <div class="step-label">${lang === 'nl' ? 'Start' : 'Start'}</div>
-                                </div>
-                            </div>
                             
                             <!-- Step 1: Email -->
                             <div class="form-step active" data-step="1">
@@ -5285,18 +5170,13 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             if (currentStep < totalSteps) {
                 // Hide current step
                 currentStepElement.classList.remove('active');
-                const currentStepIndicator = document.querySelector(\`.step-item[data-step="\${currentStep}"]\`);
-                currentStepIndicator.classList.remove('active');
-                currentStepIndicator.classList.add('completed');
                 
                 // Show next step
                 currentStep++;
                 const nextStepElement = document.querySelector(\`.form-step[data-step="\${currentStep}"]\`);
-                const nextStepIndicator = document.querySelector(\`.step-item[data-step="\${currentStep}"]\`);
                 
                 setTimeout(() => {
                     nextStepElement.classList.add('active');
-                    nextStepIndicator.classList.add('active');
                 }, 150);
                 
                 // Update summary on step 3
@@ -5310,19 +5190,14 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             if (currentStep > 1) {
                 // Hide current step
                 const currentStepElement = document.querySelector(\`.form-step[data-step="\${currentStep}"]\`);
-                const currentStepIndicator = document.querySelector(\`.step-item[data-step="\${currentStep}"]\`);
                 currentStepElement.classList.remove('active');
-                currentStepIndicator.classList.remove('active');
                 
                 // Show previous step
                 currentStep--;
                 const prevStepElement = document.querySelector(\`.form-step[data-step="\${currentStep}"]\`);
-                const prevStepIndicator = document.querySelector(\`.step-item[data-step="\${currentStep}"]\`);
                 
                 setTimeout(() => {
                     prevStepElement.classList.add('active');
-                    prevStepIndicator.classList.remove('completed');
-                    prevStepIndicator.classList.add('active');
                 }, 150);
             }
         }
@@ -5343,7 +5218,11 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         let storeDatabase = [];
         let selectedStore = null;
         
-        // Extended mock store database (in real implementation, fetch from DHgate sitemap/API)
+        // MOCK STORE DATABASE - NOT REAL DHGATE DATA!
+        // This is just example data for testing. For production, you need to:
+        // 1. Scrape DHgate sitemap or use their API
+        // 2. Build a database of actual store names and URLs
+        // 3. Update this data regularly as stores change
         function initStoreDatabase() {
             storeDatabase = [
                 // Sports & Outdoor stores
