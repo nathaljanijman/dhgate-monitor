@@ -4051,7 +4051,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             color: var(--text-primary);
             line-height: 1.7;
             overflow-x: hidden;
-            padding-top: 80px;
+            padding-top: 70px;
             margin: 0;
         }
         
@@ -4074,7 +4074,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             justify-content: space-between;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 1rem 2rem;
+            padding: 0.75rem 1.5rem;
         }
         
         .navbar-brand {
@@ -4226,7 +4226,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         .hero-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 2rem;
+            padding: 0 1.5rem;
         }
         
         .hero-content-wrapper {
@@ -4743,13 +4743,13 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         
         /* Features Section */
         .features-section {
-            padding: 120px 0;
+            padding: 60px 0;
             background: var(--card-bg);
         }
         
         /* How It Works Section */
         .how-it-works-section {
-            padding: 120px 0;
+            padding: 60px 0;
             background: var(--bg-gradient);
         }
         
@@ -4979,7 +4979,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
 
         /* Subscription Form Section */
         .subscription-section {
-            padding: 120px 0;
+            padding: 60px 0;
             background: var(--card-bg);
         }
         
@@ -4987,7 +4987,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 20px;
-            padding: 3rem 2.5rem;
+            padding: 2rem 2rem;
             box-shadow: var(--card-shadow);
             position: relative;
             overflow: hidden;
@@ -5425,7 +5425,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         
         /* DHgate Snapshot Section */
         .snapshot-section {
-            padding: 120px 0;
+            padding: 60px 0;
             background: var(--card-bg);
         }
         
@@ -5751,13 +5751,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         @media (max-width: 768px) {
             .rotating-element { display: none; }
             .hero-section { padding: 30px 0; }
-            .features-section, .snapshot-section { padding: 80px 0; }
+            .features-section, .snapshot-section, .subscription-section, .how-it-works-section { padding: 40px 0; }
             .feature-card { margin-bottom: 30px; }
             .cta-secondary { margin-left: 0; margin-top: 15px; display: block; text-align: center; }
             
-            .navbar-container {
-                padding: 1rem;
-            }
             
             .navbar-controls {
                 gap: 1rem;
@@ -5775,6 +5772,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             .hero-container {
                 padding: 0 1rem;
             }
+            
             
             .hero-main-title {
                 font-size: clamp(1.8rem, 8vw, 2.5rem);
@@ -5877,7 +5875,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             }
             
             .subscription-card {
-                padding: 2rem 1.5rem;
+                padding: 1.5rem 1rem;
             }
             
             .subscription-title {
