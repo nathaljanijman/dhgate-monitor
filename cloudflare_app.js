@@ -1335,7 +1335,148 @@ ${cssVars}
   `;
 }
 
+// DHgate Sitemap Scraper Functions
+async function scrapeDHgateSitemaps() {
+  try {
+    console.log('Starting DHgate sitemap scraping...');
+    
+    // First, get the main sitemap index
+    const mainSitemapUrl = 'https://www.dhgate.com/sitemap.xml';
+    const mainSitemapResponse = await fetch(mainSitemapUrl);
+    
+    if (!mainSitemapResponse.ok) {
+      throw new Error(`Failed to fetch main sitemap: ${mainSitemapResponse.status}`);
+    }
+    
+    const mainSitemapXml = await mainSitemapResponse.text();
+    const sellerSitemapUrls = extractSellerSitemapUrls(mainSitemapXml);
+    
+    console.log(`Found ${sellerSitemapUrls.length} seller sitemaps`);
+    
+    // Process seller sitemaps (limit to first 5 for now to avoid timeouts)
+    const stores = [];
+    const maxSitemaps = Math.min(sellerSitemapUrls.length, 5);
+    
+    for (let i = 0; i < maxSitemaps; i++) {
+      const sitemapUrl = sellerSitemapUrls[i];
+      try {
+        console.log(`Processing sitemap ${i + 1}/${maxSitemaps}: ${sitemapUrl}`);
+        
+        const sitemapResponse = await fetch(sitemapUrl);
+        if (sitemapResponse.ok) {
+          const sitemapXml = await sitemapResponse.text();
+          const sitemapStores = parseStoreDataFromSitemap(sitemapXml);
+          stores.push(...sitemapStores);
+          
+          console.log(`Extracted ${sitemapStores.length} stores from sitemap`);
+        }
+      } catch (error) {
+        console.error(`Error processing sitemap ${sitemapUrl}:`, error);
+      }
+    }
+    
+    console.log(`Total stores scraped: ${stores.length}`);
+    return stores;
+    
+  } catch (error) {
+    console.error('Error scraping DHgate sitemaps:', error);
+    return [];
+  }
+}
+
+function extractSellerSitemapUrls(sitemapXml) {
+  const urls = [];
+  
+  // Simple regex to find seller sitemap URLs
+  const sitemapRegex = /<loc>(https:\/\/www\.dhgate\.com\/sitemap[^<]*seller[^<]*\.xml)<\/loc>/g;
+  let match;
+  
+  while ((match = sitemapRegex.exec(sitemapXml)) !== null) {
+    urls.push(match[1]);
+  }
+  
+  return urls;
+}
+
+function parseStoreDataFromSitemap(sitemapXml) {
+  const stores = [];
+  
+  // Regex to find store URLs
+  const storeUrlRegex = /<loc>(https:\/\/www\.dhgate\.com\/store\/[^<]+)<\/loc>/g;
+  let match;
+  
+  while ((match = storeUrlRegex.exec(sitemapXml)) !== null) {
+    const storeUrl = match[1];
+    const storeName = extractStoreNameFromUrl(storeUrl);
+    
+    if (storeName) {
+      stores.push({
+        name: storeName,
+        url: storeUrl
+      });
+    }
+  }
+  
+  return stores;
+}
+
+function extractStoreNameFromUrl(url) {
+  try {
+    // Extract store name from URL patterns like:
+    // https://www.dhgate.com/store/12345678
+    // https://www.dhgate.com/store/storename
+    const urlObj = new URL(url);
+    const pathParts = urlObj.pathname.split('/');
+    
+    if (pathParts.length >= 3 && pathParts[1] === 'store') {
+      const storeIdentifier = pathParts[2];
+      
+      // If it's a number, try to make a readable name
+      if (/^\d+$/.test(storeIdentifier)) {
+        return `Store ${storeIdentifier}`;
+      }
+      
+      // If it's a name, clean it up
+      return storeIdentifier
+        .replace(/-/g, ' ')
+        .replace(/[^\w\s]/g, '')
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Error extracting store name from URL:', url, error);
+    return null;
+  }
+}
+
 export default {
+  // Scheduled job to update store database daily
+  async scheduled(event, env, ctx) {
+    console.log('Starting scheduled DHgate store database update...');
+    
+    try {
+      // Scrape DHgate sitemaps for fresh store data
+      const stores = await scrapeDHgateSitemaps();
+      
+      if (stores.length > 0) {
+        // Store in KV database with 24 hour TTL
+        await env.DHGATE_MONITOR_KV.put('store_database', JSON.stringify(stores), {
+          expirationTtl: 24 * 60 * 60 // 24 hours
+        });
+        
+        console.log(`Successfully updated store database with ${stores.length} stores`);
+      } else {
+        console.log('No stores found during scraping');
+      }
+      
+    } catch (error) {
+      console.error('Error during scheduled store update:', error);
+    }
+  },
+
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const method = request.method;
@@ -1357,6 +1498,12 @@ export default {
       switch (url.pathname) {
         case '/':
           return await handleLandingPage(request, env);
+        
+        case '/api/stores/search':
+          return await handleStoreSearch(request, env);
+        
+        case '/api/stores/update':
+          return await handleStoreUpdate(request, env);
         
         case '/dashboard':
           return await handleDashboard(request, env);
@@ -3029,6 +3176,105 @@ async function handleLoginPage(request, env) {
   return new Response(html, {
     headers: { 'Content-Type': 'text/html' }
   });
+}
+
+// API Handler for store search
+async function handleStoreSearch(request, env) {
+  try {
+    const url = new URL(request.url);
+    const query = url.searchParams.get('q');
+    
+    if (!query || query.length < 2) {
+      return new Response(JSON.stringify([]), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
+    // Try to get stores from KV cache first
+    let stores = [];
+    try {
+      const cachedStores = await env.DHGATE_MONITOR_KV.get('store_database');
+      if (cachedStores) {
+        stores = JSON.parse(cachedStores);
+      }
+    } catch (error) {
+      console.log('No cached stores found, will use fallback');
+    }
+    
+    // If no cached stores, try to scrape some fresh ones
+    if (stores.length === 0) {
+      console.log('No cached stores, attempting fresh scrape...');
+      stores = await scrapeDHgateSitemaps();
+      
+      // Cache the results for future use
+      if (stores.length > 0) {
+        await env.DHGATE_MONITOR_KV.put('store_database', JSON.stringify(stores), {
+          expirationTtl: 6 * 60 * 60 // 6 hours
+        });
+      }
+    }
+    
+    // Filter stores based on query
+    const filteredStores = stores.filter(store => 
+      store.name.toLowerCase().includes(query.toLowerCase())
+    ).slice(0, 20); // Limit to 20 results
+    
+    return new Response(JSON.stringify(filteredStores), {
+      headers: { 
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=3600' // Cache for 1 hour
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error in store search:', error);
+    return new Response(JSON.stringify({ error: 'Search failed' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+// API Handler for manual store database update
+async function handleStoreUpdate(request, env) {
+  try {
+    console.log('Manual store database update requested...');
+    
+    const stores = await scrapeDHgateSitemaps();
+    
+    if (stores.length > 0) {
+      await env.DHGATE_MONITOR_KV.put('store_database', JSON.stringify(stores), {
+        expirationTtl: 24 * 60 * 60 // 24 hours
+      });
+      
+      return new Response(JSON.stringify({
+        success: true,
+        message: `Successfully updated database with ${stores.length} stores`,
+        storeCount: stores.length
+      }), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    } else {
+      return new Response(JSON.stringify({
+        success: false,
+        message: 'No stores found during scraping'
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
+  } catch (error) {
+    console.error('Error in manual store update:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Update failed',
+      message: error.message
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 }
 
 // Generate Landing Page HTML
@@ -5236,54 +5482,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         let storeDatabase = [];
         let selectedStore = null;
         
-        // MOCK STORE DATABASE - NOT REAL DHGATE DATA!
-        // This is just example data for testing. For production, you need to:
-        // 1. Scrape DHgate sitemap or use their API
-        // 2. Build a database of actual store names and URLs
-        // 3. Update this data regularly as stores change
-        function initStoreDatabase() {
-            storeDatabase = [
-                // Sports & Outdoor stores
-                { name: "SportStyle Store", url: "https://dhgate.com/store/20062458" },
-                { name: "Athletic Pro Shop", url: "https://dhgate.com/store/20156392" },
-                { name: "Soccer World", url: "https://dhgate.com/store/20089456" },
-                { name: "Jersey Kings", url: "https://dhgate.com/store/20123789" },
-                
-                // Fashion stores
-                { name: "Fashion Hub", url: "https://dhgate.com/store/20045623" },
-                { name: "Style Central", url: "https://dhgate.com/store/20067891" },
-                { name: "Urban Trends", url: "https://dhgate.com/store/20098234" },
-                { name: "Chic Boutique", url: "https://dhgate.com/store/20112456" },
-                
-                // Electronics
-                { name: "TechGear Shop", url: "https://dhgate.com/store/20034567" },
-                { name: "Digital World", url: "https://dhgate.com/store/20078912" },
-                { name: "Gadget Palace", url: "https://dhgate.com/store/20091234" },
-                
-                // Kids & Baby
-                { name: "Kids World", url: "https://dhgate.com/store/20023456" },
-                { name: "Baby Essentials", url: "https://dhgate.com/store/20056789" },
-                { name: "Children Paradise", url: "https://dhgate.com/store/20089123" },
-                
-                // Home & Garden
-                { name: "Home Essentials", url: "https://dhgate.com/store/20012345" },
-                { name: "Garden Plus", url: "https://dhgate.com/store/20045678" },
-                { name: "Decor World", url: "https://dhgate.com/store/20078901" },
-                
-                // Jewelry & Accessories
-                { name: "Jewelry Palace", url: "https://dhgate.com/store/20001234" },
-                { name: "Luxury Gems", url: "https://dhgate.com/store/20034789" },
-                { name: "Fashion Accessories", url: "https://dhgate.com/store/20067123" },
-                
-                // Automotive
-                { name: "Auto Parts Pro", url: "https://dhgate.com/store/20090123" },
-                { name: "Car Accessories", url: "https://dhgate.com/store/20123456" },
-                
-                // Beauty & Health
-                { name: "Beauty Central", url: "https://dhgate.com/store/20056123" },
-                { name: "Health Plus", url: "https://dhgate.com/store/20089456" }
-            ];
-        }
+        // Real-time store search using DHgate sitemap data
+        let searchTimeout = null;
         
         function searchStores(query) {
             const resultsDiv = document.getElementById('store_results');
@@ -5293,23 +5493,42 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 return;
             }
             
-            const filteredStores = storeDatabase.filter(store => 
-                store.name.toLowerCase().includes(query.toLowerCase())
-            );
-            
-            if (filteredStores.length > 0) {
-                resultsDiv.innerHTML = filteredStores.map(store => 
-                    \`<div class="store-result-item" onclick="selectStore('\${store.name}', '\${store.url}')">
-                        <div class="store-result-name">\${store.name}</div>
-                        <div class="store-result-url">\${store.url}</div>
-                    </div>\`
-                ).join('');
-                resultsDiv.classList.add('show');
-            } else {
-                resultsDiv.innerHTML = '<div class="store-result-item" style="opacity: 0.6; cursor: default;">' + 
-                    ('${lang}' === 'nl' ? 'Geen winkels gevonden' : 'No stores found') + '</div>';
-                resultsDiv.classList.add('show');
+            // Clear previous timeout to debounce search
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
             }
+            
+            // Show loading state
+            resultsDiv.innerHTML = '<div class="store-result-item" style="opacity: 0.6; cursor: default;">' + 
+                ('${lang}' === 'nl' ? 'Zoeken...' : 'Searching...') + '</div>';
+            resultsDiv.classList.add('show');
+            
+            // Debounce search to avoid too many API calls
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(\`/api/stores/search?q=\${encodeURIComponent(query)}\`);
+                    const stores = await response.json();
+                    
+                    if (stores.length > 0) {
+                        resultsDiv.innerHTML = stores.map(store => 
+                            \`<div class="store-result-item" onclick="selectStore('\${store.name.replace(/'/g, "\\\\'")}', '\${store.url}')">
+                                <div class="store-result-name">\${store.name}</div>
+                                <div class="store-result-url">\${store.url}</div>
+                            </div>\`
+                        ).join('');
+                        resultsDiv.classList.add('show');
+                    } else {
+                        resultsDiv.innerHTML = '<div class="store-result-item" style="opacity: 0.6; cursor: default;">' + 
+                            ('${lang}' === 'nl' ? 'Geen winkels gevonden' : 'No stores found') + '</div>';
+                        resultsDiv.classList.add('show');
+                    }
+                } catch (error) {
+                    console.error('Store search error:', error);
+                    resultsDiv.innerHTML = '<div class="store-result-item" style="opacity: 0.6; cursor: default; color: red;">' + 
+                        ('${lang}' === 'nl' ? 'Zoeken mislukt. Probeer opnieuw.' : 'Search failed. Please try again.') + '</div>';
+                    resultsDiv.classList.add('show');
+                }
+            }, 300); // 300ms debounce
         }
         
         function selectStore(storeName, storeUrl) {
@@ -5344,10 +5563,9 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             }
         });
         
-        // Show consent banner on page load and initialize store database
+        // Show consent banner on page load
         document.addEventListener('DOMContentLoaded', function() {
             showCookieConsent();
-            initStoreDatabase();
         });
     </script>
 </body>
