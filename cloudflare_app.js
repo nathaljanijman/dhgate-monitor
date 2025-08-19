@@ -3168,16 +3168,401 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             color: var(--text-primary);
             line-height: 1.7;
             overflow-x: hidden;
+            padding-top: 0;
+            margin: 0;
         }
         
-        /* Hero Section */
-        .hero-section {
+        /* Professional Navigation */
+        .professional-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0;
+        }
+        
+        .navbar-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }
+        
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+        
+        .navbar-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+            padding: 0.5rem 0;
+        }
+        
+        .nav-link:hover {
+            color: var(--accent-color);
+        }
+        
+        .navbar-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .nav-lang-switcher {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .nav-lang-option {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-lang-option.active {
+            color: var(--accent-color);
+        }
+        
+        .nav-lang-separator {
+            color: var(--text-muted);
+        }
+        
+        .nav-theme-toggle .theme-toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-theme-toggle .theme-toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        
+        .nav-theme-toggle .theme-toggle-switch.dark .theme-toggle-slider {
+            transform: translateX(20px);
+        }
+        
+        .nav-cta-button {
+            background: var(--btn-primary-bg);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            color: white;
+        }
+        
+        /* Uptrends-Inspired Hero */
+        .uptrends-hero {
             min-height: 100vh;
-            background: var(--bg-gradient);
             position: relative;
             display: flex;
             align-items: center;
-            padding: 80px 0;
+            padding: 120px 0 80px;
+            background: var(--bg-gradient);
+            overflow: hidden;
+        }
+        
+        .hero-background-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(234, 88, 12, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+        
+        .hero-background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: -2;
+        }
+        
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .hero-content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(37, 99, 235, 0.1);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .hero-main-title {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            letter-spacing: -1px;
+        }
+        
+        .gradient-text-hero {
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-main-description {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 500px;
+        }
+        
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .hero-cta-primary {
+            background: var(--btn-primary-bg);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .hero-cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+            color: white;
+        }
+        
+        .hero-cta-secondary {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .hero-cta-secondary:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+        
+        .hero-visual {
+            position: relative;
+        }
+        
+        .hero-dashboard-preview {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .dashboard-window {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);
+        }
+        
+        .dashboard-header {
+            background: var(--card-bg);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .window-controls {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .control {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .control.red { background: #ff5f57; }
+        .control.yellow { background: #ffbd2e; }
+        .control.green { background: #28ca42; }
+        
+        .window-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .dashboard-content {
+            padding: 20px;
+        }
+        
+        .dashboard-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .metric-card {
+            background: rgba(37, 99, 235, 0.05);
+            border: 1px solid rgba(37, 99, 235, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            line-height: 1;
+        }
+        
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        
+        .dashboard-chart {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            height: 80px;
+        }
+        
+        .chart-bars {
+            display: flex;
+            align-items: end;
+            gap: 8px;
+            height: 100%;
+        }
+        
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--accent-color), var(--accent-secondary));
+            border-radius: 2px 2px 0 0;
+            min-height: 20%;
         }
         
         .hero-content h1 {
@@ -3598,13 +3983,101 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             user-select: none;
         }
         
-        /* Responsive */
+        /* Mobile Responsive Styles */
+        @media (max-width: 1024px) {
+            .navbar-menu {
+                display: none;
+            }
+            
+            .hero-content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                text-align: center;
+            }
+            
+            .hero-visual {
+                order: -1;
+            }
+            
+            .dashboard-window {
+                transform: none;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+        }
+        
         @media (max-width: 768px) {
             .rotating-element { display: none; }
             .hero-section { padding: 60px 0; }
             .features-section, .snapshot-section { padding: 80px 0; }
             .feature-card { margin-bottom: 30px; }
             .cta-secondary { margin-left: 0; margin-top: 15px; display: block; text-align: center; }
+            
+            .navbar-container {
+                padding: 1rem;
+            }
+            
+            .navbar-controls {
+                gap: 1rem;
+            }
+            
+            .nav-cta-button {
+                font-size: 0.8rem;
+                padding: 0.6rem 1rem;
+            }
+            
+            .uptrends-hero {
+                padding: 100px 0 60px;
+            }
+            
+            .hero-container {
+                padding: 0 1rem;
+            }
+            
+            .hero-main-title {
+                font-size: clamp(1.8rem, 8vw, 2.5rem);
+                margin-bottom: 1rem;
+            }
+            
+            .hero-main-description {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .hero-stats {
+                gap: 1rem;
+                margin-bottom: 2rem;
+            }
+            
+            .stat-number {
+                font-size: 1.4rem;
+            }
+            
+            .stat-label {
+                font-size: 0.8rem;
+            }
+            
+            .hero-actions {
+                flex-direction: column;
+                gap: 0.8rem;
+                width: 100%;
+            }
+            
+            .hero-cta-primary,
+            .hero-cta-secondary {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
+            
+            .dashboard-window {
+                max-width: 320px;
+            }
+            
+            .dashboard-metrics {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
             
             .browser-content { padding: 15px; min-height: 300px; }
             .dhgate-header { flex-direction: column; gap: 15px; text-align: center; }
@@ -3616,54 +4089,180 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             .product-title { font-size: 13px; }
             .product-price { font-size: 14px; }
         }
+        
+        @media (max-width: 480px) {
+            .brand-name {
+                display: none;
+            }
+            
+            .nav-lang-switcher {
+                display: none;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 0.8rem;
+                text-align: center;
+            }
+            
+            .dashboard-window {
+                max-width: 280px;
+            }
+            
+            .metric-card {
+                padding: 8px;
+            }
+            
+            .metric-value {
+                font-size: 1.2rem;
+            }
+            
+            .dashboard-chart {
+                height: 60px;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Theme Toggle Switch -->
-    <div class="theme-switcher">
-        <div class="theme-toggle">
-            <span class="theme-label">Light</span>
-            <div class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" onclick="toggleTheme()" aria-label="Toggle theme">
-                <div class="theme-toggle-slider">
-                    ${theme === 'dark' ? '●' : '○'}
+    <!-- Professional Navigation Bar -->
+    <nav class="professional-navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <div class="brand-logo">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                        <defs>
+                            <linearGradient id="brandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#2563EB"/>
+                                <stop offset="100%" style="stop-color:#EA580C"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#brandGradient)"/>
+                        <path d="M2 17L12 22L22 17" stroke="url(#brandGradient)" stroke-width="2" fill="none"/>
+                        <path d="M2 12L12 17L22 12" stroke="url(#brandGradient)" stroke-width="2" fill="none"/>
+                    </svg>
                 </div>
+                <span class="brand-name">DHgate Monitor</span>
             </div>
-            <span class="theme-label">Dark</span>
+            
+            <div class="navbar-menu">
+                <a href="#features" class="nav-link">${lang === 'nl' ? 'Features' : 'Features'}</a>
+                <a href="#how-it-works" class="nav-link">${lang === 'nl' ? 'Hoe het Werkt' : 'How it Works'}</a>
+                <a href="#pricing" class="nav-link">${lang === 'nl' ? 'Prijzen' : 'Pricing'}</a>
+                <a href="/contact?lang=${lang}&theme=${theme}" class="nav-link">${lang === 'nl' ? 'Contact' : 'Contact'}</a>
+            </div>
+            
+            <div class="navbar-controls">
+                <!-- Language Switcher -->
+                <div class="nav-lang-switcher">
+                    <a href="/?lang=en&theme=${theme}" class="nav-lang-option ${lang === 'en' ? 'active' : ''}">EN</a>
+                    <span class="nav-lang-separator">|</span>
+                    <a href="/?lang=nl&theme=${theme}" class="nav-lang-option ${lang === 'nl' ? 'active' : ''}">NL</a>
+                </div>
+                
+                <!-- Theme Toggle -->
+                <div class="nav-theme-toggle">
+                    <div class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" onclick="toggleTheme()" aria-label="Toggle theme">
+                        <div class="theme-toggle-slider">
+                            ${theme === 'dark' ? '🌙' : '☀️'}
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="/login?lang=${lang}&theme=${theme}" class="nav-cta-button">
+                    ${lang === 'nl' ? 'Inloggen' : 'Login'}
+                </a>
+            </div>
         </div>
-    </div>
+    </nav>
 
-    <!-- Language Switcher -->
-    <div class="lang-switcher">
-        <div class="lang-options">
-            <a href="/?lang=en&theme=${theme}" class="lang-option ${lang === 'en' ? 'active' : ''}">EN</a>
-            <span class="lang-separator">|</span>
-            <a href="/?lang=nl&theme=${theme}" class="lang-option ${lang === 'nl' ? 'active' : ''}">NL</a>
-        </div>
-    </div>
-
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="rotating-element"></div>
+    <!-- Full-Width Hero Section -->
+    <section class="uptrends-hero">
+        <div class="hero-background-pattern"></div>
+        <div class="hero-background-image"></div>
         
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-8">
-                    <div class="hero-content">
-                        <h1>
-                            ${lang === 'nl' ? 'DHgate Monitor' : 'DHgate Monitor'}
-                        </h1>
-                        <p>
-                            ${lang === 'nl' ? 
-                                'Automatische product monitoring en tracking voor DHgate. Krijg direct meldingen wanneer nieuwe producten worden toegevoegd die voldoen aan jouw criteria. Volledig geautomatiseerd, 24/7 monitoring systeem.' :
-                                'Automated product monitoring and tracking for DHgate. Get instant notifications when new products matching your criteria are added. Fully automated, 24/7 monitoring system.'
-                            }
-                        </p>
-                        <a href="/login?lang=${lang}&theme=${theme}" class="cta-button">
-                            ${lang === 'nl' ? 'Start Monitoring' : 'Start Monitoring'}
+        <div class="hero-container">
+            <div class="hero-content-wrapper">
+                <div class="hero-main-content">
+                    <div class="hero-badge animate-fade-in-up">
+                        <span class="status-indicator"></span>
+                        ${lang === 'nl' ? '24/7 Live Monitoring' : '24/7 Live Monitoring'}
+                    </div>
+                    
+                    <h1 class="hero-main-title animate-fade-in-up" style="animation-delay: 0.1s;">
+                        ${lang === 'nl' ? 
+                            'Professionele <span class="gradient-text-hero">DHgate Monitoring</span> voor E-commerce' :
+                            'Professional <span class="gradient-text-hero">DHgate Monitoring</span> for E-commerce'
+                        }
+                    </h1>
+                    
+                    <p class="hero-main-description animate-fade-in-up" style="animation-delay: 0.2s;">
+                        ${lang === 'nl' ? 
+                            'Automatiseer je productonderzoek met geavanceerde monitoring tools. Ontvang real-time notifications wanneer nieuwe producten worden geüpload die aan jouw criteria voldoen.' :
+                            'Automate your product research with advanced monitoring tools. Receive real-time notifications when new products matching your criteria are uploaded.'
+                        }
+                    </p>
+                    
+                    <div class="hero-stats animate-fade-in-up" style="animation-delay: 0.3s;">
+                        <div class="stat-item">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label">${lang === 'nl' ? 'Monitoring' : 'Monitoring'}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">&lt;30s</div>
+                            <div class="stat-label">${lang === 'nl' ? 'Response' : 'Response'}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">99.9%</div>
+                            <div class="stat-label">${lang === 'nl' ? 'Uptime' : 'Uptime'}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-actions animate-fade-in-up" style="animation-delay: 0.4s;">
+                        <a href="#subscription-form" class="hero-cta-primary" onclick="scrollToSubscription()">
+                            ${lang === 'nl' ? 'Start Gratis Trial' : 'Start Free Trial'}
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
                         </a>
-                        <a href="/dashboard?lang=${lang}&theme=${theme}" class="cta-button cta-secondary">
-                            ${lang === 'nl' ? 'Dashboard Preview' : 'Dashboard Preview'}
+                        <a href="/dashboard?lang=${lang}&theme=${theme}" class="hero-cta-secondary">
+                            ${lang === 'nl' ? 'View Dashboard' : 'View Dashboard'}
                         </a>
+                    </div>
+                </div>
+                
+                <div class="hero-visual">
+                    <div class="hero-dashboard-preview">
+                        <div class="dashboard-window">
+                            <div class="dashboard-header">
+                                <div class="window-controls">
+                                    <div class="control red"></div>
+                                    <div class="control yellow"></div>
+                                    <div class="control green"></div>
+                                </div>
+                                <div class="window-title">DHgate Monitor Dashboard</div>
+                            </div>
+                            <div class="dashboard-content">
+                                <div class="dashboard-metrics">
+                                    <div class="metric-card">
+                                        <div class="metric-value">1,247</div>
+                                        <div class="metric-label">Products Tracked</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value">89</div>
+                                        <div class="metric-label">New This Week</div>
+                                    </div>
+                                </div>
+                                <div class="dashboard-chart">
+                                    <div class="chart-bars">
+                                        <div class="chart-bar" style="height: 60%"></div>
+                                        <div class="chart-bar" style="height: 80%"></div>
+                                        <div class="chart-bar" style="height: 45%"></div>
+                                        <div class="chart-bar" style="height: 90%"></div>
+                                        <div class="chart-bar" style="height: 70%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -4269,6 +4868,16 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             const currentLang = url.searchParams.get('lang') || '${lang}';
             url.searchParams.set('lang', currentLang);
             window.location.href = url.toString();
+        }
+        
+        function scrollToSubscription() {
+            const subscriptionForm = document.getElementById('subscription-form');
+            if (subscriptionForm) {
+                subscriptionForm.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
         }
         
         // Show consent banner on page load
