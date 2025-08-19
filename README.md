@@ -336,14 +336,15 @@ This project is proprietary software developed for automated DHgate product moni
 ---
 
 *Last Updated: August 19, 2025*
-*Version: 3.4 - Minimal Clean Design*
+*Version: 3.5 - Clean Single Device Mockup*
 
-### **Version 3.4 Highlights**  
-- 🎯 **Minimalist Design** - Removed redundant sections for cleaner, focused user experience
+### **Version 3.5 Highlights**  
+- 📱 **Unified Device Mockup** - Single clean component replacing separate desktop/mobile mockups
+- 🎯 **Minimalist Design** - Browser-style header with dots, clean metrics grid, live alert feed
 - 📊 **Enhanced USPs** - Better metrics (10,000+ Products Tracked, <2min Alert Speed, 5★ Rating)
-- ⚡ **Optimized Hero Layout** - Reduced spacing, removed redundant 24/7 badge, improved proportions
+- ⚡ **Mobile Optimized** - Device mockup appears under header on mobile with responsive scaling
 - 🎨 **Thin-line Icons** - Replaced FILTER/ALERT/24-7 text with clean SVG icons (stroke-width: 1.5)
-- 🚀 **Performance** - Reduced bundle size by removing unused CSS and sections
+- 🚀 **Performance** - Reduced bundle size to 237.58 KiB by removing complex device mockup CSS
 
 ### **Previous Version 3.1 Features**
 - 🔓 **Complete Unsubscribe System** - Token-based secure unsubscription flow
