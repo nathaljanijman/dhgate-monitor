@@ -3052,7 +3052,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             color: var(--text-primary);
             line-height: 1.7;
             overflow-x: hidden;
-            padding-top: 0;
+            padding-top: 80px;
             margin: 0;
         }
         
@@ -3701,6 +3701,232 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         .subscription-form .form-control::placeholder {
             color: var(--text-muted);
             opacity: 0.7;
+        }
+        
+        /* Progressive Form Styles */
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+        
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+        
+        .step-item.active {
+            opacity: 1;
+        }
+        
+        .step-item.completed {
+            opacity: 1;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border-color);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .step-item.active .step-number {
+            background: var(--accent-color);
+            color: white;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+        }
+        
+        .step-item.completed .step-number {
+            background: #10b981;
+            color: white;
+        }
+        
+        .step-item.completed .step-number::before {
+            content: '✓';
+        }
+        
+        .step-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .step-item.active .step-label {
+            color: var(--accent-color);
+        }
+        
+        .step-item.completed .step-label {
+            color: #10b981;
+        }
+        
+        .step-connector {
+            flex: 1;
+            height: 2px;
+            background: var(--border-color);
+            max-width: 80px;
+        }
+        
+        .form-step {
+            display: none;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.3s ease;
+        }
+        
+        .form-step.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .step-content {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .step-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-description {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .step-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary, .btn-secondary, .btn-success {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: var(--accent-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1e40af;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            border: 2px solid var(--border-color);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border-color);
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+        
+        .summary-card {
+            background: var(--border-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        
+        .summary-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        .summary-value {
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: right;
+            max-width: 200px;
+            word-break: break-word;
+        }
+        
+        .form-control-lg {
+            font-size: 1.1rem;
+            padding: 14px 16px 14px 45px;
+        }
+        
+        @media (max-width: 768px) {
+            .step-indicator {
+                gap: 0.5rem;
+            }
+            
+            .step-connector {
+                max-width: 40px;
+            }
+            
+            .step-label {
+                font-size: 10px;
+            }
+            
+            .step-actions {
+                flex-direction: column;
+            }
+            
+            .btn-primary, .btn-secondary, .btn-success {
+                width: 100%;
+            }
         }
         
         .btn-subscribe {
@@ -4653,84 +4879,202 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                             </p>
                         </div>
                         
-                        <form method="POST" action="/subscribe" class="subscription-form">
+                        <form method="POST" action="/subscribe" class="subscription-form" id="progressiveForm">
                             <input type="hidden" name="lang" value="${lang}">
                             <input type="hidden" name="theme" value="${theme}">
                             
-                            <div class="form-step active" data-step="1">
-                                <div class="form-group">
-                                    <label for="email" class="form-label">
-                                        ${lang === 'nl' ? 'Email adres' : 'Email address'}
-                                    </label>
-                                    <div class="input-wrapper">
-                                        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                            <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2"/>
-                                            <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="2"/>
-                                        </svg>
-                                        <input 
-                                            type="email" 
-                                            id="email" 
-                                            name="email" 
-                                            class="form-control" 
-                                            placeholder="${lang === 'nl' ? 'je@email.com' : 'your@email.com'}" 
-                                            required
-                                        >
-                                    </div>
+                            <!-- Step Indicator -->
+                            <div class="step-indicator">
+                                <div class="step-item active" data-step="1">
+                                    <div class="step-number">1</div>
+                                    <div class="step-label">${lang === 'nl' ? 'Email' : 'Email'}</div>
                                 </div>
-                                
-                                <div class="form-group">
-                                    <label for="store_url" class="form-label">
-                                        ${lang === 'nl' ? 'DHgate winkel URL (optioneel)' : 'DHgate store URL (optional)'}
-                                    </label>
-                                    <div class="input-wrapper">
-                                        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                            <path d="M10 13C10 14.1 10.9 15 12 15S14 14.1 14 13C14 11.9 13.1 11 12 11S10 11.9 10 13Z" stroke="currentColor" stroke-width="2"/>
-                                            <path d="M12 2L19.07 8.75C19.66 9.32 20 10.12 20 10.96V20C20 21.1 19.1 22 18 22H6C4.9 22 4 21.1 4 20V10.96C4 10.12 4.34 9.32 4.93 8.75L12 2Z" stroke="currentColor" stroke-width="2"/>
-                                        </svg>
-                                        <input 
-                                            type="url" 
-                                            id="store_url" 
-                                            name="store_url" 
-                                            class="form-control" 
-                                            placeholder="${lang === 'nl' ? 'https://dhgate.com/store/...' : 'https://dhgate.com/store/...'}"
-                                        >
-                                    </div>
+                                <div class="step-connector"></div>
+                                <div class="step-item" data-step="2">
+                                    <div class="step-number">2</div>
+                                    <div class="step-label">${lang === 'nl' ? 'Details' : 'Details'}</div>
                                 </div>
-                                
-                                <div class="form-group">
-                                    <label for="tags" class="form-label">
-                                        ${lang === 'nl' ? 'Zoektermen (gescheiden door komma\'s)' : 'Search terms (separated by commas)'}
-                                    </label>
-                                    <div class="input-wrapper">
-                                        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                            <path d="M20.59 13.41L13.42 20.58C13.05 20.95 12.55 21.16 12.02 21.16C11.49 21.16 10.99 20.95 10.62 20.58L7.41 17.37C6.99 16.95 6.76 16.37 6.76 15.76V10.58L2.29 4.11C2.1 3.81 2 3.46 2 3.1V2C2 1.45 2.45 1 3 1H21C21.55 1 22 1.45 22 2V3.1C22 3.46 21.9 3.81 21.71 4.11L20.59 13.41Z" stroke="currentColor" stroke-width="2"/>
-                                        </svg>
-                                        <input 
-                                            type="text" 
-                                            id="tags" 
-                                            name="tags" 
-                                            class="form-control" 
-                                            placeholder="${lang === 'nl' ? 'jersey, shirt, voetbal' : 'jersey, shirt, soccer'}" 
-                                            required
-                                        >
-                                    </div>
+                                <div class="step-connector"></div>
+                                <div class="step-item" data-step="3">
+                                    <div class="step-number">3</div>
+                                    <div class="step-label">${lang === 'nl' ? 'Start' : 'Start'}</div>
                                 </div>
-                                
-                                <button type="submit" class="btn-subscribe">
-                                    ${lang === 'nl' ? 'Start monitoring' : 'Start monitoring'}
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                        <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                        <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                    </svg>
-                                </button>
-                                
-                                <p class="form-notice">
-                                    ${lang === 'nl' ? 
-                                        'Door te subscriben ontvang je een email met een link om je voorkeuren aan te passen.' :
-                                        'By subscribing you will receive an email with a link to customize your preferences.'
-                                    }
-                                </p>
                             </div>
+                            
+                            <!-- Step 1: Email -->
+                            <div class="form-step active" data-step="1">
+                                <div class="step-content">
+                                    <h3 class="step-title">
+                                        ${lang === 'nl' ? 'Wat is je email adres?' : 'What\'s your email address?'}
+                                    </h3>
+                                    <p class="step-description">
+                                        ${lang === 'nl' ? 
+                                            'We gebruiken dit om je alerts te sturen wanneer nieuwe producten worden gevonden.' :
+                                            'We\'ll use this to send you alerts when new products are found.'
+                                        }
+                                    </p>
+                                    <div class="form-group">
+                                        <div class="input-wrapper">
+                                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                                <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2"/>
+                                                <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="2"/>
+                                            </svg>
+                                            <input 
+                                                type="email" 
+                                                id="email" 
+                                                name="email" 
+                                                class="form-control form-control-lg" 
+                                                placeholder="${lang === 'nl' ? 'jouw@email.com' : 'your@email.com'}" 
+                                                required
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-actions">
+                                    <button type="button" class="btn-primary btn-next" onclick="nextStep()">
+                                        ${lang === 'nl' ? 'Volgende' : 'Next'}
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                            <path d="M5 12H19" stroke="currentColor" stroke-width="2"/>
+                                            <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 2: Store URL and Search Terms -->
+                            <div class="form-step" data-step="2">
+                                <div class="step-content">
+                                    <h3 class="step-title">
+                                        ${lang === 'nl' ? 'Monitoring details' : 'Monitoring details'}
+                                    </h3>
+                                    <p class="step-description">
+                                        ${lang === 'nl' ? 
+                                            'Geef aan welke DHgate winkel en zoektermen je wilt monitoren.' :
+                                            'Specify which DHgate store and search terms you want to monitor.'
+                                        }
+                                    </p>
+                                    <div class="form-group">
+                                        <label for="store_url" class="form-label">
+                                            ${lang === 'nl' ? 'DHgate winkel URL (optioneel)' : 'DHgate store URL (optional)'}
+                                        </label>
+                                        <div class="input-wrapper">
+                                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                                <path d="M10 13C10 14.1 10.9 15 12 15S14 14.1 14 13C14 11.9 13.1 11 12 11S10 11.9 10 13Z" stroke="currentColor" stroke-width="2"/>
+                                                <path d="M12 2L19.07 8.75C19.66 9.32 20 10.12 20 10.96V20C20 21.1 19.1 22 18 22H6C4.9 22 4 21.1 4 20V10.96C4 10.12 4.34 9.32 4.93 8.75L12 2Z" stroke="currentColor" stroke-width="2"/>
+                                            </svg>
+                                            <input 
+                                                type="url" 
+                                                id="store_url" 
+                                                name="store_url" 
+                                                class="form-control" 
+                                                placeholder="${lang === 'nl' ? 'https://dhgate.com/store/...' : 'https://dhgate.com/store/...'}"
+                                            >
+                                        </div>
+                                        <div class="form-text">
+                                            ${lang === 'nl' ? 
+                                                'Laat leeg om alle DHgate winkels te monitoren' :
+                                                'Leave empty to monitor all DHgate stores'
+                                            }
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="tags" class="form-label">
+                                            ${lang === 'nl' ? 'Zoektermen *' : 'Search terms *'}
+                                        </label>
+                                        <div class="input-wrapper">
+                                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                                <path d="M20.59 13.41L13.42 20.58C13.05 20.95 12.55 21.16 12.02 21.16C11.49 21.16 10.99 20.95 10.62 20.58L7.41 17.37C6.99 16.95 6.76 16.37 6.76 15.76V10.58L2.29 4.11C2.1 3.81 2 3.46 2 3.1V2C2 1.45 2.45 1 3 1H21C21.55 1 22 1.45 22 2V3.1C22 3.46 21.9 3.81 21.71 4.11L20.59 13.41Z" stroke="currentColor" stroke-width="2"/>
+                                            </svg>
+                                            <input 
+                                                type="text" 
+                                                id="tags" 
+                                                name="tags" 
+                                                class="form-control" 
+                                                placeholder="${lang === 'nl' ? 'jersey, shirt, voetbal' : 'jersey, shirt, soccer'}" 
+                                                required
+                                            >
+                                        </div>
+                                        <div class="form-text">
+                                            ${lang === 'nl' ? 
+                                                'Voer woorden in gescheiden door komma\'s. Producten met deze woorden worden gedetecteerd.' :
+                                                'Enter words separated by commas. Products containing these words will be detected.'
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-actions">
+                                    <button type="button" class="btn-secondary btn-back" onclick="previousStep()">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                            <path d="M19 12H5" stroke="currentColor" stroke-width="2"/>
+                                            <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2"/>
+                                        </svg>
+                                        ${lang === 'nl' ? 'Terug' : 'Back'}
+                                    </button>
+                                    <button type="button" class="btn-primary btn-next" onclick="nextStep()">
+                                        ${lang === 'nl' ? 'Volgende' : 'Next'}
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                            <path d="M5 12H19" stroke="currentColor" stroke-width="2"/>
+                                            <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 3: Confirmation -->
+                            <div class="form-step" data-step="3">
+                                <div class="step-content">
+                                    <h3 class="step-title">
+                                        ${lang === 'nl' ? 'Klaar om te starten!' : 'Ready to start!'}
+                                    </h3>
+                                    <p class="step-description">
+                                        ${lang === 'nl' ? 
+                                            'We gaan je monitoring nu instellen. Je ontvangt een email zodra nieuwe producten worden gevonden.' :
+                                            'We\'ll set up your monitoring now. You\'ll receive an email as soon as new products are found.'
+                                        }
+                                    </p>
+                                    <div class="summary-card">
+                                        <div class="summary-item">
+                                            <div class="summary-label">${lang === 'nl' ? 'Email:' : 'Email:'}</div>
+                                            <div class="summary-value" id="summaryEmail">-</div>
+                                        </div>
+                                        <div class="summary-item">
+                                            <div class="summary-label">${lang === 'nl' ? 'Winkel:' : 'Store:'}</div>
+                                            <div class="summary-value" id="summaryStore">${lang === 'nl' ? 'Alle winkels' : 'All stores'}</div>
+                                        </div>
+                                        <div class="summary-item">
+                                            <div class="summary-label">${lang === 'nl' ? 'Zoektermen:' : 'Search terms:'}</div>
+                                            <div class="summary-value" id="summaryTags">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-actions">
+                                    <button type="button" class="btn-secondary btn-back" onclick="previousStep()">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                            <path d="M19 12H5" stroke="currentColor" stroke-width="2"/>
+                                            <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2"/>
+                                        </svg>
+                                        ${lang === 'nl' ? 'Terug' : 'Back'}
+                                    </button>
+                                    <button type="submit" class="btn-success btn-submit">
+                                        ${lang === 'nl' ? 'Start monitoring' : 'Start monitoring'}
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                            <path d="M5 12H19" stroke="currentColor" stroke-width="2"/>
+                                            <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <p class="form-notice">
+                                ${lang === 'nl' ? 
+                                    'Door te subscriben ga je akkoord met onze ' :
+                                    'By subscribing you agree to our '
+                                }
+                                <a href="/terms?lang=${lang}&theme=${theme}" target="_blank">${lang === 'nl' ? 'voorwaarden' : 'terms'}</a>
+                                ${lang === 'nl' ? ' en ' : ' and '}
+                                <a href="/privacy?lang=${lang}&theme=${theme}" target="_blank">${lang === 'nl' ? 'privacybeleid' : 'privacy policy'}</a>.
+                            </p>
                         </form>
                     </div>
                 </div>
@@ -4840,6 +5184,98 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 });
             }
         }
+        
+        // Progressive Form Functionality
+        let currentStep = 1;
+        const totalSteps = 3;
+        
+        function nextStep() {
+            const currentStepElement = document.querySelector(\`.form-step[data-step="\${currentStep}"]\`);
+            const emailInput = document.getElementById('email');
+            const tagsInput = document.getElementById('tags');
+            
+            // Validate current step
+            if (currentStep === 1) {
+                if (!emailInput.value || !emailInput.checkValidity()) {
+                    emailInput.focus();
+                    emailInput.reportValidity();
+                    return;
+                }
+            } else if (currentStep === 2) {
+                if (!tagsInput.value || !tagsInput.checkValidity()) {
+                    tagsInput.focus();
+                    tagsInput.reportValidity();
+                    return;
+                }
+            }
+            
+            if (currentStep < totalSteps) {
+                // Hide current step
+                currentStepElement.classList.remove('active');
+                const currentStepIndicator = document.querySelector(\`.step-item[data-step="\${currentStep}"]\`);
+                currentStepIndicator.classList.remove('active');
+                currentStepIndicator.classList.add('completed');
+                
+                // Show next step
+                currentStep++;
+                const nextStepElement = document.querySelector(\`.form-step[data-step="\${currentStep}"]\`);
+                const nextStepIndicator = document.querySelector(\`.step-item[data-step="\${currentStep}"]\`);
+                
+                setTimeout(() => {
+                    nextStepElement.classList.add('active');
+                    nextStepIndicator.classList.add('active');
+                }, 150);
+                
+                // Update summary on step 3
+                if (currentStep === 3) {
+                    updateSummary();
+                }
+            }
+        }
+        
+        function previousStep() {
+            if (currentStep > 1) {
+                // Hide current step
+                const currentStepElement = document.querySelector(\`.form-step[data-step="\${currentStep}"]\`);
+                const currentStepIndicator = document.querySelector(\`.step-item[data-step="\${currentStep}"]\`);
+                currentStepElement.classList.remove('active');
+                currentStepIndicator.classList.remove('active');
+                
+                // Show previous step
+                currentStep--;
+                const prevStepElement = document.querySelector(\`.form-step[data-step="\${currentStep}"]\`);
+                const prevStepIndicator = document.querySelector(\`.step-item[data-step="\${currentStep}"]\`);
+                
+                setTimeout(() => {
+                    prevStepElement.classList.add('active');
+                    prevStepIndicator.classList.remove('completed');
+                    prevStepIndicator.classList.add('active');
+                }, 150);
+            }
+        }
+        
+        function updateSummary() {
+            const email = document.getElementById('email').value;
+            const storeUrl = document.getElementById('store_url').value;
+            const tags = document.getElementById('tags').value;
+            
+            document.getElementById('summaryEmail').textContent = email;
+            document.getElementById('summaryStore').textContent = storeUrl || 
+                ('${lang}' === 'nl' ? 'Alle winkels' : 'All stores');
+            document.getElementById('summaryTags').textContent = tags;
+        }
+        
+        // Allow Enter key to advance steps
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.target.matches('.form-control')) {
+                e.preventDefault();
+                if (currentStep < totalSteps) {
+                    nextStep();
+                } else if (currentStep === totalSteps && e.target.id !== 'tags') {
+                    document.getElementById('progressiveForm').submit();
+                }
+            }
+        });
         
         // Show consent banner on page load
         document.addEventListener('DOMContentLoaded', showCookieConsent);
