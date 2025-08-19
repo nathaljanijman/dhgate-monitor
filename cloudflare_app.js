@@ -4936,248 +4936,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             margin: 0;
         }
         
-        /* Luxury Features Section */
-        .luxury-features-section {
-            padding: 120px 0;
-            background: var(--card-bg);
-            position: relative;
-        }
-        
-        .luxury-features-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 85% 85%, rgba(234, 88, 12, 0.05) 0%, transparent 50%);
-            z-index: -1;
-        }
-        
-        .luxury-title {
-            font-size: 2.75rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            color: var(--text-primary);
-            background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .luxury-subtitle {
-            font-size: 1.3rem;
-            color: var(--text-muted);
-            max-width: 650px;
-            margin: 0 auto;
-            font-weight: 400;
-            line-height: 1.6;
-        }
-        
-        .luxury-feature-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 3rem 2rem;
-            text-align: center;
-            height: 100%;
-            position: relative;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-            backdrop-filter: blur(10px);
-        }
-        
-        .luxury-feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.02), rgba(234, 88, 12, 0.02));
-            border-radius: inherit;
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        
-        .luxury-feature-card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 25px 50px rgba(37, 99, 235, 0.15);
-            border-color: rgba(37, 99, 235, 0.3);
-        }
-        
-        .luxury-feature-card:hover::before {
-            opacity: 1;
-        }
-        
-        .feature-icon-wrapper {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 2rem;
-            background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            transition: all 0.4s ease;
-        }
-        
-        .luxury-feature-card:hover .feature-icon-wrapper {
-            transform: scale(1.1) rotate(-5deg);
-            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.3);
-        }
-        
-        .feature-icon {
-            color: white;
-            transition: transform 0.4s ease;
-        }
-        
-        .luxury-feature-card:hover .feature-icon {
-            transform: scale(1.1);
-        }
-        
-        .feature-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: var(--text-primary);
-            line-height: 1.3;
-        }
-        
-        .feature-description {
-            font-size: 1.1rem;
-            line-height: 1.7;
-            color: var(--text-secondary);
-            margin: 0;
-        }
-
-        /* Value Propositions Section */
-        .value-props-section {
-            padding: 120px 0;
-            background: var(--bg-gradient);
-            position: relative;
-        }
-        
-        .value-props-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                radial-gradient(circle at 25% 25%, rgba(37, 99, 235, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 75% 75%, rgba(234, 88, 12, 0.08) 0%, transparent 50%);
-            z-index: -1;
-        }
-        
-        .value-props-title {
-            font-size: 2.75rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            color: var(--text-primary);
-            line-height: 1.2;
-        }
-        
-        .value-props-subtitle {
-            font-size: 1.3rem;
-            color: var(--text-muted);
-            max-width: 750px;
-            margin: 0 auto;
-            font-weight: 400;
-            line-height: 1.6;
-        }
-        
-        .value-prop-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 3rem 2.5rem;
-            text-align: center;
-            height: 100%;
-            position: relative;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            backdrop-filter: blur(20px);
-        }
-        
-        .value-prop-card.highlighted {
-            border-color: var(--accent-color);
-            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.15);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .value-prop-card.highlighted::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.03), rgba(234, 88, 12, 0.03));
-            z-index: -1;
-        }
-        
-        .value-prop-card:hover {
-            transform: translateY(-15px) scale(1.02);
-            box-shadow: 0 25px 60px rgba(37, 99, 235, 0.2);
-            border-color: rgba(37, 99, 235, 0.4);
-        }
-        
-        .value-prop-badge {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--accent-color);
-            color: white;
-            padding: 6px 20px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        
-        .value-prop-number {
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: var(--accent-color);
-            line-height: 1;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .value-prop-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: var(--text-primary);
-            line-height: 1.3;
-        }
-        
-        .value-prop-description {
-            font-size: 1.1rem;
-            line-height: 1.7;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
-        
-        .value-prop-source {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-style: italic;
-            border-top: 1px solid var(--border-light);
-            padding-top: 1rem;
-            margin-top: auto;
-        }
 
         /* Subscription Form Section */
         .subscription-section {
@@ -6335,7 +6093,11 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             <div class="row">
                 <div class="col-lg-4 mb-4">
                     <div class="feature-card">
-                        <div class="feature-icon">FILTER</div>
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M4 6H20M7 12H17M10 18H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
                         <h3 class="feature-title">
                             ${lang === 'nl' ? 'Smart Filtering' : 'Smart Filtering'}
                         </h3>
@@ -6350,7 +6112,12 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 
                 <div class="col-lg-4 mb-4">
                     <div class="feature-card">
-                        <div class="feature-icon">ALERT</div>
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M13.73 21C13.5542 21.3031 13.3018 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
                         <h3 class="feature-title">
                             ${lang === 'nl' ? 'Real-time Alerts' : 'Real-time Alerts'}
                         </h3>
@@ -6365,7 +6132,12 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 
                 <div class="col-lg-4 mb-4">
                     <div class="feature-card">
-                        <div class="feature-icon">24/7</div>
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
                         <h3 class="feature-title">
                             ${lang === 'nl' ? 'Continuous Monitoring' : 'Continuous Monitoring'}
                         </h3>
@@ -6382,166 +6154,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
     </section>
 
     <!-- How It Works Section -->
-    <!-- Premium Features Section -->
-    <section id="features" class="luxury-features-section">
-        <div class="container">
-            <div class="row text-center mb-5">
-                <div class="col-12">
-                    <h2 class="luxury-title">
-                        ${lang === 'nl' ? 'Professionele Monitoring Features' : 'Professional Monitoring Features'}
-                    </h2>
-                    <p class="luxury-subtitle">
-                        ${lang === 'nl' ? 
-                            'Geavanceerde tools voor slimme e-commerce professionals' :
-                            'Advanced tools for smart e-commerce professionals'
-                        }
-                    </p>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="col-lg-4 mb-4">
-                    <div class="luxury-feature-card">
-                        <div class="feature-icon-wrapper">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" class="feature-icon">
-                                <path d="M12 2L2 7V10C2 16 6 20.88 12 22C18 20.88 22 16 22 10V7L12 2Z" stroke="currentColor" stroke-width="2" fill="none"/>
-                                <path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </div>
-                        <h3 class="feature-title">
-                            ${lang === 'nl' ? 'Real-time Monitoring' : 'Real-time Monitoring'}
-                        </h3>
-                        <p class="feature-description">
-                            ${lang === 'nl' ? 
-                                'Krijg binnen 2 minuten een melding zodra nieuwe producten verschijnen die matchen met je criteria.' :
-                                'Get notified within 2 minutes when new products appear that match your criteria.'
-                            }
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="col-lg-4 mb-4">
-                    <div class="luxury-feature-card">
-                        <div class="feature-icon-wrapper">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" class="feature-icon">
-                                <path d="M9 11L12 14L22 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M21 12V19C21 19.55 20.55 20 20 20H4C3.45 20 3 19.55 3 19V5C3 4.45 3.45 4 4 4H16" stroke="currentColor" stroke-width="2" fill="none"/>
-                            </svg>
-                        </div>
-                        <h3 class="feature-title">
-                            ${lang === 'nl' ? 'Smart Filtering' : 'Smart Filtering'}
-                        </h3>
-                        <p class="feature-description">
-                            ${lang === 'nl' ? 
-                                'Geavanceerde filters op tags, prijsrange en productcategorieën voor exacte resultaten.' :
-                                'Advanced filters on tags, price ranges and product categories for precise results.'
-                            }
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="col-lg-4 mb-4">
-                    <div class="luxury-feature-card">
-                        <div class="feature-icon-wrapper">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" class="feature-icon">
-                                <path d="M21 15C21 15.55 20.55 16 20 16H4C3.45 16 3 15.55 3 15V5C3 4.45 3.45 4 4 4H20C20.55 4 21 4.45 21 5V15Z" stroke="currentColor" stroke-width="2" fill="none"/>
-                                <path d="M7 8L12 11L17 8" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M22 19H2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </div>
-                        <h3 class="feature-title">
-                            ${lang === 'nl' ? 'Premium Email Alerts' : 'Premium Email Alerts'}
-                        </h3>
-                        <p class="feature-description">
-                            ${lang === 'nl' ? 
-                                'Professioneel vormgegeven email alerts met productdetails en directe links naar DHgate.' :
-                                'Professionally designed email alerts with product details and direct links to DHgate.'
-                            }
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- DHgate Snapshot Section -->
-    <!-- Value Propositions Section -->
-    <section class="value-props-section">
-        <div class="container">
-            <div class="row text-center mb-5">
-                <div class="col-12">
-                    <h2 class="value-props-title">
-                        ${lang === 'nl' ? 'Waarom E-commerce Professionals Kiezen voor DHgate Monitor' : 'Why E-commerce Professionals Choose DHgate Monitor'}
-                    </h2>
-                    <p class="value-props-subtitle">
-                        ${lang === 'nl' ? 
-                            'Bewezen resultaten voor ondernemers die hun concurrentievoordeel willen behouden' :
-                            'Proven results for entrepreneurs who want to maintain their competitive edge'
-                        }
-                    </p>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="col-lg-4 mb-4">
-                    <div class="value-prop-card">
-                        <div class="value-prop-number">€2,847</div>
-                        <h4 class="value-prop-title">
-                            ${lang === 'nl' ? 'Gemiddelde Maandelijkse Winst Toename' : 'Average Monthly Profit Increase'}
-                        </h4>
-                        <p class="value-prop-description">
-                            ${lang === 'nl' ? 
-                                'Onze gebruikers rapporteren een gemiddelde winststijging van €2,847 per maand door sneller te reageren op nieuwe product trends.' :
-                                'Our users report an average profit increase of €2,847 per month by responding faster to new product trends.'
-                            }
-                        </p>
-                        <div class="value-prop-source">
-                            ${lang === 'nl' ? 'Gebaseerd op 200+ klantonderzoeken' : 'Based on 200+ customer surveys'}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-4 mb-4">
-                    <div class="value-prop-card highlighted">
-                        <div class="value-prop-badge">
-                            ${lang === 'nl' ? 'POPULAIR' : 'POPULAR'}
-                        </div>
-                        <div class="value-prop-number">87%</div>
-                        <h4 class="value-prop-title">
-                            ${lang === 'nl' ? 'Sneller Dan Concurrenten' : 'Faster Than Competitors'}
-                        </h4>
-                        <p class="value-prop-description">
-                            ${lang === 'nl' ? 
-                                'Wees 87% sneller dan je concurrenten met het vinden van nieuwe trending producten op DHgate. Eerste zijn = meer verkoop.' :
-                                'Be 87% faster than your competitors in finding new trending products on DHgate. Being first = more sales.'
-                            }
-                        </p>
-                        <div class="value-prop-source">
-                            ${lang === 'nl' ? 'Vergelijkende analyse 2024' : 'Comparative analysis 2024'}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-4 mb-4">
-                    <div class="value-prop-card">
-                        <div class="value-prop-number">24/7</div>
-                        <h4 class="value-prop-title">
-                            ${lang === 'nl' ? 'Geen Gemiste Kansen Meer' : 'No More Missed Opportunities'}
-                        </h4>
-                        <p class="value-prop-description">
-                            ${lang === 'nl' ? 
-                                'Stop met handmatig controleren van DHgate. Ons systeem werkt 24/7 en waarschuwt je binnen 2 minuten bij nieuwe matches.' :
-                                'Stop manually checking DHgate. Our system works 24/7 and alerts you within 2 minutes of new matches.'
-                            }
-                        </p>
-                        <div class="value-prop-source">
-                            ${lang === 'nl' ? 'Gegarandeerde uptime >99.9%' : 'Guaranteed uptime >99.9%'}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Subscription Form Section -->
     <section id="subscription-form" class="subscription-section">
