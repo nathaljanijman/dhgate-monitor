@@ -4190,13 +4190,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             color: white;
         }
         
-        /* Uptrends-Inspired Hero */
-        .uptrends-hero {
-            min-height: 90vh;
+        /* Simplified Hero */
+        .hero-section {
             position: relative;
-            display: flex;
-            align-items: center;
-            padding: 80px 0 60px;
+            padding: 60px 0 40px;
             background: var(--bg-gradient);
             overflow: hidden;
         }
@@ -4947,8 +4944,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         /* Mobile positioning for device mockup */
         @media (max-width: 768px) {
             .clean-device-mockup {
-                order: -1;
-                margin-bottom: 2rem;
                 padding: 1rem 0;
             }
             
@@ -5733,12 +5728,17 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             
             .hero-content-wrapper {
                 grid-template-columns: 1fr;
-                gap: 3rem;
+                gap: 2rem;
                 text-align: center;
             }
             
+            .hero-main-content {
+                order: 1;
+            }
+            
             .hero-visual {
-                order: -1;
+                order: 2;
+                margin-top: 2rem;
             }
             
             .dashboard-window {
@@ -5750,7 +5750,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         
         @media (max-width: 768px) {
             .rotating-element { display: none; }
-            .hero-section { padding: 60px 0; }
+            .hero-section { padding: 30px 0; }
             .features-section, .snapshot-section { padding: 80px 0; }
             .feature-card { margin-bottom: 30px; }
             .cta-secondary { margin-left: 0; margin-top: 15px; display: block; text-align: center; }
@@ -5768,8 +5768,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 padding: 0.6rem 1rem;
             }
             
-            .uptrends-hero {
-                padding: 100px 0 60px;
+            .hero-section {
+                padding: 40px 0 30px;
             }
             
             .hero-container {
@@ -5941,8 +5941,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         </div>
     </nav>
 
-    <!-- Full-Width Hero Section -->
-    <section class="uptrends-hero">
+    <!-- Simplified Hero Section -->
+    <section class="hero-section">
         <div class="hero-background-pattern"></div>
         <div class="hero-background-image"></div>
         
