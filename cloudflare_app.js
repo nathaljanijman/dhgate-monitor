@@ -5108,14 +5108,64 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             transition: all 0.3s ease;
         }
         
-        .hero-cta-secondary:hover {
-            border-color: var(--accent-color);
-            color: var(--accent-color);
-            background: rgba(37, 99, 235, 0.05);
-        }
-        
         .hero-visual {
             position: relative;
+        }
+        
+        /* Mobile Hero Mockup Styling */
+        .mobile-hero-mockup {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-mobile-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 10px 30px rgba(37, 99, 235, 0.2));
+        }
+        
+        .hero-mobile-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
+            filter: drop-shadow(0 15px 40px rgba(37, 99, 235, 0.3));
+        }
+        
+        /* Hero Image Placeholder */
+        .hero-image-placeholder {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 2px dashed var(--border-color);
+            opacity: 0.6;
+        }
+        
+        .placeholder-content {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .placeholder-icon {
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .placeholder-icon svg {
+            color: var(--text-muted);
+        }
+        
+        .placeholder-text {
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 500;
         }
         
         .hero-dashboard-preview {
@@ -6680,7 +6730,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 padding: 0 1rem;
             }
             
-            
             .hero-main-title {
                 font-size: clamp(1.8rem, 8vw, 2.5rem);
                 margin-bottom: 1rem;
@@ -6958,50 +7007,28 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 </div>
                 
                 <div class="hero-visual">
-                    <!-- Clean Device Mockup -->
-                    <div class="clean-device-mockup">
-                        <div class="mockup-container">
-                            <div class="mockup-header">
-                                <div class="mockup-dots">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
+                    <!-- Mobile Mockup Hero Image -->
+                    <div class="mobile-hero-mockup">
+                        <img src="/assets/hero-mobile-mockup.png" 
+                             alt="${lang === 'nl' ? 'DHgate Monitor mobiele interface showcase' : 'DHgate Monitor mobile interface showcase'}"
+                             class="hero-mobile-image animate-fade-in-up" 
+                             style="animation-delay: 0.5s;"
+                             loading="eager"
+                             width="600" 
+                             height="800"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        
+                        <!-- Fallback for when image is not available -->
+                        <div class="hero-image-placeholder" style="display: none;">
+                            <div class="placeholder-content">
+                                <div class="placeholder-icon">
+                                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                                        <polyline points="21,15 16,10 5,21"/>
+                                    </svg>
                                 </div>
-                                <span class="mockup-title">DHgate Monitor</span>
-                            </div>
-                            <div class="mockup-content">
-                                <div class="mockup-metrics">
-                                    <div class="metric">
-                                        <div class="metric-value">2,847</div>
-                                        <div class="metric-label">${lang === 'nl' ? 'Monitors' : 'Monitors'}</div>
-                                    </div>
-                                    <div class="metric">
-                                        <div class="metric-value">124</div>
-                                        <div class="metric-label">${lang === 'nl' ? 'Alerts' : 'Alerts'}</div>
-                                    </div>
-                                    <div class="metric">
-                                        <div class="metric-value">2min</div>
-                                        <div class="metric-label">${lang === 'nl' ? 'Gemiddeld' : 'Average'}</div>
-                                    </div>
-                                </div>
-                                <div class="mockup-feed">
-                                    <div class="feed-item">
-                                        <div class="feed-indicator"></div>
-                                        <div class="feed-content">
-                                            <div class="feed-title">${lang === 'nl' ? 'Nieuw product gevonden' : 'New product found'}</div>
-                                            <div class="feed-subtitle">iPhone 15 Case - €12.99</div>
-                                        </div>
-                                        <div class="feed-time">2m</div>
-                                    </div>
-                                    <div class="feed-item">
-                                        <div class="feed-indicator"></div>
-                                        <div class="feed-content">
-                                            <div class="feed-title">${lang === 'nl' ? 'Nieuw product gevonden' : 'New product found'}</div>
-                                            <div class="feed-subtitle">Gaming Headset - €29.50</div>
-                                        </div>
-                                        <div class="feed-time">8m</div>
-                                    </div>
-                                </div>
+                                <div class="placeholder-text">${lang === 'nl' ? 'Hero afbeelding wordt geladen...' : 'Hero image loading...'}</div>
                             </div>
                         </div>
                     </div>
