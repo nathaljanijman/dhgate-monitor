@@ -5156,18 +5156,15 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         }
         
         .hero-mobile-image {
-            max-width: 100%;
+            max-width: 400px;
+            width: 100%;
             height: auto;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
             transition: all 0.3s ease;
-            filter: drop-shadow(0 10px 30px rgba(37, 99, 235, 0.2));
         }
         
         .hero-mobile-image:hover {
             transform: scale(1.02);
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
-            filter: drop-shadow(0 15px 40px rgba(37, 99, 235, 0.3));
         }
         
         /* Hero Image Placeholder */
@@ -7048,8 +7045,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                              class="hero-mobile-image animate-fade-in-up" 
                              style="animation-delay: 0.5s;"
                              loading="eager"
-                             width="600" 
-                             height="800"
+                             width="400" 
+                             height="auto"
                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         
                         <!-- Fallback for when image is not available -->
