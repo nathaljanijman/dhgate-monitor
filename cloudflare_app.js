@@ -353,7 +353,7 @@ async function handleAsset(pathname, corsHeaders) {
   if (pathname === '/assets/dhgatevisualheader.png') {
     // Fetch from GitHub raw content or serve base64 encoded version
     try {
-      const response = await fetch('https://raw.githubusercontent.com/nathalja/dhgate-monitor/main/assets/dhgatevisualheader.png');
+      const response = await fetch('https://raw.githubusercontent.com/nathaljanijman/dhgate-monitor/main/assets/dhgatevisualheader.png');
       if (response.ok) {
         const imageBuffer = await response.arrayBuffer();
         return new Response(imageBuffer, {
