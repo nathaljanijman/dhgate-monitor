@@ -1608,20 +1608,34 @@ function generateCookieConsentBanner(lang = 'en') {
       // Show cookie consent banner if not already accepted/declined
       document.addEventListener('DOMContentLoaded', function() {
         const consent = localStorage.getItem('dhgate_analytics_consent');
-        if (!consent) {
-          document.getElementById('cookieConsent').style.display = 'flex';
+        const cookieBanner = document.getElementById('cookieConsent');
+        
+        if (!consent || (consent !== 'accepted' && consent !== 'declined')) {
+          if (cookieBanner) {
+            cookieBanner.style.display = 'flex';
+          }
         } else if (consent === 'accepted') {
           // Load GA4 if previously accepted
           if (typeof window.loadGA4 === 'function') {
             window.loadGA4();
           }
+          // Ensure banner is hidden
+          if (cookieBanner) {
+            cookieBanner.style.display = 'none';
+          }
+        } else if (consent === 'declined') {
+          // Ensure banner is hidden when declined
+          if (cookieBanner) {
+            cookieBanner.style.display = 'none';
+          }
         }
       });
 
       function acceptCookies() {
-        const analyticsEnabled = document.getElementById('analyticsCookies')?.checked !== false;
+        const analyticsCheckbox = document.getElementById('analyticsCookies');
+        const analyticsEnabled = analyticsCheckbox ? analyticsCheckbox.checked : true; // Default to true if no checkbox
         
-        localStorage.setItem('dhgate_analytics_consent', analyticsEnabled ? 'accepted' : 'declined');
+        localStorage.setItem('dhgate_analytics_consent', 'accepted');
         localStorage.setItem('dhgate_analytics_enabled', analyticsEnabled.toString());
         
         if (analyticsEnabled && typeof window.loadGA4 === 'function') {
@@ -3294,7 +3308,6 @@ function generateAddShopHTML(t, lang, theme = 'light') {
         }
         
         // Show consent banner on page load
-        document.addEventListener('DOMContentLoaded', showCookieConsent);
     </script>
 </body>
 </html>
@@ -3391,7 +3404,7 @@ function generateSettingsHTML(config, t, lang) {
         </div>
     </div>
     
-    ${generateCookieConsent(t, lang)}
+    ${generateCookieConsentBanner(lang)}
 </body>
 </html>
   `;
@@ -3475,7 +3488,7 @@ function generateTagsHTML(tags, t, lang) {
         </div>
     </div>
     
-    ${generateCookieConsent(t, lang)}
+    ${generateCookieConsentBanner(lang)}
 </body>
 </html>
   `;
@@ -3525,7 +3538,7 @@ function generatePrivacyHTML(t, lang) {
         </div>
     </div>
     
-    ${generateCookieConsent(t, lang)}
+    ${generateCookieConsentBanner(lang)}
 </body>
 </html>
   `;
@@ -3575,7 +3588,7 @@ function generateTermsHTML(t, lang) {
         </div>
     </div>
     
-    ${generateCookieConsent(t, lang)}
+    ${generateCookieConsentBanner(lang)}
 </body>
 </html>
   `;
@@ -3641,7 +3654,7 @@ function generateContactHTML(t, lang) {
         </div>
     </div>
     
-    ${generateCookieConsent(t, lang)}
+    ${generateCookieConsentBanner(lang)}
 </body>
 </html>
   `;
@@ -3672,66 +3685,6 @@ ${urls.map(url => `  <url>
 </urlset>`;
   
   return sitemap;
-}
-
-// Cookie consent banner generator
-function generateCookieConsent(t, lang) {
-  return `
-    <!-- Cookie Consent Banner -->
-    <div id="cookieConsent" class="cookie-consent">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h6 class="mb-2">${t.cookie_title}</h6>
-                    <p class="mb-0 small">${t.cookie_message}</p>
-                </div>
-                <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <button onclick="acceptCookies()" class="btn btn-success btn-sm">${t.accept_cookies}</button>
-                    <button onclick="declineCookies()" class="btn btn-outline-light btn-sm">${t.decline_cookies}</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        
-        // Show consent banner on page load
-        document.addEventListener('DOMContentLoaded', showCookieConsent);
-        
-        // Theme switching functionality
-        function switchTheme(newTheme) {
-            localStorage.setItem('selectedTheme', newTheme);
-            const url = new URL(window.location);
-            url.searchParams.set('theme', newTheme);
-            window.location.href = url.toString();
-        }
-        
-        function getStoredTheme() {
-            return localStorage.getItem('selectedTheme') || 
-                   (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        }
-        
-        // Apply theme on load
-        function applyTheme() {
-            const currentTheme = getStoredTheme();
-            const urlParams = new URLSearchParams(window.location.search);
-            const urlTheme = urlParams.get('theme');
-            
-            if (!urlTheme && currentTheme !== 'light') {
-                const url = new URL(window.location);
-                url.searchParams.set('theme', currentTheme);
-                window.location.href = url.toString();
-            }
-        }
-        
-        // Make functions globally available
-        window.resetCookieConsent = resetCookieConsent;
-        window.switchTheme = switchTheme;
-        
-        // Apply theme on page load
-        document.addEventListener('DOMContentLoaded', applyTheme);
-    </script>
-  `;
 }
 
 // Legal content generators
