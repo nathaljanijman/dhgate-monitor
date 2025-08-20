@@ -346,6 +346,36 @@ const THEMES = {
   },
 };
 
+// Handle asset requests
+async function handleAsset(pathname, corsHeaders) {
+  // For now, we'll handle the specific dhgatevisualheader.png asset
+  // In the future, you could add more assets here
+  if (pathname === '/assets/dhgatevisualheader.png') {
+    // Fetch from GitHub raw content or serve base64 encoded version
+    try {
+      const response = await fetch('https://raw.githubusercontent.com/nathalja/dhgate-monitor/main/assets/dhgatevisualheader.png');
+      if (response.ok) {
+        const imageBuffer = await response.arrayBuffer();
+        return new Response(imageBuffer, {
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'image/png',
+            'Cache-Control': 'public, max-age=3600'
+          }
+        });
+      }
+    } catch (error) {
+      console.log('Failed to fetch asset from GitHub:', error);
+    }
+  }
+  
+  // Return 404 for unknown assets
+  return new Response('Asset not found', { 
+    status: 404, 
+    headers: corsHeaders 
+  });
+}
+
 // Generate global CSS with theme
 function generateGlobalCSS(theme = 'light') {
   const t = THEMES[theme] || THEMES.light;
@@ -2111,6 +2141,10 @@ export default {
           });
         
         default:
+          // Handle asset requests
+          if (url.pathname.startsWith('/assets/')) {
+            return await handleAsset(url.pathname, corsHeaders);
+          }
           return new Response('Not Found', { 
             status: 404, 
             headers: corsHeaders 
@@ -7009,8 +7043,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 <div class="hero-visual">
                     <!-- Mobile Mockup Hero Image -->
                     <div class="mobile-hero-mockup">
-                        <img src="/assets/hero-mobile-mockup.png" 
-                             alt="${lang === 'nl' ? 'DHgate Monitor mobiele interface showcase' : 'DHgate Monitor mobile interface showcase'}"
+                        <img src="/assets/dhgatevisualheader.png" 
+                             alt="${lang === 'nl' ? 'DHgate Monitor visuele header showcase' : 'DHgate Monitor visual header showcase'}"
                              class="hero-mobile-image animate-fade-in-up" 
                              style="animation-delay: 0.5s;"
                              loading="eager"
