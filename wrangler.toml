@@ -1,6 +1,6 @@
 name = "dhgate-monitor"
-main = "cloudflare_app.js"
-compatibility_date = "2024-01-01"
+main = "cloudflare_app.js" # of "src/index.js" als dat je entrypoint is
+compatibility_date = "2025-08-20"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
@@ -23,3 +23,10 @@ zone_name = "dhgate-monitor.com"
 [[routes]]
 pattern = "www.dhgate-monitor.com/*"
 zone_name = "dhgate-monitor.com"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "dhgate-monitor"
+database_id = "c81bf194-e0ca-4247-9086-cd5f57846846"
+

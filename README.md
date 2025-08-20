@@ -1,4 +1,4 @@
-# DHgate Monitor 🎯
+# DHgate Monitor
 
 **Automated DHgate Product Monitoring & Alert System**
 
@@ -6,16 +6,16 @@ A sophisticated Cloudflare Workers application that monitors DHgate products and
 
 ---
 
-## 🌟 Features
+## Features
 
-### 🎨 **Modern UI & UX**
+### **Modern UI & UX**
 - **Interactive Landing Page** with DHgate product showcase
 - **Light/Dark Theme Toggle** with system preference detection
 - **Multilingual Support** (English/Dutch) with automatic detection
 - **Responsive Design** optimized for mobile, tablet, and desktop
 - **Professional Dashboard** with real-time status indicators
 
-### 📊 **Core Functionality**
+### **Core Functionality**
 - **Automated Product Monitoring** with 24/7 scanning
 - **Intelligent Store Search** with real-time DHgate store discovery
 - **Progressive Signup Form** with email-first workflow
@@ -24,19 +24,20 @@ A sophisticated Cloudflare Workers application that monitors DHgate products and
 - **Shop Management** with comprehensive DHgate store database
 - **Real-time Status Dashboard** with monitoring statistics
 
-### 🔧 **Technical Excellence**
+### **Technical Excellence**
 - **Cloudflare Workers** serverless architecture
-- **KV Storage** for persistent data management and store caching
+- **Hybrid D1 + KV Storage** for reliable data persistence and performance
 - **DHgate Store Database** with curated popular stores and real-time search
 - **Scheduled Jobs** for automated database updates (daily at 09:00 UTC)
 - **Progressive Form Architecture** with step-by-step user guidance
 - **Selenium Web Scraping** with anti-detection measures
-- **GDPR Compliant** with cookie consent management
+- **Google Analytics 4** with privacy-first implementation and cookie consent
+- **GDPR Compliant** with comprehensive cookie consent management and data deletion rights
 - **SEO Optimized** with proper meta tags and sitemap
 
 ---
 
-## 🗺️ Complete Sitemap
+## Complete Sitemap
 
 ### **Public Pages**
 | URL | Priority | Description | Features |
@@ -74,7 +75,7 @@ A sophisticated Cloudflare Workers application that monitors DHgate products and
 
 ---
 
-## 🎯 User Journey
+## User Journey
 
 ### **1. Discovery → Landing Page (`/`)**
 - **Progressive Signup Form** with email-first workflow
@@ -100,7 +101,7 @@ A sophisticated Cloudflare Workers application that monitors DHgate products and
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ### **Frontend Stack**
 - **Vanilla JavaScript** with ES6+ features
@@ -110,12 +111,14 @@ A sophisticated Cloudflare Workers application that monitors DHgate products and
 
 ### **Backend Infrastructure**
 - **Cloudflare Workers** for serverless compute
-- **KV Storage** for persistent data and store database management
+- **Hybrid Storage System** - D1 Database (primary) + KV Storage (fallback/caching)
+- **D1 Database** for structured data with SQL queries and ACID compliance
+- **KV Storage** for high-performance caching and store database management
 - **DHgate Store Integration** with curated popular stores (10+ stores)
 - **Real-time Store Search** with intelligent query enhancement
 - **Scheduled Events** for automated monitoring and database updates (09:00 UTC)
 - **Manual Database Triggers** for instant store database refresh
-- **Email Integration** with SMTP configuration
+- **Email Integration** with Resend API and SMTP fallback configuration
 
 ### **Monitoring Engine**
 - **Python Selenium** with Chrome WebDriver automation
@@ -125,7 +128,7 @@ A sophisticated Cloudflare Workers application that monitors DHgate products and
 
 ---
 
-## 🎨 Design System
+## Design System
 
 ### **Color Palette**
 ```css
@@ -146,14 +149,16 @@ A sophisticated Cloudflare Workers application that monitors DHgate products and
 - **Letter Spacing**: Enhanced for professional appearance
 
 ### **Components**
-- **Theme Toggle**: Visual Light/Dark switcher with smooth animations
+- **Theme Toggle**: Visual Light/Dark switcher with smooth animations using SVG sun/moon icons
 - **Language Switcher**: Clean "EN | NL" format with active states
 - **Cards**: Consistent shadow system with hover effects
 - **Buttons**: Gradient backgrounds with interaction feedback
+- **Icon System**: Minimalistic SVG icons with 1.5px stroke width, theme-aware currentColor inheritance
+- **Cookie Consent**: Interactive banner with proper click handling and accessibility features
 
 ---
 
-## 🔧 Development
+## Development
 
 ### **Project Structure**
 ```
@@ -168,12 +173,16 @@ dhgate-monitor/
 ### **Key Functions**
 - `generateLandingPageHTML()` - Progressive signup form with store search
 - `generateDashboardHTML()` - Main dashboard with shop management
-- `generateGlobalCSS()` - Theme-aware styling system
+- `generateGlobalCSS()` - Theme-aware styling system with minimalistic icons
 - `handleScheduledEvent()` - Automated monitoring and database updates
 - `scrapeDHgateSitemaps()` - Store database creation and management
 - `handleStoreSearch()` - Real-time store search with query enhancement
 - `searchDHgateStores()` - Intelligent store discovery based on search terms
 - `handleScraperTrigger()` - Manual store database refresh endpoint
+- `handleD1Database()` - Hybrid D1 + KV storage operations with fallback support
+- `generateGA4Script()` - Google Analytics 4 integration with privacy controls
+- `handleDeleteData()` - GDPR Article 17 compliant data deletion system
+- `generateResponsiveNavigation()` - Mobile-first navigation with hamburger menu
 
 ### **Deployment**
 ```bash
@@ -189,7 +198,7 @@ npx wrangler dev
 
 ---
 
-## 🌍 Internationalization
+## Internationalization
 
 ### **Language Support**
 - **English (EN)**: Default for international users
@@ -204,7 +213,7 @@ npx wrangler dev
 
 ---
 
-## 📧 Email Notifications
+## Email Notifications
 
 ### **Design Features**
 - **Professional HTML Templates** with Raleway typography
@@ -220,7 +229,7 @@ npx wrangler dev
 
 ---
 
-## 🔐 Security & Compliance
+## Security & Compliance
 
 ### **Data Protection**
 - **GDPR Compliant** cookie consent management
@@ -236,7 +245,7 @@ npx wrangler dev
 
 ---
 
-## 📈 Monitoring & Analytics
+## Monitoring & Analytics
 
 ### **System Monitoring**
 - **Daily Health Checks** at 09:00 UTC
@@ -245,21 +254,24 @@ npx wrangler dev
 - **Uptime Monitoring** with status indicators
 
 ### **User Analytics**
-- **Privacy-Respecting** analytics implementation
+- **Google Analytics 4 (GA4)** with measurement ID G-8YT6DMLP00
+- **Privacy-First Implementation** with cookie consent integration
+- **Custom Event Tracking** for user interactions and conversions
 - **Theme Preference** tracking for UX improvements
 - **Language Usage** statistics for localization
 - **Performance Monitoring** for optimization
+- **Cookie Consent Management** with granular analytics controls
 
 ---
 
-## 🎯 Future Roadmap
+## Future Roadmap
 
-### **Recently Implemented** ✅
-- [x] **Progressive Signup Form** with email-first workflow
-- [x] **DHgate Store Database** with curated popular stores
-- [x] **Real-time Store Search** with intelligent query enhancement
-- [x] **Manual Database Triggers** for instant updates
-- [x] **Scheduled Store Updates** for fresh data
+### **Recently Implemented**
+- **Progressive Signup Form** with email-first workflow
+- **DHgate Store Database** with curated popular stores
+- **Real-time Store Search** with intelligent query enhancement
+- **Manual Database Triggers** for instant updates
+- **Scheduled Store Updates** for fresh data
 
 ### **Planned Features**
 - [ ] **Direct DHgate API Integration** for live store data
@@ -278,7 +290,7 @@ npx wrangler dev
 
 ---
 
-## 🧪 Testing & Development
+## Testing & Development
 
 ### **Testing Unsubscribe Flow**
 The unsubscribe system can be tested in multiple ways:
@@ -313,7 +325,7 @@ curl -X POST "https://dhgate-monitor.com/api/unsubscribe" \
 
 ---
 
-## 📞 Support & Contact
+## Support & Contact
 
 ### **Technical Support**
 - **Email**: [support@dhgate-monitor.com](mailto:support@dhgate-monitor.com)
@@ -327,7 +339,7 @@ curl -X POST "https://dhgate-monitor.com/api/unsubscribe" \
 
 ---
 
-## 📄 License
+## License
 
 This project is proprietary software developed for automated DHgate product monitoring. All rights reserved.
 
@@ -335,28 +347,46 @@ This project is proprietary software developed for automated DHgate product moni
 
 ---
 
-*Last Updated: August 19, 2025*
-*Version: 3.5 - Clean Single Device Mockup*
+*Last Updated: August 20, 2025*
+*Version: 3.6 - Minimalistic Icon System*
 
-### **Version 3.5 Highlights**  
-- 📱 **Unified Device Mockup** - Single clean component replacing separate desktop/mobile mockups
-- 🎯 **Minimalist Design** - Browser-style header with dots, clean metrics grid, live alert feed
-- 📊 **Enhanced USPs** - Better metrics (10,000+ Products Tracked, <2min Alert Speed, 5★ Rating)
-- ⚡ **Mobile Optimized** - Device mockup appears under header on mobile with responsive scaling
-- 🎨 **Thin-line Icons** - Replaced FILTER/ALERT/24-7 text with clean SVG icons (stroke-width: 1.5)
-- 🚀 **Performance** - Reduced bundle size to 237.58 KiB by removing complex device mockup CSS
+### **Version 3.6 Highlights**  
+- **Minimalistic Icon System** - Replaced all emoji icons (🍪, ☀️, 🌙, 🎯, ⚠️, ✅, 📧, 🗑️, 🗂️, ❌) with clean SVG variants
+- **Thin-line Design Language** - All icons now use stroke-width: 1.5 for consistent minimalistic aesthetic inspired by Flaticon library
+- **Performance Improvement** - Eliminated emoji dependency, resulting in better rendering across all devices and platforms
+- **Accessibility Enhancement** - SVG icons provide better scalability, semantic meaning, and screen reader support
+- **Clean Documentation** - Removed all decorative emojis from README for professional appearance
+- **Theme Integration** - All icons respect light/dark theme settings with proper currentColor inheritance
+- **Cookie Consent Fix** - Resolved interaction issues with cookie consent banner for better user experience
+- **Cross-browser Compatibility** - Improved icon rendering consistency across different browsers and devices
+
+### **Previous Major Features (From Earlier Versions)**
+- **D1 Database Integration** - Hybrid D1 + KV storage system with SQL support and fallback reliability
+- **Google Analytics 4** - Privacy-first GA4 implementation with measurement ID G-8YT6DMLP00 and cookie consent
+- **Email System Overhaul** - Resend API integration with professional HTML templates and performance monitoring
+- **Mobile Navigation** - Complete responsive navigation system with hamburger menu and mobile-friendly language switcher
+- **GDPR Compliance** - Article 17 data deletion rights with comprehensive user data management
+- **Granular Permissions** - Distinction between email marketing consent and dashboard access permissions
+
+### **Previous Version 3.5 Features**
+- **Unified Device Mockup** - Single clean component replacing separate desktop/mobile mockups
+- **Minimalist Design** - Browser-style header with dots, clean metrics grid, live alert feed
+- **Enhanced USPs** - Better metrics (10,000+ Products Tracked, <2min Alert Speed, 5★ Rating)
+- **Mobile Optimized** - Device mockup appears under header on mobile with responsive scaling
+- **Thin-line Icons** - Replaced FILTER/ALERT/24-7 text with clean SVG icons (stroke-width: 1.5)
+- **Performance** - Reduced bundle size to 237.58 KiB by removing complex device mockup CSS
 
 ### **Previous Version 3.1 Features**
-- 🔓 **Complete Unsubscribe System** - Token-based secure unsubscription flow
-- 🧪 **Test Environment** - Direct unsubscribe testing via `/test-unsubscribe`
-- 📋 **GDPR Compliance** - Proper data handling with subscription management
-- 🎯 **User-Friendly Interface** - Clear unsubscribe confirmation and success states
-- 📖 **Enhanced Documentation** - Complete testing instructions and API examples
+- **Complete Unsubscribe System** - Token-based secure unsubscription flow
+- **Test Environment** - Direct unsubscribe testing via `/test-unsubscribe`
+- **GDPR Compliance** - Proper data handling with subscription management
+- **User-Friendly Interface** - Clear unsubscribe confirmation and success states
+- **Enhanced Documentation** - Complete testing instructions and API examples
 
 ### **Previous Version 3.0 Features**
-- ✨ **Progressive Signup Form** - Email-first workflow with step-by-step guidance
-- 🏪 **DHgate Store Database** - Curated popular stores with real-time search
-- 🔍 **Intelligent Store Search** - Query enhancement with contextual suggestions
-- ⚡ **Instant Database Updates** - Manual triggers for immediate store data refresh
-- 🔄 **Automated Maintenance** - Daily store database updates at 09:00 UTC
-- 📱 **Above-the-Fold Experience** - Optimized landing without unwanted scrolling
+- **Progressive Signup Form** - Email-first workflow with step-by-step guidance
+- **DHgate Store Database** - Curated popular stores with real-time search
+- **Intelligent Store Search** - Query enhancement with contextual suggestions
+- **Instant Database Updates** - Manual triggers for immediate store data refresh
+- **Automated Maintenance** - Daily store database updates at 09:00 UTC
+- **Above-the-Fold Experience** - Optimized landing without unwanted scrolling
