@@ -852,6 +852,9 @@ ${cssVars}
         line-height: 1.1;
         margin-bottom: 1.5rem;
         letter-spacing: -0.02em;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
       }
       
       .gradient-text {
@@ -1199,6 +1202,24 @@ ${cssVars}
       @media (max-width: 767px) {
         .container {
           padding: 20px 15px !important;
+          max-width: 100%;
+          overflow-x: hidden;
+        }
+        
+        *, *::before, *::after {
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          box-sizing: border-box;
+        }
+        
+        html {
+          font-size: 16px;
+        }
+        
+        @media (max-width: 480px) {
+          html {
+            font-size: 14px;
+          }
         }
         
         .main-header {
@@ -1789,7 +1810,7 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
     </nav>
     
     <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay" onclick="closeMobileMenu()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 9998;"></div>
+    <div class="mobile-menu-overlay" onclick="closeMobileMenu()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: transparent; z-index: 9998;"></div>
     
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu" style="display: none; position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: var(--card-bg); z-index: 9999; transition: right 0.3s ease; padding: 2rem 1.5rem; box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);">
@@ -4983,8 +5004,14 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             font-size: 10px;
         }
         
+        .nav-theme-toggle .theme-toggle-switch.dark {
+            background: var(--accent-color);
+        }
+        
         .nav-theme-toggle .theme-toggle-switch.dark .theme-toggle-slider {
-            transform: translateX(20px);
+            transform: translateX(16px);
+            background: #334155;
+            color: white;
         }
         
         .nav-cta-button {
@@ -6201,6 +6228,9 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             
             .btn-primary, .btn-secondary, .btn-success {
                 width: 100%;
+                margin-bottom: 0.5rem;
+                font-size: 0.95rem;
+                padding: 14px 20px;
             }
             
             .store-options {
@@ -6282,6 +6312,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             font-size: 1.3rem;
             font-weight: 700;
             margin-bottom: 15px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
             color: var(--text-primary);
         }
         
@@ -6620,7 +6652,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: transparent;
             z-index: 9998;
         }
         
@@ -6720,15 +6752,125 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 display: none;
             }
             
-            .mobile-menu-toggle {
+            .nav-lang-switcher {
+                font-size: 0.8rem;
+                gap: 0.25rem;
+            }
+            
+            .nav-theme-toggle {
                 display: flex;
+            }
+            
+            .theme-toggle-switch {
+                width: 32px !important;
+                height: 18px !important;
+            }
+            
+            .theme-toggle-switch.dark {
+                background: var(--accent-color) !important;
+            }
+            
+            .theme-toggle-slider {
+                width: 14px !important;
+                height: 14px !important;
+            }
+            
+            .theme-toggle-switch.dark .theme-toggle-slider {
+                transform: translateX(14px) !important;
+                background: #334155 !important;
+                color: white !important;
+            }
+            
+            .theme-toggle-slider svg {
+                width: 12px !important;
+                height: 12px !important;
+            }
+            
+            .nav-cta-button {
+                display: none;
+            }
+            
+            .navbar-controls {
+                gap: 1rem;
+                flex-shrink: 0;
+                min-width: fit-content;
+            }
+            
+            .navbar-brand {
+                flex: 1;
+                text-align: left;
+            }
+            
+            .navbar-brand img {
+                height: 64px !important;
+                max-width: 280px !important;
+            }
+            
+            .navbar-container {
+                padding: 1rem 1rem !important;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+            }
+            
+            .mobile-menu-toggle {
+                display: none;
             }
             
             .mobile-menu,
             .mobile-menu-overlay {
-                display: block;
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .navbar-brand {
+                flex: 1;
+                text-align: left;
             }
             
+            .navbar-brand img {
+                height: 56px !important;
+                max-width: 240px !important;
+            }
+            
+            .nav-lang-switcher {
+                font-size: 0.75rem;
+                gap: 0.2rem;
+            }
+            
+            .nav-cta-button {
+                display: none;
+            }
+            
+            .navbar-controls {
+                gap: 0.75rem;
+                flex-shrink: 0;
+                min-width: fit-content;
+            }
+            
+            .theme-toggle-switch {
+                width: 28px !important;
+                height: 16px !important;
+            }
+            
+            .theme-toggle-switch.dark {
+                background: var(--accent-color) !important;
+            }
+            
+            .theme-toggle-slider {
+                width: 12px !important;
+                height: 12px !important;
+            }
+            
+            .theme-toggle-switch.dark .theme-toggle-slider {
+                transform: translateX(12px) !important;
+                background: #334155 !important;
+                color: white !important;
+            }
+        }
+        
+        @media (max-width: 1024px) {
             .hero-content-wrapper {
                 grid-template-columns: 1fr;
                 gap: 2rem;
@@ -6778,6 +6920,30 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             
             .hero-main-title {
                 font-size: clamp(1.8rem, 8vw, 2.5rem);
+            }
+            
+            .hero-usps {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 0.5rem !important;
+                text-align: center;
+                font-size: 0.85rem;
+            }
+            
+            .usp-item {
+                justify-content: center !important;
+                flex-direction: column;
+                gap: 0.5rem !important;
+            }
+            
+            .usp-item svg {
+                width: 16px !important;
+                height: 16px !important;
+            }
+            
+            .usp-item span {
+                white-space: normal !important;
+                text-align: center;
+                font-size: 0.8rem !important;
                 margin-bottom: 1rem;
             }
             
@@ -7011,7 +7177,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                         }
                     </p>
                     
-                    <div class="hero-usps animate-fade-in-up" style="animation-delay: 0.3s; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.5rem; margin: 2rem 0; max-width: 600px;">
+                    <div class="hero-usps animate-fade-in-up" style="animation-delay: 0.3s; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; margin: 2rem 0; max-width: 600px;">
                         <div class="usp-item" style="display: flex; align-items: center; gap: 0.75rem;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 2V6M6.414 6.414L9.172 9.172M2 12H6M6.414 17.586L9.172 14.828M12 18V22M17.586 17.586L14.828 14.828M22 12H18M17.586 6.414L14.828 9.172"/>
@@ -7128,14 +7294,101 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             
             <div class="professionals-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; max-width: 1200px; margin: 0 auto; align-items: stretch;">
                 
+            </div>
+            
+            <!-- Mobile Tab Interface -->
+            <div class="mobile-professionals-tabs">
+                <div class="mobile-tab-buttons">
+                    <button class="mobile-tab-button active" onclick="showMobileTab(0)">
+                        ${lang === 'nl' ? 'E-commerce' : 'E-commerce'}
+                    </button>
+                    <button class="mobile-tab-button" onclick="showMobileTab(1)">
+                        ${lang === 'nl' ? 'Business' : 'Business'}
+                    </button>
+                    <button class="mobile-tab-button" onclick="showMobileTab(2)">
+                        ${lang === 'nl' ? 'Shoppers' : 'Shoppers'}
+                    </button>
+                </div>
+                
+                <div class="mobile-tab-content">
+                    <!-- E-commerce Tab -->
+                    <div class="mobile-tab-panel active" id="mobile-tab-0">
+                        <div class="mobile-card-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M22 21v-2a4 4 0 00-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 010 7.75"/>
+                            </svg>
+                        </div>
+                        <h3 class="mobile-card-title">
+                            ${lang === 'nl' ? 'E-commerce Ondernemers' : 'E-commerce Entrepreneurs'}
+                        </h3>
+                        <p class="mobile-card-description">
+                            ${lang === 'nl' ? 'Dropshippers en retailers die trending producten vroeg willen ontdekken.' : 'Dropshippers and retailers who want to discover trending products early.'}
+                        </p>
+                        <div class="mobile-benefits-list">
+                            <span class="mobile-benefit-tag">${lang === 'nl' ? 'Nieuwe producten' : 'New products'}</span>
+                            <span class="mobile-benefit-tag">${lang === 'nl' ? 'Markttrends' : 'Market trends'}</span>
+                            <span class="mobile-benefit-tag">${lang === 'nl' ? 'Automatische alerts' : 'Auto alerts'}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Business Tab -->
+                    <div class="mobile-tab-panel" id="mobile-tab-1">
+                        <div class="mobile-card-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 3v18h18"/>
+                                <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+                            </svg>
+                        </div>
+                        <h3 class="mobile-card-title">
+                            ${lang === 'nl' ? 'Business Professionals' : 'Business Professionals'}
+                        </h3>
+                        <p class="mobile-card-description">
+                            ${lang === 'nl' ? 'Inkopers, productmanagers en analisten die datagedreven beslissingen willen maken.' : 'Buyers, product managers and analysts who want to make data-driven decisions.'}
+                        </p>
+                        <div class="mobile-benefits-list">
+                            <span class="mobile-benefit-tag">${lang === 'nl' ? 'Markt intelligence' : 'Market intelligence'}</span>
+                            <span class="mobile-benefit-tag">${lang === 'nl' ? 'Concurrentie analyse' : 'Competitor analysis'}</span>
+                            <span class="mobile-benefit-tag">${lang === 'nl' ? 'Leverancier monitoring' : 'Supplier monitoring'}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Shoppers Tab -->
+                    <div class="mobile-tab-panel" id="mobile-tab-2">
+                        <div class="mobile-card-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="9" cy="21" r="1"/>
+                                <circle cx="20" cy="21" r="1"/>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+                            </svg>
+                        </div>
+                        <h3 class="mobile-card-title">
+                            ${lang === 'nl' ? 'Smart Shoppers' : 'Smart Shoppers'}
+                        </h3>
+                        <p class="mobile-card-description">
+                            ${lang === 'nl' ? 'Koopjachtliefhebbers en bulk buyers die de beste prijzen en handelsmogelijkheden zoeken.' : 'Bargain hunters and bulk buyers looking for the best prices and trading opportunities.'}
+                        </p>
+                        <div class="mobile-benefits-list">
+                            <span class="mobile-benefit-tag">${lang === 'nl' ? 'Beste deals' : 'Best deals'}</span>
+                            <span class="mobile-benefit-tag">${lang === 'nl' ? 'Prijs alerts' : 'Price alerts'}</span>
+                            <span class="mobile-benefit-tag">${lang === 'nl' ? 'Bulk opportunities' : 'Bulk opportunities'}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display: none;">
+                
                 <!-- E-commerce Entrepreneurs -->
-                <div class="professional-card animate-fade-in-up" style="animation-delay: 0.2s; position: relative; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 2.5rem; text-align: center; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;" onmouseover="this.style.transform='translateY(-10px) scale(1.02)'; this.style.boxShadow='0 25px 50px rgba(37, 99, 235, 0.15)'; this.querySelector('.card-glow').style.opacity='1';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 30px rgba(0, 0, 0, 0.1)'; this.querySelector('.card-glow').style.opacity='0';">
+                <div class="professional-card animate-fade-in-up" style="animation-delay: 0.2s;">
                     
-                    <div class="card-glow" style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%); opacity: 0; transition: opacity 0.4s ease; pointer-events: none;"></div>
+                    <div class="card-glow"></div>
                     
-                    <div class="card-header" style="position: relative; z-index: 2; height: 280px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div class="card-header">
                         <div class="icon-wrapper animate-scale-in" style="margin: 0 auto 2rem; display: flex; justify-content: center;">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/>
                                 <circle cx="9" cy="7" r="4"/>
                                 <path d="M22 21v-2a4 4 0 00-3-3.87"/>
@@ -7177,13 +7430,13 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 </div>
                 
                 <!-- Business Professionals -->
-                <div class="professional-card animate-fade-in-up" style="animation-delay: 0.4s; position: relative; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 2.5rem; text-align: center; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;" onmouseover="this.style.transform='translateY(-10px) scale(1.02)'; this.style.boxShadow='0 25px 50px rgba(234, 88, 12, 0.15)'; this.querySelector('.card-glow').style.opacity='1';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 30px rgba(0, 0, 0, 0.1)'; this.querySelector('.card-glow').style.opacity='0';">
+                <div class="professional-card animate-fade-in-up" style="animation-delay: 0.4s;">
                     
-                    <div class="card-glow" style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(234, 88, 12, 0.1) 0%, transparent 70%); opacity: 0; transition: opacity 0.4s ease; pointer-events: none;"></div>
+                    <div class="card-glow card-glow-business"></div>
                     
-                    <div class="card-header" style="position: relative; z-index: 2; height: 280px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div class="card-header">
                         <div class="icon-wrapper animate-scale-in" style="margin: 0 auto 2rem; display: flex; justify-content: center; animation-delay: 0.4s;">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M3 3v18h18"/>
                                 <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
                             </svg>
@@ -7223,13 +7476,13 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 </div>
                 
                 <!-- Smart Shoppers -->
-                <div class="professional-card animate-fade-in-up" style="animation-delay: 0.6s; position: relative; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 2.5rem; text-align: center; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;" onmouseover="this.style.transform='translateY(-10px) scale(1.02)'; this.style.boxShadow='0 25px 50px rgba(16, 185, 129, 0.15)'; this.querySelector('.card-glow').style.opacity='1';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 30px rgba(0, 0, 0, 0.1)'; this.querySelector('.card-glow').style.opacity='0';">
+                <div class="professional-card animate-fade-in-up" style="animation-delay: 0.6s;">
                     
-                    <div class="card-glow" style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%); opacity: 0; transition: opacity 0.4s ease; pointer-events: none;"></div>
+                    <div class="card-glow card-glow-shoppers"></div>
                     
-                    <div class="card-header" style="position: relative; z-index: 2; height: 280px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div class="card-header">
                         <div class="icon-wrapper animate-scale-in" style="margin: 0 auto 2rem; display: flex; justify-content: center; animation-delay: 0.6s;">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="9" cy="21" r="1"/>
                                 <circle cx="20" cy="21" r="1"/>
                                 <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
@@ -7303,11 +7556,172 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             opacity: 1;
         }
         
+        .professional-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 400px;
+        }
+        
+        .professional-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(37, 99, 235, 0.15);
+        }
+        
+        .card-header {
+            position: relative;
+            z-index: 2;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .card-glow {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+        
+        .professional-card:hover .card-glow {
+            opacity: 1;
+        }
+        
+        .card-glow-business {
+            background: radial-gradient(circle, rgba(234, 88, 12, 0.1) 0%, transparent 70%);
+        }
+        
+        .card-glow-shoppers {
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+        }
+        
+        /* Mobile Tab Interface */
         @media (max-width: 768px) {
             .professionals-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
+                display: none !important;
             }
+            
+            .mobile-professionals-tabs {
+                display: block !important;
+                margin: 0.5rem 0;
+            }
+            
+            .mobile-tab-buttons {
+                display: flex;
+                border-radius: 12px;
+                background: var(--card-bg);
+                padding: 4px;
+                margin-bottom: 1rem;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+            
+            .mobile-tab-button {
+                flex: 1;
+                padding: 0.75rem 0.5rem;
+                border: none;
+                background: transparent;
+                color: var(--text-muted);
+                font-size: 0.8rem;
+                font-weight: 500;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-align: center;
+                word-wrap: break-word;
+            }
+            
+            .mobile-tab-button.active {
+                background: var(--accent-color);
+                color: white;
+                box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+            }
+            
+            .mobile-tab-content {
+                background: var(--card-bg);
+                border-radius: 16px;
+                padding: 1.5rem;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                border: 1px solid var(--border-color);
+            }
+            
+            .mobile-tab-panel {
+                display: none;
+                animation: fadeIn 0.3s ease;
+            }
+            
+            .mobile-tab-panel.active {
+                display: block;
+            }
+            
+            .mobile-card-icon {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 0.5rem;
+            }
+            
+            .mobile-card-title {
+                font-size: 1.3rem;
+                font-weight: 600;
+                color: var(--text-primary);
+                text-align: center;
+                margin-bottom: 0.5rem;
+                word-wrap: break-word;
+            }
+            
+            .mobile-card-description {
+                font-size: 0.95rem;
+                color: var(--text-secondary);
+                text-align: center;
+                line-height: 1.5;
+                margin-bottom: 0.75rem;
+                word-wrap: break-word;
+            }
+            
+            .mobile-benefits-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                justify-content: center;
+            }
+            
+            .mobile-benefit-tag {
+                background: var(--bg-light);
+                color: var(--text-primary);
+                padding: 0.5rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.85rem;
+                font-weight: 500;
+                border: 1px solid var(--border-color);
+                word-wrap: break-word;
+            }
+        }
+        
+        /* Hide mobile tabs on desktop */
+        .mobile-professionals-tabs {
+            display: none;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        }
             
             .professional-card {
                 padding: 2rem 1.5rem;
@@ -7320,6 +7734,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             
             .section-title {
                 font-size: 2rem;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
         }
         
@@ -7332,116 +7748,155 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
     </style>
 
     <!-- Popular Shop Categories Carousel -->
-    <section class="shop-categories-section" style="padding: 4rem 0; background: var(--background-primary); position: relative; overflow: hidden;">
+    <section class="shop-categories-section" style="padding: 1rem 0; background: var(--background-primary); position: relative; overflow: hidden;">
         <div class="container">
-            <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+            <div class="section-header" style="text-align: center; margin-bottom: 1.5rem;">
                 <h2 class="section-title" style="font-size: 2.2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem;">
-                    ${lang === 'nl' ? 'Populaire shop categorieën' : 'Popular shop categories'}
+                    ${lang === 'nl' ? 'Populaire shops' : 'Popular shops'}
                 </h2>
                 <p class="section-subtitle" style="font-size: 1.1rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto;">
-                    ${lang === 'nl' ? 'Monitor de meest populaire productcategorieën op DHgate' : 'Monitor the most popular product categories on DHgate'}
+                    ${lang === 'nl' ? 'Monitor de beste en meest betrouwbare DHgate sellers uit 2025' : 'Monitor the best and most trusted DHgate sellers from 2025'}
                 </p>
             </div>
             
-            <div class="carousel-container" style="position: relative; width: 100%; height: 120px; overflow: hidden; border-radius: 12px;">
-                <div class="carousel-track" id="categoriesCarousel" style="display: flex; align-items: center; height: 100%; animation: scroll-left 30s linear infinite; gap: 3rem;">
+            <div class="carousel-container" style="position: relative; width: 100%; height: 140px; overflow: hidden; border-radius: 12px;">
+                <div class="carousel-track" id="categoriesCarousel" style="display: flex; align-items: center; height: 100%; animation: scroll-left 25s linear infinite; gap: 2rem;">
                     
-                    <!-- Electronics -->
-                    <div class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 200px; white-space: nowrap; transition: all 0.3s ease;">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <!-- BTime - Luxury Watches -->
+                    <a href="https://www.dhgate.com/store/btime" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="6"/>
+                            <polyline points="12,6 12,12 16,14"/>
+                            <circle cx="12" cy="12" r="1"/>
+                        </svg>
+                        <div>
+                            <div style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">BTime - Luxury Watches</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">97.2% • 55,925 sales</div>
+                        </div>
+                    </a>
+                    
+                    <!-- Amy 1003_1 - Sportswear -->
+                    <a href="https://www.dhgate.com/store/20451494" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
+                        </svg>
+                        <div>
+                            <div style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">Amy 1003_1 - Sportswear</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">98.5% • 70,458 sales</div>
+                        </div>
+                    </a>
+                    
+                    <!-- DHgate Beauty -->
+                    <a href="https://www.dhgate.com/store/20522858" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                        <div>
+                            <div style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">DHgate Beauty</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">99.7% • 20,164 sales</div>
+                        </div>
+                    </a>
+                    
+                    <!-- IZeso - Phone Accessories -->
+                    <a href="https://www.dhgate.com/store/18282436" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                            <line x1="12" y1="18" x2="12.01" y2="18"/>
+                        </svg>
+                        <div>
+                            <div style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">IZeso - Phone Accessories</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">100% • 4,919 sales</div>
+                        </div>
+                    </a>
+                    
+                    <!-- Arthur032 - Electronics -->
+                    <a href="https://www.dhgate.com/store/14772307" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
                             <line x1="8" y1="21" x2="16" y2="21"/>
                             <line x1="12" y1="17" x2="12" y2="21"/>
                         </svg>
-                        <span style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">Electronics</span>
-                    </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">Arthur032 - Electronics</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">97.5% • 22,432 sales</div>
+                        </div>
+                    </a>
                     
-                    <!-- Fashion -->
-                    <div class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 200px; white-space: nowrap; transition: all 0.3s ease;">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/>
-                            <line x1="16" y1="8" x2="2" y2="22"/>
-                            <line x1="17.5" y1="15" x2="9" y2="15"/>
+                    <!-- Beija 2013 - Jewelry -->
+                    <a href="https://www.dhgate.com/store/14772307" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 3h12l4 6-10 13L2 9z"/>
+                            <path d="M11 3L8 9l4 13 4-13-3-6"/>
                         </svg>
-                        <span style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">Fashion</span>
-                    </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">Beija 2013 - Jewelry</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">98.9% • 17,470 sales</div>
+                        </div>
+                    </a>
                     
-                    <!-- Home & Garden -->
-                    <div class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 200px; white-space: nowrap; transition: all 0.3s ease;">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z"/>
-                            <polyline points="9,22 9,12 15,12 15,22"/>
+                    <!-- Dicky0750 - Designer Bags -->
+                    <a href="https://www.dhgate.com/store/20425879" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 7H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1Z"/>
+                            <path d="M9 7v6a3 3 0 0 0 6 0V7"/>
                         </svg>
-                        <span style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">Home & Garden</span>
-                    </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">Dicky0750 - Designer Bags</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">99.2% • 99,999+ sales</div>
+                        </div>
+                    </a>
                     
-                    <!-- Sports & Outdoors -->
-                    <div class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 200px; white-space: nowrap; transition: all 0.3s ease;">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/>
-                            <polygon points="10,8 16,12 10,16 10,8"/>
+                    <!-- Boost 700 V2 - Sneakers -->
+                    <a href="https://www.dhgate.com/store/21208299" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.3 2-2.2 3.3-2.2H22"/>
+                            <path d="M2 18v3"/>
+                            <path d="M22 18v3"/>
                         </svg>
-                        <span style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">Sports & Outdoors</span>
-                    </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">Boost 700 V2 - Sneakers</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">99.4% • 53,914 sales</div>
+                        </div>
+                    </a>
                     
-                    <!-- Beauty & Health -->
-                    <div class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 200px; white-space: nowrap; transition: all 0.3s ease;">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M19 14C19 18.4183 15.4183 22 11 22C6.58172 22 3 18.4183 3 14C3 9.58172 6.58172 6 11 6C15.4183 6 19 9.58172 19 14Z"/>
-                            <path d="M9 9L15 15"/>
-                            <path d="M15 9L9 15"/>
+                    <!-- iBestshoppingmall - Electronics -->
+                    <a href="https://www.dhgate.com/store/20047923" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="4" y="3" width="16" height="10" rx="2"/>
+                            <path d="M22 18H2l2-3h16l2 3z"/>
+                            <path d="M6 15h12"/>
                         </svg>
-                        <span style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">Beauty & Health</span>
-                    </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">iBestshoppingmall - Electronics</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">99.5% • 53,915 sales</div>
+                        </div>
+                    </a>
                     
-                    <!-- Auto & Motorcycle -->
-                    <div class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 200px; white-space: nowrap; transition: all 0.3s ease;">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M19 17H5C3.89543 17 3 16.1046 3 15V9C3 7.89543 3.89543 7 5 7H19C20.1046 7 21 7.89543 21 9V15C21 16.1046 20.1046 17 19 17Z"/>
-                            <circle cx="7" cy="17" r="2"/>
-                            <circle cx="17" cy="17" r="2"/>
+                    <!-- CasualTrendyShoes - Footwear -->
+                    <a href="https://www.dhgate.com/store/21926048" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.3 2-2.2 3.3-2.2H22"/>
+                            <path d="M2 18v3"/>
+                            <path d="M22 18v3"/>
                         </svg>
-                        <span style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">Auto & Motorcycle</span>
-                    </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">CasualTrendyShoes - Footwear</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">99.1% • 20,077 sales</div>
+                        </div>
+                    </a>
                     
-                    <!-- Jewelry & Watches -->
-                    <div class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 200px; white-space: nowrap; transition: all 0.3s ease;">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="3"/>
-                            <path d="M12 1V3"/>
-                            <path d="M12 21V23"/>
-                            <path d="M4.22 4.22L5.64 5.64"/>
-                            <path d="M18.36 18.36L19.78 19.78"/>
+                    <!-- Alexandr Store - Gym Equipment -->
+                    <a href="https://www.dhgate.com/store/20245807" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 4h6v2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V4z"/>
+                            <path d="M12 8v8"/>
+                            <path d="M9 18h6v2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2z"/>
                         </svg>
-                        <span style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">Jewelry & Watches</span>
-                    </div>
-                    
-                    <!-- Toys & Games -->
-                    <div class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 200px; white-space: nowrap; transition: all 0.3s ease;">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21.42 6.11L14.89 12.64L12.64 14.89L6.11 21.42C5.72 21.81 5.09 21.81 4.7 21.42L2.58 19.3C2.19 18.91 2.19 18.28 2.58 17.89L9.11 11.36L11.36 9.11L17.89 2.58C18.28 2.19 18.91 2.19 19.3 2.58L21.42 4.7C21.81 5.09 21.81 5.72 21.42 6.11Z"/>
-                        </svg>
-                        <span style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">Toys & Games</span>
-                    </div>
-                    
-                    <!-- Duplicate items for seamless loop -->
-                    <div class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 200px; white-space: nowrap; transition: all 0.3s ease;">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                            <line x1="8" y1="21" x2="16" y2="21"/>
-                            <line x1="12" y1="17" x2="12" y2="21"/>
-                        </svg>
-                        <span style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">Electronics</span>
-                    </div>
-                    
-                    <div class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 200px; white-space: nowrap; transition: all 0.3s ease;">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/>
-                            <line x1="16" y1="8" x2="2" y2="22"/>
-                            <line x1="17.5" y1="15" x2="9" y2="15"/>
-                        </svg>
-                        <span style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">Fashion</span>
-                    </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">Alexandr Store - Gym Equipment</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">100% • 1,191 sales</div>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -7450,6 +7905,34 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             @keyframes scroll-left {
                 0% { transform: translateX(0); }
                 100% { transform: translateX(-100%); }
+            }
+            
+            /* Snellere animatie op mobile */
+            @media (max-width: 768px) {
+                .carousel-track {
+                    animation: scroll-left 18s linear infinite !important;
+                }
+                
+                /* Compactere carousel cards op mobile */
+                .category-item {
+                    padding: 1rem 1.25rem !important;
+                    min-width: 220px !important;
+                    gap: 0.75rem !important;
+                    font-size: 0.9rem !important;
+                }
+                
+                .category-item svg {
+                    width: 20px !important;
+                    height: 20px !important;
+                }
+                
+                .carousel-container {
+                    height: 120px !important;
+                }
+                
+                .carousel-track {
+                    gap: 1.5rem !important;
+                }
             }
             
             .carousel-track:hover {
@@ -7469,6 +7952,12 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 .category-item {
                     min-width: 180px;
                     padding: 1rem 1.5rem;
+                    font-size: 0.85rem;
+                }
+                
+                .category-item div {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
             }
         </style>
@@ -7794,6 +8283,47 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             }
         }
         
+        // Mobile Tab Functions
+        function showMobileTab(tabIndex) {
+            console.log('showMobileTab called with index:', tabIndex);
+            
+            // Hide all panels
+            const panels = document.querySelectorAll('.mobile-tab-panel');
+            const buttons = document.querySelectorAll('.mobile-tab-button');
+            
+            console.log('Found panels:', panels.length);
+            console.log('Found buttons:', buttons.length);
+            
+            panels.forEach(panel => {
+                panel.classList.remove('active');
+            });
+            
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected panel and button
+            const selectedPanel = document.getElementById('mobile-tab-' + tabIndex);
+            const selectedButton = buttons[tabIndex];
+            
+            console.log('Selected panel:', selectedPanel);
+            console.log('Selected button:', selectedButton);
+            
+            if (selectedPanel) {
+                selectedPanel.classList.add('active');
+                console.log('Panel activated');
+            } else {
+                console.log('Panel not found!');
+            }
+            
+            if (selectedButton) {
+                selectedButton.classList.add('active');
+                console.log('Button activated');
+            } else {
+                console.log('Button not found!');
+            }
+        }
+        
         // Mobile Menu Functions
         function toggleMobileMenu() {
             const mobileMenu = document.getElementById('mobileMenu');
@@ -8080,6 +8610,33 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     }
                     document.getElementById('progressiveForm').submit();
                 }
+            }
+        });
+        
+        // Initialize mobile tabs when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded - initializing mobile tabs');
+            
+            // Check if mobile tab elements exist
+            const tabContainer = document.querySelector('.mobile-professionals-tabs');
+            const panels = document.querySelectorAll('.mobile-tab-panel');
+            const buttons = document.querySelectorAll('.mobile-tab-button');
+            
+            console.log('Tab container found:', !!tabContainer);
+            console.log('Panels found:', panels.length);
+            console.log('Buttons found:', buttons.length);
+            
+            // Make sure the first tab is active by default
+            if (panels.length > 0 && buttons.length > 0) {
+                // Remove all active classes first
+                panels.forEach(panel => panel.classList.remove('active'));
+                buttons.forEach(button => button.classList.remove('active'));
+                
+                // Set first tab as active
+                panels[0].classList.add('active');
+                buttons[0].classList.add('active');
+                
+                console.log('First tab initialized as active');
             }
         });
         
