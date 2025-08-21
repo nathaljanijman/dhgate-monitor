@@ -348,6 +348,7 @@ const THEMES = {
 
 // Handle asset requests
 async function handleAsset(pathname, corsHeaders) {
+  console.log('🖼️ Asset request for:', pathname);
   // For now, we'll handle the specific dhgatevisualheader.png asset
   // In the future, you could add more assets here
   if (pathname === '/assets/dhgatevisualheader.png') {
@@ -366,6 +367,44 @@ async function handleAsset(pathname, corsHeaders) {
       }
     } catch (error) {
       console.log('Failed to fetch asset from GitHub:', error);
+    }
+  }
+  
+  if (pathname === '/assets/logo.svg') {
+    // Serve the new horizontal SVG logo
+    try {
+      const response = await fetch('https://raw.githubusercontent.com/nathaljanijman/dhgate-monitor/main/assets/dhgate-monitor-logo-horizontal.svg');
+      if (response.ok) {
+        const svgContent = await response.text();
+        return new Response(svgContent, {
+          headers: {
+            'Content-Type': 'image/svg+xml',
+            'Cache-Control': 'public, max-age=86400',
+            ...corsHeaders
+          }
+        });
+      }
+    } catch (error) {
+      console.log('Failed to fetch horizontal logo from GitHub:', error);
+    }
+  }
+  
+  if (pathname === '/assets/logo.png') {
+    // Fetch the new logo from GitHub
+    try {
+      const response = await fetch('https://raw.githubusercontent.com/nathaljanijman/dhgate-monitor/main/assets/Dhgate_monitor_vector-removebg-preview.png');
+      if (response.ok) {
+        const imageBuffer = await response.arrayBuffer();
+        return new Response(imageBuffer, {
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'image/png',
+            'Cache-Control': 'public, max-age=3600'
+          }
+        });
+      }
+    } catch (error) {
+      console.log('Failed to fetch logo from GitHub:', error);
     }
   }
   
@@ -1712,21 +1751,8 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
     <nav class="site-navbar" style="background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000;">
         <div class="container">
             <div class="navbar-container" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;">
-                <a href="/?lang=${lang}&theme=${theme}" class="navbar-brand" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
-                    <div class="brand-logo">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                            <defs>
-                                <linearGradient id="navBrandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#2563EB"/>
-                                    <stop offset="100%" style="stop-color:#EA580C"/>
-                                </linearGradient>
-                            </defs>
-                            <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#navBrandGradient)"/>
-                            <path d="M2 17L12 22L22 17" stroke="url(#navBrandGradient)" stroke-width="1.5" fill="none"/>
-                            <path d="M2 12L12 17L22 12" stroke="url(#navBrandGradient)" stroke-width="1.5" fill="none"/>
-                        </svg>
-                    </div>
-                    <span style="font-weight: 700; color: var(--text-primary); font-size: 1.1rem;">DHgate Monitor</span>
+                <a href="/?lang=${lang}&theme=${theme}" class="navbar-brand" style="text-decoration: none; display: flex; align-items: center;">
+                    <img src="/assets/logo.svg" alt="DHgate Monitor" height="40" style="max-width: 200px;">
                 </a>
                 
                 <div class="navbar-controls" style="display: flex; align-items: center; gap: 1rem;">
@@ -1768,19 +1794,7 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu" style="display: none; position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: var(--card-bg); z-index: 9999; transition: right 0.3s ease; padding: 2rem 1.5rem; box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);">
         <div class="mobile-menu-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
-            <div class="brand-logo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <defs>
-                        <linearGradient id="mobileBrandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#2563EB"/>
-                            <stop offset="100%" style="stop-color:#EA580C"/>
-                        </linearGradient>
-                    </defs>
-                    <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#mobileBrandGradient)"/>
-                    <path d="M2 17L12 22L22 17" stroke="url(#mobileBrandGradient)" stroke-width="1.5" fill="none"/>
-                    <path d="M2 12L12 17L22 12" stroke="url(#mobileBrandGradient)" stroke-width="1.5" fill="none"/>
-                </svg>
-            </div>
+            <img src="/assets/logo.svg" alt="DHgate Monitor" height="32" style="max-width: 160px;">
             <button class="mobile-menu-close" onclick="closeMobileMenu()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-primary);">✕</button>
         </div>
         
@@ -5034,6 +5048,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             grid-template-columns: 1fr 1fr;
             gap: 4rem;
             align-items: center;
+            text-align: left;
         }
         
         .hero-badge {
@@ -6253,7 +6268,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             width: 80px;
             height: 80px;
             border-radius: 12px;
-            background: var(--btn-primary-bg);
+            background: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -7009,18 +7024,27 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                         }
                     </p>
                     
-                    <div class="hero-stats animate-fade-in-up" style="animation-delay: 0.3s;">
-                        <div class="stat-item">
-                            <div class="stat-number">10,000+</div>
-                            <div class="stat-label">${lang === 'nl' ? 'Producten gevolgd' : 'Products Tracked'}</div>
+                    <div class="hero-usps animate-fade-in-up" style="animation-delay: 0.3s; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.5rem; margin: 2rem 0; max-width: 600px;">
+                        <div class="usp-item" style="display: flex; align-items: center; gap: 0.75rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2V6M6.414 6.414L9.172 9.172M2 12H6M6.414 17.586L9.172 14.828M12 18V22M17.586 17.586L14.828 14.828M22 12H18M17.586 6.414L14.828 9.172"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem;">${lang === 'nl' ? '100% Gratis' : '100% Free'}</span>
                         </div>
-                        <div class="stat-item">
-                            <div class="stat-number">&lt;2min</div>
-                            <div class="stat-label">${lang === 'nl' ? 'Alert snelheid' : 'Alert Speed'}</div>
+                        <div class="usp-item" style="display: flex; align-items: center; gap: 0.75rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z"/>
+                                <path d="M13.73 21C13.5542 21.3031 13.3018 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21"/>
+                            </svg>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; white-space: nowrap;">${lang === 'nl' ? 'Eerste updates' : 'First to know'}</span>
                         </div>
-                        <div class="stat-item">
-                            <div class="stat-number">5★</div>
-                            <div class="stat-label">${lang === 'nl' ? 'Gebruiker rating' : 'User Rating'}</div>
+                        <div class="usp-item" style="display: flex; align-items: center; gap: 0.75rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21V19C20 16.7909 18.2091 15 16 15H8C5.79086 15 4 16.7909 4 19V21"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; white-space: nowrap;">${lang === 'nl' ? 'Geen registratie' : 'No account needed'}</span>
                         </div>
                     </div>
                     
@@ -7124,7 +7148,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     <div class="feature-card">
                         <div class="feature-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M4 6H20M7 12H17M10 18H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M4 6H20M7 12H17M10 18H14" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
                         <h3 class="feature-title">
@@ -7143,8 +7167,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     <div class="feature-card">
                         <div class="feature-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M13.73 21C13.5542 21.3031 13.3018 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M13.73 21C13.5542 21.3031 13.3018 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
                         <h3 class="feature-title">
@@ -7163,8 +7187,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     <div class="feature-card">
                         <div class="feature-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
-                                <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="12" r="10" stroke="#2563EB" stroke-width="1.5"/>
+                                <path d="M12 6V12L16 14" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
                         <h3 class="feature-title">
