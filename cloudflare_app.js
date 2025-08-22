@@ -1784,19 +1784,24 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
                         <a href="/contact?lang=${lang}&theme=${theme}" style="color: var(--text-secondary); text-decoration: none; font-weight: 500;">${lang === 'nl' ? 'Contact' : 'Contact'}</a>
                     </div>
                     
-                    <!-- Language Switcher -->
-                    <div class="nav-lang-switcher" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+                    <!-- Desktop Language Switcher -->
+                    <div class="desktop-lang-switcher" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
                         <a href="${currentPage}?lang=en&theme=${theme}" style="color: ${lang === 'en' ? 'var(--accent-color)' : 'var(--text-muted)'}; text-decoration: none; font-weight: 500;">EN</a>
                         <span style="color: var(--text-muted);">|</span>
                         <a href="${currentPage}?lang=nl&theme=${theme}" style="color: ${lang === 'nl' ? 'var(--accent-color)' : 'var(--text-muted)'}; text-decoration: none; font-weight: 500;">NL</a>
                     </div>
                     
-                    <!-- Theme Toggle -->
-                    <div class="theme-toggle-switch" onclick="toggleTheme()" style="width: 50px; height: 25px; background: var(--border-color); border-radius: 12px; position: relative; cursor: pointer; transition: all 0.3s ease;">
+                    <!-- Desktop Theme Toggle -->
+                    <div class="desktop-theme-toggle" style="width: 50px; height: 25px; background: var(--border-color); border-radius: 12px; position: relative; cursor: pointer; transition: all 0.3s ease;" onclick="toggleTheme()">
                         <div class="theme-toggle-slider" style="position: absolute; top: 2px; left: ${theme === 'dark' ? '23px' : '2px'}; width: 21px; height: 21px; background: white; border-radius: 50%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; font-size: 12px;">
                             ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'}
                         </div>
                     </div>
+                    
+                    <!-- Mobile CTA Button -->
+                    <a href="/dashboard?lang=${lang}&theme=${theme}" class="mobile-cta-button" style="display: none; background: linear-gradient(135deg, #2563EB, #1e40af); color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.875rem; white-space: nowrap;">
+                        ${lang === 'nl' ? 'Dashboard' : 'Dashboard'}
+                    </a>
                     
                     <!-- Mobile Menu Toggle -->
                     <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" style="display: none; flex-direction: column; cursor: pointer; padding: 0.5rem; background: none; border: none; gap: 0.25rem;">
@@ -1826,17 +1831,19 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
             <a href="/privacy?lang=${lang}&theme=${theme}" style="color: var(--text-primary); text-decoration: none; font-weight: 500; font-size: 1.1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light);">${lang === 'nl' ? 'Privacy' : 'Privacy'}</a>
         </div>
         
-        <div class="mobile-controls" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
-            <div class="mobile-lang-switcher" style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem;">
-                <a href="${currentPage}?lang=en&theme=${theme}" style="color: ${lang === 'en' ? 'var(--accent-color)' : 'var(--text-muted)'}; text-decoration: none; font-weight: 500; padding: 0.5rem 1rem; border-radius: 8px; background: ${lang === 'en' ? 'var(--bg-light)' : 'transparent'};">English</a>
-                <a href="${currentPage}?lang=nl&theme=${theme}" style="color: ${lang === 'nl' ? 'var(--accent-color)' : 'var(--text-muted)'}; text-decoration: none; font-weight: 500; padding: 0.5rem 1rem; border-radius: 8px; background: ${lang === 'nl' ? 'var(--bg-light)' : 'transparent'};">Nederlands</a>
+        <div class="mobile-controls" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 1.5rem;">
+            <!-- Language Switcher in Mobile Menu -->
+            <div class="mobile-lang-switcher" style="display: flex; justify-content: center; gap: 1rem;">
+                <a href="${currentPage}?lang=en&theme=${theme}" style="color: ${lang === 'en' ? 'var(--accent-color)' : 'var(--text-muted)'}; text-decoration: none; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 10px; background: ${lang === 'en' ? 'rgba(37, 99, 235, 0.1)' : 'transparent'}; border: 1px solid ${lang === 'en' ? '#2563EB' : 'var(--border-color)'};  transition: all 0.3s ease;">English</a>
+                <a href="${currentPage}?lang=nl&theme=${theme}" style="color: ${lang === 'nl' ? 'var(--accent-color)' : 'var(--text-muted)'}; text-decoration: none; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 10px; background: ${lang === 'nl' ? 'rgba(37, 99, 235, 0.1)' : 'transparent'}; border: 1px solid ${lang === 'nl' ? '#2563EB' : 'var(--border-color)'};  transition: all 0.3s ease;">Nederlands</a>
             </div>
             
-            <div class="mobile-theme-toggle" style="display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
-                <span style="color: var(--text-muted); font-size: 0.9rem;">${lang === 'nl' ? 'Thema:' : 'Theme:'}</span>
-                <div class="theme-toggle-switch" onclick="toggleTheme()" style="width: 50px; height: 25px; background: var(--border-color); border-radius: 12px; position: relative; cursor: pointer; transition: all 0.3s ease;">
-                    <div class="theme-toggle-slider" style="position: absolute; top: 2px; left: ${theme === 'dark' ? '23px' : '2px'}; width: 21px; height: 21px; background: white; border-radius: 50%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; font-size: 12px;">
-                        ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'}
+            <!-- Theme Toggle in Mobile Menu -->
+            <div class="mobile-theme-toggle" style="display: flex; justify-content: center; align-items: center; gap: 1rem; padding: 1rem; background: var(--bg-light); border-radius: 10px;">
+                <span style="color: var(--text-primary); font-size: 1rem; font-weight: 500;">${lang === 'nl' ? 'Donkere modus' : 'Dark mode'}</span>
+                <div class="theme-toggle-switch" onclick="toggleTheme()" style="width: 60px; height: 30px; background: var(--border-color); border-radius: 15px; position: relative; cursor: pointer; transition: all 0.3s ease;">
+                    <div class="theme-toggle-slider" style="position: absolute; top: 3px; left: ${theme === 'dark' ? '33px' : '3px'}; width: 24px; height: 24px; background: white; border-radius: 50%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                        ${theme === 'dark' ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>' : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'}
                     </div>
                 </div>
             </div>
@@ -1849,13 +1856,24 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
                 display: none !important;
             }
             
+            .desktop-lang-switcher {
+                display: none !important;
+            }
+            
+            .desktop-theme-toggle {
+                display: none !important;
+            }
+            
+            .mobile-cta-button {
+                display: inline-block !important;
+            }
+            
             .mobile-menu-toggle {
                 display: flex !important;
             }
             
-            .nav-lang-switcher {
-                font-size: 0.8rem !important;
-                gap: 0.25rem !important;
+            .navbar-controls {
+                gap: 0.75rem !important;
             }
         }
         
