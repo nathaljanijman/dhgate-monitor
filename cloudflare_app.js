@@ -7371,6 +7371,72 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             
             <div class="professionals-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; max-width: 1200px; margin: 0 auto; align-items: stretch;">
                 
+                <!-- E-commerce Professionals Card -->
+                <div class="professional-card animate-fade-in-up" style="background: var(--card-bg); border-radius: 20px; padding: 2.5rem 2rem; border: 1px solid var(--border-color); transition: all 0.3s ease; animation-delay: 0.1s; position: relative; overflow: hidden;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #2563EB, #3b82f6); width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M22 21v-2a4 4 0 00-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 010 7.75"/>
+                        </svg>
+                    </div>
+                    <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--text-primary); margin-bottom: 1rem;">
+                        ${lang === 'nl' ? 'E-commerce Ondernemers' : 'E-commerce Entrepreneurs'}
+                    </h3>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;">
+                        ${lang === 'nl' ? 'Dropshippers en retailers die trending producten vroeg willen ontdekken.' : 'Dropshippers and retailers who want to discover trending products early.'}
+                    </p>
+                    <div class="benefits-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Nieuwe producten' : 'New products'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Markttrends' : 'Market trends'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Automatische alerts' : 'Auto alerts'}</span>
+                    </div>
+                </div>
+                
+                <!-- Business Professionals Card -->
+                <div class="professional-card animate-fade-in-up" style="background: var(--card-bg); border-radius: 20px; padding: 2.5rem 2rem; border: 1px solid var(--border-color); transition: all 0.3s ease; animation-delay: 0.2s; position: relative; overflow: hidden;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #2563EB, #3b82f6); width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 3v18h18"/>
+                            <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+                        </svg>
+                    </div>
+                    <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--text-primary); margin-bottom: 1rem;">
+                        ${lang === 'nl' ? 'Business Professionals' : 'Business Professionals'}
+                    </h3>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;">
+                        ${lang === 'nl' ? 'Inkopers, productmanagers en analisten die datagedreven beslissingen willen maken.' : 'Buyers, product managers and analysts who want to make data-driven decisions.'}
+                    </p>
+                    <div class="benefits-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Markt intelligence' : 'Market intelligence'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Concurrentie analyse' : 'Competitor analysis'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Leverancier monitoring' : 'Supplier monitoring'}</span>
+                    </div>
+                </div>
+                
+                <!-- Smart Shoppers Card -->
+                <div class="professional-card animate-fade-in-up" style="background: var(--card-bg); border-radius: 20px; padding: 2.5rem 2rem; border: 1px solid var(--border-color); transition: all 0.3s ease; animation-delay: 0.3s; position: relative; overflow: hidden;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #2563EB, #3b82f6); width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"/>
+                            <circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+                        </svg>
+                    </div>
+                    <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--text-primary); margin-bottom: 1rem;">
+                        ${lang === 'nl' ? 'Smart Shoppers' : 'Smart Shoppers'}
+                    </h3>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;">
+                        ${lang === 'nl' ? 'Koopjachtliefhebbers en bulk buyers die de beste prijzen en handelsmogelijkheden zoeken.' : 'Bargain hunters and bulk buyers looking for the best prices and trading opportunities.'}
+                    </p>
+                    <div class="benefits-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Vroege toegang' : 'Early access'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Prijsmonitoring' : 'Price monitoring'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Bulk mogelijkheden' : 'Bulk opportunities'}</span>
+                    </div>
+                </div>
+                
             </div>
             
             <!-- Mobile Tab Interface -->
@@ -7821,6 +7887,22 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 grid-template-columns: 1fr 1fr;
                 gap: 1.5rem;
             }
+        }
+        
+        /* Desktop professional cards hover effects */
+        .professionals-grid .professional-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.15);
+            border-color: rgba(37, 99, 235, 0.3);
+        }
+        
+        .professionals-grid .professional-card:hover .card-icon {
+            transform: scale(1.1);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+        
+        .professionals-grid .professional-card .card-icon {
+            transition: all 0.3s ease;
         }
     </style>
 
