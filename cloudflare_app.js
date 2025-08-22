@@ -9228,7 +9228,7 @@ function generateDashboardAccessEmailHTML(email, dashboardUrl, lang) {
             </div>
             
             <div class="content">
-                <h2>${lang === 'nl' ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Dashboard toegang aangevraagd' : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Dashboard Access Requested'}</h2>
+                <h2>${lang === 'nl' ? '<span style="color: #2563EB; font-size: 18px; margin-right: 8px;">🎛️</span>Dashboard toegang aangevraagd' : '<span style="color: #2563EB; font-size: 18px; margin-right: 8px;">🎛️</span>Dashboard Access Requested'}</h2>
                 
                 <p>
                     ${lang === 'nl' ? 
