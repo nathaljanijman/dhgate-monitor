@@ -1804,7 +1804,7 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
                     </a>
                     
                     <!-- Mobile Menu Toggle -->
-                    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" style="display: none; flex-direction: column; cursor: pointer; padding: 0.5rem; background: none; border: none; gap: 0.25rem;">
+                    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" style="flex-direction: column; cursor: pointer; padding: 0.5rem; background: none; border: none; gap: 0.25rem;">
                         <span class="hamburger-line" style="width: 20px; height: 2px; background: var(--text-primary); transition: all 0.3s ease; border-radius: 1px;"></span>
                         <span class="hamburger-line" style="width: 20px; height: 2px; background: var(--text-primary); transition: all 0.3s ease; border-radius: 1px;"></span>
                         <span class="hamburger-line" style="width: 20px; height: 2px; background: var(--text-primary); transition: all 0.3s ease; border-radius: 1px;"></span>
@@ -5251,7 +5251,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         .hero-cta-primary {
             background: var(--btn-primary-bg);
             color: white;
-            padding: 1rem 2rem;
+            padding: 1.2rem 2.4rem;
             border-radius: 12px;
             text-decoration: none;
             font-weight: 600;
@@ -5273,7 +5273,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             text-decoration: none;
             font-weight: 600;
             font-size: 1.1rem;
-            padding: 1rem 1.5rem;
+            padding: 1.2rem 2rem;
             border: 2px solid var(--border-color);
             border-radius: 12px;
             transition: all 0.3s ease;
@@ -6712,12 +6712,19 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         /* Mobile Hamburger Menu */
         .mobile-menu-toggle {
             display: none;
-            flex-direction: column;
-            cursor: pointer;
-            padding: 0.5rem;
-            background: none;
-            border: none;
-            gap: 0.25rem;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: flex !important;
+                flex-direction: column;
+                cursor: pointer;
+                padding: 0.5rem;
+                background: none;
+                border: none;
+                gap: 0.25rem;
+                z-index: 1000;
+            }
         }
         
         .hamburger-line {
@@ -6841,8 +6848,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             gap: 0.5rem;
         }
 
-        /* Mobile Responsive Styles */
-        @media (max-width: 1024px) {
+        /* Tablet Responsive Styles */
+        @media (max-width: 1024px) and (min-width: 769px) {
             .navbar-menu {
                 display: none;
             }
@@ -6909,7 +6916,19 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             }
             
             .mobile-menu-toggle {
-                display: none;
+                display: none !important;
+            }
+            
+            .nav-links {
+                display: flex !important;
+            }
+            
+            .nav-controls {
+                display: flex !important;
+            }
+            
+            .nav-cta-button {
+                display: none !important;
             }
             
             .mobile-menu,
@@ -7018,28 +7037,23 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             }
             
             .hero-usps {
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 0.5rem !important;
-                text-align: center;
-                font-size: 0.85rem;
+                justify-content: center;
+                gap: 0.6rem !important;
             }
             
-            .usp-item {
-                justify-content: center !important;
-                flex-direction: column;
-                gap: 0.5rem !important;
+            .usp-pill {
+                flex: 0 1 auto;
+                min-width: fit-content;
             }
             
-            .usp-item svg {
-                width: 16px !important;
-                height: 16px !important;
+            .mobile-menu-toggle {
+                display: flex !important;
             }
             
-            .usp-item span {
-                white-space: normal !important;
-                text-align: center;
-                font-size: 0.8rem !important;
-                margin-bottom: 1rem;
+            .nav-links,
+            .nav-controls,
+            .nav-cta-button {
+                display: none !important;
             }
             
             .hero-main-description {
@@ -7068,9 +7082,11 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             
             .hero-cta-primary,
             .hero-cta-secondary {
-                width: 100%;
+                width: auto;
+                min-width: 160px;
                 text-align: center;
                 justify-content: center;
+                padding: 1rem 1.8rem;
             }
             
             .dashboard-window {
@@ -7272,34 +7288,33 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                         }
                     </p>
                     
-                    <div class="hero-usps animate-fade-in-up" style="animation-delay: 0.3s; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; margin: 2rem 0; max-width: 600px;">
-                        <div class="usp-item" style="display: flex; align-items: center; gap: 0.75rem;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 2V6M6.414 6.414L9.172 9.172M2 12H6M6.414 17.586L9.172 14.828M12 18V22M17.586 17.586L14.828 14.828M22 12H18M17.586 6.414L14.828 9.172"/>
+                    <!-- Innovative USP Pills Design -->
+                    <div class="hero-usps animate-fade-in-up" style="animation-delay: 0.3s; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; margin: 1.5rem 0; max-width: 480px;">
+                        <div class="usp-pill" style="background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15); border-radius: 20px; padding: 0.5rem 0.8rem; display: flex; align-items: center; gap: 0.35rem;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="12" cy="12" r="3"/>
+                                <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M17.36 17.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M17.36 6.64l1.42-1.42"/>
                             </svg>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem;">${lang === 'nl' ? '100% Gratis' : '100% Free'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.75rem;">${lang === 'nl' ? 'Gratis' : 'Free'}</span>
                         </div>
-                        <div class="usp-item" style="display: flex; align-items: center; gap: 0.75rem;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <div class="usp-pill" style="background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15); border-radius: 20px; padding: 0.5rem 0.8rem; display: flex; align-items: center; gap: 0.35rem;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z"/>
-                                <path d="M13.73 21C13.5542 21.3031 13.3018 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21"/>
                             </svg>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; white-space: nowrap;">${lang === 'nl' ? 'Eerste updates' : 'First to know'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.75rem; white-space: nowrap;">${lang === 'nl' ? 'Snel' : 'Fast'}</span>
                         </div>
-                        <div class="usp-item" style="display: flex; align-items: center; gap: 0.75rem;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M20 21V19C20 16.7909 18.2091 15 16 15H8C5.79086 15 4 16.7909 4 19V21"/>
-                                <circle cx="12" cy="7" r="4"/>
+                        <div class="usp-pill" style="background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15); border-radius: 20px; padding: 0.5rem 0.8rem; display: flex; align-items: center; gap: 0.35rem;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; white-space: nowrap;">${lang === 'nl' ? 'Geen registratie' : 'No account needed'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.75rem; white-space: nowrap;">${lang === 'nl' ? 'Direct' : 'Instant'}</span>
                         </div>
                     </div>
                     
                     <div class="hero-actions animate-fade-in-up" style="animation-delay: 0.4s;">
                         <a href="#subscription-form" class="hero-cta-primary" onclick="scrollToSubscription(); return false;">
                             ${lang === 'nl' ? 'Meld je aan' : 'Sign Up'}
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f8fafc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M7 17L17 7M17 7H7M17 7V17"/>
                             </svg>
                         </a>
@@ -7390,86 +7405,86 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             <div class="professionals-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; max-width: 1200px; margin: 0 auto; align-items: start;">
                 
                 <!-- E-commerce Professionals Card -->
-                <div class="professional-card animate-fade-in-up" style="background: var(--card-bg); border-radius: 20px; padding: 2.5rem 2rem; border: 1px solid var(--border-color); transition: all 0.3s ease; animation-delay: 0.1s; position: relative; overflow: hidden; display: flex; flex-direction: column; min-height: 400px;">
-                    <div class="card-content" style="flex: 1; display: flex; flex-direction: column;">
-                        <div class="card-icon" style="background: linear-gradient(135deg, #2563EB, #3b82f6); width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; flex-shrink: 0;">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <div class="professional-card animate-fade-in-up" style="background: var(--card-bg); border-radius: 20px; padding: 2.5rem 2rem; border: 1px solid var(--border-color); transition: all 0.3s ease; animation-delay: 0.1s; position: relative; overflow: hidden; display: flex; flex-direction: column; min-height: 450px; max-height: 450px; text-align: center;">
+                    <div class="card-content" style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #2563EB, #3b82f6); width: 70px; height: 70px; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; flex-shrink: 0;">
+                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/>
                                 <circle cx="9" cy="7" r="4"/>
                                 <path d="M22 21v-2a4 4 0 00-3-3.87"/>
                                 <path d="M16 3.13a4 4 0 010 7.75"/>
                             </svg>
                         </div>
-                        <div class="card-header" style="min-height: 60px; display: flex; align-items: start; margin-bottom: 1rem;">
-                            <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--text-primary); margin: 0; line-height: 1.3;">
-                                ${lang === 'nl' ? 'E-commerce Ondernemers' : 'E-commerce Entrepreneurs'}
+                        <div class="card-header" style="min-height: 70px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                            <h3 style="font-size: 1.4rem; font-weight: 600; color: var(--text-primary); margin: 0; line-height: 1.3;">
+                                ${lang === 'nl' ? 'E-commerce ondernemers' : 'E-commerce entrepreneurs'}
                             </h3>
                         </div>
-                        <div class="card-description" style="flex: 1; margin-bottom: 1.5rem;">
-                            <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
-                                ${lang === 'nl' ? 'Dropshippers en retailers die trending producten vroeg willen ontdekken.' : 'Dropshippers and retailers who want to discover trending products early.'}
+                        <div class="card-description" style="flex: 1; margin-bottom: 2rem;">
+                            <p style="color: var(--text-secondary); line-height: 1.6; margin: 0; font-size: 0.95rem;">
+                                ${lang === 'nl' ? 'Dropshippers en retailers die trending producten vroeg willen ontdekken om concurrentievoordeel te behalen.' : 'Dropshippers and retailers who want to discover trending products early to gain competitive advantage.'}
                             </p>
                         </div>
                     </div>
-                    <div class="benefits-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: auto;">
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Nieuwe producten' : 'New products'}</span>
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Markttrends' : 'Market trends'}</span>
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Automatische alerts' : 'Auto alerts'}</span>
+                    <div class="benefits-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: auto; justify-content: center;">
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Nieuwe producten' : 'New products'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Markttrends' : 'Market trends'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Automatische alerts' : 'Auto alerts'}</span>
                     </div>
                 </div>
                 
                 <!-- Business Professionals Card -->
-                <div class="professional-card animate-fade-in-up" style="background: var(--card-bg); border-radius: 20px; padding: 2.5rem 2rem; border: 1px solid var(--border-color); transition: all 0.3s ease; animation-delay: 0.2s; position: relative; overflow: hidden; display: flex; flex-direction: column; min-height: 400px;">
-                    <div class="card-content" style="flex: 1; display: flex; flex-direction: column;">
-                        <div class="card-icon" style="background: linear-gradient(135deg, #2563EB, #3b82f6); width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; flex-shrink: 0;">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <div class="professional-card animate-fade-in-up" style="background: var(--card-bg); border-radius: 20px; padding: 2.5rem 2rem; border: 1px solid var(--border-color); transition: all 0.3s ease; animation-delay: 0.2s; position: relative; overflow: hidden; display: flex; flex-direction: column; min-height: 450px; text-align: center;">
+                    <div class="card-content" style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #2563EB, #3b82f6); width: 70px; height: 70px; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; flex-shrink: 0;">
+                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M3 3v18h18"/>
                                 <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
                             </svg>
                         </div>
-                        <div class="card-header" style="min-height: 60px; display: flex; align-items: start; margin-bottom: 1rem;">
-                            <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--text-primary); margin: 0; line-height: 1.3;">
+                        <div class="card-header" style="min-height: 70px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                            <h3 style="font-size: 1.4rem; font-weight: 600; color: var(--text-primary); margin: 0; line-height: 1.3;">
                                 ${lang === 'nl' ? 'Business Professionals' : 'Business Professionals'}
                             </h3>
                         </div>
-                        <div class="card-description" style="flex: 1; margin-bottom: 1.5rem;">
-                            <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
-                                ${lang === 'nl' ? 'Inkopers, productmanagers en analisten die datagedreven beslissingen willen maken.' : 'Buyers, product managers and analysts who want to make data-driven decisions.'}
+                        <div class="card-description" style="flex: 1; margin-bottom: 2rem;">
+                            <p style="color: var(--text-secondary); line-height: 1.6; margin: 0; font-size: 0.95rem;">
+                                ${lang === 'nl' ? 'Inkopers, productmanagers en analisten die datagedreven beslissingen willen maken voor strategisch voordeel.' : 'Buyers, product managers and analysts who want to make data-driven decisions for strategic advantage.'}
                             </p>
                         </div>
                     </div>
-                    <div class="benefits-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: auto;">
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Markt intelligence' : 'Market intelligence'}</span>
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Concurrentie analyse' : 'Competitor analysis'}</span>
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Leverancier monitoring' : 'Supplier monitoring'}</span>
+                    <div class="benefits-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: auto; justify-content: center;">
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Markt intelligence' : 'Market intelligence'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Concurrentie analyse' : 'Competitor analysis'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Leverancier monitoring' : 'Supplier monitoring'}</span>
                     </div>
                 </div>
                 
                 <!-- Smart Shoppers Card -->
-                <div class="professional-card animate-fade-in-up" style="background: var(--card-bg); border-radius: 20px; padding: 2.5rem 2rem; border: 1px solid var(--border-color); transition: all 0.3s ease; animation-delay: 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column; min-height: 400px;">
-                    <div class="card-content" style="flex: 1; display: flex; flex-direction: column;">
-                        <div class="card-icon" style="background: linear-gradient(135deg, #2563EB, #3b82f6); width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; flex-shrink: 0;">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <div class="professional-card animate-fade-in-up" style="background: var(--card-bg); border-radius: 20px; padding: 2.5rem 2rem; border: 1px solid var(--border-color); transition: all 0.3s ease; animation-delay: 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column; min-height: 450px; text-align: center;">
+                    <div class="card-content" style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #2563EB, #3b82f6); width: 70px; height: 70px; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; flex-shrink: 0;">
+                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="9" cy="21" r="1"/>
                                 <circle cx="20" cy="21" r="1"/>
                                 <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
                             </svg>
                         </div>
-                        <div class="card-header" style="min-height: 60px; display: flex; align-items: start; margin-bottom: 1rem;">
-                            <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--text-primary); margin: 0; line-height: 1.3;">
+                        <div class="card-header" style="min-height: 70px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                            <h3 style="font-size: 1.4rem; font-weight: 600; color: var(--text-primary); margin: 0; line-height: 1.3;">
                                 ${lang === 'nl' ? 'Smart Shoppers' : 'Smart Shoppers'}
                             </h3>
                         </div>
-                        <div class="card-description" style="flex: 1; margin-bottom: 1.5rem;">
-                            <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
-                                ${lang === 'nl' ? 'Koopjachtliefhebbers en bulk buyers die de beste prijzen en handelsmogelijkheden zoeken.' : 'Bargain hunters and bulk buyers looking for the best prices and trading opportunities.'}
+                        <div class="card-description" style="flex: 1; margin-bottom: 2rem;">
+                            <p style="color: var(--text-secondary); line-height: 1.6; margin: 0; font-size: 0.95rem;">
+                                ${lang === 'nl' ? 'Koopjachtliefhebbers en bulk buyers die de beste prijzen en handelsmogelijkheden zoeken voor maximale winst.' : 'Bargain hunters and bulk buyers looking for the best prices and trading opportunities for maximum profit.'}
                             </p>
                         </div>
                     </div>
-                    <div class="benefits-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: auto;">
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Vroege toegang' : 'Early access'}</span>
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Prijsmonitoring' : 'Price monitoring'}</span>
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500;">${lang === 'nl' ? 'Bulk mogelijkheden' : 'Bulk opportunities'}</span>
+                    <div class="benefits-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: auto; justify-content: center;">
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Vroege toegang' : 'Early access'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Prijsmonitoring' : 'Price monitoring'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Bulk mogelijkheden' : 'Bulk opportunities'}</span>
                     </div>
                 </div>
                 
@@ -7959,7 +7974,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- BTime - Luxury Watches -->
                     <a href="https://www.dhgate.com/store/btime" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="6"/>
                             <polyline points="12,6 12,12 16,14"/>
                             <circle cx="12" cy="12" r="1"/>
@@ -7972,7 +7987,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- Amy 1003_1 - Sportswear -->
                     <a href="https://www.dhgate.com/store/20451494" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
                         </svg>
                         <div>
@@ -7983,7 +7998,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- DHgate Beauty -->
                     <a href="https://www.dhgate.com/store/20522858" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                         </svg>
                         <div>
@@ -7994,7 +8009,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- IZeso - Phone Accessories -->
                     <a href="https://www.dhgate.com/store/18282436" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
                             <line x1="12" y1="18" x2="12.01" y2="18"/>
                         </svg>
@@ -8006,7 +8021,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- Arthur032 - Electronics -->
                     <a href="https://www.dhgate.com/store/14772307" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
                             <line x1="8" y1="21" x2="16" y2="21"/>
                             <line x1="12" y1="17" x2="12" y2="21"/>
@@ -8019,7 +8034,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- Beija 2013 - Jewelry -->
                     <a href="https://www.dhgate.com/store/14772307" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M6 3h12l4 6-10 13L2 9z"/>
                             <path d="M11 3L8 9l4 13 4-13-3-6"/>
                         </svg>
@@ -8031,7 +8046,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- Dicky0750 - Designer Bags -->
                     <a href="https://www.dhgate.com/store/20425879" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20 7H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1Z"/>
                             <path d="M9 7v6a3 3 0 0 0 6 0V7"/>
                         </svg>
@@ -8043,7 +8058,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- Boost 700 V2 - Sneakers -->
                     <a href="https://www.dhgate.com/store/21208299" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.3 2-2.2 3.3-2.2H22"/>
                             <path d="M2 18v3"/>
                             <path d="M22 18v3"/>
@@ -8056,7 +8071,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- iBestshoppingmall - Electronics -->
                     <a href="https://www.dhgate.com/store/20047923" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="4" y="3" width="16" height="10" rx="2"/>
                             <path d="M22 18H2l2-3h16l2 3z"/>
                             <path d="M6 15h12"/>
@@ -8069,7 +8084,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- CasualTrendyShoes - Footwear -->
                     <a href="https://www.dhgate.com/store/21926048" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.3 2-2.2 3.3-2.2H22"/>
                             <path d="M2 18v3"/>
                             <path d="M22 18v3"/>
@@ -8082,7 +8097,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- Alexandr Store - Gym Equipment -->
                     <a href="https://www.dhgate.com/store/20245807" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M9 4h6v2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V4z"/>
                             <path d="M12 8v8"/>
                             <path d="M9 18h6v2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2z"/>
