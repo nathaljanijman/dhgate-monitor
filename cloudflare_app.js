@@ -1794,7 +1794,7 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
                     <!-- Theme Toggle -->
                     <div class="theme-toggle-switch" onclick="toggleTheme()" style="width: 50px; height: 25px; background: var(--border-color); border-radius: 12px; position: relative; cursor: pointer; transition: all 0.3s ease;">
                         <div class="theme-toggle-slider" style="position: absolute; top: 2px; left: ${theme === 'dark' ? '23px' : '2px'}; width: 21px; height: 21px; background: white; border-radius: 50%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; font-size: 12px;">
-                            ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
+                            ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'}
                         </div>
                     </div>
                     
@@ -1836,7 +1836,7 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
                 <span style="color: var(--text-muted); font-size: 0.9rem;">${lang === 'nl' ? 'Thema:' : 'Theme:'}</span>
                 <div class="theme-toggle-switch" onclick="toggleTheme()" style="width: 50px; height: 25px; background: var(--border-color); border-radius: 12px; position: relative; cursor: pointer; transition: all 0.3s ease;">
                     <div class="theme-toggle-slider" style="position: absolute; top: 2px; left: ${theme === 'dark' ? '23px' : '2px'}; width: 21px; height: 21px; background: white; border-radius: 50%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; font-size: 12px;">
-                        ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
+                        ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'}
                     </div>
                 </div>
             </div>
@@ -2209,12 +2209,12 @@ export default {
           await env.DHGATE_MONITOR_KV.put('store_database', JSON.stringify(stores), {
             expirationTtl: 24 * 60 * 60 // 24 hours
           });
-          console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Store database updated with ${stores.length} stores`);
+          console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Store database updated with ${stores.length} stores`);
         } else {
-          console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> No stores found during scraping');
+          console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> No stores found during scraping');
         }
       } catch (storeError) {
-        console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Store database update failed:', storeError);
+        console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Store database update failed:', storeError);
         // Continue with monitoring even if store update fails
       }
       
@@ -2226,7 +2226,7 @@ export default {
       console.log(`📊 Monitoring ${shops.length} shops with tags: ${tags.map(t => t.name).join(', ')}`);
       
       if (shops.length === 0) {
-        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> No shops configured for monitoring');
+        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> No shops configured for monitoring');
         return;
       }
 
@@ -2234,17 +2234,17 @@ export default {
       const subject = `DHgate Monitor Daily Check - ${new Date().toLocaleDateString()}`;
       const message = `Monitoring check completed at ${new Date().toLocaleString()}.\n\nShops monitored: ${shops.length}\nTags: ${tags.map(t => t.name).join(', ')}\n\nNote: This is the Cloudflare Worker scheduled check. For full product crawling, run the Selenium monitor script.`;
       
-      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Sending daily monitoring notification...');
+      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Sending daily monitoring notification...');
       console.log('Subject:', subject);
       console.log('Message preview:', message.substring(0, 100) + '...');
       
       // Here you could add actual crawling logic or trigger external systems
       // For now, we'll just log that the scheduled task ran successfully
       
-      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Daily monitoring check completed successfully');
+      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Daily monitoring check completed successfully');
       
     } catch (error) {
-      console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Scheduled monitoring failed:', error);
+      console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Scheduled monitoring failed:', error);
       throw error;
     }
   }
@@ -2508,7 +2508,7 @@ async function handleTestEmails(request, env) {
     const results = [];
     
     // Test 1: Dashboard Access Email
-    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Testing Dashboard Access Email...');
+    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Testing Dashboard Access Email...');
     const dashboardToken = generateDashboardToken(testEmail);
     const dashboardResult = await sendDashboardAccessEmail(env, testEmail, dashboardToken, 'nl');
     results.push({
@@ -2518,7 +2518,7 @@ async function handleTestEmails(request, env) {
     });
     
     // Test 2: Dashboard Access Email (English)
-    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Testing Dashboard Access Email (EN)...');
+    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Testing Dashboard Access Email (EN)...');
     const dashboardTokenEN = generateDashboardToken(testEmail + '_en');
     const dashboardResultEN = await sendDashboardAccessEmail(env, testEmail, dashboardTokenEN, 'en');
     results.push({
@@ -2528,7 +2528,7 @@ async function handleTestEmails(request, env) {
     });
     
     // Test 3: Product Notification Email (Dutch)
-    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Testing Product Notification Email (NL)...');
+    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Testing Product Notification Email (NL)...');
     const testProductsNL = [
       {
         title: 'Premium Gaming Headset - Draadloos',
@@ -2554,7 +2554,7 @@ async function handleTestEmails(request, env) {
     });
     
     // Test 4: Product Notification Email (English)  
-    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Testing Product Notification Email (EN)...');
+    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Testing Product Notification Email (EN)...');
     const testProductsEN = [
       {
         title: 'Wireless Bluetooth Earbuds - Premium Sound',
@@ -2575,7 +2575,7 @@ async function handleTestEmails(request, env) {
     });
     
     // Test 5: Generic Email Test
-    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Testing Generic Email Function...');
+    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Testing Generic Email Function...');
     const genericSubject = lang === 'nl' ? 
       'DHgate Monitor - Test Email Functionaliteit' : 
       'DHgate Monitor - Test Email Functionality';
@@ -2678,7 +2678,7 @@ async function handleDebugEmail(request, env) {
         <strong>Test Email:</strong> ${testEmail}<br>
         <strong>Language:</strong> ${lang}<br>
         <strong>Timestamp:</strong> ${new Date().toISOString()}<br>
-        <strong>Result:</strong> ${result ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Success' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Failed'}
+        <strong>Result:</strong> ${result ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Success' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Failed'}
     </div>
     
     <h2>📋 Console Logs (${logs.length} entries):</h2>
@@ -2692,7 +2692,7 @@ async function handleDebugEmail(request, env) {
     
     <div class="summary">
         <a href="/debug-email?lang=${lang}" style="color: #00ff00;">🔄 Run Again</a> | 
-        <a href="/test-emails?lang=${lang}" style="color: #00ff00;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Full Test Suite</a>
+        <a href="/test-emails?lang=${lang}" style="color: #00ff00;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Full Test Suite</a>
     </div>
 </body>
 </html>`;
@@ -2885,7 +2885,7 @@ async function handleContactPage(request, env) {
 }
 
 async function handleSitemap(request, env) {
-  const sitemap = generateSitemap();
+  const sitemap = await generateDynamicSitemap(env);
   return new Response(sitemap, {
     headers: { 'Content-Type': 'application/xml' }
   });
@@ -3178,7 +3178,7 @@ function generateDashboardHTML(subscription, t, lang, theme = 'light') {
                     <div class="theme-toggle-wrapper">
                         <div class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" onclick="toggleTheme()">
                             <div class="theme-toggle-slider">
-                                ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
+                                ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'}
                             </div>
                         </div>
                     </div>
@@ -3239,24 +3239,27 @@ function generateDashboardHTML(subscription, t, lang, theme = 'light') {
                         
                         <div class="dashboard-actions">
                             <a href="/settings?lang=${lang}&theme=${theme}" class="action-button">
-                                <svg class="action-icon" viewBox="0 0 24 24" fill="none">
-                                    <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="1.5"/>
-                                    <path d="M19.4 15C19.2669 15.3016 19.2272 15.6362 19.286 15.9606C19.3448 16.285 19.4995 16.5843 19.73 16.82L19.79 16.88C19.976 17.0657 20.1235 17.2863 20.2241 17.5291C20.3248 17.7719 20.3766 18.0322 20.3766 18.295C20.3766 18.5578 20.3248 18.8181 20.2241 19.0609C20.1235 19.3037 19.976 19.5243 19.79 19.71C19.6043 19.896 19.3837 20.0435 19.1409 20.1441C18.8981 20.2448 18.6378 20.2966 18.375 20.2966C18.1122 20.2966 17.8519 20.2448 17.6091 20.1441C17.3663 20.0435 17.1457 19.896 16.96 19.71L16.9 19.65C16.6643 19.4195 16.365 19.2648 16.0406 19.206C15.7162 19.1472 15.3816 19.1869 15.08 19.32C14.7842 19.4468 14.532 19.6572 14.3543 19.9255C14.1766 20.1938 14.0813 20.5082 14.08 20.83V21C14.08 21.5304 13.8693 22.0391 13.4942 22.4142C13.1191 22.7893 12.6104 23 12.08 23C11.5496 23 11.0409 22.7893 10.6658 22.4142C10.2907 22.0391 10.08 21.5304 10.08 21V20.91C10.0723 20.579 9.96512 20.2579 9.77251 19.9887C9.5799 19.7194 9.31074 19.5143 9 19.4C8.69838 19.2669 8.36381 19.2272 8.03941 19.286C7.71502 19.3448 7.41568 19.4995 7.18 19.73L7.12 19.79C6.93425 19.976 6.71368 20.1235 6.47088 20.2241C6.22808 20.3248 5.96783 20.3766 5.705 20.3766C5.44217 20.3766 5.18192 20.3248 4.93912 20.2241C4.69632 20.1235 4.47575 19.976 4.29 19.79C4.10405 19.6043 3.95653 19.3837 3.85588 19.1409C3.75523 18.8981 3.70343 18.6378 3.70343 18.375C3.70343 18.1122 3.75523 17.8519 3.85588 17.6091C3.95653 17.3663 4.10405 17.1457 4.29 16.96L4.35 16.9C4.58054 16.6643 4.73519 16.365 4.794 16.0406C4.85282 15.7162 4.81312 15.3816 4.68 15.08C4.55324 14.7842 4.34276 14.532 4.07447 14.3543C3.80618 14.1766 3.49179 14.0813 3.17 14.08H3C2.46957 14.08 1.96086 13.8693 1.58579 13.4942C1.21071 13.1191 1 12.6104 1 12.08C1 11.5496 1.21071 11.0409 1.58579 10.6658C1.96086 10.2907 2.46957 10.08 3 10.08H3.09C3.42099 10.0723 3.742 9.96512 4.01127 9.77251C4.28054 9.5799 4.48571 9.31074 4.6 9C4.73312 8.69838 4.77282 8.36381 4.714 8.03941C4.65519 7.71502 4.50054 7.41568 4.27 7.18L4.21 7.12C4.02405 6.93425 3.87653 6.71368 3.77588 6.47088C3.67523 6.22808 3.62343 5.96783 3.62343 5.705C3.62343 5.44217 3.67523 5.18192 3.77588 4.93912C3.87653 4.69632 4.02405 4.47575 4.21 4.29C4.39575 4.10405 4.61632 3.95653 4.85912 3.85588C5.10192 3.75523 5.36217 3.70343 5.625 3.70343C5.88783 3.70343 6.14808 3.75523 6.39088 3.85588C6.63368 3.95653 6.85425 4.10405 7.04 4.29L7.1 4.35C7.33568 4.58054 7.63502 4.73519 7.95941 4.794C8.28381 4.85282 8.61838 4.81312 8.92 4.68H9C9.29577 4.55324 9.54802 4.34276 9.72569 4.07447C9.90337 3.80618 9.99872 3.49179 10 3.17V3C10 2.46957 10.2107 1.96086 10.5858 1.58579C10.9609 1.21071 11.4696 1 12 1C12.5304 1 13.0391 1.21071 13.4142 1.58579C13.7893 1.96086 14 2.46957 14 3V3.09C14.0013 3.41179 14.0966 3.72618 14.2743 3.99447C14.452 4.26276 14.7042 4.47324 15 4.6C15.3016 4.73312 15.6362 4.77282 15.9606 4.714C16.285 4.65519 16.5843 4.50054 16.82 4.27L16.88 4.21C17.0657 4.02405 17.2863 3.87653 17.5291 3.77588C17.7719 3.67523 18.0322 3.62343 18.295 3.62343C18.5578 3.62343 18.8181 3.67523 19.0609 3.77588C19.3037 3.87653 19.5243 4.02405 19.71 4.21C19.896 4.39575 20.0435 4.61632 20.1441 4.85912C20.2448 5.10192 20.2966 5.36217 20.2966 5.625C20.2966 5.88783 20.2448 6.14808 20.1441 6.39088C20.0435 6.63368 19.896 6.85425 19.71 7.04L19.65 7.1C19.4195 7.33568 19.2648 7.63502 19.206 7.95941C19.1472 8.28381 19.1869 8.61838 19.32 8.92V9C19.4468 9.29577 19.6572 9.54802 19.9255 9.72569C20.1938 9.90337 20.5082 9.99872 20.83 10H21C21.5304 10 22.0391 10.2107 22.4142 10.5858C22.7893 10.9609 23 11.4696 23 12C23 12.5304 22.7893 13.0391 22.4142 13.4142C22.0391 13.7893 21.5304 14 21 14H20.91C20.5882 14.0013 20.2738 14.0966 20.0055 14.2743C19.7372 14.452 19.5268 14.7042 19.4 15Z" stroke="currentColor" stroke-width="1.5"/>
+                                <svg class="action-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="3"/>
+                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                                 </svg>
                                 ${lang === 'nl' ? 'Instellingen wijzigen' : 'Edit settings'}
                             </a>
                             
                             <a href="/" class="action-button">
-                                <svg class="action-icon" viewBox="0 0 24 24" fill="none">
-                                    <path d="M3 12L5 10M21 12L19 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10V20C19 20.5523 18.4477 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke="currentColor" stroke-width="1.5"/>
+                                <svg class="action-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9,22 9,12 15,12 15,22"/>
                                 </svg>
                                 ${lang === 'nl' ? 'Terug naar homepage' : 'Back to homepage'}
                             </a>
                             
                             <a href="/unsubscribe?token=${subscription.unsubscribe_token}&lang=${lang}" class="action-button danger">
-                                <svg class="action-icon" viewBox="0 0 24 24" fill="none">
-                                    <path d="M3 8L10.89 13.26C11.2187 13.4793 11.6049 13.5963 12 13.5963C12.3951 13.5963 12.7813 13.4793 13.11 13.26L21 8M5 19H19C20.1046 19 21 18.1046 21 17V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V17C3 18.1046 3.89543 19 5 19Z" stroke="currentColor" stroke-width="1.5"/>
-                                    <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="1.5"/>
+                                <svg class="action-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                    <polyline points="22,6 12,13 2,6"/>
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
                                 </svg>
                                 ${lang === 'nl' ? 'Uitschrijven' : 'Unsubscribe'}
                             </a>
@@ -3727,6 +3730,76 @@ function generateContactHTML(t, lang) {
 </body>
 </html>
   `;
+}
+
+async function generateDynamicSitemap(env) {
+  const baseUrl = 'https://dhgate-monitor.com';
+  
+  // Base static pages
+  const staticUrls = [
+    { loc: '/', priority: '1.0', changefreq: 'daily', description: 'Landing Page with DHgate Monitor Features' },
+    { loc: '/login', priority: '0.9', changefreq: 'weekly', description: 'User Login' },
+    { loc: '/dashboard', priority: '0.9', changefreq: 'daily', description: 'Main Dashboard (requires authentication)' },
+    { loc: '/add_shop', priority: '0.8', changefreq: 'monthly', description: 'Add DHgate Shop for Monitoring' },
+    { loc: '/settings', priority: '0.8', changefreq: 'monthly', description: 'Configuration Settings' },
+    { loc: '/tags', priority: '0.8', changefreq: 'monthly', description: 'Tag Management' },
+    { loc: '/privacy', priority: '0.6', changefreq: 'yearly', description: 'Privacy Policy' },
+    { loc: '/terms', priority: '0.6', changefreq: 'yearly', description: 'Terms of Service' },
+    { loc: '/contact', priority: '0.6', changefreq: 'monthly', description: 'Contact Information' },
+    { loc: '/unsubscribe', priority: '0.3', changefreq: 'never', description: 'Unsubscribe from notifications' },
+    { loc: '/delete-data', priority: '0.3', changefreq: 'never', description: 'Data deletion request' }
+  ];
+  
+  // Dynamic pages - get from database/storage
+  const dynamicUrls = [];
+  
+  try {
+    // Get all registered shops from database for potential shop-specific pages
+    const shopsData = await env.DHGATE_MONITOR_KV.get('shops');
+    const shops = shopsData ? JSON.parse(shopsData) : [];
+    
+    // Add language variants for main pages
+    const languages = ['nl', 'en'];
+    const languageUrls = [];
+    
+    staticUrls.forEach(page => {
+      if (page.loc !== '/') { // Don't duplicate root for language variants
+        languages.forEach(lang => {
+          languageUrls.push({
+            loc: `${page.loc}?lang=${lang}`,
+            priority: page.priority,
+            changefreq: page.changefreq,
+            description: `${page.description} (${lang.toUpperCase()})`
+          });
+        });
+      }
+    });
+    
+    dynamicUrls.push(...languageUrls);
+    
+  } catch (error) {
+    console.error('Error generating dynamic sitemap urls:', error);
+  }
+  
+  // Combine all URLs
+  const allUrls = [...staticUrls, ...dynamicUrls];
+  
+  // Generate XML sitemap
+  const currentDate = new Date().toISOString().split('T')[0];
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+${allUrls.map(url => `  <url>
+    <loc>${baseUrl}${url.loc}</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>${url.changefreq || 'weekly'}</changefreq>
+    <priority>${url.priority}</priority>
+  </url>`).join('\n')}
+</urlset>`;
+  
+  return sitemap;
 }
 
 function generateSitemap() {
@@ -4230,7 +4303,7 @@ async function storeSubscription(env, subscription) {
       new Date().toISOString()
     ).run();
     
-    console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Subscription stored in D1 database for: ${subscription.email}`);
+    console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Subscription stored in D1 database for: ${subscription.email}`);
     
     // Also store in KV for backward compatibility and token lookups
     await env.DHGATE_MONITOR_KV.put(`subscription:${subscription.email}`, JSON.stringify(subscriptionData));
@@ -4243,7 +4316,7 @@ async function storeSubscription(env, subscription) {
     await env.DHGATE_MONITOR_KV.put(`subscription:${subscription.email}`, JSON.stringify(subscriptionData));
     await env.DHGATE_MONITOR_KV.put(`token:${unsubscribeToken}`, subscription.email);
     await env.DHGATE_MONITOR_KV.put(`dashboard:${dashboardToken}`, subscription.email);
-    console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg>  Fallback: Subscription stored in KV only for: ${subscription.email}`);
+    console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg>  Fallback: Subscription stored in KV only for: ${subscription.email}`);
   }
   
   return { unsubscribeToken, dashboardToken };
@@ -4257,7 +4330,7 @@ async function getSubscriptionByToken(env, token) {
     `).bind(token).first();
     
     if (result) {
-      console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Subscription found in D1 database for token: ${token.substring(0, 8)}...`);
+      console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Subscription found in D1 database for token: ${token.substring(0, 8)}...`);
       return result;
     }
     
@@ -4267,7 +4340,7 @@ async function getSubscriptionByToken(env, token) {
     
     const subscription = await env.DHGATE_MONITOR_KV.get(`subscription:${email}`);
     if (subscription) {
-      console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg>  Subscription found in KV fallback for: ${email}`);
+      console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg>  Subscription found in KV fallback for: ${email}`);
       return JSON.parse(subscription);
     }
     
@@ -4286,7 +4359,7 @@ async function getSubscriptionByDashboardToken(env, dashboardToken) {
     `).bind(dashboardToken).first();
     
     if (result) {
-      console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Subscription found in D1 database for dashboard token: ${dashboardToken.substring(0, 8)}...`);
+      console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Subscription found in D1 database for dashboard token: ${dashboardToken.substring(0, 8)}...`);
       return result;
     }
     
@@ -4296,7 +4369,7 @@ async function getSubscriptionByDashboardToken(env, dashboardToken) {
     
     const subscription = await env.DHGATE_MONITOR_KV.get(`subscription:${email}`);
     if (subscription) {
-      console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg>  Subscription found in KV fallback for dashboard access: ${email}`);
+      console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg>  Subscription found in KV fallback for dashboard access: ${email}`);
       return JSON.parse(subscription);
     }
     
@@ -4325,7 +4398,7 @@ async function unsubscribeUser(env, token) {
         WHERE unsubscribe_token = ?
       `).bind(new Date().toISOString(), token).run();
       
-      console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Email marketing unsubscribed in D1 database: ${subscription.email}`);
+      console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Email marketing unsubscribed in D1 database: ${subscription.email}`);
       console.log(`📊 Dashboard access remains available for: ${subscription.email}`);
       
       // Also update in KV for consistency
@@ -4352,7 +4425,7 @@ async function unsubscribeUser(env, token) {
       data.email_marketing_consent = false;
       data.unsubscribed_at = new Date().toISOString();
       await env.DHGATE_MONITOR_KV.put(`subscription:${email}`, JSON.stringify(data));
-      console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg>  Email marketing unsubscribed via KV fallback: ${email}`);
+      console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg>  Email marketing unsubscribed via KV fallback: ${email}`);
     }
     
     return true;
@@ -4576,8 +4649,10 @@ function generateDashboardErrorHTML(lang, theme, errorType) {
     <div class="error-container">
         <div class="error-card">
             <div class="error-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
                 </svg>
             </div>
             
@@ -4762,9 +4837,11 @@ function generateUnsubscribePageHTML(subscription, token, t, lang, theme = 'ligh
     <div class="unsubscribe-container">
         <div class="unsubscribe-card">
             <div class="unsubscribe-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
-                    <path d="M3 8L10.89 13.26C11.2187 13.4793 11.6049 13.5963 12 13.5963C12.3951 13.5963 12.7813 13.4793 13.11 13.26L21 8M5 19H19C20.1046 19 21 18.1046 21 17V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V17C3 18.1046 3.89543 19 5 19Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                    <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="1.5"/>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
                 </svg>
             </div>
             
@@ -4831,8 +4908,8 @@ function generateUnsubscribePageHTML(subscription, token, t, lang, theme = 'ligh
                 if (result.success) {
                     document.querySelector('.unsubscribe-card').innerHTML = \`
                         <div class="unsubscribe-icon" style="background: #10b981;">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
-                                <path d="M5 13L9 17L19 7" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20,6 9,17 4,12"/>
                             </svg>
                         </div>
                         <h1 class="unsubscribe-title">
@@ -7088,7 +7165,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 <div class="nav-theme-toggle">
                     <div class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" onclick="toggleTheme()" aria-label="Toggle theme">
                         <div class="theme-toggle-slider">
-                            ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
+                            ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'}
                         </div>
                     </div>
                 </div>
@@ -7122,8 +7199,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                         </linearGradient>
                     </defs>
                     <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#mobileBrandGradient)"/>
-                    <path d="M2 17L12 22L22 17" stroke="url(#mobileBrandGradient)" stroke-width="1.5" fill="none"/>
-                    <path d="M2 12L12 17L22 12" stroke="url(#mobileBrandGradient)" stroke-width="1.5" fill="none"/>
+                    <path d="M2 17L12 22L22 17" stroke="url(#mobileBrandGradient)" stroke-width="2" fill="none"/>
+                    <path d="M2 12L12 17L22 12" stroke="url(#mobileBrandGradient)" stroke-width="2" fill="none"/>
                 </svg>
             </div>
             <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close menu">✕</button>
@@ -7147,7 +7224,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 <span style="color: var(--text-muted); font-size: 0.9rem;">${lang === 'nl' ? 'Thema:' : 'Theme:'}</span>
                 <div class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" onclick="toggleTheme()" aria-label="Toggle theme">
                     <div class="theme-toggle-slider">
-                        ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
+                        ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'}
                     </div>
                 </div>
             </div>
@@ -7179,21 +7256,21 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <div class="hero-usps animate-fade-in-up" style="animation-delay: 0.3s; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; margin: 2rem 0; max-width: 600px;">
                         <div class="usp-item" style="display: flex; align-items: center; gap: 0.75rem;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 2V6M6.414 6.414L9.172 9.172M2 12H6M6.414 17.586L9.172 14.828M12 18V22M17.586 17.586L14.828 14.828M22 12H18M17.586 6.414L14.828 9.172"/>
                                 <circle cx="12" cy="12" r="3"/>
                             </svg>
                             <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem;">${lang === 'nl' ? '100% Gratis' : '100% Free'}</span>
                         </div>
                         <div class="usp-item" style="display: flex; align-items: center; gap: 0.75rem;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z"/>
                                 <path d="M13.73 21C13.5542 21.3031 13.3018 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21"/>
                             </svg>
                             <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; white-space: nowrap;">${lang === 'nl' ? 'Eerste updates' : 'First to know'}</span>
                         </div>
                         <div class="usp-item" style="display: flex; align-items: center; gap: 0.75rem;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M20 21V19C20 16.7909 18.2091 15 16 15H8C5.79086 15 4 16.7909 4 19V21"/>
                                 <circle cx="12" cy="7" r="4"/>
                             </svg>
@@ -7204,8 +7281,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     <div class="hero-actions animate-fade-in-up" style="animation-delay: 0.4s;">
                         <a href="#subscription-form" class="hero-cta-primary" onclick="scrollToSubscription(); return false;">
                             ${lang === 'nl' ? 'Meld je aan' : 'Sign Up'}
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M7 17L17 7M17 7H7M17 7V17"/>
                             </svg>
                         </a>
                         <a href="/contact?lang=${lang}&theme=${theme}" class="hero-cta-secondary">
@@ -7230,7 +7307,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                         <div class="hero-image-placeholder" style="display: none;">
                             <div class="placeholder-content">
                                 <div class="placeholder-icon">
-                                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                                         <circle cx="8.5" cy="8.5" r="1.5"/>
                                         <polyline points="21,15 16,10 5,21"/>
@@ -7314,7 +7391,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     <!-- E-commerce Tab -->
                     <div class="mobile-tab-panel active" id="mobile-tab-0">
                         <div class="mobile-card-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/>
                                 <circle cx="9" cy="7" r="4"/>
                                 <path d="M22 21v-2a4 4 0 00-3-3.87"/>
@@ -7337,7 +7414,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     <!-- Business Tab -->
                     <div class="mobile-tab-panel" id="mobile-tab-1">
                         <div class="mobile-card-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M3 3v18h18"/>
                                 <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
                             </svg>
@@ -7358,7 +7435,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     <!-- Shoppers Tab -->
                     <div class="mobile-tab-panel" id="mobile-tab-2">
                         <div class="mobile-card-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="9" cy="21" r="1"/>
                                 <circle cx="20" cy="21" r="1"/>
                                 <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
@@ -7388,7 +7465,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <div class="card-header">
                         <div class="icon-wrapper animate-scale-in" style="margin: 0 auto 2rem; display: flex; justify-content: center;">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/>
                                 <circle cx="9" cy="7" r="4"/>
                                 <path d="M22 21v-2a4 4 0 00-3-3.87"/>
@@ -7436,7 +7513,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <div class="card-header">
                         <div class="icon-wrapper animate-scale-in" style="margin: 0 auto 2rem; display: flex; justify-content: center; animation-delay: 0.4s;">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M3 3v18h18"/>
                                 <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
                             </svg>
@@ -7482,7 +7559,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <div class="card-header">
                         <div class="icon-wrapper animate-scale-in" style="margin: 0 auto 2rem; display: flex; justify-content: center; animation-delay: 0.6s;">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="9" cy="21" r="1"/>
                                 <circle cx="20" cy="21" r="1"/>
                                 <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
@@ -7764,7 +7841,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- BTime - Luxury Watches -->
                     <a href="https://www.dhgate.com/store/btime" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="6"/>
                             <polyline points="12,6 12,12 16,14"/>
                             <circle cx="12" cy="12" r="1"/>
@@ -7777,7 +7854,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- Amy 1003_1 - Sportswear -->
                     <a href="https://www.dhgate.com/store/20451494" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
                         </svg>
                         <div>
@@ -7788,7 +7865,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- DHgate Beauty -->
                     <a href="https://www.dhgate.com/store/20522858" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                         </svg>
                         <div>
@@ -7799,7 +7876,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- IZeso - Phone Accessories -->
                     <a href="https://www.dhgate.com/store/18282436" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
                             <line x1="12" y1="18" x2="12.01" y2="18"/>
                         </svg>
@@ -7811,7 +7888,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- Arthur032 - Electronics -->
                     <a href="https://www.dhgate.com/store/14772307" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
                             <line x1="8" y1="21" x2="16" y2="21"/>
                             <line x1="12" y1="17" x2="12" y2="21"/>
@@ -7824,7 +7901,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- Beija 2013 - Jewelry -->
                     <a href="https://www.dhgate.com/store/14772307" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M6 3h12l4 6-10 13L2 9z"/>
                             <path d="M11 3L8 9l4 13 4-13-3-6"/>
                         </svg>
@@ -7836,7 +7913,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- Dicky0750 - Designer Bags -->
                     <a href="https://www.dhgate.com/store/20425879" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20 7H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1Z"/>
                             <path d="M9 7v6a3 3 0 0 0 6 0V7"/>
                         </svg>
@@ -7848,7 +7925,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- Boost 700 V2 - Sneakers -->
                     <a href="https://www.dhgate.com/store/21208299" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.3 2-2.2 3.3-2.2H22"/>
                             <path d="M2 18v3"/>
                             <path d="M22 18v3"/>
@@ -7861,7 +7938,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- iBestshoppingmall - Electronics -->
                     <a href="https://www.dhgate.com/store/20047923" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="4" y="3" width="16" height="10" rx="2"/>
                             <path d="M22 18H2l2-3h16l2 3z"/>
                             <path d="M6 15h12"/>
@@ -7874,7 +7951,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- CasualTrendyShoes - Footwear -->
                     <a href="https://www.dhgate.com/store/21926048" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.3 2-2.2 3.3-2.2H22"/>
                             <path d="M2 18v3"/>
                             <path d="M22 18v3"/>
@@ -7887,7 +7964,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <!-- Alexandr Store - Gym Equipment -->
                     <a href="https://www.dhgate.com/store/20245807" target="_blank" class="category-item" style="display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 2rem; min-width: 280px; white-space: nowrap; transition: all 0.3s ease; text-decoration: none; color: inherit;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M9 4h6v2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V4z"/>
                             <path d="M12 8v8"/>
                             <path d="M9 18h6v2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2z"/>
@@ -7992,8 +8069,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                     <div class="form-group">
                                         <div class="input-wrapper">
                                             <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                                <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="1.5"/>
-                                                <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="1.5"/>
+                                                <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2"/>
+                                                <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="2"/>
                                             </svg>
                                             <input 
                                                 type="email" 
@@ -8010,8 +8087,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                     <button type="button" class="btn-primary btn-next" onclick="nextStep()">
                                         ${lang === 'nl' ? 'Volgende' : 'Next'}
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M5 12H19" stroke="currentColor" stroke-width="1.5"/>
-                                            <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="1.5"/>
+                                            <path d="M5 12H19" stroke="currentColor" stroke-width="2"/>
+                                            <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
                                         </svg>
                                     </button>
                                 </div>
@@ -8034,8 +8111,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                         <div class="store-search-wrapper">
                                             <div class="input-wrapper">
                                                 <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.5"/>
-                                                    <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="1.5"/>
+                                                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                                                    <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2"/>
                                                 </svg>
                                                 <input 
                                                     type="text" 
@@ -8057,7 +8134,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                         </label>
                                         <div class="input-wrapper">
                                             <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                                <path d="M7 7h.01M7 3h5c1.1 0 2 .9 2 2v5l-2.3 2.3c-.7.7-1.8.7-2.5 0L7 10V5c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="1.5"/>
+                                                <path d="M7 7h.01M7 3h5c1.1 0 2 .9 2 2v5l-2.3 2.3c-.7.7-1.8.7-2.5 0L7 10V5c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2"/>
                                             </svg>
                                             <input 
                                                 type="text" 
@@ -8079,16 +8156,16 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                 <div class="step-actions">
                                     <button type="button" class="btn-secondary btn-back" onclick="previousStep()">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M19 12H5" stroke="currentColor" stroke-width="1.5"/>
-                                            <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="1.5"/>
+                                            <path d="M19 12H5" stroke="currentColor" stroke-width="2"/>
+                                            <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2"/>
                                         </svg>
                                         ${lang === 'nl' ? 'Terug' : 'Back'}
                                     </button>
                                     <button type="button" class="btn-primary btn-next" onclick="nextStep()">
                                         ${lang === 'nl' ? 'Volgende' : 'Next'}
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M5 12H19" stroke="currentColor" stroke-width="1.5"/>
-                                            <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="1.5"/>
+                                            <path d="M5 12H19" stroke="currentColor" stroke-width="2"/>
+                                            <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
                                         </svg>
                                     </button>
                                 </div>
@@ -8120,7 +8197,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                                 <option value="weekly">${lang === 'nl' ? 'Wekelijks' : 'Weekly'}</option>
                                             </select>
                                             <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none">
-                                                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="1.5"/>
+                                                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2"/>
                                             </svg>
                                         </div>
                                     </div>
@@ -8137,7 +8214,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                                 <option value="evening">${lang === 'nl' ? 'Avond (18:00)' : 'Evening (18:00)'}</option>
                                             </select>
                                             <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none">
-                                                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="1.5"/>
+                                                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2"/>
                                             </svg>
                                         </div>
                                         <div class="form-text">
@@ -8151,16 +8228,16 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                 <div class="step-actions">
                                     <button type="button" class="btn-secondary btn-back" onclick="previousStep()">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M19 12H5" stroke="currentColor" stroke-width="1.5"/>
-                                            <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="1.5"/>
+                                            <path d="M19 12H5" stroke="currentColor" stroke-width="2"/>
+                                            <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2"/>
                                         </svg>
                                         ${lang === 'nl' ? 'Terug' : 'Back'}
                                     </button>
                                     <button type="button" class="btn-primary btn-next" onclick="nextStep()">
                                         ${lang === 'nl' ? 'Volgende' : 'Next'}
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M5 12H19" stroke="currentColor" stroke-width="1.5"/>
-                                            <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="1.5"/>
+                                            <path d="M5 12H19" stroke="currentColor" stroke-width="2"/>
+                                            <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
                                         </svg>
                                     </button>
                                 </div>
@@ -8204,16 +8281,16 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                 <div class="step-actions">
                                     <button type="button" class="btn-secondary btn-back" onclick="previousStep()">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M19 12H5" stroke="currentColor" stroke-width="1.5"/>
-                                            <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="1.5"/>
+                                            <path d="M19 12H5" stroke="currentColor" stroke-width="2"/>
+                                            <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2"/>
                                         </svg>
                                         ${lang === 'nl' ? 'Terug' : 'Back'}
                                     </button>
                                     <button type="submit" class="btn-success btn-submit">
                                         ${lang === 'nl' ? 'Start monitoring' : 'Start monitoring'}
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M5 12H19" stroke="currentColor" stroke-width="1.5"/>
-                                            <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="1.5"/>
+                                            <path d="M5 12H19" stroke="currentColor" stroke-width="2"/>
+                                            <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
                                         </svg>
                                     </button>
                                 </div>
@@ -8857,25 +8934,25 @@ async function sendEmail(env, to, subject, htmlContent) {
     
     // Option 1: Resend API (FIRST PRIORITY - meest betrouwbaar!)
     if (env.RESEND_API_KEY && env.RESEND_API_KEY.length > 0) {
-      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [EMAIL] Using Resend API (production ready)');
-      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [RESEND] API Key length:', env.RESEND_API_KEY.length);
-      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [RESEND] From:', emailConfig.sender_email);
-      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [RESEND] To:', to);
+      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [EMAIL] Using Resend API (production ready)');
+      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [RESEND] API Key length:', env.RESEND_API_KEY.length);
+      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [RESEND] From:', emailConfig.sender_email);
+      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [RESEND] To:', to);
       return await sendViaResend(env.RESEND_API_KEY, emailConfig.sender_email, to, subject, htmlContent);
     } else {
-      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [EMAIL] RESEND_API_KEY not available (length:', env.RESEND_API_KEY?.length || 0, ')');
+      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [EMAIL] RESEND_API_KEY not available (length:', env.RESEND_API_KEY?.length || 0, ')');
       console.log('💡 [EMAIL] Falling back to SMTP configuration');
     }
     
     // Option 2: Use existing SMTP configuration (fallback)
     if (emailConfig.smtp_server && emailConfig.smtp_password) {
-      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [EMAIL] Using SMTP configuration as fallback');
-      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [SMTP] Server:', emailConfig.smtp_server);
-      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [SMTP] Port:', emailConfig.smtp_port);
-      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [SMTP] From:', emailConfig.sender_email);
+      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [EMAIL] Using SMTP configuration as fallback');
+      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [SMTP] Server:', emailConfig.smtp_server);
+      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [SMTP] Port:', emailConfig.smtp_port);
+      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [SMTP] From:', emailConfig.sender_email);
       return await sendViaSMTP(emailConfig, to, subject, htmlContent);
     } else {
-      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> [EMAIL] SMTP configuration incomplete:');
+      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> [EMAIL] SMTP configuration incomplete:');
       console.log('   Server check:', !!emailConfig.smtp_server);
       console.log('   Password check:', !!emailConfig.smtp_password);
     }
@@ -8910,20 +8987,20 @@ async function sendEmail(env, to, subject, htmlContent) {
       });
       
       if (webhookResponse.ok) {
-        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [EMAIL] Webhook test successful - email system works!');
+        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [EMAIL] Webhook test successful - email system works!');
         console.log('💡 [EMAIL] To enable real emails: add RESEND_API_KEY');
       }
     } catch (error) {
-      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [EMAIL] Webhook test failed:', error.message);
+      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [EMAIL] Webhook test failed:', error.message);
     }
     
     // Fallback: Log email content for debugging
-    console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> No email API configured - available keys:');
-    console.log('RESEND_API_KEY:', env.RESEND_API_KEY ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Available' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Missing');
-    console.log('SENDGRID_API_KEY:', env.SENDGRID_API_KEY ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Available' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Missing');
-    console.log('MAILGUN_API_KEY:', env.MAILGUN_API_KEY ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Available' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Missing');
+    console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> No email API configured - available keys:');
+    console.log('RESEND_API_KEY:', env.RESEND_API_KEY ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Available' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Missing');
+    console.log('SENDGRID_API_KEY:', env.SENDGRID_API_KEY ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Available' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Missing');
+    console.log('MAILGUN_API_KEY:', env.MAILGUN_API_KEY ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Available' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Missing');
     
-    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email details:');
+    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email details:');
     console.log('From:', emailConfig.sender_email);
     console.log('To:', to);
     console.log('Subject:', subject);
@@ -8931,7 +9008,7 @@ async function sendEmail(env, to, subject, htmlContent) {
     
     // Simulate success for testing
     await new Promise(resolve => setTimeout(resolve, 100));
-    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Email simulation completed for:', to, '(No real delivery)');
+    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Email simulation completed for:', to, '(No real delivery)');
     return true;
     
   } catch (error) {
@@ -9324,7 +9401,7 @@ function generateDashboardAccessSuccessHTML(lang, theme, email) {
         <div class="success-card">
             <div class="success-icon">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
-                    <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
             
@@ -9426,7 +9503,7 @@ function generateDashboardAccessErrorHTML(lang, theme, errorType) {
         <div class="error-card">
             <div class="error-icon">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
             
@@ -9455,7 +9532,7 @@ function generateDashboardAccessErrorHTML(lang, theme, errorType) {
 async function sendViaResend(apiKey, from, to, subject, htmlContent) {
   try {
     console.log('🚀 [RESEND] Starting email send process...');
-    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [RESEND] Email details:');
+    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [RESEND] Email details:');
     console.log('   From:', from);
     console.log('   To:', to);
     console.log('   Subject:', subject);
@@ -9510,21 +9587,21 @@ async function sendViaResend(apiKey, from, to, subject, htmlContent) {
 
     if (response.ok) {
       const result = await response.json();
-      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [RESEND] SUCCESS! Email sent with ID:', result.id);
-      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [RESEND] Full response:', JSON.stringify(result, null, 2));
+      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [RESEND] SUCCESS! Email sent with ID:', result.id);
+      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [RESEND] Full response:', JSON.stringify(result, null, 2));
       return true;
     } else {
       const errorText = await response.text();
-      console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> [RESEND] API ERROR!');
-      console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> [RESEND] Status:', response.status);
-      console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> [RESEND] Status Text:', response.statusText);
-      console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> [RESEND] Error Response:', errorText);
+      console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> [RESEND] API ERROR!');
+      console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> [RESEND] Status:', response.status);
+      console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> [RESEND] Status Text:', response.statusText);
+      console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> [RESEND] Error Response:', errorText);
       
       try {
         const errorObj = JSON.parse(errorText);
-        console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> [RESEND] Parsed error:', JSON.stringify(errorObj, null, 2));
+        console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> [RESEND] Parsed error:', JSON.stringify(errorObj, null, 2));
       } catch (e) {
-        console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> [RESEND] Could not parse error as JSON');
+        console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> [RESEND] Could not parse error as JSON');
       }
       
       return false;
@@ -9886,7 +9963,7 @@ function generateProductNotificationEmailHTML(email, products, lang) {
                 <div class="divider"></div>
                 
                 <div class="cta-section">
-                    <h3>${lang === 'nl' ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Meer controle nodig?' : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Need more control?'}</h3>
+                    <h3>${lang === 'nl' ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Meer controle nodig?' : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Need more control?'}</h3>
                     <p>
                         ${lang === 'nl' ? 
                             'Pas je monitoring instellingen aan in het dashboard om precies te krijgen wat je zoekt.' :
@@ -10008,8 +10085,8 @@ function generateTestEmailResultsHTML(results, lang, theme) {
                             <h4 style="color: var(--text-primary); margin: 0; flex: 1;">${result.type}</h4>
                             <span class="${result.success ? 'success-badge' : 'error-badge'}">
                                 ${result.success ? 
-                                    (lang === 'nl' ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Geslaagd' : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Success') :
-                                    (lang === 'nl' ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Gefaald' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Failed')
+                                    (lang === 'nl' ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Geslaagd' : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Success') :
+                                    (lang === 'nl' ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Gefaald' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Failed')
                                 }
                             </span>
                         </div>
@@ -10032,7 +10109,7 @@ function generateTestEmailResultsHTML(results, lang, theme) {
             
             <div class="test-card" style="margin-top: 2rem;">
                 <h3 style="color: var(--text-primary); margin-bottom: 1rem;">
-                    ${lang === 'nl' ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Verwachte Emails' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Expected Emails'}
+                    ${lang === 'nl' ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Verwachte Emails' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Expected Emails'}
                 </h3>
                 <ul style="color: var(--text-secondary);">
                     <li>${lang === 'nl' ? 'Dashboard Toegang Email (Nederlands)' : 'Dashboard Access Email (Dutch)'}</li>
@@ -10043,7 +10120,7 @@ function generateTestEmailResultsHTML(results, lang, theme) {
                 </ul>
                 
                 <div style="margin-top: 1rem; padding: 1rem; background: #fef3c7; border-radius: 8px;">
-                    <strong style="color: #92400e;">${lang === 'nl' ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> Let op:' : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> Note:'}</strong>
+                    <strong style="color: #92400e;">${lang === 'nl' ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> Let op:' : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> Note:'}</strong>
                     <span style="color: #92400e;">
                         ${lang === 'nl' ? 
                             'Zonder API key configuratie worden emails alleen gelogd naar console.' :
@@ -10063,7 +10140,7 @@ function generateTestEmailResultsHTML(results, lang, theme) {
 async function sendViaSMTP(emailConfig, to, subject, htmlContent) {
   try {
     console.log('🚀 [SMTP] Starting SMTP email send process...');
-    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [SMTP] Email details:');
+    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [SMTP] Email details:');
     console.log('   Server:', emailConfig.smtp_server);
     console.log('   Port:', emailConfig.smtp_port);
     console.log('   From:', emailConfig.sender_email);
@@ -10075,12 +10152,12 @@ async function sendViaSMTP(emailConfig, to, subject, htmlContent) {
     // or HTTP-to-SMTP service. For Gmail, we can use their REST API instead of SMTP
     
     if (emailConfig.smtp_server === 'smtp.gmail.com') {
-      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [SMTP] Detected Gmail - using Gmail API approach');
+      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [SMTP] Detected Gmail - using Gmail API approach');
       return await sendViaGmailAPI(emailConfig, to, subject, htmlContent);
     }
     
     // For other SMTP servers, we'll use a generic HTTP-to-SMTP bridge
-    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [SMTP] Using generic SMTP-to-HTTP bridge');
+    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [SMTP] Using generic SMTP-to-HTTP bridge');
     return await sendViaHTTPSMTPBridge(emailConfig, to, subject, htmlContent);
     
   } catch (error) {
@@ -10128,7 +10205,7 @@ async function sendViaGmailAPI(emailConfig, to, subject, htmlContent) {
     
     // Try using Brevo (SendinBlue) which has free tier and good API
     try {
-      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [GMAIL] Trying Brevo API (SendinBlue)...');
+      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [GMAIL] Trying Brevo API (SendinBlue)...');
       
       // Brevo heeft een gratis tier en werkt goed met HTML emails
       const brevoResponse = await fetch('https://api.sendinblue.com/v3/smtp/email', {
@@ -10152,19 +10229,19 @@ async function sendViaGmailAPI(emailConfig, to, subject, htmlContent) {
       
       if (brevoResponse.ok) {
         const result = await brevoResponse.json();
-        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [GMAIL] Email sent via Brevo:', result.messageId);
+        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [GMAIL] Email sent via Brevo:', result.messageId);
         return true;
       } else {
         const errorText = await brevoResponse.text();
-        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [GMAIL] Brevo API failed:', brevoResponse.status, errorText);
+        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [GMAIL] Brevo API failed:', brevoResponse.status, errorText);
       }
     } catch (apiError) {
-      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [GMAIL] Brevo API call failed:', apiError.message);
+      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [GMAIL] Brevo API call failed:', apiError.message);
     }
     
     // Alternative: Try SMTP2GO with free account
     try {
-      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [GMAIL] Trying SMTP2GO API...');
+      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [GMAIL] Trying SMTP2GO API...');
       
       const smtp2goResponse = await fetch('https://api.smtp2go.com/v3/email/send', {
         method: 'POST',
@@ -10183,19 +10260,19 @@ async function sendViaGmailAPI(emailConfig, to, subject, htmlContent) {
       
       if (smtp2goResponse.ok) {
         const result = await smtp2goResponse.json();
-        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [GMAIL] Email sent via SMTP2GO:', result.data);
+        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [GMAIL] Email sent via SMTP2GO:', result.data);
         return true;
       } else {
         const errorText = await smtp2goResponse.text();
-        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [GMAIL] SMTP2GO API failed:', smtp2goResponse.status, errorText);
+        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [GMAIL] SMTP2GO API failed:', smtp2goResponse.status, errorText);
       }
     } catch (apiError) {
-      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [GMAIL] SMTP2GO API call failed:', apiError.message);
+      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [GMAIL] SMTP2GO API call failed:', apiError.message);
     }
     
     // Try using FormSubmit (simple email forwarding service)
     try {
-      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [GMAIL] Trying FormSubmit email forwarding...');
+      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [GMAIL] Trying FormSubmit email forwarding...');
       
       const formData = new FormData();
       formData.append('_subject', subject);
@@ -10210,18 +10287,18 @@ async function sendViaGmailAPI(emailConfig, to, subject, htmlContent) {
       });
       
       if (formSubmitResponse.ok) {
-        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [GMAIL] Email sent via FormSubmit');
+        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [GMAIL] Email sent via FormSubmit');
         return true;
       } else {
-        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [GMAIL] FormSubmit failed:', formSubmitResponse.status);
+        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [GMAIL] FormSubmit failed:', formSubmitResponse.status);
       }
     } catch (apiError) {
-      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [GMAIL] FormSubmit API call failed:', apiError.message);
+      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [GMAIL] FormSubmit API call failed:', apiError.message);
     }
     
     // Final attempt: Use Netlify Forms (works without API key)
     try {
-      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [GMAIL] Trying Netlify Forms email...');
+      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [GMAIL] Trying Netlify Forms email...');
       
       const netlifyFormData = new URLSearchParams({
         'form-name': 'dhgate-monitor-email',
@@ -10241,25 +10318,25 @@ async function sendViaGmailAPI(emailConfig, to, subject, htmlContent) {
       });
       
       if (netlifyResponse.ok) {
-        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [GMAIL] Email submitted via Netlify Forms');
+        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [GMAIL] Email submitted via Netlify Forms');
         return true;
       } else {
-        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [GMAIL] Netlify Forms failed:', netlifyResponse.status);
+        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [GMAIL] Netlify Forms failed:', netlifyResponse.status);
       }
     } catch (apiError) {
-      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [GMAIL] Netlify Forms API call failed:', apiError.message);
+      console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg> [GMAIL] Netlify Forms API call failed:', apiError.message);
     }
     
     // Fallback: Since we can't do real SMTP in Cloudflare Workers,
     // let's simulate successful sending but log all details
-    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [GMAIL] Using Gmail credential verification...');
-    console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [GMAIL] SMTP Config verified:');
-    console.log('   Server: smtp.gmail.com <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>');
-    console.log('   Port: 587 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>');
-    console.log('   Username: ' + emailConfig.sender_email + ' <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>');
-    console.log('   App Password: ' + emailConfig.smtp_password.substring(0, 4) + '***' + emailConfig.smtp_password.substring(-4) + ' <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>');
-    console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [GMAIL] Email ready for delivery');
-    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [GMAIL] Message details:');
+    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [GMAIL] Using Gmail credential verification...');
+    console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [GMAIL] SMTP Config verified:');
+    console.log('   Server: smtp.gmail.com <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>');
+    console.log('   Port: 587 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>');
+    console.log('   Username: ' + emailConfig.sender_email + ' <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>');
+    console.log('   App Password: ' + emailConfig.smtp_password.substring(0, 4) + '***' + emailConfig.smtp_password.substring(-4) + ' <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>');
+    console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [GMAIL] Email ready for delivery');
+    console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> [GMAIL] Message details:');
     console.log('   Content-Length: ' + htmlContent.length + ' bytes');
     console.log('   Content-Type: text/html');
     
@@ -10304,8 +10381,8 @@ async function sendViaHTTPSMTPBridge(emailConfig, to, subject, htmlContent) {
     });
     
     // Simulate HTTP-to-SMTP bridge call
-    console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [HTTP-SMTP] Bridge simulation completed');
-    console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [HTTP-SMTP] Email would be relayed via SMTP bridge');
+    console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [HTTP-SMTP] Bridge simulation completed');
+    console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> [HTTP-SMTP] Email would be relayed via SMTP bridge');
     
     return true;
     
@@ -10360,7 +10437,7 @@ async function handleDeleteData(request, env) {
       const result = await env.DB.prepare(`DELETE FROM subscriptions WHERE email = ?`).bind(email).run();
       if (result.changes > 0) {
         deletedFromD1 = true;
-        console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Deleted ${result.changes} records from D1 database for: ${email}`);
+        console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Deleted ${result.changes} records from D1 database for: ${email}`);
       } else {
         console.log(`ℹ️ No records found in D1 database for: ${email}`);
       }
@@ -10380,7 +10457,7 @@ async function handleDeleteData(request, env) {
       // Delete subscription data
       await env.DHGATE_MONITOR_KV.delete(`subscription:${email}`);
       deletedFromKV++;
-      console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Deleted subscription from KV for: ${email}`);
+      console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Deleted subscription from KV for: ${email}`);
 
       // Find and delete tokens - this is more complex as we need to scan
       // For now, we'll do basic cleanup
@@ -10402,7 +10479,7 @@ async function handleDeleteData(request, env) {
     }
 
     // Log the deletion for audit purposes
-    console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2 0,0,1-2,2H7a2,2 0,0,1-2-2V6m3,0V4a2,2 0,0,1,2-2h4a2,2 0,0,1,2,2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> [DATA DELETION] User data deletion completed:`);
+    console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2 0,0,1-2,2H7a2,2 0,0,1-2-2V6m3,0V4a2,2 0,0,1,2-2h4a2,2 0,0,1,2,2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> [DATA DELETION] User data deletion completed:`);
     console.log(`   Email: ${email}`);
     console.log(`   D1 Records Deleted: ${deletedFromD1 ? 'Yes' : 'No'}`);
     console.log(`   KV Keys Deleted: ${deletedFromKV}`);
@@ -10463,7 +10540,7 @@ function generateDeleteDataPageHTML(email, lang, theme) {
             <div class="col-lg-8 col-xl-6">
                 <div class="main-header text-center animate-fade-in-up">
                     <h1 class="fw-bold mb-3">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2 0,0,1-2,2H7a2,2 0,0,1-2-2V6m3,0V4a2,2 0,0,1,2-2h4a2,2 0,0,1,2,2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> ${lang === 'nl' ? 'Verwijder Alle Mijn Data' : 'Delete All My Data'}
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2 0,0,1-2,2H7a2,2 0,0,1-2-2V6m3,0V4a2,2 0,0,1,2-2h4a2,2 0,0,1,2,2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> ${lang === 'nl' ? 'Verwijder Alle Mijn Data' : 'Delete All My Data'}
                     </h1>
                     <p class="text-muted">
                         ${lang === 'nl' ? 
@@ -10478,7 +10555,7 @@ function generateDeleteDataPageHTML(email, lang, theme) {
                         <!-- Warning Section -->
                         <div class="alert alert-warning border-0 mb-4" style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border-left: 4px solid var(--accent-secondary) !important;">
                             <div class="d-flex align-items-center mb-3">
-                                <div class="me-3" style="font-size: 2rem;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg></div>
+                                <div class="me-3" style="font-size: 2rem;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg></div>
                                 <div>
                                     <h5 class="alert-heading mb-1" style="color: var(--accent-secondary);">
                                         ${lang === 'nl' ? 'Permanente Verwijdering' : 'Permanent Deletion'}
@@ -10507,7 +10584,7 @@ function generateDeleteDataPageHTML(email, lang, theme) {
                         <div class="card bg-light border-0 mb-4">
                             <div class="card-body">
                                 <h6 class="card-title fw-bold text-primary mb-3">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg> ${lang === 'nl' ? 'Wat wordt verwijderd:' : 'What will be deleted:'}
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg> ${lang === 'nl' ? 'Wat wordt verwijderd:' : 'What will be deleted:'}
                                 </h6>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -10632,12 +10709,12 @@ function generateDeleteDataPageHTML(email, lang, theme) {
     function confirmDeletion() {
         const lang = '${lang}';
         const message = lang === 'nl' ? 
-            'Ben je ABSOLUUT ZEKER dat je alle data wilt verwijderen?\\n\\n<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg>  Deze actie kan NIET ongedaan worden gemaakt!\\n\\nNa verwijdering:' +
+            'Ben je ABSOLUUT ZEKER dat je alle data wilt verwijderen?\\n\\n<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg>  Deze actie kan NIET ongedaan worden gemaakt!\\n\\nNa verwijdering:' +
             '\\n• Je verliest toegang tot het dashboard' +
             '\\n• Alle monitoring wordt gestopt' +  
             '\\n• Je ontvangt geen emails meer' +
             '\\n\\nWil je doorgaan?' :
-            'Are you ABSOLUTELY SURE you want to delete all data?\\n\\n<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg>  This action CANNOT be undone!\\n\\nAfter deletion:' +
+            'Are you ABSOLUTELY SURE you want to delete all data?\\n\\n<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg>  This action CANNOT be undone!\\n\\nAfter deletion:' +
             '\\n• You will lose access to the dashboard' +
             '\\n• All monitoring will stop' +
             '\\n• You will not receive any emails' +
@@ -10670,7 +10747,7 @@ function generateDeleteDataSuccessHTML(email, lang, theme) {
         <div style="max-width: 500px; width: 100%; background: var(--card-bg); border-radius: 16px; padding: 3rem; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1); text-align: center; border-left: 4px solid #10b981;">
             <div style="width: 64px; height: 64px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
-                    <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
             
@@ -10687,7 +10764,7 @@ function generateDeleteDataSuccessHTML(email, lang, theme) {
             
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0;">
                 <h5 style="color: #16a34a; margin-bottom: 1rem;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> ${lang === 'nl' ? 'Wat is verwijderd:' : 'What has been deleted:'}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> ${lang === 'nl' ? 'Wat is verwijderd:' : 'What has been deleted:'}
                 </h5>
                 <ul style="text-align: center; margin: 0; color: #16a34a;">
                     <li>${lang === 'nl' ? 'Alle persoonlijke gegevens' : 'All personal data'}</li>
@@ -10760,7 +10837,7 @@ function generateDeleteDataErrorHTML(lang, theme, errorType) {
         <div style="max-width: 500px; width: 100%; background: var(--card-bg); border-radius: 16px; padding: 3rem; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.1); text-align: center; border-left: 4px solid #ef4444;">
             <div style="width: 64px; height: 64px; background: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
             
