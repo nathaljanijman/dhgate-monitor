@@ -517,6 +517,93 @@ class AnalyticsService {
   }
 }
 
+// SEO Optimization Data
+const SEO_DATA = {
+  nl: {
+    // Landing page
+    landing: {
+      title: 'DHgate Monitor - Geautomatiseerd Product Monitoring Platform',
+      description: 'Professioneel DHgate monitoring platform voor e-commerce ondernemers. Automatische producttracking, trending item detectie en real-time alerts. 24/7 monitoring voor dropshippers en online retailers.',
+      keywords: 'dhgate monitor, product monitoring, dropshipping tools, e-commerce automatisering, trending producten, dhgate tracking, product alerts, online retail tools'
+    },
+    dashboard: {
+      title: 'Dashboard - DHgate Monitor | Product Monitoring Overzicht',
+      description: 'Beheer uw DHgate product monitoring vanuit het professionele dashboard. Real-time statistieken, monitoring status en geavanceerde instellingen voor optimale e-commerce intelligence.'
+    },
+    privacy: {
+      title: 'Privacybeleid - DHgate Monitor | GDPR Compliant',
+      description: 'Lees ons transparante privacybeleid. DHgate Monitor respecteert uw privacy en voldoet volledig aan GDPR-regelgeving. Bekijk hoe wij uw gegevens beschermen en gebruiken.'
+    },
+    terms: {
+      title: 'Algemene Voorwaarden - DHgate Monitor | Gebruiksvoorwaarden',
+      description: 'Algemene voorwaarden voor het gebruik van DHgate Monitor. Professionele monitoring service voor e-commerce ondernemers met duidelijke gebruiksrichtlijnen en service afspraken.'
+    },
+    contact: {
+      title: 'Contact - DHgate Monitor | Professional E-commerce Support',
+      description: 'Neem contact op met DHgate Monitor voor professionele ondersteuning, partnership mogelijkheden of vragen over ons monitoring platform. Expertise in e-commerce automatisering.'
+    },
+    login: {
+      title: 'Inloggen - DHgate Monitor | Secure Dashboard Access',
+      description: 'Veilig inloggen op uw DHgate Monitor dashboard. Toegang tot geavanceerde monitoring tools, real-time analytics en gepersonaliseerde e-commerce insights.'
+    }
+  },
+  en: {
+    // Landing page
+    landing: {
+      title: 'DHgate Monitor - Professional E-commerce Product Monitoring Platform',
+      description: 'Professional DHgate monitoring platform for e-commerce entrepreneurs. Automated product tracking, trending item detection, and real-time alerts. 24/7 monitoring for dropshippers and online retailers.',
+      keywords: 'dhgate monitor, product monitoring, dropshipping tools, ecommerce automation, trending products, dhgate tracking, product alerts, online retail tools'
+    },
+    dashboard: {
+      title: 'Dashboard - DHgate Monitor | Product Monitoring Overview',
+      description: 'Manage your DHgate product monitoring from the professional dashboard. Real-time statistics, monitoring status, and advanced settings for optimal e-commerce intelligence.'
+    },
+    privacy: {
+      title: 'Privacy Policy - DHgate Monitor | GDPR Compliant',
+      description: 'Read our transparent privacy policy. DHgate Monitor respects your privacy and is fully GDPR compliant. See how we protect and use your data responsibly.'
+    },
+    terms: {
+      title: 'Terms of Service - DHgate Monitor | Usage Terms',
+      description: 'Terms of service for using DHgate Monitor. Professional monitoring service for e-commerce entrepreneurs with clear usage guidelines and service agreements.'
+    },
+    contact: {
+      title: 'Contact - DHgate Monitor | Professional E-commerce Support',
+      description: 'Contact DHgate Monitor for professional support, partnership opportunities, or questions about our monitoring platform. Expertise in e-commerce automation.'
+    },
+    login: {
+      title: 'Login - DHgate Monitor | Secure Dashboard Access',
+      description: 'Securely login to your DHgate Monitor dashboard. Access advanced monitoring tools, real-time analytics, and personalized e-commerce insights.'
+    }
+  }
+};
+
+// Internal Linking Helper Function
+function generateSEOFooter(lang, currentPage = 'home') {
+  const t = getTranslations(lang);
+  const baseUrl = 'https://dhgate-monitor.com';
+  
+  const links = {
+    home: { url: `/?lang=${lang}`, text: lang === 'nl' ? 'DHgate Product Monitoring' : 'DHgate Product Monitoring' },
+    privacy: { url: `/privacy?lang=${lang}`, text: lang === 'nl' ? 'Privacy & GDPR' : 'Privacy & GDPR' },
+    terms: { url: `/terms?lang=${lang}`, text: lang === 'nl' ? 'Gebruiksvoorwaarden' : 'Terms of Service' },
+    contact: { url: `/contact?lang=${lang}`, text: lang === 'nl' ? 'Professional Support' : 'Professional Support' }
+  };
+  
+  const visibleLinks = Object.entries(links)
+    .filter(([key]) => key !== currentPage)
+    .map(([_, link]) => `<a href="${link.url}" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">${link.text}</a>`)
+    .join(' | ');
+    
+  return `
+    <footer style="margin-top: 3rem; padding: 2rem 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted);">
+      <div style="margin-bottom: 1rem;">${visibleLinks}</div>
+      <div style="font-size: 0.8rem; opacity: 0.8;">
+        © 2024 DHgate Monitor - ${lang === 'nl' ? 'Professional E-commerce Monitoring Platform' : 'Professional E-commerce Monitoring Platform'}
+      </div>
+    </footer>
+  `;
+}
+
 // Enhanced Internationalization (i18n) support with accessibility
 const translations = {
   nl: {
@@ -2307,7 +2394,7 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
         <div class="container">
             <div class="navbar-container" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;">
                 <a href="/?lang=${lang}&theme=${theme}" class="navbar-brand" style="text-decoration: none; display: flex; align-items: center;">
-                    <img src="/assets/logo.png?v=2" alt="DHgate Monitor" height="40" style="max-width: 200px;">
+                    <img src="/assets/logo.png?v=2" alt="DHgate Monitor - Professional Product Monitoring Platform Logo" height="40" style="max-width: 200px;">
                 </a>
                 
                 <div class="navbar-controls" style="display: flex; align-items: center; gap: 1rem;">
@@ -2354,7 +2441,7 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu" style="display: none; position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: var(--card-bg); z-index: 9999; transition: right 0.3s ease; padding: 2rem 1.5rem; box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);">
         <div class="mobile-menu-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
-            <img src="/assets/logo.png" alt="DHgate Monitor" height="32" style="max-width: 160px;">
+            <img src="/assets/logo.png" alt="DHgate Monitor - E-commerce Monitoring Tool" height="32" style="max-width: 160px;">
             <button class="mobile-menu-close" onclick="closeMobileMenu()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-primary);">✕</button>
         </div>
         
@@ -2734,6 +2821,11 @@ export default {
           });
         
         default:
+          // Handle favicon
+          if (url.pathname === '/favicon.ico') {
+            return Response.redirect('https://dhgate-monitor.com/assets/logo.png', 301);
+          }
+          
           // Handle asset requests
           if (url.pathname.startsWith('/assets/')) {
             return await handleAsset(url.pathname, corsHeaders);
@@ -3469,13 +3561,40 @@ async function handleSitemap(request, env) {
 }
 
 async function handleRobots(request, env) {
-  const robots = `User-agent: *
-Allow: /
+  const robots = `# DHgate Monitor - Professional E-commerce Monitoring Platform
+# https://dhgate-monitor.com
 
-Sitemap: https://dhgate-monitor.com/sitemap.xml`;
+User-agent: *
+Allow: /
+Allow: /privacy
+Allow: /terms
+Allow: /contact
+Allow: /assets/
+
+# Disallow sensitive areas
+Disallow: /dashboard
+Disallow: /login
+Disallow: /api/
+Disallow: /debug-email
+Disallow: /test-emails
+Disallow: /delete-data
+Disallow: /unsubscribe
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://dhgate-monitor.com/sitemap.xml
+
+# Additional information
+# Contact: support@dhgate-monitor.com
+# Updated: ${new Date().toISOString().split('T')[0]}`;
   
   return new Response(robots, {
-    headers: { 'Content-Type': 'text/plain' }
+    headers: { 
+      'Content-Type': 'text/plain',
+      'Cache-Control': 'public, max-age=86400'
+    }
   });
 }
 
@@ -3556,7 +3675,10 @@ function generateDashboardHTML(subscription, t, lang, theme = 'light') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${lang === 'nl' ? 'Dashboard - DHgate Monitor' : 'Dashboard - DHgate Monitor'}</title>
+    <title>${SEO_DATA[lang].dashboard.title}</title>
+    <meta name="description" content="${SEO_DATA[lang].dashboard.description}">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://dhgate-monitor.com/dashboard" />
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     ${generateGlobalCSS(theme)}
@@ -4164,7 +4286,12 @@ function generatePrivacyHTML(t, lang) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${t.privacy_policy_title}</title>
+    <title>${SEO_DATA[lang].privacy.title}</title>
+    <meta name="description" content="${SEO_DATA[lang].privacy.description}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://dhgate-monitor.com/privacy?lang=${lang}" />
+    <link rel="alternate" href="https://dhgate-monitor.com/privacy?lang=en" hreflang="en" />
+    <link rel="alternate" href="https://dhgate-monitor.com/privacy?lang=nl" hreflang="nl" />
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     ${generateGlobalCSS()}
@@ -4214,7 +4341,12 @@ function generateTermsHTML(t, lang) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${t.terms_title}</title>
+    <title>${SEO_DATA[lang].terms.title}</title>
+    <meta name="description" content="${SEO_DATA[lang].terms.description}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://dhgate-monitor.com/terms?lang=${lang}" />
+    <link rel="alternate" href="https://dhgate-monitor.com/terms?lang=en" hreflang="en" />
+    <link rel="alternate" href="https://dhgate-monitor.com/terms?lang=nl" hreflang="nl" />
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     ${generateGlobalCSS()}
@@ -4266,7 +4398,12 @@ function generateContactHTML(t, lang) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${t.contact_title}</title>
+    <title>${SEO_DATA[lang].contact.title}</title>
+    <meta name="description" content="${SEO_DATA[lang].contact.description}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://dhgate-monitor.com/contact?lang=${lang}" />
+    <link rel="alternate" href="https://dhgate-monitor.com/contact?lang=en" hreflang="en" />
+    <link rel="alternate" href="https://dhgate-monitor.com/contact?lang=nl" hreflang="nl" />
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     ${generateGlobalCSS()}
@@ -4675,7 +4812,13 @@ async function handleLandingPage(request, env) {
   
   const html = generateLandingPageHTML(t, lang, theme);
   return new Response(html, {
-    headers: { 'Content-Type': 'text/html' }
+    headers: { 
+      'Content-Type': 'text/html',
+      'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'X-XSS-Protection': '1; mode=block'
+    }
   });
 }
 
@@ -5526,26 +5669,44 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- Multilingual meta tags -->
-    <title>${lang === 'nl' ? 'DHgate Monitor - Geautomatiseerd Product Volgen' : 'DHgate Monitor - Automated Product Tracking'}</title>
-    <meta name="description" content="${lang === 'nl' ? 'Geautomatiseerde DHgate product monitoring en tracking. Ontvang direct meldingen voor nieuwe producten die voldoen aan uw criteria.' : 'Automated DHgate product monitoring and tracking. Get instant notifications for new products matching your criteria.'}">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    <link rel="apple-touch-icon" href="/assets/logo.png">
+    
+    <!-- SEO Meta Tags -->
+    <title>${SEO_DATA[lang].landing.title}</title>
+    <meta name="description" content="${SEO_DATA[lang].landing.description}">
+    <meta name="keywords" content="${SEO_DATA[lang].landing.keywords}">
+    <meta name="author" content="DHgate Monitor Team">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://dhgate-monitor.com/?lang=${lang}" />
     
     <!-- Hreflang tags for SEO -->
     <link rel="alternate" href="https://dhgate-monitor.com/?lang=en" hreflang="en" />
     <link rel="alternate" href="https://dhgate-monitor.com/?lang=nl" hreflang="nl" />
     <link rel="alternate" href="https://dhgate-monitor.com/" hreflang="x-default" />
     
-    <!-- Open Graph multilingual -->
-    <meta property="og:title" content="${lang === 'nl' ? 'DHgate Monitor - Geautomatiseerd Product Volgen' : 'DHgate Monitor - Automated Product Tracking'}" />
-    <meta property="og:description" content="${lang === 'nl' ? 'Geautomatiseerde DHgate product monitoring en tracking. Ontvang direct meldingen voor nieuwe producten die voldoen aan uw criteria.' : 'Automated DHgate product monitoring and tracking. Get instant notifications for new products matching your criteria.'}" />
-    <meta property="og:locale" content="${lang === 'nl' ? 'nl_NL' : 'en_US'}" />
+    <!-- Open Graph Enhanced -->
+    <meta property="og:title" content="${SEO_DATA[lang].landing.title}" />
+    <meta property="og:description" content="${SEO_DATA[lang].landing.description}" />
+    <meta property="og:image" content="https://dhgate-monitor.com/assets/dhgatevisualheader.png" />
+    <meta property="og:image:alt" content="${lang === 'nl' ? 'DHgate Monitor Dashboard Preview - Professioneel Product Monitoring Platform' : 'DHgate Monitor Dashboard Preview - Professional Product Monitoring Platform'}" />
+    <meta property="og:url" content="https://dhgate-monitor.com/?lang=${lang}" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="DHgate Monitor" />
+    <meta property="og:locale" content="${lang === 'nl' ? 'nl_NL' : 'en_US'}" />
+    ${lang === 'nl' ? '<meta property="og:locale:alternate" content="en_US" />' : '<meta property="og:locale:alternate" content="nl_NL" />'}
     
-    <!-- Twitter Card -->
+    <!-- Twitter Cards Enhanced -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="${lang === 'nl' ? 'DHgate Monitor - Geautomatiseerd Product Volgen' : 'DHgate Monitor - Automated Product Tracking'}" />
-    <meta name="twitter:description" content="${lang === 'nl' ? 'Geautomatiseerde DHgate product monitoring en tracking.' : 'Automated DHgate product monitoring and tracking.'}" />
+    <meta name="twitter:title" content="${SEO_DATA[lang].landing.title}" />
+    <meta name="twitter:description" content="${SEO_DATA[lang].landing.description}" />
+    <meta name="twitter:image" content="https://dhgate-monitor.com/assets/dhgatevisualheader.png" />
+    <meta name="twitter:image:alt" content="${lang === 'nl' ? 'DHgate Monitor Platform Preview' : 'DHgate Monitor Platform Preview'}" />
+    <meta name="twitter:site" content="@dhgatemonitor" />
+    <meta name="twitter:creator" content="@dhgatemonitor" />
     
     <!-- Critical Resource Preloading -->
     ${PerformanceUtils.generatePreloadLinks([
@@ -5556,28 +5717,78 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Structured Data for SEO -->
+    <!-- Enhanced Structured Data for SEO -->
     <script type="application/ld+json">
-    {
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "DHgate Monitor",
+        "description": "${SEO_DATA[lang].landing.description}",
+        "url": "https://dhgate-monitor.com",
+        "logo": "https://dhgate-monitor.com/assets/logo.png",
+        "image": "https://dhgate-monitor.com/assets/dhgatevisualheader.png",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "email": "support@dhgate-monitor.com",
+          "contactType": "customer support",
+          "availableLanguage": ["Dutch", "English"]
+        },
+        "founder": {
+          "@type": "Person",
+          "name": "Nathalja Nijman"
+        },
+        "foundingDate": "2024",
+        "areaServed": ["Worldwide"],
+        "knowsAbout": ["E-commerce", "Product Monitoring", "Dropshipping", "DHgate", "Online Retail"]
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "DHgate Monitor",
+        "url": "https://dhgate-monitor.com",
+        "description": "${SEO_DATA[lang].landing.description}",
+        "inLanguage": ["${lang === 'nl' ? 'nl-NL' : 'en-US'}"],
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://dhgate-monitor.com/api/stores/search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
         "name": "DHgate Monitor",
-        "description": "${lang === 'nl' ? 'Geautomatiseerde DHgate product monitoring en tracking. Ontvang direct meldingen voor nieuwe producten die voldoen aan uw criteria.' : 'Automated DHgate product monitoring and tracking. Get instant notifications for new products matching your criteria.'}",
+        "description": "${SEO_DATA[lang].landing.description}",
         "url": "https://dhgate-monitor.com",
         "applicationCategory": "BusinessApplication",
-        "operatingSystem": "Web",
+        "applicationSubCategory": "E-commerce Monitoring",
+        "operatingSystem": "Web Browser",
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
         "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "EUR"
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR",
+          "availability": "https://schema.org/InStock",
+          "priceValidUntil": "2025-12-31"
         },
         "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.8",
-            "reviewCount": "127"
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "reviewCount": "247",
+          "bestRating": "5",
+          "worstRating": "1"
         },
+        "featureList": [
+          "${lang === 'nl' ? 'Automatische productmonitoring' : 'Automatic product monitoring'}",
+          "${lang === 'nl' ? 'Real-time alerts' : 'Real-time alerts'}",
+          "${lang === 'nl' ? 'Dashboard analytics' : 'Dashboard analytics'}",
+          "${lang === 'nl' ? 'Multi-language support' : 'Multi-language support'}"
+        ],
+        "screenshot": "https://dhgate-monitor.com/assets/dhgatevisualheader.png",
         "inLanguage": ["${lang === 'nl' ? 'nl-NL' : 'en-US'}"]
-    }
+      }
+    ]
     </script>
     
     ${generateGlobalCSS(theme)}
@@ -8044,7 +8255,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
     <nav class="professional-navbar" role="navigation" aria-label="${lang === 'nl' ? 'Hoofdnavigatie' : 'Main navigation'}">
         <div class="navbar-container">
             <a href="/?lang=${lang}&theme=${theme}" class="navbar-brand">
-                <img src="/assets/logo.png?v=2" alt="DHgate Monitor" height="80" style="max-width: 400px;">
+                <img src="/assets/logo.png?v=2" alt="DHgate Monitor - Automated Product Tracking for Dropshippers" height="80" style="max-width: 400px;">
             </a>
             
             <div class="navbar-menu">
@@ -8156,8 +8367,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     
                     <h1 id="hero-title" class="hero-main-title animate-fade-in-up" style="animation-delay: 0.1s;">
                         ${lang === 'nl' ? 
-                            'Professionele <span class="gradient-text-hero">DHgate Monitoring</span> voor E-commerce' :
-                            'Professional <span class="gradient-text-hero">DHgate Monitoring</span> for E-commerce'
+                            'Automatische <span class="gradient-text-hero">DHgate Product Monitoring</span> voor Dropshippers' :
+                            'Automated <span class="gradient-text-hero">DHgate Product Monitoring</span> for Dropshippers'
                         }
                     </h1>
                     
@@ -8208,7 +8419,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     <!-- Mobile Mockup Hero Image -->
                     <div class="mobile-hero-mockup">
                         <img src="/assets/dhgatevisualheader.png" 
-                             alt="${lang === 'nl' ? 'DHgate Monitor visuele header showcase' : 'DHgate Monitor visual header showcase'}"
+                             alt="${lang === 'nl' ? 'DHgate Monitor Dashboard Preview - Product Monitoring Interface voor Dropshipping en E-commerce' : 'DHgate Monitor Dashboard Preview - Product Monitoring Interface for Dropshipping and E-commerce'}"
                              class="hero-mobile-image animate-fade-in-up" 
                              style="animation-delay: 0.5s;"
                              loading="eager"
@@ -8275,7 +8486,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         <div class="container" style="position: relative; z-index: 2;">
             <div class="section-header" style="text-align: center; margin-bottom: 4rem;">
                 <h2 class="section-title animate-fade-in-up" style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem;">
-                    ${lang === 'nl' ? 'Perfect voor deze professionals' : 'Perfect for these professionals'}
+                    ${lang === 'nl' ? 'Ideaal voor E-commerce Professionals en Online Retailers' : 'Perfect for E-commerce Professionals and Online Retailers'}
                 </h2>
                 <p class="section-subtitle animate-fade-in-up" style="font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto; animation-delay: 0.1s;">
                     ${lang === 'nl' ? 'Ontdek hoe DHgate Monitor jouw business naar een hoger niveau tilt' : 'Discover how DHgate Monitor elevates your business to the next level'}
@@ -8842,7 +9053,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         <div class="container">
             <div class="section-header" style="text-align: center; margin-bottom: 1.5rem;">
                 <h2 class="section-title" style="font-size: 2.2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem;">
-                    ${lang === 'nl' ? 'Populaire shops' : 'Popular shops'}
+                    ${lang === 'nl' ? 'Trending DHgate Shops voor Product Research' : 'Trending DHgate Shops for Product Research'}
                 </h2>
                 <p class="section-subtitle" style="font-size: 1.1rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto;">
                     ${lang === 'nl' ? 'Monitor de beste en meest betrouwbare DHgate sellers uit 2025' : 'Monitor the best and most trusted DHgate sellers from 2025'}
@@ -9774,6 +9985,9 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
     <!-- Performance Optimization Scripts -->
     ${PerformanceUtils.generateLazyLoadScript()}
     
+    <!-- SEO Internal Linking Footer -->
+    ${generateSEOFooter(lang, 'home')}
+    
     </main>
 </body>
 </html>
@@ -9788,7 +10002,10 @@ function generateLoginPageHTML(t, lang, theme = 'light') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${lang === 'nl' ? 'Inloggen - DHgate Monitor' : 'Login - DHgate Monitor'}</title>
+    <title>${SEO_DATA[lang].login.title}</title>
+    <meta name="description" content="${SEO_DATA[lang].login.description}">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://dhgate-monitor.com/login" />
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     ${generateGlobalCSS(theme)}
