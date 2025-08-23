@@ -1,16 +1,82 @@
 {
   "name": "dhgate-monitor",
-  "version": "3.0.0",
-  "description": "DHgate Kids Monitor - Pure Cloudflare Workers Application",
+  "version": "2.0.0",
+  "description": "Professional DHgate Product Monitoring Platform - Enterprise-Grade E-commerce Intelligence",
   "type": "module",
+  "main": "cloudflare_app.js",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler publish",
+    "dev": "wrangler dev --local --port 3000",
+    "deploy": "wrangler deploy",
     "tail": "wrangler tail",
-    "login": "wrangler login"
+    "login": "wrangler login",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint cloudflare_app.js",
+    "format": "prettier --write *.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nathaljanijman/dhgate-monitor.git"
+  },
+  "keywords": [
+    "dhgate",
+    "monitoring",
+    "e-commerce",
+    "automation",
+    "cloudflare-workers",
+    "product-tracking",
+    "dropshipping",
+    "alerts",
+    "business-intelligence",
+    "market-research"
+  ],
+  "author": "Nathalja Nijman <support@dhgate-monitor.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@cloudflare/workers-types": "^4.20240620.0"
   },
   "devDependencies": {
-    "wrangler": "^3.0.0"
+    "@types/jest": "^29.5.12",
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0",
+    "jest-environment-node": "^29.7.0",
+    "prettier": "^3.2.5",
+    "wrangler": "^3.60.3"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "cloudflare_app.js",
+      "!node_modules/**"
+    ],
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "html"
+    ]
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2021": true,
+      "node": true,
+      "jest": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+      "ecmaVersion": 2021,
+      "sourceType": "module"
+    },
+    "rules": {
+      "no-unused-vars": "warn",
+      "no-console": "off",
+      "prefer-const": "error",
+      "no-var": "error"
+    }
   },
   "engines": {
     "node": ">=18.0.0"
