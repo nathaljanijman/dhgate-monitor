@@ -1803,11 +1803,11 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
                         ${lang === 'nl' ? 'Dashboard' : 'Dashboard'}
                     </a>
                     
-                    <!-- Mobile Menu Toggle -->
-                    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" style="flex-direction: column; cursor: pointer; padding: 0.5rem; background: none; border: none; gap: 0.25rem;">
-                        <span class="hamburger-line" style="width: 20px; height: 2px; background: var(--text-primary); transition: all 0.3s ease; border-radius: 1px;"></span>
-                        <span class="hamburger-line" style="width: 20px; height: 2px; background: var(--text-primary); transition: all 0.3s ease; border-radius: 1px;"></span>
-                        <span class="hamburger-line" style="width: 20px; height: 2px; background: var(--text-primary); transition: all 0.3s ease; border-radius: 1px;"></span>
+                    <!-- Mobile Hamburger Menu -->
+                    <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Toggle Menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
                     </button>
                 </div>
             </div>
@@ -1868,7 +1868,7 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
                 display: inline-block !important;
             }
             
-            .mobile-menu-toggle {
+            .hamburger {
                 display: flex !important;
             }
             
@@ -1887,16 +1887,17 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
             right: 0 !important;
         }
         
-        .mobile-menu-toggle.active .hamburger-line:nth-child(1) {
-            transform: rotate(45deg) translate(6px, 6px);
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg);
         }
         
-        .mobile-menu-toggle.active .hamburger-line:nth-child(2) {
+        .hamburger.active span:nth-child(2) {
             opacity: 0;
+            transform: translateX(20px);
         }
         
-        .mobile-menu-toggle.active .hamburger-line:nth-child(3) {
-            transform: rotate(-45deg) translate(6px, -6px);
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg);
         }
     </style>
     
@@ -1913,7 +1914,7 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
         
         function toggleMobileMenu() {
             const mobileMenu = document.getElementById('mobileMenu');
-            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+            const hamburger = document.querySelector('.hamburger');
             const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
             
             const isActive = mobileMenu.classList.contains('active');
@@ -1930,11 +1931,12 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
         
         function closeMobileMenu() {
             const mobileMenu = document.getElementById('mobileMenu');
-            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+            const hamburger = document.querySelector('.hamburger');
             const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
             
             mobileMenu.classList.remove('active');
-            mobileMenuToggle.classList.remove('active');
+            hamburger.classList.remove('active');
+            mobileMenuOverlay.classList.remove('active');
             mobileMenuOverlay.style.display = 'none';
             document.body.style.overflow = '';
         }
@@ -6709,42 +6711,96 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             user-select: none;
         }
         
-        /* Mobile Hamburger Menu */
-        .mobile-menu-toggle {
+        /* Mobile Hamburger Menu - Dashboard */
+        .hamburger {
             display: none;
         }
         
-        @media (max-width: 768px) {
-            .mobile-menu-toggle {
-                display: flex !important;
+        @media screen and (max-width: 768px) {
+            .hamburger {
+                display: flex;
                 flex-direction: column;
-                cursor: pointer;
-                padding: 0.5rem;
-                background: none;
+                justify-content: space-around;
+                width: 2rem;
+                height: 2rem;
+                background: transparent;
                 border: none;
-                gap: 0.25rem;
-                z-index: 1000;
+                cursor: pointer;
+                padding: 0;
+                z-index: 10;
+            }
+            
+            .hamburger span {
+                width: 2rem;
+                height: 0.25rem;
+                background: var(--text-primary);
+                border-radius: 10px;
+                transition: all 0.3s linear;
+                position: relative;
+                transform-origin: 1px;
             }
         }
         
-        .hamburger-line {
-            width: 20px;
-            height: 2px;
+        
+        @media screen and (max-width: 768px) {
+            .desktop-menu,
+            .desktop-lang-switcher,
+            .desktop-theme-toggle {
+                display: none !important;
+            }
+        }
+        
+        /* Hamburger Menu - Modern Implementation */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 2rem;
+            height: 2rem;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 10;
+        }
+        
+        .hamburger span {
+            width: 2rem;
+            height: 0.25rem;
             background: var(--text-primary);
-            transition: all 0.3s ease;
-            border-radius: 1px;
+            border-radius: 10px;
+            transition: all 0.3s linear;
+            position: relative;
+            transform-origin: 1px;
         }
         
-        .mobile-menu-toggle.active .hamburger-line:nth-child(1) {
-            transform: rotate(45deg) translate(6px, 6px);
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+            
+            .navbar-menu {
+                display: none;
+            }
+            
+            .nav-lang-switcher,
+            .nav-theme-toggle {
+                display: none;
+            }
         }
         
-        .mobile-menu-toggle.active .hamburger-line:nth-child(2) {
+        /* Hamburger Animation States */
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg);
+        }
+        
+        .hamburger.active span:nth-child(2) {
             opacity: 0;
+            transform: translateX(20px);
         }
         
-        .mobile-menu-toggle.active .hamburger-line:nth-child(3) {
-            transform: rotate(-45deg) translate(6px, -6px);
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg);
         }
         
         .mobile-menu-overlay {
@@ -6754,12 +6810,21 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             left: 0;
             width: 100%;
             height: 100%;
-            background: transparent;
+            background: rgba(0, 0, 0, 0.5);
             z-index: 9998;
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .mobile-menu-overlay.active {
+            display: block !important;
+            opacity: 1;
+            pointer-events: auto;
         }
         
         .mobile-menu {
-            display: none;
             position: fixed;
             top: 0;
             right: -100%;
@@ -6770,6 +6835,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             transition: right 0.3s ease;
             padding: 2rem 1.5rem;
             box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+            border-left: 1px solid var(--border-color);
+            overflow-y: auto;
         }
         
         .mobile-menu.active {
@@ -6778,7 +6845,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         
         .mobile-menu-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
             padding-bottom: 1rem;
@@ -6915,8 +6982,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 width: 100%;
             }
             
-            .mobile-menu-toggle {
-                display: none !important;
+            .hamburger {
+                display: flex !important;
             }
             
             .nav-links {
@@ -7008,45 +7075,116 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         }
         
         @media (max-width: 768px) {
-            .rotating-element { display: none; }
-            .hero-section { padding: 30px 0; }
-            .features-section, .snapshot-section, .subscription-section, .how-it-works-section { padding: 40px 0; }
-            .feature-card { margin-bottom: 30px; }
-            .cta-secondary { margin-left: 0; margin-top: 15px; display: block; text-align: center; }
-            
-            
-            .navbar-controls {
-                gap: 1rem;
-            }
-            
-            .nav-cta-button {
-                font-size: 0.8rem;
-                padding: 0.6rem 1rem;
-            }
-            
+            /* Reset and clean mobile layout */
             .hero-section {
-                padding: 40px 0 30px;
+                padding: 2rem 0 !important;
             }
             
             .hero-container {
-                padding: 0 1rem;
+                display: block !important;
+                padding: 0 1.5rem !important;
+                max-width: 100% !important;
+                gap: 0 !important;
+            }
+            
+            .hero-content-wrapper {
+                width: 100%;
+                margin: 0;
+            }
+            
+            .hero-main-content {
+                text-align: left;
+                width: 100%;
+                max-width: 100%;
             }
             
             .hero-main-title {
-                font-size: clamp(1.8rem, 8vw, 2.5rem);
+                font-size: 2rem !important;
+                text-align: left !important;
+                line-height: 1.2;
+                margin-bottom: 1rem;
+            }
+            
+            .hero-main-description {
+                font-size: 1rem;
+                text-align: left !important;
+                margin-bottom: 1.5rem;
+                line-height: 1.5;
             }
             
             .hero-usps {
-                justify-content: center;
-                gap: 0.6rem !important;
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: flex-start !important;
+                gap: 0.8rem !important;
+                margin: 1.5rem 0 !important;
             }
             
             .usp-pill {
-                flex: 0 1 auto;
-                min-width: fit-content;
+                background: transparent !important;
+                border: none !important;
+                padding: 0.4rem 0.2rem !important;
             }
             
+            .usp-pill svg {
+                width: 14px !important;
+                height: 14px !important;
+            }
+            
+            .usp-pill span {
+                font-size: 0.85rem !important;
+                font-weight: 500;
+            }
+            
+            .hero-actions {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 1rem !important;
+                margin-top: 2rem !important;
+                width: 100%;
+            }
+            
+            .hero-visual {
+                margin-top: 3rem;
+                text-align: center;
+            }
+            
+            /* Mobile navigation */
             .mobile-menu-toggle {
+                display: flex !important;
+                position: relative !important;
+                z-index: 1000 !important;
+                background: none !important;
+                border: none !important;
+                padding: 0.5rem !important;
+                cursor: pointer !important;
+                flex-direction: column !important;
+                gap: 0.25rem !important;
+            }
+            
+            .hamburger-line {
+                display: block !important;
+                width: 20px !important;
+                height: 2px !important;
+                background: var(--text-primary) !important;
+                transition: 0.3s !important;
+                border-radius: 1px !important;
+            }
+            
+            .desktop-menu,
+            .desktop-lang-switcher,
+            .desktop-theme-toggle {
+                display: none !important;
+            }
+            
+            .navbar-controls {
+                display: flex !important;
+                align-items: center !important;
+                gap: 1rem !important;
+            }
+            
+            .hamburger {
                 display: flex !important;
             }
             
@@ -7082,11 +7220,12 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             
             .hero-cta-primary,
             .hero-cta-secondary {
-                width: auto;
-                min-width: 160px;
+                width: 100% !important;
                 text-align: center;
                 justify-content: center;
-                padding: 1rem 1.8rem;
+                padding: 1rem 1.5rem;
+                font-size: 1rem;
+                border-radius: 8px;
             }
             
             .dashboard-window {
@@ -7208,11 +7347,11 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     ${lang === 'nl' ? 'START' : 'START'}
                 </a>
                 
-                <!-- Mobile Menu Toggle -->
-                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Menu">
-                    <span class="hamburger-line"></span>
-                    <span class="hamburger-line"></span>
-                    <span class="hamburger-line"></span>
+                <!-- Mobile Hamburger Menu -->
+                <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Toggle Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </button>
             </div>
         </div>
@@ -7272,7 +7411,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         
         <div class="hero-container">
             <div class="hero-content-wrapper">
-                <div class="hero-main-content">
+                <div class="hero-main-content" style="text-align: left;">
                     
                     <h1 class="hero-main-title animate-fade-in-up" style="animation-delay: 0.1s;">
                         ${lang === 'nl' ? 
@@ -7289,29 +7428,29 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                     </p>
                     
                     <!-- Innovative USP Pills Design -->
-                    <div class="hero-usps animate-fade-in-up" style="animation-delay: 0.3s; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; margin: 1.5rem 0; max-width: 480px;">
+                    <div class="hero-usps animate-fade-in-up" style="animation-delay: 0.3s; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 0.8rem; margin: 1.5rem 0; max-width: 480px;">
                         <div class="usp-pill" style="background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15); border-radius: 20px; padding: 0.5rem 0.8rem; display: flex; align-items: center; gap: 0.35rem;">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="12" cy="12" r="3"/>
                                 <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M17.36 17.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M17.36 6.64l1.42-1.42"/>
                             </svg>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.75rem;">${lang === 'nl' ? 'Gratis' : 'Free'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.75rem;">${lang === 'nl' ? '100% Gratis' : '100% Free'}</span>
                         </div>
                         <div class="usp-pill" style="background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15); border-radius: 20px; padding: 0.5rem 0.8rem; display: flex; align-items: center; gap: 0.35rem;">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z"/>
                             </svg>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.75rem; white-space: nowrap;">${lang === 'nl' ? 'Snel' : 'Fast'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.75rem; white-space: nowrap;">${lang === 'nl' ? 'Als eerste op de hoogte' : 'First to know'}</span>
                         </div>
                         <div class="usp-pill" style="background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15); border-radius: 20px; padding: 0.5rem 0.8rem; display: flex; align-items: center; gap: 0.35rem;">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.75rem; white-space: nowrap;">${lang === 'nl' ? 'Direct' : 'Instant'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.75rem; white-space: nowrap;">${lang === 'nl' ? 'Geen account nodig' : 'No account needed'}</span>
                         </div>
                     </div>
                     
-                    <div class="hero-actions animate-fade-in-up" style="animation-delay: 0.4s;">
+                    <div class="hero-actions animate-fade-in-up" style="animation-delay: 0.4s; display: flex; gap: 1rem; justify-content: flex-start; align-items: center; flex-wrap: wrap;">
                         <a href="#subscription-form" class="hero-cta-primary" onclick="scrollToSubscription(); return false;">
                             ${lang === 'nl' ? 'Meld je aan' : 'Sign Up'}
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f8fafc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -8536,19 +8675,32 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         
         // Mobile Menu Functions
         function toggleMobileMenu() {
+            console.log('🍔 Mobile menu toggle clicked');
             const mobileMenu = document.getElementById('mobileMenu');
-            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+            const hamburger = document.querySelector('.hamburger');
             const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
-            
+
+            if (!mobileMenu || !hamburger || !mobileMenuOverlay) {
+                console.error('❌ Mobile menu elements not found');
+                return;
+            }
+
             const isActive = mobileMenu.classList.contains('active');
-            
+            console.log('📱 Menu is currently active:', isActive);
+
             if (isActive) {
                 closeMobileMenu();
             } else {
-                mobileMenu.classList.add('active');
-                mobileMenuToggle.classList.add('active');
+                // Show overlay first
                 mobileMenuOverlay.style.display = 'block';
+                mobileMenuOverlay.classList.add('active');
+                
+                // Then show and animate menu
+                mobileMenu.classList.add('active');
+                hamburger.classList.add('active');
+                
                 document.body.style.overflow = 'hidden';
+                console.log('✅ Menu opened successfully');
                 
                 // Track mobile menu open
                 if (typeof window.trackDHgateEvent === 'function') {
@@ -8561,11 +8713,12 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         
         function closeMobileMenu() {
             const mobileMenu = document.getElementById('mobileMenu');
-            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+            const hamburger = document.querySelector('.hamburger');
             const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
             
             mobileMenu.classList.remove('active');
-            mobileMenuToggle.classList.remove('active');
+            hamburger.classList.remove('active');
+            mobileMenuOverlay.classList.remove('active');
             mobileMenuOverlay.style.display = 'none';
             document.body.style.overflow = '';
         }
