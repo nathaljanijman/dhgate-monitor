@@ -62,4 +62,8 @@ geckodriver*
 screenshots/
 *.png
 *.jpg
-*.jpeg.wrangler/
+*.jpeg
+
+# Node / Cloudflare
+node_modules/
+.wrangler/

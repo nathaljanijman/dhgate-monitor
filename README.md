@@ -32,6 +32,7 @@ DHgate Monitor transformeert hoe e-commerce ondernemers marktonderzoek doen door
 - **Responsive design** voor alle apparaten
 - **Dark/Light mode** voor optimaal gebruik
 - **Intuïtieve dashboard** met real-time data
+- **Innovative breadcrumb navigation** op alle pagina's met glassmorphism design
 
 ### 🔒 **Enterprise-Grade Security & Privacy**
 - **GDPR compliant** data processing
@@ -243,6 +244,8 @@ dhgate-monitor/
 - `generateLandingPageHTML()` - Progressive signup form with store search
 - `generateDashboardHTML()` - Main dashboard with shop management
 - `generateGlobalCSS()` - Theme-aware styling system with minimalistic icons
+- `generateBreadcrumb()` - Innovative breadcrumb navigation with glassmorphism design
+- `generateBreadcrumbStyles()` - Advanced CSS styling with hover animations en dark mode support
 - `handleScheduledEvent()` - Automated monitoring and database updates
 - `scrapeDHgateSitemaps()` - Store database creation and management
 - `handleStoreSearch()` - Real-time store search with query enhancement
@@ -267,18 +270,69 @@ npx wrangler dev
 
 ---
 
-## Internationalization
+## 🌐 Internationalization & Navigation
+
+### **Innovative Breadcrumb System**
+Het platform beschikt over een geavanceerd breadcrumb navigatiesysteem dat zich automatisch aanpast aan de huidige locatie en taal:
+
+#### **Design Features**
+- **Glassmorphism Effect**: Sticky backdrop-blur navigation met hover animaties
+- **Responsive Icons**: Huispictogrammen met smooth hover-effecten en scale animations  
+- **Micro-interactions**: Shimmer effecten bij hover en glow animaties voor actieve items
+- **Accessibility**: Volledig ARIA-compliant met role="navigation" en aria-current support
+
+#### **Technical Implementation**
+```javascript
+// Automatic breadcrumb generation
+generateBreadcrumb('/service', 'nl')
+// Generates: Home > Service & Contact
+
+// Supported paths with localization
+const pathMapping = {
+  '/': 'Home',
+  '/service': 'Service & Contact',
+  '/dashboard': 'Dashboard',
+  '/unsubscribe': 'Uitschrijven' (NL) / 'Unsubscribe' (EN)
+}
+```
+
+#### **Styling Features**
+- **Smooth Animations**: cubic-bezier(0.4, 0, 0.2, 1) voor premium feel
+- **Dark Mode Support**: Automatische achtergrond aanpassing via CSS variables
+- **Mobile Responsive**: Optimized voor touchscreens met wrap support
+- **Performance**: Sticky positioning voor optimale scroll performance
 
 ### **Language Support**
 - **English (EN)**: Default for international users
 - **Dutch (NL)**: Complete translation with cultural adaptations
 - **Auto-Detection**: Based on Accept-Language headers
 - **URL Parameters**: Manual language switching with `?lang=en/nl`
+- **Breadcrumb Localization**: Automatic path translation based on current language
+
+#### **Localization Implementation**
+```javascript
+// Multi-language breadcrumb support
+const breadcrumbTranslations = {
+  nl: {
+    home: 'Home',
+    service: 'Service & Contact',
+    dashboard: 'Dashboard',
+    unsubscribe: 'Uitschrijven'
+  },
+  en: {
+    home: 'Home', 
+    service: 'Service & Contact',
+    dashboard: 'Dashboard',
+    unsubscribe: 'Unsubscribe'
+  }
+};
+```
 
 ### **Theme Management**
 - **System Preference**: Automatic dark/light mode detection
 - **Manual Override**: Toggle switch with localStorage persistence
 - **URL Parameters**: Theme control with `?theme=light/dark`
+- **Breadcrumb Integration**: Dynamic styling based on theme preference
 
 ---
 
@@ -416,18 +470,24 @@ This project is proprietary software developed for automated DHgate product moni
 
 ---
 
-*Last Updated: August 20, 2025*
-*Version: 3.6 - Minimalistic Icon System*
+*Last Updated: August 23, 2025*
+*Version: 3.7 - Innovative Breadcrumb Navigation System*
 
-### **Version 3.6 Highlights**  
-- **Minimalistic Icon System** - Replaced all emoji icons (🍪, ☀️, 🌙, 🎯, ⚠️, ✅, 📧, 🗑️, 🗂️, ❌) with clean SVG variants
-- **Thin-line Design Language** - All icons now use stroke-width: 1.5 for consistent minimalistic aesthetic inspired by Flaticon library
-- **Performance Improvement** - Eliminated emoji dependency, resulting in better rendering across all devices and platforms
-- **Accessibility Enhancement** - SVG icons provide better scalability, semantic meaning, and screen reader support
-- **Clean Documentation** - Removed all decorative emojis from README for professional appearance
-- **Theme Integration** - All icons respect light/dark theme settings with proper currentColor inheritance
-- **Cookie Consent Fix** - Resolved interaction issues with cookie consent banner for better user experience
-- **Cross-browser Compatibility** - Improved icon rendering consistency across different browsers and devices
+### **Version 3.7 Highlights**  
+- **🧭 Innovative Breadcrumb System** - Glassmorphism navigation met sticky positioning op alle pagina's behalve homepage
+- **✨ Micro-interactions Design** - Hover shimmer effecten, glow animaties en smooth scale transforms voor premium UX
+- **🌐 Multilingual Breadcrumbs** - Automatische localisatie van breadcrumb labels (NL/EN) met path-mapping systeem
+- **📱 Mobile-First Responsive** - Optimized voor touchscreens met flex-wrap support en kleinere iconen op mobile
+- **🎨 Dark Mode Integration** - Dynamic styling met CSS variables voor seamless theme switching
+- **♿ Accessibility Excellence** - ARIA-compliant met role="navigation", aria-current="page" en semantic HTML
+- **🔧 Dashboard Access Fix** - Development test token (test123) toegevoegd voor testing van dashboard functionaliteit
+- **⚡ Performance Optimized** - Efficient CSS met backdrop-filter en cubic-bezier animaties
+
+### **Previous Version 3.6 Features**
+- **Minimalistic Icon System** - Replaced all emoji icons with clean SVG variants
+- **Thin-line Design Language** - All icons now use stroke-width: 1.5 for consistent aesthetic
+- **Performance Improvement** - Eliminated emoji dependency for better rendering
+- **Theme Integration** - All icons respect light/dark theme settings with currentColor inheritance
 
 ### **Previous Major Features (From Earlier Versions)**
 - **D1 Database Integration** - Hybrid D1 + KV storage system with SQL support and fallback reliability

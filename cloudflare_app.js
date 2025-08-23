@@ -586,7 +586,7 @@ function generateSEOFooter(lang, currentPage = 'home') {
     home: { url: `/?lang=${lang}`, text: lang === 'nl' ? 'DHgate Product Monitoring' : 'DHgate Product Monitoring' },
     privacy: { url: `/privacy?lang=${lang}`, text: lang === 'nl' ? 'Privacy & GDPR' : 'Privacy & GDPR' },
     terms: { url: `/terms?lang=${lang}`, text: lang === 'nl' ? 'Gebruiksvoorwaarden' : 'Terms of Service' },
-    contact: { url: `/contact?lang=${lang}`, text: lang === 'nl' ? 'Professional Support' : 'Professional Support' }
+    contact: { url: `/service?lang=${lang}`, text: lang === 'nl' ? 'Service & Contact' : 'Service & Contact' }
   };
   
   const visibleLinks = Object.entries(links)
@@ -2393,8 +2393,16 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
     <nav class="site-navbar" style="background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000;">
         <div class="container">
             <div class="navbar-container" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;">
-                <a href="/?lang=${lang}&theme=${theme}" class="navbar-brand" style="text-decoration: none; display: flex; align-items: center;">
-                    <img src="/assets/logo.png?v=2" alt="DHgate Monitor - Professional Product Monitoring Platform Logo" height="40" style="max-width: 200px;">
+                <a href="/?lang=${lang}&theme=${theme}" class="navbar-brand" style="text-decoration: none; display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="brand-icon" style="width: 32px; height: 32px; background: linear-gradient(135deg, #2563EB, #1E40AF); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <div class="brand-text" style="display: flex; flex-direction: column; line-height: 1.1;">
+                        <span style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">DHgate Monitor</span>
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 400;">${lang === 'nl' ? 'E-commerce Intelligence' : 'E-commerce Intelligence'}</span>
+                    </div>
                 </a>
                 
                 <div class="navbar-controls" style="display: flex; align-items: center; gap: 1rem;">
@@ -2402,7 +2410,7 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
                     <div class="desktop-menu" style="display: flex; gap: 1.5rem; align-items: center;">
                         <a href="/?lang=${lang}&theme=${theme}" style="color: var(--text-secondary); text-decoration: none; font-weight: 500;">${lang === 'nl' ? 'Home' : 'Home'}</a>
                         <a href="/dashboard?lang=${lang}&theme=${theme}" style="color: var(--text-secondary); text-decoration: none; font-weight: 500;">${lang === 'nl' ? 'Dashboard' : 'Dashboard'}</a>
-                        <a href="/contact?lang=${lang}&theme=${theme}" style="color: var(--text-secondary); text-decoration: none; font-weight: 500;">${lang === 'nl' ? 'Contact' : 'Contact'}</a>
+                        <a href="/service?lang=${lang}&theme=${theme}" style="color: var(--text-secondary); text-decoration: none; font-weight: 500;">${lang === 'nl' ? 'Service' : 'Service'}</a>
                     </div>
                     
                     <!-- Desktop Language Switcher -->
@@ -2419,10 +2427,6 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
                         </div>
                     </div>
                     
-                    <!-- Mobile CTA Button -->
-                    <a href="/dashboard?lang=${lang}&theme=${theme}" class="mobile-cta-button" style="display: none; background: linear-gradient(135deg, #2563EB, #1e40af); color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.875rem; white-space: nowrap;">
-                        ${lang === 'nl' ? 'Dashboard' : 'Dashboard'}
-                    </a>
                     
                     <!-- Mobile Hamburger Menu -->
                     <button class="hamburger" onclick="toggleMobileMenu()" 
@@ -2443,16 +2447,23 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
     <div class="mobile-menu-overlay" onclick="closeMobileMenu()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: transparent; z-index: 9998;"></div>
     
     <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu" style="display: none; position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: var(--card-bg); z-index: 9999; transition: right 0.3s ease; padding: 2rem 1.5rem; box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);">
+    <div class="mobile-menu" id="mobileMenu" style="position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: var(--card-bg); z-index: 9999; transition: right 0.3s ease; padding: 2rem 1.5rem; box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);">
         <div class="mobile-menu-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
-            <img src="/assets/logo.png" alt="DHgate Monitor - E-commerce Monitoring Tool" height="32" style="max-width: 160px;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div class="brand-icon" style="width: 28px; height: 28px; background: linear-gradient(135deg, #2563EB, #1E40AF); border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                </div>
+                <span style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">DHgate Monitor</span>
+            </div>
             <button class="mobile-menu-close" onclick="closeMobileMenu()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-primary);">✕</button>
         </div>
         
         <div class="mobile-menu-items" style="display: flex; flex-direction: column; gap: 1.5rem;">
             <a href="/?lang=${lang}&theme=${theme}" style="color: var(--text-primary); text-decoration: none; font-weight: 500; font-size: 1.1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light);">${lang === 'nl' ? 'Home' : 'Home'}</a>
             <a href="/dashboard?lang=${lang}&theme=${theme}" style="color: var(--text-primary); text-decoration: none; font-weight: 500; font-size: 1.1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light);">${lang === 'nl' ? 'Dashboard' : 'Dashboard'}</a>
-            <a href="/contact?lang=${lang}&theme=${theme}" style="color: var(--text-primary); text-decoration: none; font-weight: 500; font-size: 1.1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light);">${lang === 'nl' ? 'Contact' : 'Contact'}</a>
+            <a href="/service?lang=${lang}&theme=${theme}" style="color: var(--text-primary); text-decoration: none; font-weight: 500; font-size: 1.1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light);">${lang === 'nl' ? 'Service' : 'Service'}</a>
             <a href="/privacy?lang=${lang}&theme=${theme}" style="color: var(--text-primary); text-decoration: none; font-weight: 500; font-size: 1.1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light);">${lang === 'nl' ? 'Privacy' : 'Privacy'}</a>
         </div>
         
@@ -2824,7 +2835,13 @@ export default {
           return await handleTermsPage(request, env);
         
         case '/contact':
-          return await handleContactPage(request, env);
+          // Redirect old contact page to new service page
+          const lang = getLanguage(request);
+          const theme = getTheme(request);
+          return Response.redirect(`${url.origin}/service?lang=${lang}&theme=${theme}`, 301);
+        
+        case '/service':
+          return await handleServicePage(request, env);
         
         case '/sitemap.xml':
           return await handleSitemap(request, env);
@@ -2869,7 +2886,8 @@ export default {
         default:
           // Handle favicon
           if (url.pathname === '/favicon.ico') {
-            return Response.redirect('https://dhgate-monitor.com/assets/logo.png', 301);
+            const origin = url.origin;
+            return Response.redirect(`${origin}/assets/logo.png`, 301);
           }
           
           // Handle asset requests
@@ -3599,6 +3617,16 @@ async function handleContactPage(request, env) {
   });
 }
 
+async function handleServicePage(request, env) {
+  const lang = getLanguage(request);
+  const theme = getTheme(request);
+  const t = getTranslations(lang);
+  const html = generateServiceHTML(t, lang, theme);
+  return new Response(html, {
+    headers: { 'Content-Type': 'text/html' }
+  });
+}
+
 async function handleSitemap(request, env) {
   const sitemap = await generateDynamicSitemap(env);
   return new Response(sitemap, {
@@ -3731,6 +3759,7 @@ function generateDashboardHTML(subscription, t, lang, theme = 'light') {
     ${generateGA4Script()}
     
     <style>
+        ${generateBreadcrumbStyles()}
         .dashboard-container {
             min-height: 100vh;
             background: var(--bg-gradient);
@@ -3989,6 +4018,8 @@ function generateDashboardHTML(subscription, t, lang, theme = 'light') {
                     </div>
                 </div>
             </div>
+            
+            ${generateBreadcrumb('/dashboard', lang)}
             
             <!-- Dashboard Content -->
             <div class="dashboard-content">
@@ -4481,6 +4512,800 @@ function generateTermsHTML(t, lang) {
   `;
 }
 
+// Service Header Component (for all pages except homepage)
+function generateServiceHeader(title, subtitle, lang, theme) {
+  return `
+    <!-- Service Header -->
+    <header class="service-header">
+        <div class="container">
+            <h1 class="service-title">
+                ${title}
+            </h1>
+            <p class="service-subtitle">
+                ${subtitle}
+            </p>
+        </div>
+    </header>
+  `;
+}
+
+// Service Header Styles
+function generateServiceHeaderStyles() {
+  return `
+    /* Service Header Styles */
+    .service-header {
+        background: var(--bg-hero);
+        color: white;
+        text-align: center;
+        padding: 3rem 0 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .service-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+        animation: shimmer 3s ease-in-out infinite;
+    }
+    
+    @keyframes shimmer {
+        0%, 100% { transform: translateX(-100%); }
+        50% { transform: translateX(100%); }
+    }
+    
+    .service-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        position: relative;
+        z-index: 1;
+    }
+    
+    .service-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+    
+    @media (max-width: 768px) {
+        .service-header {
+            padding: 2.5rem 0 1.5rem;
+        }
+        
+        .service-title {
+            font-size: 2rem;
+        }
+        
+        .service-subtitle {
+            font-size: 1rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .service-title {
+            font-size: 1.75rem;
+        }
+        
+        .service-subtitle {
+            font-size: 0.95rem;
+        }
+    }
+  `;
+}
+
+// Minimalist Breadcrumb System
+function generateBreadcrumb(currentPath, lang = 'nl') {
+  const breadcrumbTranslations = {
+    nl: {
+      home: 'Home',
+      service: 'Service & Contact',
+      dashboard: 'Dashboard',
+      unsubscribe: 'Uitschrijven',
+      test: 'Test',
+      login: 'Inloggen'
+    },
+    en: {
+      home: 'Home',
+      service: 'Service & Contact', 
+      dashboard: 'Dashboard',
+      unsubscribe: 'Unsubscribe',
+      test: 'Test',
+      login: 'Login'
+    }
+  };
+
+  const t = breadcrumbTranslations[lang] || breadcrumbTranslations.en;
+  
+  const pathMapping = {
+    '/': { label: t.home, path: '/' },
+    '/service': { label: t.service, path: '/service' },
+    '/dashboard': { label: t.dashboard, path: '/dashboard' },
+    '/unsubscribe': { label: t.unsubscribe, path: '/unsubscribe' },
+    '/test': { label: t.test, path: '/test' },
+    '/login': { label: t.login, path: '/login' }
+  };
+
+  const crumbs = [];
+  
+  // Always start with Home (except if we're on home)
+  if (currentPath !== '/') {
+    crumbs.push({ label: t.home, path: '/', active: false });
+  }
+  
+  // Add current page
+  if (pathMapping[currentPath]) {
+    crumbs.push({ 
+      label: pathMapping[currentPath].label, 
+      path: currentPath, 
+      active: true 
+    });
+  }
+
+  return `
+    <nav class="breadcrumb-nav" role="navigation" aria-label="breadcrumb">
+      <div class="container">
+        <div class="breadcrumb-list">
+          ${crumbs.map((crumb, index) => `
+            ${crumb.active ? `
+              <span class="breadcrumb-current" aria-current="page">
+                ${crumb.label}
+              </span>
+            ` : `
+              <a href="${crumb.path}?lang=${lang}" class="breadcrumb-link">
+                ${crumb.label}
+              </a>
+              <span class="breadcrumb-separator" aria-hidden="true">></span>
+            `}
+          `).join('')}
+        </div>
+      </div>
+    </nav>
+  `;
+}
+
+// Minimalist Breadcrumb Styles
+function generateBreadcrumbStyles() {
+  return `
+    /* Minimalist Breadcrumb System */
+    .breadcrumb-nav {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-light);
+      padding: 0.75rem 0;
+      margin-bottom: 1rem;
+    }
+    
+    .breadcrumb-list {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+    
+    .breadcrumb-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    
+    .breadcrumb-link:hover {
+      color: var(--primary-blue);
+    }
+    
+    .breadcrumb-current {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    
+    .breadcrumb-separator {
+      color: var(--text-muted);
+      margin: 0 0.25rem;
+      user-select: none;
+    }
+    
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .breadcrumb-nav {
+        padding: 0.5rem 0;
+      }
+      
+      .breadcrumb-list {
+        font-size: 0.8rem;
+      }
+    }
+  `;
+}
+
+// Service & Contact Page Generator
+function generateServiceHTML(t, lang, theme = 'light') {
+  const url = new URL('http://localhost');
+  url.pathname = '/service';
+  
+  return `
+<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${lang === 'nl' ? 'Service & Contact - DHgate Monitor' : 'Service & Contact - DHgate Monitor'}</title>
+    <meta name="description" content="${lang === 'nl' ? 'Professionele service en support voor DHgate Monitor. Neem contact op voor algemene vragen of technische ondersteuning.' : 'Professional service and support for DHgate Monitor. Contact us for general inquiries or technical support.'}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://dhgate-monitor.com/service?lang=${lang}" />
+    <link rel="alternate" href="https://dhgate-monitor.com/service?lang=en" hreflang="en" />
+    <link rel="alternate" href="https://dhgate-monitor.com/service?lang=nl" hreflang="nl" />
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    ${generateGlobalCSS(theme)}
+    
+    <style>
+        ${generateBreadcrumbStyles()}
+        
+        /* Mobile Menu Fix */
+        .mobile-menu.active {
+            right: 0 !important;
+        }
+        
+        .mobile-menu-overlay.active {
+            display: block !important;
+            background: rgba(0, 0, 0, 0.5) !important;
+        }
+        
+        .hamburger {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: none;
+            flex-direction: column;
+            gap: 3px;
+            padding: 0.5rem;
+        }
+        
+        .hamburger span {
+            width: 20px;
+            height: 2px;
+            background: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+        
+        @media (max-width: 768px) {
+            .desktop-menu, .desktop-lang-switcher, .desktop-theme-toggle {
+                display: none !important;
+            }
+            
+            .hamburger {
+                display: flex;
+            }
+            
+            .brand-text span:nth-child(2) {
+                display: none;
+            }
+        }
+        
+        body { 
+            font-family: 'Raleway', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        /* Skip to content for accessibility */
+        .skip-to-content {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: var(--primary-blue);
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 1000;
+        }
+        
+        .skip-to-content:focus {
+            top: 6px;
+        }
+        
+        /* Service Page Specific Styles */
+        .service-header {
+            background: var(--bg-hero);
+            color: white;
+            text-align: center;
+            padding: 4rem 0 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+        
+        .service-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .service-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Service Pathfinder */
+        .service-pathfinder {
+            padding: 3rem 0;
+        }
+        
+        .pathfinder-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .pathfinder-card {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pathfinder-card:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-4px);
+            box-shadow: var(--card-shadow-hover);
+        }
+        
+        .pathfinder-card:focus-visible {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+        
+        .pathfinder-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1rem;
+            background: var(--primary-blue);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .pathfinder-card:hover .pathfinder-icon {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25);
+        }
+        
+        .pathfinder-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+        
+        .pathfinder-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        
+        .pathfinder-features {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+        
+        .pathfinder-features ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .pathfinder-features li {
+            padding: 0.25rem 0;
+            position: relative;
+            padding-left: 1.25rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .pathfinder-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        /* Contact Buttons */
+        .contact-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--btn-primary-bg);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            min-width: 180px;
+            justify-content: center;
+        }
+        
+        .contact-button:hover {
+            background: var(--btn-primary-hover);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+        }
+        
+        .contact-button:focus-visible {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+        
+        .contact-button-secondary {
+            background: var(--btn-secondary-bg);
+        }
+        
+        .contact-button-secondary:hover {
+            background: var(--btn-secondary-hover);
+        }
+        
+        /* Response Time Indicators */
+        .response-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+        
+        .response-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+        
+        .response-dot.medium {
+            background: var(--warning);
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .service-title {
+                font-size: 2.5rem;
+            }
+            
+            .pathfinder-grid {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+            
+            .pathfinder-card {
+                padding: 1.25rem;
+            }
+            
+            .pathfinder-icon {
+                width: 56px;
+                height: 56px;
+            }
+            
+            .service-header {
+                padding: 3rem 0 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .service-title {
+                font-size: 2rem;
+            }
+            
+            .pathfinder-card {
+                padding: 1rem;
+            }
+            
+            .pathfinder-icon {
+                width: 48px;
+                height: 48px;
+            }
+            
+            .contact-button {
+                width: 100%;
+                min-width: auto;
+                font-size: 0.85rem;
+                padding: 0.6rem 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    ${generateResponsiveNavigation(lang, theme, '/service')}
+    
+    ${generateBreadcrumb('/service', lang)}
+    
+    <!-- Skip to content for accessibility -->
+    <a href="#main-content" class="skip-to-content" tabindex="1">
+        ${lang === 'nl' ? 'Ga naar inhoud' : 'Skip to content'}
+    </a>
+    
+    <!-- Service Header -->
+    <header class="service-header">
+        <div class="container">
+            <h1 class="service-title">
+                ${lang === 'nl' ? 'Service & Contact' : 'Service & Contact'}
+            </h1>
+            <p class="service-subtitle">
+                ${lang === 'nl' ? 'Professionele ondersteuning voor al uw DHgate monitoring behoeften' : 'Professional support for all your DHgate monitoring needs'}
+            </p>
+        </div>
+    </header>
+    
+    <main id="main-content" role="main">
+        <!-- Service Pathfinder -->
+        <section class="service-pathfinder">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 style="font-size: 2.5rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary);">
+                        ${lang === 'nl' ? 'Hoe kunnen we u helpen?' : 'How can we help you?'}
+                    </h2>
+                    <p style="font-size: 1.1rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+                        ${lang === 'nl' ? 'Kies de optie die het beste bij uw situatie past' : 'Choose the option that best fits your situation'}
+                    </p>
+                </div>
+                
+                <div class="pathfinder-grid">
+                    <!-- General Inquiries -->
+                    <div class="pathfinder-card" tabindex="0" role="button" 
+                         aria-label="${lang === 'nl' ? 'Algemene vragen - Klik voor contact informatie' : 'General inquiries - Click for contact information'}">
+                        <div class="pathfinder-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M9,9h6v6H9V9z"/>
+                                <path d="M12,6V4m0,16v-2M6,12H4m16,0h-2"/>
+                            </svg>
+                        </div>
+                        <h3 class="pathfinder-title">
+                            ${lang === 'nl' ? 'Algemene Vragen' : 'General Inquiries'}
+                        </h3>
+                        <p class="pathfinder-description">
+                            ${lang === 'nl' ? 'Voor vragen over prijzen, partnerships, features en algemene informatie over DHgate Monitor.' : 'For questions about pricing, partnerships, features and general information about DHgate Monitor.'}
+                        </p>
+                        <div class="pathfinder-features">
+                            <ul>
+                                <li>${lang === 'nl' ? 'Prijzen en abonnementen' : 'Pricing and subscriptions'}</li>
+                                <li>${lang === 'nl' ? 'Business partnerships' : 'Business partnerships'}</li>
+                                <li>${lang === 'nl' ? 'Product informatie' : 'Product information'}</li>
+                                <li>${lang === 'nl' ? 'Account vragen' : 'Account questions'}</li>
+                            </ul>
+                        </div>
+                        <a href="mailto:info@dhgate-monitor.com" class="contact-button" 
+                           aria-label="${lang === 'nl' ? 'Stuur email naar info@dhgate-monitor.com' : 'Send email to info@dhgate-monitor.com'}">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                            info@dhgate-monitor.com
+                        </a>
+                        <div class="response-indicator">
+                            <span class="response-dot medium"></span>
+                            ${lang === 'nl' ? 'Responstijd: 24-48 uur' : 'Response time: 24-48 hours'}
+                        </div>
+                    </div>
+                    
+                    <!-- Technical Support -->
+                    <div class="pathfinder-card" tabindex="0" role="button"
+                         aria-label="${lang === 'nl' ? 'Technische ondersteuning - Klik voor contact informatie' : 'Technical support - Click for contact information'}">
+                        <div class="pathfinder-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                            </svg>
+                        </div>
+                        <h3 class="pathfinder-title">
+                            ${lang === 'nl' ? 'Technische Ondersteuning' : 'Technical Support'}
+                        </h3>
+                        <p class="pathfinder-description">
+                            ${lang === 'nl' ? 'Voor technische problemen, bugs, API issues en ondersteuning bij het gebruik van het platform.' : 'For technical issues, bugs, API problems and support with using the platform.'}
+                        </p>
+                        <div class="pathfinder-features">
+                            <ul>
+                                <li>${lang === 'nl' ? 'Login & toegangsproblemen' : 'Login & access issues'}</li>
+                                <li>${lang === 'nl' ? 'Monitoring niet werkend' : 'Monitoring not working'}</li>
+                                <li>${lang === 'nl' ? 'Bug reports' : 'Bug reports'}</li>
+                                <li>${lang === 'nl' ? 'API ondersteuning' : 'API support'}</li>
+                            </ul>
+                        </div>
+                        <a href="mailto:support@dhgate-monitor.com" class="contact-button contact-button-secondary"
+                           aria-label="${lang === 'nl' ? 'Stuur email naar support@dhgate-monitor.com' : 'Send email to support@dhgate-monitor.com'}">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12l2 2 4-4"/>
+                                <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+                                <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+                                <path d="M12 3v6m0 6v6"/>
+                            </svg>
+                            support@dhgate-monitor.com
+                        </a>
+                        <div class="response-indicator">
+                            <span class="response-dot"></span>
+                            ${lang === 'nl' ? 'Responstijd: 4-12 uur' : 'Response time: 4-12 hours'}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Additional Help Section -->
+                <div class="text-center mt-5">
+                    <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 2rem; max-width: 800px; margin: 0 auto;">
+                        <h3 style="color: var(--text-primary); margin-bottom: 1rem;">
+                            ${lang === 'nl' ? 'Meer hulp nodig?' : 'Need more help?'}
+                        </h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                            ${lang === 'nl' ? 'Bekijk onze uitgebreide documentatie of probeer eerst onze FAQ sectie.' : 'Check out our comprehensive documentation or try our FAQ section first.'}
+                        </p>
+                        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                            <a href="/service?lang=${lang}&theme=${theme}" 
+                               style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--primary-blue); text-decoration: none; font-weight: 500; padding: 0.75rem 1rem; border: 1px solid var(--primary-blue); border-radius: 8px; transition: all 0.2s;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="3"/>
+                                    <path d="M20.2 20.2c2.04-2.03 2.04-5.37 0-7.4l-2.6-2.6M6.6 6.6c-2.04 2.03-2.04 5.37 0 7.4l2.6 2.6"/>
+                                    <path d="M12 1v6m0 6v6"/>
+                                </svg>
+                                ${lang === 'nl' ? 'Service & Contact' : 'Service & Contact'}
+                            </a>
+                            <a href="/?lang=${lang}&theme=${theme}" 
+                               style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; font-weight: 500; padding: 0.75rem 1rem; border: 1px solid var(--border-light); border-radius: 8px; transition: all 0.2s;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9,22 9,12 15,12 15,22"/>
+                                </svg>
+                                ${lang === 'nl' ? 'Terug naar Home' : 'Back to Home'}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer style="background: var(--card-bg); border-top: 1px solid var(--card-border); margin-top: 4rem; padding: 2rem 0;">
+        <div class="container">
+            <div style="text-align: center;">
+                <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                    <a href="/privacy?lang=${lang}&theme=${theme}" style="color: var(--text-muted); text-decoration: none;">
+                        ${lang === 'nl' ? 'Privacybeleid' : 'Privacy Policy'}
+                    </a>
+                    <a href="/terms?lang=${lang}&theme=${theme}" style="color: var(--text-muted); text-decoration: none;">
+                        ${lang === 'nl' ? 'Algemene voorwaarden' : 'Terms of Service'}
+                    </a>
+                    <a href="/service?lang=${lang}&theme=${theme}" style="color: var(--text-muted); text-decoration: none;">
+                        ${lang === 'nl' ? 'Service' : 'Service'}
+                    </a>
+                </div>
+                <div style="color: var(--text-muted); font-size: 0.875rem;">
+                    © ${new Date().getFullYear()} DHgate Monitor - ${lang === 'nl' ? 'Professionele DHgate monitoring oplossingen' : 'Professional DHgate monitoring solutions'}
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Theme detection and switching
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-detect theme preference
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const urlParams = new URLSearchParams(window.location.search);
+            const themeParam = urlParams.get('theme');
+            
+            if (!themeParam && prefersDark) {
+                // Redirect to dark theme if user prefers dark and no theme is specified
+                const newUrl = new URL(window.location);
+                newUrl.searchParams.set('theme', 'dark');
+                window.history.replaceState({}, '', newUrl);
+                location.reload();
+            }
+            
+            // Email click tracking for analytics
+            document.querySelectorAll('a[href^="mailto:"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const email = this.getAttribute('href').replace('mailto:', '');
+                    console.log('Email contact initiated:', email);
+                    
+                    // Optional: Add analytics tracking here
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'contact_email_click', {
+                            email_address: email,
+                            contact_method: 'email'
+                        });
+                    }
+                });
+            });
+            
+            // Keyboard navigation for pathfinder cards
+            document.querySelectorAll('.pathfinder-card[role="button"]').forEach(card => {
+                card.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        const emailLink = this.querySelector('a[href^="mailto:"]');
+                        if (emailLink) {
+                            emailLink.click();
+                        }
+                    }
+                });
+            });
+        });
+        
+        // Handle system theme changes
+        if (window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (!urlParams.get('theme')) {
+                    // Only auto-switch if no explicit theme is set
+                    const newUrl = new URL(window.location);
+                    newUrl.searchParams.set('theme', e.matches ? 'dark' : 'light');
+                    window.history.replaceState({}, '', newUrl);
+                    location.reload();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+  `;
+}
+
 function generateContactHTML(t, lang, theme = 'light') {
   const url = new URL('http://localhost'); // Temporary URL for current page detection
   url.pathname = '/contact';
@@ -4628,6 +5453,12 @@ function generateContactHTML(t, lang, theme = 'light') {
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
+            border: 2px solid var(--card-border);
+        }
+        
+        .expandable-card:focus-visible {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
         }
         
         .expandable-card.expanded {
@@ -4897,6 +5728,74 @@ function generateContactHTML(t, lang, theme = 'light') {
             .pathfinder-icon {
                 width: 48px;
                 height: 48px;
+            }
+            
+            .pathfinder-toggle {
+                top: 12px;
+                right: 12px;
+                width: 28px;
+                height: 28px;
+            }
+            
+            .expandable-card.expanded .pathfinder-faq {
+                max-height: 1000px;
+            }
+            
+            .faq-header {
+                padding: 1.5rem 1rem 1rem;
+            }
+            
+            .faq-list {
+                padding: 0 1rem 1.5rem;
+            }
+            
+            .faq-actions {
+                padding: 0 1rem 1.5rem;
+            }
+            
+            .faq-question {
+                padding: 1rem;
+                font-size: 0.95rem;
+            }
+            
+            .faq-answer {
+                padding: 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .pathfinder-categories .col-md-6 {
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+            
+            .pathfinder-card {
+                padding: 1.25rem 0.75rem;
+            }
+            
+            .pathfinder-card-title {
+                font-size: 1.1rem;
+            }
+            
+            .pathfinder-card-desc {
+                font-size: 0.875rem;
+            }
+            
+            .expandable-card.expanded .pathfinder-faq {
+                max-height: 1200px;
+            }
+            
+            .faq-header {
+                padding: 1rem 0.75rem 0.75rem;
+            }
+            
+            .faq-list {
+                padding: 0 0.75rem 1rem;
+            }
+            
+            .faq-actions {
+                padding: 0 0.75rem 1rem;
             }
         }
     </style>
@@ -5218,75 +6117,325 @@ function generateContactHTML(t, lang, theme = 'light') {
                             </div>
                         </div>
                         
+                        <!-- Technical Support Category -->
                         <div class="col-md-6 col-lg-4">
-                            <div class="pathfinder-card" data-category="account">
-                                <div class="pathfinder-icon">
-                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                        <circle cx="12" cy="7" r="4"/>
-                                    </svg>
+                            <div class="pathfinder-card expandable-card" data-category="technical" 
+                                 role="button" tabindex="0" 
+                                 aria-expanded="false" 
+                                 aria-controls="technical-faq"
+                                 aria-label="${lang === 'nl' ? 'Technische Ondersteuning FAQ - klik om uit te klappen' : 'Technical Support FAQ - click to expand'}">
+                                
+                                <div class="pathfinder-card-header">
+                                    <div class="pathfinder-icon">
+                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="pathfinder-card-title">${lang === 'nl' ? 'Technische Ondersteuning' : 'Technical Support'}</h3>
+                                    <p class="pathfinder-card-desc">${lang === 'nl' ? 'Bugs, API issues en technische problemen' : 'Bugs, API issues and technical problems'}</p>
+                                    <div class="pathfinder-toggle" aria-hidden="true">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M6 9l6 6 6-6"/>
+                                        </svg>
+                                    </div>
                                 </div>
-                                <h3 class="pathfinder-card-title">${lang === 'nl' ? 'Account & Instellingen' : 'Account & Settings'}</h3>
-                                <p class="pathfinder-card-desc">${lang === 'nl' ? 'Accountbeheer, wachtwoorden en privacy' : 'Account management, passwords and privacy'}</p>
-                                <div class="pathfinder-arrow">→</div>
+                                
+                                <div class="pathfinder-faq" id="technical-faq" aria-hidden="true">
+                                    <div class="faq-header">
+                                        <h4 class="faq-title">${lang === 'nl' ? 'Veelgestelde Vragen' : 'Frequently Asked Questions'}</h4>
+                                        <p class="faq-subtitle">${lang === 'nl' ? 'Technische problemen en ondersteuning' : 'Technical issues and support'}</p>
+                                    </div>
+                                    
+                                    <div class="faq-list">
+                                        <div class="faq-item">
+                                            <button class="faq-question" aria-expanded="false" aria-controls="technical-q1"
+                                                    itemscope itemtype="https://schema.org/Question">
+                                                <span itemprop="name">${lang === 'nl' ? 'Ik krijg een error bij het inloggen, wat moet ik doen?' : 'I get an error when logging in, what should I do?'}</span>
+                                                <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M6 9l6 6 6-6"/>
+                                                </svg>
+                                            </button>
+                                            <div class="faq-answer" id="technical-q1" aria-hidden="true" itemscope itemtype="https://schema.org/Answer">
+                                                <div itemprop="text">${lang === 'nl' ? 'Probeer eerst je browser cache te legen en cookies te verwijderen. Als dat niet helpt, probeer dan een andere browser of incognito modus.' : 'First try clearing your browser cache and deleting cookies. If that doesn\'t help, try a different browser or incognito mode.'}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="faq-item">
+                                            <button class="faq-question" aria-expanded="false" aria-controls="technical-q2"
+                                                    itemscope itemtype="https://schema.org/Question">
+                                                <span itemprop="name">${lang === 'nl' ? 'De website laadt langzaam, hoe kan dit?' : 'The website loads slowly, how is this possible?'}</span>
+                                                <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M6 9l6 6 6-6"/>
+                                                </svg>
+                                            </button>
+                                            <div class="faq-answer" id="technical-q2" aria-hidden="true" itemscope itemtype="https://schema.org/Answer">
+                                                <div itemprop="text">${lang === 'nl' ? 'Dit kan liggen aan je internetverbinding, browserversie of ad-blockers. Probeer de pagina te vernieuwen of een andere browser te gebruiken.' : 'This could be due to your internet connection, browser version or ad-blockers. Try refreshing the page or using a different browser.'}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="faq-item">
+                                            <button class="faq-question" aria-expanded="false" aria-controls="technical-q3"
+                                                    itemscope itemtype="https://schema.org/Question">
+                                                <span itemprop="name">${lang === 'nl' ? 'Ik kan geen notificaties ontvangen, wat is er mis?' : 'I can\'t receive notifications, what\'s wrong?'}</span>
+                                                <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M6 9l6 6 6-6"/>
+                                                </svg>
+                                            </button>
+                                            <div class="faq-answer" id="technical-q3" aria-hidden="true" itemscope itemtype="https://schema.org/Answer">
+                                                <div itemprop="text">${lang === 'nl' ? 'Controleer je browser-instellingen voor notificaties en zorg dat je email-adres correct is. Check ook je spam folder.' : 'Check your browser notification settings and make sure your email address is correct. Also check your spam folder.'}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="faq-actions">
+                                        <button class="btn-contact-form" data-category="technical">
+                                            ${lang === 'nl' ? 'Andere vraag? Neem contact op' : 'Other question? Contact us'}
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
+                        <!-- Business & Partnerships Category -->
                         <div class="col-md-6 col-lg-4">
-                            <div class="pathfinder-card" data-category="technical">
-                                <div class="pathfinder-icon">
-                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-                                    </svg>
+                            <div class="pathfinder-card expandable-card" data-category="business" 
+                                 role="button" tabindex="0" 
+                                 aria-expanded="false" 
+                                 aria-controls="business-faq"
+                                 aria-label="${lang === 'nl' ? 'Business & Partnerships FAQ - klik om uit te klappen' : 'Business & Partnerships FAQ - click to expand'}">
+                                
+                                <div class="pathfinder-card-header">
+                                    <div class="pathfinder-icon">
+                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                                            <polyline points="3.27,6.96 12,12.01 20.73,6.96"/>
+                                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="pathfinder-card-title">${lang === 'nl' ? 'Business & Partnerships' : 'Business & Partnerships'}</h3>
+                                    <p class="pathfinder-card-desc">${lang === 'nl' ? 'Samenwerkingen, API toegang en enterprise' : 'Partnerships, API access and enterprise'}</p>
+                                    <div class="pathfinder-toggle" aria-hidden="true">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M6 9l6 6 6-6"/>
+                                        </svg>
+                                    </div>
                                 </div>
-                                <h3 class="pathfinder-card-title">${lang === 'nl' ? 'Technische Ondersteuning' : 'Technical Support'}</h3>
-                                <p class="pathfinder-card-desc">${lang === 'nl' ? 'Bugs, API issues en technische problemen' : 'Bugs, API issues and technical problems'}</p>
-                                <div class="pathfinder-arrow">→</div>
+                                
+                                <div class="pathfinder-faq" id="business-faq" aria-hidden="true">
+                                    <div class="faq-header">
+                                        <h4 class="faq-title">${lang === 'nl' ? 'Veelgestelde Vragen' : 'Frequently Asked Questions'}</h4>
+                                        <p class="faq-subtitle">${lang === 'nl' ? 'Business oplossingen en partnerships' : 'Business solutions and partnerships'}</p>
+                                    </div>
+                                    
+                                    <div class="faq-list">
+                                        <div class="faq-item">
+                                            <button class="faq-question" aria-expanded="false" aria-controls="business-q1"
+                                                    itemscope itemtype="https://schema.org/Question">
+                                                <span itemprop="name">${lang === 'nl' ? 'Bieden jullie enterprise oplossingen aan?' : 'Do you offer enterprise solutions?'}</span>
+                                                <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M6 9l6 6 6-6"/>
+                                                </svg>
+                                            </button>
+                                            <div class="faq-answer" id="business-q1" aria-hidden="true" itemscope itemtype="https://schema.org/Answer">
+                                                <div itemprop="text">${lang === 'nl' ? 'Ja, we bieden maatwerkoplossingen voor bedrijven met grote volumes. Neem contact op voor een gepersonaliseerd voorstel.' : 'Yes, we offer custom solutions for businesses with large volumes. Contact us for a personalized proposal.'}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="faq-item">
+                                            <button class="faq-question" aria-expanded="false" aria-controls="business-q2"
+                                                    itemscope itemtype="https://schema.org/Question">
+                                                <span itemprop="name">${lang === 'nl' ? 'Is er een API beschikbaar voor integratie?' : 'Is there an API available for integration?'}</span>
+                                                <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M6 9l6 6 6-6"/>
+                                                </svg>
+                                            </button>
+                                            <div class="faq-answer" id="business-q2" aria-hidden="true" itemscope itemtype="https://schema.org/Answer">
+                                                <div itemprop="text">${lang === 'nl' ? 'Ja, we hebben een RESTful API voor enterprise klanten. Documentatie wordt verstrekt na het afsluiten van een contract.' : 'Yes, we have a RESTful API for enterprise customers. Documentation is provided after signing a contract.'}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="faq-item">
+                                            <button class="faq-question" aria-expanded="false" aria-controls="business-q3"
+                                                    itemscope itemtype="https://schema.org/Question">
+                                                <span itemprop="name">${lang === 'nl' ? 'Welke kortingen zijn er beschikbaar voor volume?' : 'What discounts are available for volume?'}</span>
+                                                <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M6 9l6 6 6-6"/>
+                                                </svg>
+                                            </button>
+                                            <div class="faq-answer" id="business-q3" aria-hidden="true" itemscope itemtype="https://schema.org/Answer">
+                                                <div itemprop="text">${lang === 'nl' ? 'Volume kortingen starten vanaf 100+ producten en kunnen oplopen tot 40% korting. Neem contact op voor een offerte.' : 'Volume discounts start from 100+ products and can go up to 40% discount. Contact us for a quote.'}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="faq-actions">
+                                        <button class="btn-contact-form" data-category="business">
+                                            ${lang === 'nl' ? 'Andere vraag? Neem contact op' : 'Other question? Contact us'}
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
+                        <!-- Billing & Payments Category -->
                         <div class="col-md-6 col-lg-4">
-                            <div class="pathfinder-card" data-category="business">
-                                <div class="pathfinder-icon">
-                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                                        <polyline points="3.27,6.96 12,12.01 20.73,6.96"/>
-                                        <line x1="12" y1="22.08" x2="12" y2="12"/>
-                                    </svg>
+                            <div class="pathfinder-card expandable-card" data-category="billing" 
+                                 role="button" tabindex="0" 
+                                 aria-expanded="false" 
+                                 aria-controls="billing-faq"
+                                 aria-label="${lang === 'nl' ? 'Facturering & Betalingen FAQ - klik om uit te klappen' : 'Billing & Payments FAQ - click to expand'}">
+                                
+                                <div class="pathfinder-card-header">
+                                    <div class="pathfinder-icon">
+                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                            <line x1="8" y1="21" x2="16" y2="21"/>
+                                            <line x1="12" y1="17" x2="12" y2="21"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="pathfinder-card-title">${lang === 'nl' ? 'Facturering & Betalingen' : 'Billing & Payments'}</h3>
+                                    <p class="pathfinder-card-desc">${lang === 'nl' ? 'Vragen over kosten, facturen en betalingen' : 'Questions about costs, invoices and payments'}</p>
+                                    <div class="pathfinder-toggle" aria-hidden="true">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M6 9l6 6 6-6"/>
+                                        </svg>
+                                    </div>
                                 </div>
-                                <h3 class="pathfinder-card-title">${lang === 'nl' ? 'Business & Partnerships' : 'Business & Partnerships'}</h3>
-                                <p class="pathfinder-card-desc">${lang === 'nl' ? 'Samenwerkingen, API toegang en enterprise' : 'Partnerships, API access and enterprise'}</p>
-                                <div class="pathfinder-arrow">→</div>
+                                
+                                <div class="pathfinder-faq" id="billing-faq" aria-hidden="true">
+                                    <div class="faq-header">
+                                        <h4 class="faq-title">${lang === 'nl' ? 'Veelgestelde Vragen' : 'Frequently Asked Questions'}</h4>
+                                        <p class="faq-subtitle">${lang === 'nl' ? 'Betalingen en facturering' : 'Payments and billing'}</p>
+                                    </div>
+                                    
+                                    <div class="faq-list">
+                                        <div class="faq-item">
+                                            <button class="faq-question" aria-expanded="false" aria-controls="billing-q1"
+                                                    itemscope itemtype="https://schema.org/Question">
+                                                <span itemprop="name">${lang === 'nl' ? 'Welke betaalmethodes accepteren jullie?' : 'What payment methods do you accept?'}</span>
+                                                <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M6 9l6 6 6-6"/>
+                                                </svg>
+                                            </button>
+                                            <div class="faq-answer" id="billing-q1" aria-hidden="true" itemscope itemtype="https://schema.org/Answer">
+                                                <div itemprop="text">${lang === 'nl' ? 'We accepteren alle grote creditcards, PayPal, iDEAL, Bancontact en SEPA bankoverschrijvingen.' : 'We accept all major credit cards, PayPal, iDEAL, Bancontact and SEPA bank transfers.'}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="faq-item">
+                                            <button class="faq-question" aria-expanded="false" aria-controls="billing-q2"
+                                                    itemscope itemtype="https://schema.org/Question">
+                                                <span itemprop="name">${lang === 'nl' ? 'Kan ik mijn abonnement op elk moment opzeggen?' : 'Can I cancel my subscription at any time?'}</span>
+                                                <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M6 9l6 6 6-6"/>
+                                                </svg>
+                                            </button>
+                                            <div class="faq-answer" id="billing-q2" aria-hidden="true" itemscope itemtype="https://schema.org/Answer">
+                                                <div itemprop="text">${lang === 'nl' ? 'Ja, je kunt je abonnement op elk moment opzeggen in je account instellingen. Je behoudt toegang tot het einde van je facturatieperiode.' : 'Yes, you can cancel your subscription at any time in your account settings. You retain access until the end of your billing period.'}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="faq-item">
+                                            <button class="faq-question" aria-expanded="false" aria-controls="billing-q3"
+                                                    itemscope itemtype="https://schema.org/Question">
+                                                <span itemprop="name">${lang === 'nl' ? 'Krijg ik een factuur voor mijn bedrijf?' : 'Do I get an invoice for my business?'}</span>
+                                                <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M6 9l6 6 6-6"/>
+                                                </svg>
+                                            </button>
+                                            <div class="faq-answer" id="billing-q3" aria-hidden="true" itemscope itemtype="https://schema.org/Answer">
+                                                <div itemprop="text">${lang === 'nl' ? 'Ja, je ontvangt automatisch een BTW-factuur via email na elke betaling. Je kunt deze ook downloaden vanuit je account.' : 'Yes, you automatically receive a VAT invoice via email after each payment. You can also download them from your account.'}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="faq-actions">
+                                        <button class="btn-contact-form" data-category="billing">
+                                            ${lang === 'nl' ? 'Andere vraag? Neem contact op' : 'Other question? Contact us'}
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
+                        <!-- General Questions Category -->
                         <div class="col-md-6 col-lg-4">
-                            <div class="pathfinder-card" data-category="billing">
-                                <div class="pathfinder-icon">
-                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                                        <line x1="8" y1="21" x2="16" y2="21"/>
-                                        <line x1="12" y1="17" x2="12" y2="21"/>
-                                    </svg>
+                            <div class="pathfinder-card expandable-card" data-category="other" 
+                                 role="button" tabindex="0" 
+                                 aria-expanded="false" 
+                                 aria-controls="other-faq"
+                                 aria-label="${lang === 'nl' ? 'Algemene Vragen FAQ - klik om uit te klappen' : 'General Questions FAQ - click to expand'}">
+                                
+                                <div class="pathfinder-card-header">
+                                    <div class="pathfinder-icon">
+                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <path d="M9,9h6v6H9V9z"/>
+                                            <path d="M12,6V4m0,16v-2M6,12H4m16,0h-2"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="pathfinder-card-title">${lang === 'nl' ? 'Algemene Vragen' : 'General Questions'}</h3>
+                                    <p class="pathfinder-card-desc">${lang === 'nl' ? 'Andere vragen of feedback over onze service' : 'Other questions or feedback about our service'}</p>
+                                    <div class="pathfinder-toggle" aria-hidden="true">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M6 9l6 6 6-6"/>
+                                        </svg>
+                                    </div>
                                 </div>
-                                <h3 class="pathfinder-card-title">${lang === 'nl' ? 'Facturering & Betalingen' : 'Billing & Payments'}</h3>
-                                <p class="pathfinder-card-desc">${lang === 'nl' ? 'Vragen over kosten, facturen en betalingen' : 'Questions about costs, invoices and payments'}</p>
-                                <div class="pathfinder-arrow">→</div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6 col-lg-4">
-                            <div class="pathfinder-card" data-category="other">
-                                <div class="pathfinder-icon">
-                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="10"/>
-                                        <path d="M9,9h6v6H9V9z"/>
-                                        <path d="M12,6V4m0,16v-2M6,12H4m16,0h-2"/>
-                                    </svg>
+                                
+                                <div class="pathfinder-faq" id="other-faq" aria-hidden="true">
+                                    <div class="faq-header">
+                                        <h4 class="faq-title">${lang === 'nl' ? 'Veelgestelde Vragen' : 'Frequently Asked Questions'}</h4>
+                                        <p class="faq-subtitle">${lang === 'nl' ? 'Algemene informatie en feedback' : 'General information and feedback'}</p>
+                                    </div>
+                                    
+                                    <div class="faq-list">
+                                        <div class="faq-item">
+                                            <button class="faq-question" aria-expanded="false" aria-controls="other-q1"
+                                                    itemscope itemtype="https://schema.org/Question">
+                                                <span itemprop="name">${lang === 'nl' ? 'Hoe kan ik feedback geven over de service?' : 'How can I give feedback about the service?'}</span>
+                                                <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M6 9l6 6 6-6"/>
+                                                </svg>
+                                            </button>
+                                            <div class="faq-answer" id="other-q1" aria-hidden="true" itemscope itemtype="https://schema.org/Answer">
+                                                <div itemprop="text">${lang === 'nl' ? 'Je kunt feedback geven via het contactformulier, email of de feedback sectie in je dashboard. We waarderen alle input!' : 'You can give feedback through the contact form, email or the feedback section in your dashboard. We appreciate all input!'}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="faq-item">
+                                            <button class="faq-question" aria-expanded="false" aria-controls="other-q2"
+                                                    itemscope itemtype="https://schema.org/Question">
+                                                <span itemprop="name">${lang === 'nl' ? 'Waar kan ik updates over nieuwe features vinden?' : 'Where can I find updates about new features?'}</span>
+                                                <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M6 9l6 6 6-6"/>
+                                                </svg>
+                                            </button>
+                                            <div class="faq-answer" id="other-q2" aria-hidden="true" itemscope itemtype="https://schema.org/Answer">
+                                                <div itemprop="text">${lang === 'nl' ? 'Updates worden getoond in je dashboard, via email notificaties en op onze blog. Je kunt ook onze changelog bekijken voor gedetailleerde informatie.' : 'Updates are shown in your dashboard, via email notifications and on our blog. You can also check our changelog for detailed information.'}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="faq-item">
+                                            <button class="faq-question" aria-expanded="false" aria-controls="other-q3"
+                                                    itemscope itemtype="https://schema.org/Question">
+                                                <span itemprop="name">${lang === 'nl' ? 'Is er een mobiele app beschikbaar?' : 'Is there a mobile app available?'}</span>
+                                                <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M6 9l6 6 6-6"/>
+                                                </svg>
+                                            </button>
+                                            <div class="faq-answer" id="other-q3" aria-hidden="true" itemscope itemtype="https://schema.org/Answer">
+                                                <div itemprop="text">${lang === 'nl' ? 'Op dit moment is er geen native app, maar onze website is volledig geoptimaliseerd voor mobiel gebruik en werkt uitstekend op alle apparaten.' : 'Currently there is no native app, but our website is fully optimized for mobile use and works excellent on all devices.'}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="faq-actions">
+                                        <button class="btn-contact-form" data-category="other">
+                                            ${lang === 'nl' ? 'Andere vraag? Neem contact op' : 'Other question? Contact us'}
+                                        </button>
+                                    </div>
                                 </div>
-                                <h3 class="pathfinder-card-title">${lang === 'nl' ? 'Algemene Vragen' : 'General Questions'}</h3>
-                                <p class="pathfinder-card-desc">${lang === 'nl' ? 'Andere vragen of feedback over onze service' : 'Other questions or feedback about our service'}</p>
-                                <div class="pathfinder-arrow">→</div>
                             </div>
                         </div>
                     </div>
@@ -5490,7 +6639,7 @@ async function generateDynamicSitemap(env) {
     { loc: '/tags', priority: '0.8', changefreq: 'monthly', description: 'Tag Management' },
     { loc: '/privacy', priority: '0.6', changefreq: 'yearly', description: 'Privacy Policy' },
     { loc: '/terms', priority: '0.6', changefreq: 'yearly', description: 'Terms of Service' },
-    { loc: '/contact', priority: '0.6', changefreq: 'monthly', description: 'Contact Information' },
+    { loc: '/service', priority: '0.6', changefreq: 'monthly', description: 'Service & Contact Information' },
     { loc: '/unsubscribe', priority: '0.3', changefreq: 'never', description: 'Unsubscribe from notifications' },
     { loc: '/delete-data', priority: '0.3', changefreq: 'never', description: 'Data deletion request' }
   ];
@@ -5558,7 +6707,7 @@ function generateSitemap() {
     { loc: '/tags', priority: '0.8', description: 'Tag Management' },
     { loc: '/privacy', priority: '0.6', description: 'Privacy Policy' },
     { loc: '/terms', priority: '0.6', description: 'Terms of Service' },
-    { loc: '/contact', priority: '0.6', description: 'Contact Information' }
+    { loc: '/service', priority: '0.6', description: 'Service & Contact Information' }
   ];
   
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -6092,6 +7241,19 @@ async function getSubscriptionByToken(env, token) {
 
 async function getSubscriptionByDashboardToken(env, dashboardToken) {
   try {
+    // Development test token
+    if (dashboardToken === 'test123') {
+      console.log('🔧 Development test token detected');
+      return {
+        email: 'test@dhgate-monitor.com',
+        dashboard_token: 'test123',
+        dashboard_access: true,
+        subscribed: true,
+        email_marketing_consent: true,
+        created_at: new Date().toISOString()
+      };
+    }
+    
     // Try D1 Database first
     const result = await env.DB.prepare(`
       SELECT * FROM subscriptions WHERE dashboard_token = ?
@@ -6355,36 +7517,59 @@ function generateDashboardErrorHTML(lang, theme, errorType) {
     ${generateGlobalCSS(theme)}
     
     <style>
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Raleway', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-primary);
+        }
+        
+        ${generateServiceHeaderStyles()}
+        
+        ${generateBreadcrumbStyles()}
+        
         .error-container {
-            min-height: 100vh;
+            min-height: calc(100vh - 200px);
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 2rem 1rem;
         }
         
         .error-card {
-            max-width: 500px;
+            max-width: 450px;
             width: 100%;
             background: var(--card-bg);
-            border-radius: 16px;
-            padding: 3rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            box-shadow: var(--card-shadow);
             text-align: center;
         }
         
         .error-icon {
-            width: 64px;
-            height: 64px;
-            background: #f59e0b;
-            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1.5rem;
+            margin: 0 auto 1rem;
         }
     </style>
 </head>
 <body>
+    ${generateServiceHeader(
+        lang === 'nl' ? 'Service & Contact' : 'Service & Contact',
+        lang === 'nl' ? 'Professionele ondersteuning voor DHgate Monitor' : 'Professional support for DHgate Monitor',
+        lang,
+        theme
+    )}
+    
+    ${generateBreadcrumb('/dashboard', lang)}
+    
     <div class="error-container">
         <div class="error-card">
             <div class="error-icon">
@@ -6395,39 +7580,14 @@ function generateDashboardErrorHTML(lang, theme, errorType) {
                 </svg>
             </div>
             
-            <h1 style="color: var(--text-primary); margin-bottom: 1rem; font-size: 1.75rem; font-weight: 700;">
+            <h1 style="color: var(--text-primary); margin-bottom: 0.75rem; font-size: 1.25rem; font-weight: 600;">
                 ${message.title}
             </h1>
             
-            <p style="color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.6;">
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.5; font-size: 0.95rem;">
                 ${message.description}
             </p>
             
-            ${errorType === 'missing_key' ? `
-            <div style="margin-bottom: 2rem;">
-                <h3 style="color: var(--text-primary); margin-bottom: 1rem; font-size: 1.25rem; font-weight: 600;">
-                    ${message.form_title}
-                </h3>
-                
-                <form method="POST" action="/request-dashboard-access" style="text-align: center;">
-                    <input type="hidden" name="lang" value="${lang}">
-                    <input type="hidden" name="theme" value="${theme}">
-                    
-                    <div style="margin-bottom: 1rem;">
-                        <input type="email" 
-                               name="email" 
-                               placeholder="${message.email_placeholder}"
-                               required
-                               style="width: 100%; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--input-bg); color: var(--text-primary); font-size: 1rem;">
-                    </div>
-                    
-                    <button type="submit" 
-                            style="width: 100%; background: var(--accent-color); color: white; padding: 12px 24px; border: none; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;">
-                        ${message.button_text}
-                    </button>
-                </form>
-            </div>
-            ` : ''}
             
             <div>
                 <a href="/" style="background: var(--secondary-color); color: var(--text-primary); padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 600; display: inline-block;">
@@ -9465,7 +10625,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             <div class="navbar-menu">
                 <a href="#subscription-form" class="nav-link" onclick="scrollToSubscription(); return false;">${lang === 'nl' ? 'Beginnen' : 'Get Started'}</a>
                 <a href="/dashboard?lang=${lang}&theme=${theme}" class="nav-link">${lang === 'nl' ? 'Dashboard' : 'Dashboard'}</a>
-                <a href="/contact?lang=${lang}&theme=${theme}" class="nav-link">${lang === 'nl' ? 'Contact' : 'Contact'}</a>
+                <a href="/service?lang=${lang}&theme=${theme}" class="nav-link">${lang === 'nl' ? 'Service' : 'Service'}</a>
             </div>
             
             <div class="navbar-controls">
@@ -9531,7 +10691,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         <div class="mobile-menu-items">
             <a href="#subscription-form" class="mobile-nav-link" onclick="scrollToSubscription(); closeMobileMenu(); return false;">${lang === 'nl' ? 'Beginnen' : 'Get Started'}</a>
             <a href="/dashboard?lang=${lang}&theme=${theme}" class="mobile-nav-link">${lang === 'nl' ? 'Dashboard' : 'Dashboard'}</a>
-            <a href="/contact?lang=${lang}&theme=${theme}" class="mobile-nav-link">${lang === 'nl' ? 'Contact' : 'Contact'}</a>
+            <a href="/service?lang=${lang}&theme=${theme}" class="mobile-nav-link">${lang === 'nl' ? 'Service' : 'Service'}</a>
         </div>
         
         <div class="mobile-controls">
@@ -9613,7 +10773,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                 <path d="M7 17L17 7M17 7H7M17 7V17"/>
                             </svg>
                         </a>
-                        <a href="/contact?lang=${lang}&theme=${theme}" class="hero-cta-secondary">
+                        <a href="/service?lang=${lang}&theme=${theme}" class="hero-cta-secondary">
                             ${lang === 'nl' ? 'Meer informatie' : 'Learn More'}
                         </a>
                     </div>
@@ -10755,7 +11915,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 <div class="text-muted small d-flex flex-column flex-md-row justify-content-center gap-2 gap-md-3">
                     <a href="/privacy?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Privacybeleid' : 'Privacy Policy'}</a>
                     <a href="/terms?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Algemene voorwaarden' : 'Terms of Service'}</a>
-                    <a href="/contact?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Contact' : 'Contact'}</a>
+                    <a href="/service?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Service' : 'Service'}</a>
                     <a href="/delete-data?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Verwijder mijn data' : 'Delete my data'}</a>
                 </div>
                 <div class="text-muted small mt-2">
@@ -11729,8 +12889,8 @@ function generateEmailFooter(email, lang, emailType = 'general') {
                     ${lang === 'nl' ? 'Algemene voorwaarden' : 'Terms of Service'}
                 </a>
                 <span style="color: #cbd5e1;">•</span>
-                <a href="https://dhgate-monitor.com/contact?lang=${lang}" style="color: #64748b; text-decoration: none; font-size: 13px;">
-                    ${lang === 'nl' ? 'Contact' : 'Contact'}
+                <a href="https://dhgate-monitor.com/service?lang=${lang}" style="color: #64748b; text-decoration: none; font-size: 13px;">
+                    ${lang === 'nl' ? 'Service' : 'Service'}
                 </a>
             </div>
             
@@ -12150,11 +13310,11 @@ function generateDashboardAccessErrorHTML(lang, theme, errorType) {
                 </svg>
             </div>
             
-            <h1 style="color: var(--text-primary); margin-bottom: 1rem; font-size: 1.75rem; font-weight: 700;">
+            <h1 style="color: var(--text-primary); margin-bottom: 0.75rem; font-size: 1.25rem; font-weight: 600;">
                 ${message.title}
             </h1>
             
-            <p style="color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.6;">
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.5; font-size: 0.95rem;">
                 ${message.description}
             </p>
             
@@ -13339,7 +14499,7 @@ function generateDeleteDataPageHTML(email, lang, theme) {
                 <div class="text-muted small d-flex flex-column flex-md-row justify-content-center gap-2 gap-md-3">
                     <a href="/privacy?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Privacybeleid' : 'Privacy Policy'}</a>
                     <a href="/terms?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Algemene voorwaarden' : 'Terms of Service'}</a>
-                    <a href="/contact?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Contact' : 'Contact'}</a>
+                    <a href="/service?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Service' : 'Service'}</a>
                 </div>
                 <div class="text-muted small mt-2">
                     © ${new Date().getFullYear()} DHgate Monitor - ${lang === 'nl' ? 'Juridische informatie' : 'Legal information'}
