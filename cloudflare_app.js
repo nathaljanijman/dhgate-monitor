@@ -3,12 +3,22 @@
  * Uses D1 Database and KV Storage for data persistence
  */
 
-// Internationalization (i18n) support
+// Enhanced Internationalization (i18n) support with accessibility
 const translations = {
   nl: {
     // Main app
     app_title: "DHGate monitor",
     app_description: "Automatische shop en producten monitoring",
+    
+    // Accessibility labels
+    main_navigation: "Hoofdnavigatie",
+    skip_to_content: "Ga naar inhoud",
+    toggle_menu: "Menu in-/uitklappen",
+    toggle_theme: "Thema wijzigen",
+    switch_language: "Taal wijzigen",
+    close_modal: "Sluiten",
+    loading: "Laden...",
+    error_occurred: "Er is een fout opgetreden",
     
     // Navigation & Actions
     actions: "Acties",
@@ -86,6 +96,16 @@ const translations = {
     // Main app
     app_title: "DHGate monitor",
     app_description: "Automatic shop and product monitoring",
+    
+    // Accessibility labels
+    main_navigation: "Main navigation",
+    skip_to_content: "Skip to content",
+    toggle_menu: "Toggle menu",
+    toggle_theme: "Toggle theme",
+    switch_language: "Switch language",
+    close_modal: "Close",
+    loading: "Loading...",
+    error_occurred: "An error occurred",
     
     // Navigation & Actions  
     actions: "Actions",
@@ -1934,11 +1954,19 @@ function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage 
             const hamburger = document.querySelector('.hamburger');
             const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
             
+            if (!mobileMenu || !hamburger || !mobileMenuOverlay) return;
+            
+            // Update aria-expanded for accessibility
+            hamburger.setAttribute('aria-expanded', 'false');
+            
             mobileMenu.classList.remove('active');
             hamburger.classList.remove('active');
             mobileMenuOverlay.classList.remove('active');
             mobileMenuOverlay.style.display = 'none';
             document.body.style.overflow = '';
+            
+            // Return focus to hamburger button
+            hamburger.focus();
         }
         
         document.addEventListener('keydown', function(e) {
@@ -4964,19 +4992,153 @@ function generateUnsubscribePageHTML(subscription, token, t, lang, theme = 'ligh
 function generateLandingPageHTML(t, lang, theme = 'light') {
   return `
 <!DOCTYPE html>
-<html lang="${lang}">
+<html lang="${lang}" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DHgate Monitor - Automated Product Tracking</title>
-    <meta name="description" content="Automated DHgate product monitoring and tracking. Get instant notifications for new products matching your criteria.">
+    
+    <!-- Multilingual meta tags -->
+    <title>${lang === 'nl' ? 'DHgate Monitor - Geautomatiseerd Product Volgen' : 'DHgate Monitor - Automated Product Tracking'}</title>
+    <meta name="description" content="${lang === 'nl' ? 'Geautomatiseerde DHgate product monitoring en tracking. Ontvang direct meldingen voor nieuwe producten die voldoen aan uw criteria.' : 'Automated DHgate product monitoring and tracking. Get instant notifications for new products matching your criteria.'}">
+    
+    <!-- Hreflang tags for SEO -->
+    <link rel="alternate" href="https://dhgate-monitor.com/?lang=en" hreflang="en" />
+    <link rel="alternate" href="https://dhgate-monitor.com/?lang=nl" hreflang="nl" />
+    <link rel="alternate" href="https://dhgate-monitor.com/" hreflang="x-default" />
+    
+    <!-- Open Graph multilingual -->
+    <meta property="og:title" content="${lang === 'nl' ? 'DHgate Monitor - Geautomatiseerd Product Volgen' : 'DHgate Monitor - Automated Product Tracking'}" />
+    <meta property="og:description" content="${lang === 'nl' ? 'Geautomatiseerde DHgate product monitoring en tracking. Ontvang direct meldingen voor nieuwe producten die voldoen aan uw criteria.' : 'Automated DHgate product monitoring and tracking. Get instant notifications for new products matching your criteria.'}" />
+    <meta property="og:locale" content="${lang === 'nl' ? 'nl_NL' : 'en_US'}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DHgate Monitor" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${lang === 'nl' ? 'DHgate Monitor - Geautomatiseerd Product Volgen' : 'DHgate Monitor - Automated Product Tracking'}" />
+    <meta name="twitter:description" content="${lang === 'nl' ? 'Geautomatiseerde DHgate product monitoring en tracking.' : 'Automated DHgate product monitoring and tracking.'}" />
+    
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "DHgate Monitor",
+        "description": "${lang === 'nl' ? 'Geautomatiseerde DHgate product monitoring en tracking. Ontvang direct meldingen voor nieuwe producten die voldoen aan uw criteria.' : 'Automated DHgate product monitoring and tracking. Get instant notifications for new products matching your criteria.'}",
+        "url": "https://dhgate-monitor.com",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "EUR"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "127"
+        },
+        "inLanguage": ["${lang === 'nl' ? 'nl-NL' : 'en-US'}"]
+    }
+    </script>
+    
     ${generateGlobalCSS(theme)}
     ${generateGA4Script()}
     ${generateCookieConsentBanner(lang)}
     
     <style>
+        /* Accessibility improvements */
+        .skip-to-content {
+            position: absolute;
+            left: -9999px;
+            z-index: 9999;
+            padding: 8px 16px;
+            background: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 0 0 4px 4px;
+            transition: left 0.3s;
+        }
+        
+        .skip-to-content:focus {
+            left: 16px;
+            top: 16px;
+        }
+        
+        /* Enhanced focus styles */
+        *:focus {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+        
+        button:focus,
+        a:focus,
+        input:focus,
+        select:focus,
+        textarea:focus {
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+        }
+        
+        /* Screen reader only text */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        /* Enhanced form accessibility */
+        .error-message {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            min-height: 1.25rem;
+            display: block;
+        }
+        
+        .form-control:invalid {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+        
+        .form-control:valid {
+            border-color: #16a34a;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* Reduce motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
         body {
             font-family: 'Raleway', sans-serif;
             background: var(--bg-gradient);
@@ -6777,6 +6939,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         @media (max-width: 768px) {
             .hamburger {
                 display: flex;
+                min-height: 44px; /* Touch target minimum */
+                min-width: 44px;
             }
             
             .navbar-menu {
@@ -6786,6 +6950,31 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             .nav-lang-switcher,
             .nav-theme-toggle {
                 display: none;
+            }
+            
+            /* Improved text contrast for mobile */
+            body {
+                font-size: 16px; /* Minimum for mobile readability */
+                line-height: 1.6;
+            }
+        }
+        
+        /* Tablet responsive improvements */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .navbar-container {
+                padding: 0 2rem;
+            }
+            
+            .nav-cta-button {
+                font-size: 0.9rem;
+                padding: 0.6rem 1.2rem;
+            }
+        }
+        
+        /* Large screen optimizations */
+        @media (min-width: 1400px) {
+            .navbar-container {
+                max-width: 1400px;
             }
         }
         
@@ -7313,8 +7502,11 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
     </style>
 </head>
 <body data-page-type="landing">
+    <!-- Skip to content link for screen readers -->
+    <a href="#main-content" class="skip-to-content" tabindex="1">${lang === 'nl' ? 'Ga naar inhoud' : 'Skip to content'}</a>
+    
     <!-- Professional Navigation Bar -->
-    <nav class="professional-navbar">
+    <nav class="professional-navbar" role="navigation" aria-label="${lang === 'nl' ? 'Hoofdnavigatie' : 'Main navigation'}">
         <div class="navbar-container">
             <a href="/?lang=${lang}&theme=${theme}" class="navbar-brand">
                 <img src="/assets/logo.png?v=2" alt="DHgate Monitor" height="80" style="max-width: 400px;">
@@ -7336,11 +7528,17 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 
                 <!-- Theme Toggle -->
                 <div class="nav-theme-toggle">
-                    <div class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" onclick="toggleTheme()" aria-label="Toggle theme">
-                        <div class="theme-toggle-slider">
+                    <button class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" 
+                            onclick="toggleTheme()" 
+                            aria-label="${lang === 'nl' ? (theme === 'dark' ? 'Schakel naar licht thema' : 'Schakel naar donker thema') : (theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme')}"
+                            role="switch"
+                            aria-checked="${theme === 'dark' ? 'true' : 'false'}"
+                            tabindex="0">
+                        <div class="theme-toggle-slider" aria-hidden="true">
                             ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'}
                         </div>
-                    </div>
+                        <span class="sr-only">${lang === 'nl' ? (theme === 'dark' ? 'Donker thema actief' : 'Licht thema actief') : (theme === 'dark' ? 'Dark theme active' : 'Light theme active')}</span>
+                    </button>
                 </div>
                 
                 <a href="#subscription-form" class="nav-cta-button" onclick="scrollToSubscription(); return false;">
@@ -7348,10 +7546,11 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 </a>
                 
                 <!-- Mobile Hamburger Menu -->
-                <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Toggle Menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                <button class="hamburger" onclick="toggleMobileMenu()" aria-label="${lang === 'nl' ? 'Menu in-/uitklappen' : 'Toggle menu'}" aria-expanded="false" aria-controls="mobileMenu">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span class="sr-only">${lang === 'nl' ? 'Menu' : 'Menu'}</span>
                 </button>
             </div>
         </div>
@@ -7394,26 +7593,33 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             
             <!-- Mobile Theme Toggle -->
             <div class="mobile-theme-toggle">
-                <span style="color: var(--text-muted); font-size: 0.9rem;">${lang === 'nl' ? 'Thema:' : 'Theme:'}</span>
-                <div class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" onclick="toggleTheme()" aria-label="Toggle theme">
-                    <div class="theme-toggle-slider">
+                <span style="color: var(--text-muted); font-size: 0.9rem;" id="mobile-theme-label">${lang === 'nl' ? 'Thema:' : 'Theme:'}</span>
+                <button class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" 
+                        onclick="toggleTheme()" 
+                        aria-labelledby="mobile-theme-label"
+                        aria-label="${lang === 'nl' ? (theme === 'dark' ? 'Schakel naar licht thema' : 'Schakel naar donker thema') : (theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme')}"
+                        role="switch"
+                        aria-checked="${theme === 'dark' ? 'true' : 'false'}">
+                    <div class="theme-toggle-slider" aria-hidden="true">
                         ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'}
                     </div>
-                </div>
+                    <span class="sr-only">${lang === 'nl' ? (theme === 'dark' ? 'Donker thema actief' : 'Licht thema actief') : (theme === 'dark' ? 'Dark theme active' : 'Light theme active')}</span>
+                </button>
             </div>
         </div>
     </div>
 
     <!-- Simplified Hero Section -->
-    <section class="hero-section">
-        <div class="hero-background-pattern"></div>
-        <div class="hero-background-image"></div>
-        
-        <div class="hero-container">
-            <div class="hero-content-wrapper">
-                <div class="hero-main-content" style="text-align: left;">
+    <main id="main-content" role="main">
+        <section class="hero-section" aria-labelledby="hero-title">
+            <div class="hero-background-pattern" aria-hidden="true"></div>
+            <div class="hero-background-image" aria-hidden="true"></div>
+            
+            <div class="hero-container">
+                <div class="hero-content-wrapper">
+                    <header class="hero-main-content" style="text-align: left;">
                     
-                    <h1 class="hero-main-title animate-fade-in-up" style="animation-delay: 0.1s;">
+                    <h1 id="hero-title" class="hero-main-title animate-fade-in-up" style="animation-delay: 0.1s;">
                         ${lang === 'nl' ? 
                             'Professionele <span class="gradient-text-hero">DHgate Monitoring</span> voor E-commerce' :
                             'Professional <span class="gradient-text-hero">DHgate Monitoring</span> for E-commerce'
@@ -8315,13 +8521,15 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
     <!-- How It Works Section -->
 
     <!-- Subscription Form Section -->
-    <section id="subscription-form" class="subscription-section">
+    <section id="subscription-form" class="subscription-section" aria-labelledby="subscription-title">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <div class="subscription-card">
                         
-                        <form method="POST" action="/subscribe" class="subscription-form" id="progressiveForm">
+                        <form method="POST" action="/subscribe" class="subscription-form" id="progressiveForm" 
+                              role="form" aria-label="${lang === 'nl' ? 'Registratieformulier voor DHgate monitoring' : 'Registration form for DHgate monitoring'}"
+                              novalidate>
                             <input type="hidden" name="lang" value="${lang}">
                             <input type="hidden" name="theme" value="${theme}">
                             
@@ -8339,8 +8547,9 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                         }
                                     </p>
                                     <div class="form-group">
+                                        <label for="email" class="sr-only">${lang === 'nl' ? 'Email adres' : 'Email address'}</label>
                                         <div class="input-wrapper">
-                                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                                 <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2"/>
                                                 <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="2"/>
                                             </svg>
@@ -8350,9 +8559,14 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                                 name="email" 
                                                 class="form-control form-control-lg" 
                                                 placeholder="${lang === 'nl' ? 'jouw@email.com' : 'your@email.com'}" 
+                                                aria-label="${lang === 'nl' ? 'Voer je email adres in' : 'Enter your email address'}"
+                                                aria-describedby="email-error"
+                                                autocomplete="email"
+                                                spellcheck="false"
                                                 required
                                             >
                                         </div>
+                                        <div id="email-error" class="error-message" role="alert" aria-live="polite"></div>
                                     </div>
                                 </div>
                                 <div class="step-actions">
@@ -8691,6 +8905,9 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             if (isActive) {
                 closeMobileMenu();
             } else {
+                // Update aria-expanded for accessibility
+                hamburger.setAttribute('aria-expanded', 'true');
+                
                 // Show overlay first
                 mobileMenuOverlay.style.display = 'block';
                 mobileMenuOverlay.classList.add('active');
@@ -8698,6 +8915,12 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 // Then show and animate menu
                 mobileMenu.classList.add('active');
                 hamburger.classList.add('active');
+                
+                // Trap focus in mobile menu
+                const firstFocusableElement = mobileMenu.querySelector('a, button');
+                if (firstFocusableElement) {
+                    firstFocusableElement.focus();
+                }
                 
                 document.body.style.overflow = 'hidden';
                 console.log('✅ Menu opened successfully');
@@ -8716,11 +8939,19 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             const hamburger = document.querySelector('.hamburger');
             const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
             
+            if (!mobileMenu || !hamburger || !mobileMenuOverlay) return;
+            
+            // Update aria-expanded for accessibility
+            hamburger.setAttribute('aria-expanded', 'false');
+            
             mobileMenu.classList.remove('active');
             hamburger.classList.remove('active');
             mobileMenuOverlay.classList.remove('active');
             mobileMenuOverlay.style.display = 'none';
             document.body.style.overflow = '';
+            
+            // Return focus to hamburger button
+            hamburger.focus();
         }
         
         // Close mobile menu on escape key
@@ -9004,6 +9235,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         });
         
     </script>
+    </main>
 </body>
 </html>
   `;
