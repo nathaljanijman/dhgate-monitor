@@ -146,7 +146,7 @@ Tests run automatically at **6:00 AM UTC (8:00 AM Nederlandse tijd)** daily via 
 - 🔍 **Detailed Results**: Test-by-test breakdown with screenshots  
 - 💡 **Actionable Recommendations**: Prioritized fix suggestions
 - 🎯 **Next Actions**: Assigned tasks with deadlines
-- 📧 **Email Distribution**: Daily reports sent to nathaljanijman@hotmail.com at 6:00 AM UTC
+- 📧 **Email Distribution**: Daily reports sent to configured personal address at 6:00 AM UTC
 
 ### Report Formats:
 - **HTML**: Interactive dashboard with charts and drill-down

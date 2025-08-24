@@ -496,6 +496,51 @@ npm run test:accessibility
 npm run test:performance
 ```
 
+## 📊 **Viewing Test Results**
+
+### **Quick Results (Terminal)**
+```bash
+# Simple test runner with immediate feedback
+npm run test:qa
+
+# Output shows:
+# 🧪 Testing: 🏠 Landing Page
+#    ✅ Landing Page - Tests passed
+# 📊 SUMMARY: ✅ 2 Passed ❌ 0 Failed
+```
+
+### **Detailed HTML Reports**
+```bash
+# Interactive test runner with detailed reports
+npm run test:e2e:ui
+
+# Opens browser with:
+# - Test results with screenshots
+# - Failure details and stack traces  
+# - Performance metrics
+# - Visual test comparison
+```
+
+### **Individual Test Categories**
+```bash
+# Test specific areas with detailed output
+npm run test:accessibility  # WCAG compliance results
+npm run test:performance    # SEO and speed metrics
+
+# Results saved in:
+test-results/
+├── screenshots/     # Visual evidence of failures
+├── videos/         # Test execution recordings  
+├── html-report/    # Interactive HTML dashboard
+└── *.json         # Machine-readable results
+```
+
+### **Real-time Test Monitoring**
+- **Live Results**: `test:e2e:ui` shows real-time test execution
+- **Failure Screenshots**: Automatic capture when tests fail
+- **Performance Metrics**: Load times, accessibility scores
+- **Error Details**: Stack traces and failure context
+
 ---
 
 ## Support & Contact
