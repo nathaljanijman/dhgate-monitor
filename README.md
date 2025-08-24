@@ -94,6 +94,23 @@ npm run dev
 npm run deploy
 ```
 
+### **🧪 Quality Assurance Setup**
+```bash
+# Setup QA testing environment
+./scripts/setup-qa.sh
+
+# Run comprehensive QA tests
+npm run test:qa
+
+# Run specific test categories
+npm run test:accessibility    # WCAG 2.1 AA compliance
+npm run test:performance      # SEO & performance
+npm run test:e2e             # All end-to-end tests
+
+# Interactive test runner
+npm run test:e2e:ui
+```
+
 ### **Environment Configuration**
 ```env
 # Required Environment Variables
@@ -413,7 +430,31 @@ const breadcrumbTranslations = {
 
 ---
 
-## Testing & Development
+## 🧪 Quality Assurance & Testing
+
+### **Comprehensive QA Testing Framework**
+DHgate Monitor includes a professional QA testing system that ensures **reliability, compliance, and user experience excellence**.
+
+#### **🔍 Test Coverage**
+- **✅ Core Functionality**: Landing page, dashboard access, email workflows
+- **♿ WCAG 2.1 AA Compliance**: Accessibility testing for all users
+- **🔒 GDPR Compliance**: Privacy law compliance validation
+- **📧 Email Journey Testing**: Registration, dashboard access, notifications
+- **🚀 Performance & SEO**: Speed optimization and search engine compliance
+- **🌐 Cross-browser Testing**: Chrome, Firefox, Safari compatibility
+- **📱 Device Testing**: Desktop, mobile, tablet responsiveness
+
+#### **🤖 Automated Daily Testing**
+- **Scheduled**: Daily testing at 9:00 AM UTC via GitHub Actions
+- **Continuous Integration**: Tests on every code push and pull request
+- **Multi-environment**: Production and development environment testing
+- **Real-time Reporting**: Automated email reports with actionable insights
+
+#### **📊 Professional Reporting**
+- **Executive Dashboard**: HTML reports with interactive charts
+- **Detailed Analytics**: Pass rates, performance metrics, compliance scores
+- **Issue Tracking**: Prioritized recommendations with assigned deadlines
+- **Team Notifications**: Slack integration for critical issues
 
 ### **Testing Unsubscribe Flow**
 The unsubscribe system can be tested in multiple ways:
@@ -444,6 +485,15 @@ curl "https://dhgate-monitor.com/api/scraper/trigger"
 # Test unsubscribe action (requires valid token)
 curl -X POST "https://dhgate-monitor.com/api/unsubscribe" \
   -d "token=VALID_TOKEN&action=unsubscribe"
+
+# Run QA test suite
+npm run test:qa
+
+# Test accessibility compliance
+npm run test:accessibility
+
+# Performance and SEO validation
+npm run test:performance
 ```
 
 ---
@@ -470,10 +520,21 @@ This project is proprietary software developed for automated DHgate product moni
 
 ---
 
-*Last Updated: August 23, 2025*
-*Version: 3.7 - Innovative Breadcrumb Navigation System*
+*Last Updated: August 24, 2025*
+*Version: 3.8 - Professional QA Testing Framework*
 
-### **Version 3.7 Highlights**  
+### **Version 3.8 Highlights**  
+- **🧪 Comprehensive QA Framework** - Professional testing system with Playwright for end-to-end validation
+- **♿ WCAG 2.1 AA Compliance Testing** - Automated accessibility validation with detailed reporting
+- **🔒 GDPR Compliance Validation** - Privacy law compliance testing with cookie consent verification
+- **📧 Email Journey Testing** - Complete validation of registration, dashboard access, and notification flows
+- **🚀 Performance & SEO Testing** - Speed optimization and search engine compliance validation
+- **🤖 Automated Daily Testing** - GitHub Actions workflow with 9:00 AM UTC scheduling
+- **📊 Executive Reporting** - HTML dashboards with interactive charts and actionable insights
+- **🌐 Cross-browser Testing** - Chrome, Firefox, Safari compatibility validation across devices
+- **🎯 Quality Metrics** - 95%+ pass rate targets with comprehensive compliance tracking
+
+### **Previous Version 3.7 Features**  
 - **🧭 Innovative Breadcrumb System** - Glassmorphism navigation met sticky positioning op alle pagina's behalve homepage
 - **✨ Micro-interactions Design** - Hover shimmer effecten, glow animaties en smooth scale transforms voor premium UX
 - **🌐 Multilingual Breadcrumbs** - Automatische localisatie van breadcrumb labels (NL/EN) met path-mapping systeem

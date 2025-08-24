@@ -7477,7 +7477,7 @@ function generateDashboardErrorHTML(lang, theme, errorType) {
       nl: {
         title: 'Dashboard toegang vereist',
         description: 'Je hebt een geldige dashboard link nodig om toegang te krijgen. Vul hieronder je emailadres in om een nieuwe dashboard link te ontvangen.',
-        form_title: 'Dashboard toegang aanvragen',
+        form_title: '',
         email_placeholder: 'Voer je emailadres in',
         button_text: 'Stuur dashboard link',
         success_message: 'Dashboard link verzonden! Controleer je email.'
@@ -7588,9 +7588,37 @@ function generateDashboardErrorHTML(lang, theme, errorType) {
                 ${message.description}
             </p>
             
+            ${errorType === 'missing_key' ? `
+            <!-- Email Form for Dashboard Access -->
+            <form method="POST" action="/request-dashboard-access" style="margin-bottom: 1.5rem;">
+                <input type="hidden" name="lang" value="${lang}">
+                <input type="hidden" name="theme" value="${theme}">
+                
+                <div style="margin-bottom: 1rem; text-align: left;">
+                    <label for="email" style="display: block; font-weight: 500; color: var(--text-primary); margin-bottom: 0.5rem; font-size: 0.9rem;">
+                        ${message.form_title || (lang === 'nl' ? 'Email adres:' : 'Email address:')}
+                    </label>
+                    <input type="email" 
+                           id="email" 
+                           name="email" 
+                           placeholder="${message.email_placeholder}"
+                           required
+                           style="width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem; background: var(--card-bg); color: var(--text-primary); transition: border-color 0.3s ease;"
+                           onfocus="this.style.borderColor='var(--accent-color)'"
+                           onblur="this.style.borderColor='var(--border-color)'">
+                </div>
+                
+                <button type="submit" 
+                        style="width: 100%; background: var(--btn-primary-bg); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; margin-bottom: 1rem;"
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(37, 99, 235, 0.3)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                    ${message.button_text}
+                </button>
+            </form>
+            ` : ''}
             
             <div>
-                <a href="/" style="background: var(--secondary-color); color: var(--text-primary); padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 600; display: inline-block;">
+                <a href="/?lang=${lang}&theme=${theme}" style="background: var(--secondary-color); color: var(--text-primary); padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 600; display: inline-block;">
                     ${lang === 'nl' ? 'Terug naar Homepage' : 'Back to Homepage'}
                 </a>
             </div>
@@ -8388,12 +8416,51 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         }
         
         .hero-content-wrapper {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
+            display: flex;
             align-items: center;
-            text-align: center;
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 0;
         }
+        
+        .hero-main-content {
+            flex: 1;
+            max-width: 600px;
+        }
+        
+        .hero-visual {
+            flex: 0 0 400px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Ensure desktop layout */
+        @media (min-width: 769px) {
+            .hero-content-wrapper {
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                gap: 3rem !important;
+            }
+            
+            .hero-main-content {
+                flex: 1 !important;
+                text-align: left !important;
+            }
+            
+            .hero-visual {
+                flex: 0 0 400px !important;
+                order: 2 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+        }
+        
+        
         
         .hero-badge {
             display: inline-flex;
@@ -8503,6 +8570,12 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         
         .hero-visual {
             position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem 0;
+            margin: 0;
+            height: 100%;
         }
         
         /* Mobile Hero Mockup Styling */
@@ -8512,18 +8585,25 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             align-items: center;
             position: relative;
             z-index: 1;
+            background: transparent;
+            padding: 0;
+            margin: 0;
         }
         
         .hero-mobile-image {
-            max-width: 400px;
+            max-width: 320px;
             width: 100%;
             height: auto;
-            border-radius: 12px;
+            border-radius: 8px;
+            box-shadow: none;
             transition: all 0.3s ease;
+            background: transparent;
+            display: block;
         }
         
         .hero-mobile-image:hover {
-            transform: scale(1.02);
+            transform: scale(1.01);
+            opacity: 0.9;
         }
         
         /* Hero Image Placeholder */
@@ -10350,11 +10430,33 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             }
         }
         
-        @media (max-width: 1024px) {
+        /* Mobile layout - only applied on screens 768px and below */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 2rem 0;
+            }
+            
+            .hero-container {
+                display: block;
+                padding: 0 1.5rem;
+                max-width: 100%;
+            }
+            
             .hero-content-wrapper {
-                grid-template-columns: 1fr;
+                display: flex;
+                flex-direction: column;
                 gap: 2rem;
                 text-align: center;
+                width: 100%;
+                margin: 0;
+            }
+            
+            .hero-main-content {
+                max-width: 100%;
+            }
+            
+            .hero-visual {
+                flex: none;
             }
             
             .hero-main-content {
@@ -10370,25 +10472,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 transform: none;
                 max-width: 400px;
                 margin: 0 auto;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            /* Reset and clean mobile layout */
-            .hero-section {
-                padding: 2rem 0 !important;
-            }
-            
-            .hero-container {
-                display: block !important;
-                padding: 0 1.5rem !important;
-                max-width: 100% !important;
-                gap: 0 !important;
-            }
-            
-            .hero-content-wrapper {
-                width: 100%;
-                margin: 0;
             }
             
             .hero-main-content {
@@ -10727,7 +10810,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             
             <div class="hero-container">
                 <div class="hero-content-wrapper">
-                    <header class="hero-main-content" style="text-align: left;">
+                    <div class="hero-main-content">
                     
                     <h1 id="hero-title" class="hero-main-title animate-fade-in-up" style="animation-delay: 0.1s;">
                         ${lang === 'nl' ? 
