@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHgate Monitor QA Rapport</title>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent-color: #2563EB;
+            --accent-secondary: #EA580C;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --border-color: #e2e8f0;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --border-radius: 12px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: #f8fafc;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        /* Email Container */
+        .email-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(17, 24, 39, 0.1);
+            overflow: hidden;
+        }
+        
+        /* Service Page Header - Exact DHGate Gradient */
+        .header {
+            background: linear-gradient(135deg, #2563EB 0%, #EA580C 100%);
+            position: relative;
+            padding: 32px 40px;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0.5;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Logo Styles - Responsive */
+        .dhgate-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Raleway', sans-serif;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            flex-shrink: 0;
+        }
+        
+        .logo-icon img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .logo-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            line-height: 1.2;
+            letter-spacing: -0.025em;
+        }
+
+        .logo-subtitle {
+            font-size: 13px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.2;
+        }
+        
+        /* Navigation */
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-link.active {
+            color: white;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Header Controls */
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .lang-switcher {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .lang-option {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .lang-option.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            padding: 8px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.2s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        /* QA Banner */
+        .qa-banner {
+            background: var(--bg-primary);
+            padding: 32px 40px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .qa-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        
+        .qa-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+        
+        /* Content */
+        .content {
+            padding: 40px;
+        }
+        
+        .greeting {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+        
+        /* Metrics Grid - Clickable */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin: 32px 0;
+        }
+        
+        .metric-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.15);
+            border-color: var(--accent-color);
+        }
+        
+        .metric-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+        
+        .metric-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Test Results Section */
+        .test-results {
+            margin: 40px 0;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        /* Test Categories */
+        .test-category {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .category-header {
+            background: linear-gradient(90deg, var(--accent-color), #1e40af);
+            color: white;
+            padding: 16px 24px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .category-content {
+            padding: 20px 24px;
+        }
+        
+        /* Test Items - Clickable Tiles */
+        .test-item {
+            display: block;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 12px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .test-item:hover {
+            background: rgba(37, 99, 235, 0.02);
+            border-color: var(--accent-color);
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+        }
+        
+        .test-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .test-info {
+            flex: 1;
+        }
+        
+        .test-name {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .test-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        
+        .test-status {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 16px;
+            flex-shrink: 0;
+        }
+        
+        .status-passed { background: #dcfce7; color: #166534; }
+        .status-failed { background: #fee2e2; color: #991b1b; }
+        .status-warning { background: #fef3c7; color: #92400e; }
+        
+        .test-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            opacity: 0.8;
+            font-style: italic;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            margin: 40px 0;
+            padding: 32px;
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-color), #1e40af);
+            color: white;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 16px;
+            margin: 8px 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 32px 40px;
+            text-align: center;
+        }
+        
+        .footer-brand {
+            font-weight: 700;
+            color: var(--accent-color);
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+        
+        /* Modal for Test Details */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: translateY(50px);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--accent-color), #1e40af);
+            color: white;
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        .detail-section {
+            margin-bottom: 24px;
+        }
+        
+        .detail-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+        
+        .detail-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+        
+        .solution-prompt {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-top: 16px;
+            position: relative;
+        }
+        
+        .solution-prompt::before {
+            content: "💡";
+            font-size: 20px;
+            margin-right: 8px;
+        }
+        
+        .copy-prompt-btn {
+            background: linear-gradient(135deg, var(--accent-color), #1e40af);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .copy-prompt-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        
+        .copy-prompt-btn.copied {
+            background: var(--success-color);
+        }
+        
+        /* Mobile Responsive */
+        @media only screen and (max-width: 768px) {
+            .header {
+                padding: 20px 16px;
+                min-height: 80px;
+            }
+            
+            .logo-text {
+                display: none;
+            }
+            
+            .logo-icon img {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .header-controls {
+                gap: 8px;
+            }
+            
+            .lang-switcher {
+                display: none;
+            }
+            
+            .qa-banner {
+                padding: 24px 20px;
+            }
+            
+            .content {
+                padding: 24px 20px;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            
+            .test-item {
+                padding: 16px;
+            }
+            
+            .test-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .test-status {
+                margin-left: 0;
+                align-self: flex-end;
+            }
+            
+            .modal-content {
+                margin: 10px;
+                max-height: 90vh;
+            }
+            
+            .modal-header, .modal-body {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Service Page Header with DHGate Gradient -->
+        <header class="header">
+            <div class="header-content">
+                <a href="#" class="dhgate-logo">
+                    <div class="logo-icon">
+                        <img src="./assets/DHGateVector.png" alt="DHgate Monitor">
+                    </div>
+                    <div class="logo-text">
+                        <div class="logo-title">DHgate Monitor</div>
+                        <div class="logo-subtitle">E-commerce Intelligence</div>
+                    </div>
+                </a>
+                
+                <nav class="nav-menu">
+                    <ul class="nav-links">
+                        <li><a href="#" class="nav-link">Dashboard</a></li>
+                        <li><a href="#" class="nav-link active">QA Report</a></li>
+                        <li><a href="#" class="nav-link">Service</a></li>
+                    </ul>
+                    
+                    <div class="header-controls">
+                        <div class="lang-switcher">
+                            <a href="#" class="lang-option">EN</a>
+                            <a href="#" class="lang-option active">NL</a>
+                        </div>
+                        
+                        <button class="theme-toggle" title="Toggle theme">
+                            🌙
+                        </button>
+                    </div>
+                </nav>
+            </div>
+        </header>
+        
+        <!-- QA Banner -->
+        <div class="qa-banner">
+            <div class="qa-title">Quality Assurance Report</div>
+            <div class="qa-subtitle">Dagelijkse kwaliteitscontrole - ${new Date().toLocaleDateString('nl-NL', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            })}</div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="greeting">
+                <strong>Hallo Nathalja,</strong>
+            </div>
+
+            <p style="margin-bottom: 24px; color: var(--text-secondary); font-size: 16px;">
+                Hier is je dagelijkse QA rapport voor het DHgate Monitor platform. 
+                Klik op elke test tile voor gedetailleerde informatie en oplossingsvoorstellen.
+            </p>
+
+            <!-- Clickable Metrics Grid -->
+            <div class="metrics-grid">
+                <a href="#" class="metric-card" onclick="showMetricDetails('total')">
+                    <div class="metric-number">6</div>
+                    <div class="metric-label">Totaal Tests</div>
+                </a>
+                <a href="#" class="metric-card" onclick="showMetricDetails('passed')">
+                    <div class="metric-number" style="color: var(--success-color);">4</div>
+                    <div class="metric-label">Geslaagd</div>
+                </a>
+                <a href="#" class="metric-card" onclick="showMetricDetails('failed')">
+                    <div class="metric-number" style="color: var(--danger-color);">1</div>
+                    <div class="metric-label">Gefaald</div>
+                </a>
+                <a href="#" class="metric-card" onclick="showMetricDetails('passrate')">
+                    <div class="metric-number" style="color: var(--warning-color);">67%</div>
+                    <div class="metric-label">Slagingspercentage</div>
+                </a>
+            </div>
+
+            <!-- Test Results with Clickable Tiles -->
+            <div class="test-results">
+                <div class="section-title">Test Resultaten (Klik voor details)</div>
+                
+                <!-- Toegankelijkheid -->
+                <div class="test-category">
+                    <div class="category-header">Toegankelijkheid (WCAG 2.1 AA)</div>
+                    <div class="category-content">
+                        <a href="#" class="test-item" onclick="showTestDetails('alt-text')">
+                            <div class="test-header">
+                                <div class="test-info">
+                                    <div class="test-name">Alt-teksten afbeeldingen</div>
+                                    <div class="test-description">Alle afbeeldingen hebben correcte alt-teksten voor screen readers</div>
+                                </div>
+                                <span class="test-status status-passed">Geslaagd</span>
+                            </div>
+                            <div class="test-hint">Klik voor gedetailleerde analyse →</div>
+                        </a>
+                        
+                        <a href="#" class="test-item" onclick="showTestDetails('color-contrast')">
+                            <div class="test-header">
+                                <div class="test-info">
+                                    <div class="test-name">Kleurcontrast validatie</div>
+                                    <div class="test-description">Enkele elementen voldoen niet aan WCAG 2.1 AA contrast vereisten</div>
+                                </div>
+                                <span class="test-status status-warning">Waarschuwing</span>
+                            </div>
+                            <div class="test-hint">Klik voor oplossingsvoorstellen →</div>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Performance & SEO -->
+                <div class="test-category">
+                    <div class="category-header">Performance & SEO</div>
+                    <div class="category-content">
+                        <a href="#" class="test-item" onclick="showTestDetails('load-time')">
+                            <div class="test-header">
+                                <div class="test-info">
+                                    <div class="test-name">Pagina laadtijd</div>
+                                    <div class="test-description">Homepage laadt binnen 2 seconden op alle geteste devices</div>
+                                </div>
+                                <span class="test-status status-passed">Geslaagd</span>
+                            </div>
+                            <div class="test-hint">Klik voor performance details →</div>
+                        </a>
+                        
+                        <a href="#" class="test-item" onclick="showTestDetails('mobile-responsive')">
+                            <div class="test-header">
+                                <div class="test-info">
+                                    <div class="test-name">Mobile responsiveness</div>
+                                    <div class="test-description">Layout breekt op smartphones, CSS media queries vereisen aanpassingen</div>
+                                </div>
+                                <span class="test-status status-failed">Gefaald</span>
+                            </div>
+                            <div class="test-hint">Klik voor fix instructies →</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="cta-section">
+                <h3 style="margin-bottom: 16px; color: var(--text-primary);">Actie Vereist</h3>
+                <p style="margin-bottom: 24px; color: var(--text-secondary);">
+                    Er zijn issues gevonden die je aandacht vereisen. Gebruik de buttons hieronder om direct actie te ondernemen.
+                </p>
+                <a href="https://dhgate-monitor.com/qa/dashboard" class="cta-button">
+                    QA Dashboard
+                </a>
+                <a href="https://dhgate-monitor.com/qa/fix-all" class="cta-button">
+                    Fix All Issues
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-brand">DHgate Monitor</div>
+            <div style="color: var(--text-secondary); font-size: 14px; margin-bottom: 8px;">Professional E-commerce Monitoring Platform</div>
+            <div style="color: var(--text-secondary); font-size: 14px; margin-bottom: 8px;">Volgende test: Morgen om 06:00 UTC (08:00 Nederlandse tijd)</div>
+            <div style="margin-top: 16px; font-size: 12px; color: var(--text-secondary); font-style: italic;">
+                Dit rapport is automatisch gegenereerd door het DHgate Monitor QA systeem.<br>
+                Voor technische ondersteuning: support@dhgate-monitor.com
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Test Details -->
+    <div class="modal-overlay" id="testModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Test Details</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test data with detailed information and solution prompts
+        const testData = {
+            'alt-text': {
+                name: 'Alt-teksten afbeeldingen',
+                status: 'passed',
+                category: 'Toegankelijkheid',
+                description: 'Alle afbeeldingen op de website hebben correcte en beschrijvende alt-teksten voor screen readers.',
+                details: 'Er zijn 47 afbeeldingen gecontroleerd. Alle afbeeldingen hebben betekenisvolle alt-teksten die de inhoud beschrijven. Decoratieve afbeeldingen hebben lege alt-attributes.',
+                solution: 'Geen actie vereist. Blijf nieuwe afbeeldingen voorzien van beschrijvende alt-teksten.',
+                prompt: 'Continueer met het toevoegen van beschrijvende alt-teksten aan alle nieuwe afbeeldingen. Voor decoratieve afbeeldingen gebruik alt="" en voor informatieve afbeeldingen beschrijf de inhoud beknopt.'
+            },
+            'color-contrast': {
+                name: 'Kleurcontrast validatie',
+                status: 'warning',
+                category: 'Toegankelijkheid',
+                description: 'Enkele tekstelementen voldoen niet aan WCAG 2.1 AA contrast vereisten van minimaal 4.5:1.',
+                details: 'Gevonden issues: Secundaire tekst in de footer (3.2:1), placeholder tekst in formulieren (3.8:1), en enkele link states hebben onvoldoende contrast.',
+                solution: 'Verander de kleur van secundaire tekst naar #4a5568 of donkerder. Gebruik #2d3748 voor placeholder tekst.',
+                prompt: 'Fix de kleurcontrast issues voor betere toegankelijkheid. Verander de CSS variabele --text-secondary naar #4a5568, en --placeholder-color naar #2d3748. Test alle kleuren met een contrast checker tool en zorg voor minimaal 4.5:1 ratio.'
+            },
+            'load-time': {
+                name: 'Pagina laadtijd',
+                status: 'passed',
+                category: 'Performance',
+                description: 'Website presteert goed qua laadtijden op alle geteste apparaten en verbindingen.',
+                details: 'Gemiddelde laadtijd: 1.8s (desktop), 2.4s (mobile). Largest Contentful Paint: 1.2s. First Input Delay: 45ms. Cumulative Layout Shift: 0.08.',
+                solution: 'Geen directe actie vereist. Monitor prestaties en optimaliseer waar mogelijk.',
+                prompt: 'Behoud de goede performance door regelmatig afbeeldingen te optimaliseren, unused CSS te verwijderen en Critical Rendering Path te optimaliseren.'
+            },
+            'mobile-responsive': {
+                name: 'Mobile responsiveness',
+                status: 'failed',
+                category: 'Performance',
+                description: 'Layout breekt op smartphones. Enkele elementen zijn niet goed responsive op kleine schermen.',
+                details: 'Issues gevonden op iPhone 12 (390px): Navigation menu overlapt content, formulier buttons te klein, horizontale scroll op tabellen.',
+                solution: 'Fix CSS media queries, gebruik flexbox voor layout, maak buttons groter op mobile.',
+                prompt: 'Fix de mobile responsiveness issues. Update de CSS media queries voor schermen onder 400px, gebruik flexbox in plaats van float layouts, zorg dat buttons minimaal 44px hoog zijn op mobile, en implementeer horizontale scroll voor grote tabellen met overflow-x: auto.'
+            }
+        };
+
+        function showTestDetails(testId) {
+            event.preventDefault();
+            const test = testData[testId];
+            if (!test) return;
+
+            const modal = document.getElementById('testModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+
+            modalTitle.textContent = test.name;
+
+            const statusClass = `status-${test.status}`;
+            const statusText = test.status === 'passed' ? 'Geslaagd' : 
+                             test.status === 'failed' ? 'Gefaald' : 'Waarschuwing';
+
+            modalBody.innerHTML = `
+                <div class="detail-section">
+                    <div class="detail-title">Status</div>
+                    <div class="detail-content">
+                        <span class="test-status ${statusClass}">${statusText}</span>
+                        <div style="margin-top: 8px;">${test.description}</div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <div class="detail-title">Gedetailleerde Analyse</div>
+                    <div class="detail-content">${test.details}</div>
+                </div>
+                
+                <div class="detail-section">
+                    <div class="detail-title">Aanbevolen Oplossing</div>
+                    <div class="detail-content">
+                        ${test.solution}
+                        <div class="solution-prompt">
+                            <strong>Prompt voor Claude:</strong><br>
+                            ${test.prompt}
+                            <button class="copy-prompt-btn" onclick="copyPrompt('${testId}')">
+                                📋 Kopieer Prompt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function showMetricDetails(metric) {
+            event.preventDefault();
+            // Similar implementation for metrics
+            console.log('Show metric details for:', metric);
+        }
+
+        function copyPrompt(testId) {
+            const test = testData[testId];
+            if (!test) return;
+
+            navigator.clipboard.writeText(test.prompt).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Gekopieerd!';
+                btn.classList.add('copied');
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                alert('Kon prompt niet kopiëren. Selecteer handmatig.');
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('testModal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('testModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Escape key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

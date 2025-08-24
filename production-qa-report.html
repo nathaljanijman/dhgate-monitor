@@ -56,8 +56,57 @@
             opacity: 0.3;
         }
         
-        .header-content { position: relative; z-index: 2; }
-        .logo { font-size: 28px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .header-content { 
+            position: relative; 
+            z-index: 2; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* DHgate Monitor Logo Styles */
+        .dhgate-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .logo-icon {
+            flex-shrink: 0;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .logo-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1.2;
+            letter-spacing: -0.025em;
+        }
+
+        .logo-subtitle {
+            font-size: 12px;
+            font-weight: 400;
+            color: #64748b;
+            line-height: 1.2;
+        }
+
+        /* White variant for header */
+        .dhgate-logo.white .logo-title {
+            color: white;
+        }
+
+        .dhgate-logo.white .logo-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
         .tagline { font-size: 16px; opacity: 0.9; font-weight: 400; }
         .content { padding: 40px; }
         .greeting { font-size: 18px; font-weight: 500; margin-bottom: 24px; color: var(--text-primary); }
@@ -360,8 +409,24 @@
         <!-- Header -->
         <div class="header">
             <div class="header-content">
-                <div class="logo">🧪 DHgate Monitor</div>
-                <div class="tagline">Quality Assurance Report - Interactive</div>
+                <div class="dhgate-logo white">
+                    <!-- Logo Icon -->
+                    <div class="logo-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Blue rounded background -->
+                            <rect width="32" height="32" rx="6" fill="white" fill-opacity="0.15"/>
+                            <!-- White star icon -->
+                            <path d="M16 7L18.09 12.26L24 13L20 16.74L21.18 22.52L16 19.77L10.82 22.52L12 16.74L8 13L13.91 12.26L16 7Z" fill="white"/>
+                        </svg>
+                    </div>
+                    
+                    <!-- Logo Text -->
+                    <div class="logo-text">
+                        <div class="logo-title">DHgate Monitor</div>
+                        <div class="logo-subtitle">E-commerce Intelligence</div>
+                    </div>
+                </div>
+                <div class="tagline">Quality Assurance Report</div>
             </div>
         </div>
 
@@ -378,7 +443,7 @@
 
             <!-- Status Banner -->
             <div class="status-banner status-error">
-                ❌ Platform Status: 1 TEST(S) GEFAALD
+                ❌ Platform Status: 2 TEST(S) GEFAALD
             </div>
 
             <!-- Metrics Grid -->
@@ -392,7 +457,7 @@
                     <div class="metric-label">Geslaagd</div>
                 </div>
                 <div class="metric-card" onclick="showMetricDetails('failed')">
-                    <div class="metric-number" style="color: var(--danger-color);">1</div>
+                    <div class="metric-number" style="color: var(--danger-color);">2</div>
                     <div class="metric-label">Gefaald</div>
                 </div>
                 <div class="metric-card" onclick="showMetricDetails('passRate')">
@@ -449,7 +514,7 @@
 
     <script>
         // Test data will be injected here
-        const testData = [{"id":"homepage-performance","name":"Homepage Performance","status":"passed","message":"Homepage laadt binnen 2 seconden","error":null,"duration":0,"category":"performance","description":"Test voor website laadtijd optimalisatie","solution":"Optimaliseer afbeeldingen, CSS en JavaScript","promptSuggestion":"Fix de \"Homepage Performance\" test. Analyseer de fout: \"Homepage laadt binnen 2 seconden\" en implementeer een oplossing.","screenshots":[]},{"id":"kleurcontrast-validatie","name":"Kleurcontrast validatie","status":"warning","message":"Kleurcontrast op enkele elementen kan verbeterd worden","error":null,"duration":0,"category":"accessibility","description":"WCAG 2.1 AA kleurcontrast test","solution":"Verbeter contrast naar minimaal 4.5:1 ratio","promptSuggestion":"Verbeter het kleurcontrast voor betere toegankelijkheid. Update kleuren naar WCAG 2.1 AA standaarden (minimaal 4.5:1 contrast ratio voor normale tekst).","screenshots":[]},{"id":"cookie-consent-banner","name":"Cookie consent banner","status":"passed","message":"Cookie consent en privacy policy correct geïmplementeerd","error":null,"duration":0,"category":"gdpr","description":"GDPR compliance cookie test","solution":"Implementeer correcte cookie toestemming","promptSuggestion":"Fix de cookie consent functionaliteit. Zorg dat de banner correct wordt getoond, cookies worden opgeslagen en gebruikerskeuzes worden gerespecteerd.","screenshots":[]},{"id":"mobile-responsiveness","name":"Mobile responsiveness","status":"failed","message":"Enkele elementen zijn niet goed responsive op mobile","error":null,"duration":0,"category":"performance","description":"Responsive design test","solution":"Fix CSS media queries en flexbox layouts","promptSuggestion":"Fix de mobile responsiveness issues. Controleer CSS media queries, flexbox/grid layouts en zorg dat alle elementen goed schalen op verschillende schermgroottes.","screenshots":[]},{"id":"email-validatie","name":"Email validatie","status":"passed","message":"Email registratie workflow werkt correct","error":null,"duration":0,"category":"email","description":"Email functionality test","solution":"Implementeer email validatie","promptSuggestion":"Herstel de email validatie. Implementeer server-side en client-side validatie voor email formaten en functionality.","screenshots":[]},{"id":"alt-teksten-afbeeldingen","name":"Alt-teksten afbeeldingen","status":"passed","message":"Alle afbeeldingen hebben correcte alt-teksten","error":null,"duration":0,"category":"accessibility","description":"Afbeelding toegankelijkheid test","solution":"Voeg beschrijvende alt-teksten toe","promptSuggestion":"Voeg alt-teksten toe aan alle afbeeldingen voor betere toegankelijkheid. Zorg voor beschrijvende alt attributen die de inhoud van de afbeelding uitleggen.","screenshots":[]}];
+        const testData = [{"id":"website-bereikbaarheid","name":"Website bereikbaarheid","status":"failed","message":"Website bereikbaarheid gefaald: Website niet bereikbaar","error":null,"duration":0,"category":"core","description":"Test of de hoofdpagina toegankelijk is","solution":"Controleer DNS, server status en hosting","promptSuggestion":"Controleer DNS, server status en hosting","screenshots":[]},{"id":"ssl-certificaat","name":"SSL certificaat","status":"passed","message":"SSL certificaat is geldig en veilig","error":null,"duration":0,"category":"security","description":"Valideer HTTPS verbinding en certificaat","solution":"Vernieuw SSL certificaat via hosting provider","promptSuggestion":"Fix de \"SSL certificaat\" test. Analyseer de fout: \"SSL certificaat is geldig en veilig\" en implementeer een oplossing.","screenshots":[]},{"id":"performance-audit","name":"Performance audit","status":"passed","message":"Laadtijden binnen acceptabele grenzen (< 3s)","error":null,"duration":0,"category":"performance","description":"Test laadtijden en Core Web Vitals","solution":"Optimaliseer afbeeldingen, CSS en JavaScript","promptSuggestion":"Fix de \"Performance audit\" test. Analyseer de fout: \"Laadtijden binnen acceptabele grenzen (< 3s)\" en implementeer een oplossing.","screenshots":[]},{"id":"email-formulier","name":"Email formulier","status":"passed","message":"Email registratie werkt correct","error":null,"duration":0,"category":"email","description":"Test email registratie functionaliteit","solution":"Controleer email service configuratie","promptSuggestion":"Fix de \"Email formulier\" test. Analyseer de fout: \"Email registratie werkt correct\" en implementeer een oplossing.","screenshots":[]},{"id":"mobile-responsiveness","name":"Mobile responsiveness","status":"failed","message":"Mobile responsiveness gefaald: Mobile responsiveness issues gedetecteerd","error":null,"duration":0,"category":"accessibility","description":"Test responsive design op verschillende schermen","solution":"Fix CSS media queries en flexbox layouts","promptSuggestion":"Fix CSS media queries en flexbox layouts","screenshots":[]},{"id":"gdpr-compliance","name":"GDPR compliance","status":"passed","message":"GDPR compliance en privacy policy correct","error":null,"duration":1,"category":"gdpr","description":"Controleer privacy policy en cookie consent","solution":"Update privacy policy en cookie banner","promptSuggestion":"Zorg voor GDPR compliance. Implementeer cookie toestemming, privacy policy toegang en data verwijdering opties.","screenshots":[]}];
         
         function initializeTests() {
             const categoriesContainer = document.getElementById('test-categories');

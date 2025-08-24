@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHgate Monitor - Nieuw Logo Preview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #1e293b;
+            font-size: 32px;
+        }
+        
+        .preview-section {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #374151;
+        }
+        
+        /* DHgate Monitor Logo Styles */
+        .dhgate-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-icon img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .logo-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1.2;
+            letter-spacing: -0.025em;
+        }
+
+        .logo-subtitle {
+            font-size: 11px;
+            font-weight: 400;
+            color: #64748b;
+            line-height: 1.2;
+        }
+
+        /* Size variants */        
+        .dhgate-logo.small .logo-icon img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .dhgate-logo.small .logo-title {
+            font-size: 14px;
+        }
+
+        .dhgate-logo.small .logo-subtitle {
+            font-size: 9px;
+        }
+        
+        .dhgate-logo.large .logo-icon img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .dhgate-logo.large .logo-title {
+            font-size: 22px;
+        }
+
+        .dhgate-logo.large .logo-subtitle {
+            font-size: 13px;
+        }
+
+        /* Color variants */        
+        .dhgate-logo.white .logo-title {
+            color: white;
+        }
+
+        .dhgate-logo.white .logo-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .dhgate-logo.dark .logo-title {
+            color: #111827;
+        }
+
+        .dhgate-logo.dark .logo-subtitle {
+            color: #374151;
+        }
+        
+        /* Demo backgrounds */
+        .header-demo {
+            background: linear-gradient(135deg, #2563EB 0%, #1e40af 100%);
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .dark-demo {
+            background: #111827;
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .light-demo {
+            background: #f8fafc;
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .navbar-demo {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 24px;
+        }
+        
+        .nav-link {
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .nav-link:hover {
+            color: #2563EB;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DHgate Monitor - Nieuw Logo Preview</h1>
+        
+        <!-- Header Example -->
+        <div class="preview-section">
+            <h2 class="section-title">Header - Email/QA Reports</h2>
+            <div class="header-demo">
+                <div class="dhgate-logo white large">
+                    <!-- Logo Icon -->
+                    <div class="logo-icon">
+                        <img src="./assets/DHGateVector.png" alt="DHgate Monitor">
+                    </div>
+                    
+                    <!-- Logo Text -->
+                    <div class="logo-text">
+                        <div class="logo-title">DHgate Monitor</div>
+                        <div class="logo-subtitle">E-commerce Intelligence</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navbar Example -->
+        <div class="preview-section">
+            <h2 class="section-title">Navigation Bar</h2>
+            <div class="navbar-demo">
+                <div class="dhgate-logo">
+                    <!-- Logo Icon -->
+                    <div class="logo-icon">
+                        <img src="./assets/DHGateVector.png" alt="DHgate Monitor">
+                    </div>
+                    
+                    <!-- Logo Text -->
+                    <div class="logo-text">
+                        <div class="logo-title">DHgate Monitor</div>
+                        <div class="logo-subtitle">E-commerce Intelligence</div>
+                    </div>
+                </div>
+                
+                <nav class="nav-links">
+                    <a href="#" class="nav-link">Dashboard</a>
+                    <a href="#" class="nav-link">Service</a>
+                    <a href="#" class="nav-link">QA Report</a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Size Variations -->
+        <div class="preview-section">
+            <h2 class="section-title">Size Variations</h2>
+            
+            <h3 style="margin-bottom: 16px; color: #374151;">Large (Headers)</h3>
+            <div class="dhgate-logo large">
+                <div class="logo-icon">
+                    <img src="./assets/DHGateVector.png" alt="DHgate Monitor">
+                </div>
+                <div class="logo-text">
+                    <div class="logo-title">DHgate Monitor</div>
+                    <div class="logo-subtitle">E-commerce Intelligence</div>
+                </div>
+            </div>
+            
+            <h3 style="margin: 24px 0 16px 0; color: #374151;">Normal (Navigation)</h3>
+            <div class="dhgate-logo">
+                <div class="logo-icon">
+                    <img src="./assets/DHGateVector.png" alt="DHgate Monitor">
+                </div>
+                <div class="logo-text">
+                    <div class="logo-title">DHgate Monitor</div>
+                    <div class="logo-subtitle">E-commerce Intelligence</div>
+                </div>
+            </div>
+            
+            <h3 style="margin: 24px 0 16px 0; color: #374151;">Small (Footers)</h3>
+            <div class="dhgate-logo small">
+                <div class="logo-icon">
+                    <img src="./assets/DHGateVector.png" alt="DHgate Monitor">
+                </div>
+                <div class="logo-text">
+                    <div class="logo-title">DHgate Monitor</div>
+                    <div class="logo-subtitle">E-commerce Intelligence</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dark Background -->
+        <div class="preview-section">
+            <h2 class="section-title">Dark Background</h2>
+            <div class="dark-demo">
+                <div class="dhgate-logo white">
+                    <div class="logo-icon">
+                        <img src="./assets/DHGateVector.png" alt="DHgate Monitor">
+                    </div>
+                    <div class="logo-text">
+                        <div class="logo-title">DHgate Monitor</div>
+                        <div class="logo-subtitle">E-commerce Intelligence</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer Example -->
+        <div class="preview-section">
+            <h2 class="section-title">Footer Example</h2>
+            <div style="text-align: center; padding: 32px; background: #f8fafc; border-radius: 8px;">
+                <div class="dhgate-logo small" style="justify-content: center; margin-bottom: 16px;">
+                    <div class="logo-icon">
+                        <img src="./assets/DHGateVector.png" alt="DHgate Monitor">
+                    </div>
+                    <div class="logo-text">
+                        <div class="logo-title">DHgate Monitor</div>
+                        <div class="logo-subtitle">E-commerce Intelligence</div>
+                    </div>
+                </div>
+                <div style="color: #64748b; font-size: 14px;">
+                    © 2024 DHgate Monitor. Alle rechten voorbehouden.
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

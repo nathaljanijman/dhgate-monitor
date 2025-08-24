@@ -1,0 +1,13 @@
+<svg width="280" height="60" viewBox="0 0 280 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background rounded rectangle from the provided design -->
+    <rect x="0" y="8" width="44" height="44" rx="8" fill="#2563EB"/>
+    
+    <!-- Star icon from the provided design -->
+    <path d="M22 16L25.09 22.26L32 23.27L27 28.14L28.18 35.02L22 31.77L15.82 35.02L17 28.14L12 23.27L18.91 22.26L22 16Z" fill="white"/>
+    
+    <!-- Main brand text -->
+    <text x="54" y="28" font-family="'Raleway', Arial, sans-serif" font-size="20" font-weight="700" fill="#1e293b">DHgate Monitor</text>
+    
+    <!-- Subtitle text -->
+    <text x="54" y="44" font-family="'Raleway', Arial, sans-serif" font-size="12" font-weight="400" fill="#64748b">E-commerce Intelligence</text>
+</svg>
