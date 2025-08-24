@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHgate Monitor QA Rapport - Interactief</title>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent-color: #1e40af;
+            --accent-secondary: #ff6b35;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --border-color: #e2e8f0;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --border-radius: 12px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Raleway', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .email-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(30, 41, 59, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #2563eb 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .header-content { position: relative; z-index: 2; }
+        .logo { font-size: 28px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .tagline { font-size: 16px; opacity: 0.9; font-weight: 400; }
+        .content { padding: 40px; }
+        .greeting { font-size: 18px; font-weight: 500; margin-bottom: 24px; color: var(--text-primary); }
+        
+        .status-banner { 
+            padding: 24px; 
+            border-radius: var(--border-radius); 
+            text-align: center; 
+            font-weight: 600; 
+            font-size: 18px; 
+            margin: 24px 0; 
+            border: 2px solid; 
+        }
+        
+        .status-success { background: #dcfce7; color: #166534; border-color: #16a34a; }
+        .status-warning { background: #fef3c7; color: #92400e; border-color: #f59e0b; }
+        .status-error { background: #fee2e2; color: #991b1b; border-color: #ef4444; }
+        
+        .metrics-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+            gap: 20px; 
+            margin: 32px 0; 
+        }
+        
+        .metric-card { 
+            background: var(--bg-secondary); 
+            border: 1px solid var(--border-color); 
+            border-radius: var(--border-radius); 
+            padding: 24px; 
+            text-align: center; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(30, 64, 175, 0.15);
+        }
+        
+        .metric-number { 
+            font-size: 36px; 
+            font-weight: 700; 
+            color: var(--accent-color); 
+            margin-bottom: 8px; 
+            line-height: 1; 
+        }
+        
+        .metric-label { 
+            font-size: 14px; 
+            color: var(--text-secondary); 
+            font-weight: 500; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+        }
+        
+        .section { margin: 32px 0; }
+        
+        .section-title { 
+            font-size: 20px; 
+            font-weight: 600; 
+            color: var(--text-primary); 
+            margin-bottom: 20px; 
+            padding-bottom: 12px; 
+            border-bottom: 2px solid var(--border-color); 
+        }
+        
+        .test-category { 
+            background: var(--bg-secondary); 
+            border: 1px solid var(--border-color); 
+            border-radius: var(--border-radius); 
+            margin-bottom: 16px; 
+            overflow: hidden; 
+        }
+        
+        .category-header { 
+            background: linear-gradient(90deg, var(--accent-color), #2563eb); 
+            color: white; 
+            padding: 16px 24px; 
+            font-weight: 600; 
+            font-size: 16px; 
+        }
+        
+        .category-content { padding: 20px 24px; }
+        
+        .test-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 12px 0; 
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            margin: 4px 0;
+            padding: 12px;
+        }
+        
+        .test-item:hover {
+            background: rgba(30, 64, 175, 0.05);
+            transform: translateX(4px);
+        }
+        
+        .test-item:last-child { border-bottom: none; }
+        
+        .test-name { 
+            font-weight: 500; 
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .test-name::before {
+            content: "👆";
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .test-item:hover .test-name::before {
+            opacity: 1;
+        }
+        
+        .test-status { 
+            padding: 6px 16px; 
+            border-radius: 20px; 
+            font-size: 12px; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+        }
+        
+        .status-passed { background: #dcfce7; color: #166534; }
+        .status-failed { background: #fee2e2; color: #991b1b; }
+        .status-warning { background: #fef3c7; color: #92400e; }
+        
+        /* Modal Overlay Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: translateY(50px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--accent-color), #2563eb);
+            color: white;
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        .test-detail-section {
+            margin-bottom: 24px;
+        }
+        
+        .test-detail-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+        
+        .test-detail-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .prompt-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-top: 16px;
+            position: relative;
+        }
+        
+        .prompt-box::before {
+            content: "💡";
+            font-size: 20px;
+            margin-right: 8px;
+        }
+        
+        .copy-prompt-btn {
+            background: linear-gradient(135deg, var(--accent-color), #2563eb);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .copy-prompt-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+        
+        .copy-prompt-btn.copied {
+            background: var(--success-color);
+        }
+        
+        .duration-badge {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+        }
+        
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .header, .content { padding: 24px 20px; }
+            .metrics-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .metric-card { padding: 16px; }
+            .metric-number { font-size: 28px; }
+            .test-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .test-status { align-self: flex-end; }
+            .modal-content { margin: 10px; }
+            .modal-header, .modal-body { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">🧪 DHgate Monitor</div>
+                <div class="tagline">Quality Assurance Report - Interactive</div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="greeting">
+                <strong>Hallo Nathalja,</strong>
+            </div>
+
+            <p style="margin-bottom: 24px; color: var(--text-secondary); font-size: 16px;">
+                Hier is je dagelijkse QA rapport voor het DHgate Monitor platform van 
+                <strong>24-8-2025</strong>. Klik op elke test voor gedetailleerde informatie en oplossingsvoorstellen.
+            </p>
+
+            <!-- Status Banner -->
+            <div class="status-banner status-error">
+                ❌ Platform Status: 1 TEST(S) GEFAALD
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="metrics-grid">
+                <div class="metric-card" onclick="showMetricDetails('total')">
+                    <div class="metric-number">6</div>
+                    <div class="metric-label">Totaal Tests</div>
+                </div>
+                <div class="metric-card" onclick="showMetricDetails('passed')">
+                    <div class="metric-number" style="color: var(--success-color);">4</div>
+                    <div class="metric-label">Geslaagd</div>
+                </div>
+                <div class="metric-card" onclick="showMetricDetails('failed')">
+                    <div class="metric-number" style="color: var(--danger-color);">1</div>
+                    <div class="metric-label">Gefaald</div>
+                </div>
+                <div class="metric-card" onclick="showMetricDetails('passRate')">
+                    <div class="metric-number" style="color: var(--danger-color);">67%</div>
+                    <div class="metric-label">Slagingspercentage</div>
+                </div>
+            </div>
+
+            <!-- Test Categories -->
+            <div class="section">
+                <div class="section-title">🔍 Test Resultaten (Klik voor details)</div>
+                
+                <!-- Dynamic test categories will be inserted here -->
+                <div id="test-categories">
+                    <!-- This will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div style="text-align: center; margin: 40px 0;">
+                <a href="https://github.com/nathaljanijman/dhgate-monitor/actions" style="display: inline-block; background: linear-gradient(135deg, var(--accent-color), #2563eb); color: white; text-decoration: none; padding: 16px 32px; border-radius: var(--border-radius); font-weight: 600; font-size: 16px; margin: 8px 12px;">
+                    📊 Bekijk Volledige Rapporten
+                </a>
+                <a href="https://dhgate-monitor.com" style="display: inline-block; background: linear-gradient(135deg, var(--accent-secondary), #f97316); color: white; text-decoration: none; padding: 16px 32px; border-radius: var(--border-radius); font-weight: 600; font-size: 16px; margin: 8px 12px;">
+                    🌐 Ga naar Platform
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="background: var(--bg-secondary); border-top: 1px solid var(--border-color); padding: 32px 40px; text-align: center;">
+            <div style="font-weight: 700; color: var(--accent-color); font-size: 18px; margin-bottom: 16px;">DHgate Monitor</div>
+            <div style="color: var(--text-secondary); font-size: 14px; line-height: 1.5; margin-bottom: 8px;">Professional E-commerce Monitoring Platform</div>
+            <div style="color: var(--text-secondary); font-size: 14px; line-height: 1.5; margin-bottom: 8px;">Volgende test: Morgen om 06:00 UTC (08:00 Nederlandse tijd)</div>
+            <div style="color: var(--text-secondary); font-size: 12px; font-style: italic; margin-top: 16px;">
+                Dit rapport is automatisch gegenereerd door het DHgate Monitor QA systeem.<br>
+                <em>💡 Tip: Klik op elke test voor gedetailleerde informatie en oplossingsvoorstellen</em>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Test Details -->
+    <div class="modal-overlay" id="testModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Test Details</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test data will be injected here
+        const testData = [{"id":"homepage-performance","name":"Homepage Performance","status":"passed","message":"Homepage laadt binnen 2 seconden","error":null,"duration":0,"category":"performance","description":"Test voor website laadtijd optimalisatie","solution":"Optimaliseer afbeeldingen, CSS en JavaScript","promptSuggestion":"Fix de \"Homepage Performance\" test. Analyseer de fout: \"Homepage laadt binnen 2 seconden\" en implementeer een oplossing.","screenshots":[]},{"id":"kleurcontrast-validatie","name":"Kleurcontrast validatie","status":"warning","message":"Kleurcontrast op enkele elementen kan verbeterd worden","error":null,"duration":0,"category":"accessibility","description":"WCAG 2.1 AA kleurcontrast test","solution":"Verbeter contrast naar minimaal 4.5:1 ratio","promptSuggestion":"Verbeter het kleurcontrast voor betere toegankelijkheid. Update kleuren naar WCAG 2.1 AA standaarden (minimaal 4.5:1 contrast ratio voor normale tekst).","screenshots":[]},{"id":"cookie-consent-banner","name":"Cookie consent banner","status":"passed","message":"Cookie consent en privacy policy correct geïmplementeerd","error":null,"duration":0,"category":"gdpr","description":"GDPR compliance cookie test","solution":"Implementeer correcte cookie toestemming","promptSuggestion":"Fix de cookie consent functionaliteit. Zorg dat de banner correct wordt getoond, cookies worden opgeslagen en gebruikerskeuzes worden gerespecteerd.","screenshots":[]},{"id":"mobile-responsiveness","name":"Mobile responsiveness","status":"failed","message":"Enkele elementen zijn niet goed responsive op mobile","error":null,"duration":1,"category":"performance","description":"Responsive design test","solution":"Fix CSS media queries en flexbox layouts","promptSuggestion":"Fix de mobile responsiveness issues. Controleer CSS media queries, flexbox/grid layouts en zorg dat alle elementen goed schalen op verschillende schermgroottes.","screenshots":[]},{"id":"email-validatie","name":"Email validatie","status":"passed","message":"Email registratie workflow werkt correct","error":null,"duration":0,"category":"email","description":"Email functionality test","solution":"Implementeer email validatie","promptSuggestion":"Herstel de email validatie. Implementeer server-side en client-side validatie voor email formaten en functionality.","screenshots":[]},{"id":"alt-teksten-afbeeldingen","name":"Alt-teksten afbeeldingen","status":"passed","message":"Alle afbeeldingen hebben correcte alt-teksten","error":null,"duration":0,"category":"accessibility","description":"Afbeelding toegankelijkheid test","solution":"Voeg beschrijvende alt-teksten toe","promptSuggestion":"Voeg alt-teksten toe aan alle afbeeldingen voor betere toegankelijkheid. Zorg voor beschrijvende alt attributen die de inhoud van de afbeelding uitleggen.","screenshots":[]}];
+        
+        function initializeTests() {
+            const categoriesContainer = document.getElementById('test-categories');
+            
+            // Group tests by category
+            const categories = {
+                'Toegankelijkheid': {
+                    icon: '♿',
+                    title: 'Toegankelijkheid (WCAG 2.1 AA)',
+                    tests: []
+                },
+                'GDPR': {
+                    icon: '🔒',
+                    title: 'GDPR Compliance',
+                    tests: []
+                },
+                'Performance': {
+                    icon: '🚀',
+                    title: 'Performance & SEO',
+                    tests: []
+                },
+                'Email': {
+                    icon: '📧',
+                    title: 'Email Workflows',
+                    tests: []
+                },
+                'General': {
+                    icon: '🧪',
+                    title: 'Algemene Tests',
+                    tests: []
+                }
+            };
+            
+            // Categorize tests
+            testData.forEach(test => {
+                const category = test.category || 'General';
+                const categoryKey = category.charAt(0).toUpperCase() + category.slice(1);
+                
+                if (categories[categoryKey]) {
+                    categories[categoryKey].tests.push(test);
+                } else {
+                    categories['General'].tests.push(test);
+                }
+            });
+            
+            // Render categories
+            Object.entries(categories).forEach(([key, category]) => {
+                if (category.tests.length === 0) return;
+                
+                const categoryHtml = `
+                    <div class="test-category">
+                        <div class="category-header">${category.icon} ${category.title}</div>
+                        <div class="category-content">
+                            ${category.tests.map(test => `
+                                <div class="test-item" onclick="showTestDetails('${test.id}')">
+                                    <span class="test-name">
+                                        ${test.name}
+                                        ${test.duration ? `<span class="duration-badge">${Math.round(test.duration)}ms</span>` : ''}
+                                    </span>
+                                    <span class="test-status status-${test.status}">${getStatusText(test.status)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                categoriesContainer.innerHTML += categoryHtml;
+            });
+        }
+        
+        function getStatusText(status) {
+            const statusMap = {
+                'passed': 'Geslaagd',
+                'failed': 'Gefaald',
+                'warning': 'Waarschuwing',
+                'skipped': 'Overgeslagen'
+            };
+            return statusMap[status] || status;
+        }
+        
+        function getStatusIcon(status) {
+            const iconMap = {
+                'passed': '✅',
+                'failed': '❌',
+                'warning': '⚠️',
+                'skipped': '⏭️'
+            };
+            return iconMap[status] || '❓';
+        }
+        
+        function showTestDetails(testId) {
+            const test = testData.find(t => t.id === testId);
+            if (!test) return;
+            
+            const modal = document.getElementById('testModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalTitle.textContent = test.name;
+            
+            const statusClass = `status-${test.status}`;
+            const statusIcon = getStatusIcon(test.status);
+            const statusText = getStatusText(test.status);
+            
+            modalBody.innerHTML = `
+                <div class="test-detail-section">
+                    <div class="test-detail-title">Status</div>
+                    <div class="test-detail-content">
+                        <span class="status-indicator ${statusClass}">
+                            ${statusIcon} ${statusText}
+                        </span>
+                        ${test.duration ? `<span class="duration-badge">Uitvoeringstijd: ${Math.round(test.duration)}ms</span>` : ''}
+                    </div>
+                </div>
+                
+                <div class="test-detail-section">
+                    <div class="test-detail-title">Resultaat</div>
+                    <div class="test-detail-content">${test.message || 'Geen details beschikbaar'}</div>
+                </div>
+                
+                ${test.error ? `
+                    <div class="test-detail-section">
+                        <div class="test-detail-title">Fout Details</div>
+                        <div class="test-detail-content" style="font-family: monospace; background: #f8f9fa; padding: 12px; border-radius: 8px;">
+                            ${test.error}
+                        </div>
+                    </div>
+                ` : ''}
+                
+                <div class="test-detail-section">
+                    <div class="test-detail-title">Oplossingsvoorstel</div>
+                    <div class="test-detail-content">
+                        <div class="prompt-box">
+                            ${test.promptSuggestion}
+                            <button class="copy-prompt-btn" onclick="copyPrompt('${testId}')">
+                                📋 Kopieer Prompt voor Claude
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                ${test.description ? `
+                    <div class="test-detail-section">
+                        <div class="test-detail-title">Test Beschrijving</div>
+                        <div class="test-detail-content">${test.description}</div>
+                    </div>
+                ` : ''}
+            `;
+            
+            modal.classList.add('active');
+        }
+        
+        function showMetricDetails(metric) {
+            const modal = document.getElementById('testModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            const metricTitles = {
+                'total': 'Totaal Tests',
+                'passed': 'Geslaagde Tests',
+                'failed': 'Gefaalde Tests',
+                'passRate': 'Slagingspercentage'
+            };
+            
+            modalTitle.textContent = metricTitles[metric] || 'Metric Details';
+            
+            let filteredTests = testData;
+            if (metric === 'passed') {
+                filteredTests = testData.filter(t => t.status === 'passed');
+            } else if (metric === 'failed') {
+                filteredTests = testData.filter(t => t.status === 'failed' || t.status === 'warning');
+            }
+            
+            const testList = filteredTests.map(test => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
+                    <span>${test.name}</span>
+                    <span class="status-indicator status-${test.status}">
+                        ${getStatusIcon(test.status)} ${getStatusText(test.status)}
+                    </span>
+                </div>
+            `).join('');
+            
+            modalBody.innerHTML = `
+                <div class="test-detail-section">
+                    <div class="test-detail-title">${metricTitles[metric]}</div>
+                    <div class="test-detail-content">
+                        ${testList || 'Geen tests gevonden voor deze categorie.'}
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
+        
+        function copyPrompt(testId) {
+            const test = testData.find(t => t.id === testId);
+            if (!test) return;
+            
+            navigator.clipboard.writeText(test.promptSuggestion).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Gekopieerd!';
+                btn.classList.add('copied');
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                alert('Kon prompt niet kopiëren. Probeer het handmatig te selecteren.');
+            });
+        }
+        
+        function closeModal() {
+            document.getElementById('testModal').classList.remove('active');
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('testModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // Escape key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeTests);
+    </script>
+</body>
+</html>
