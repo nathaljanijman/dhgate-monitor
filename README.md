@@ -445,7 +445,7 @@ DHgate Monitor includes a professional QA testing system that ensures **reliabil
 - **📱 Device Testing**: Desktop, mobile, tablet responsiveness
 
 #### **🤖 Automated Daily Testing**
-- **Scheduled**: Daily testing at 9:00 AM UTC via GitHub Actions
+- **Scheduled**: Daily testing at 6:00 AM UTC (8:00 AM Nederlandse tijd) via GitHub Actions
 - **Continuous Integration**: Tests on every code push and pull request
 - **Multi-environment**: Production and development environment testing
 - **Real-time Reporting**: Automated email reports with actionable insights
@@ -529,7 +529,7 @@ This project is proprietary software developed for automated DHgate product moni
 - **🔒 GDPR Compliance Validation** - Privacy law compliance testing with cookie consent verification
 - **📧 Email Journey Testing** - Complete validation of registration, dashboard access, and notification flows
 - **🚀 Performance & SEO Testing** - Speed optimization and search engine compliance validation
-- **🤖 Automated Daily Testing** - GitHub Actions workflow with 9:00 AM UTC scheduling
+- **🤖 Automated Daily Testing** - GitHub Actions workflow with 6:00 AM UTC scheduling (8:00 AM Nederlandse tijd)
 - **📊 Executive Reporting** - HTML dashboards with interactive charts and actionable insights
 - **🌐 Cross-browser Testing** - Chrome, Firefox, Safari compatibility validation across devices
 - **🎯 Quality Metrics** - 95%+ pass rate targets with comprehensive compliance tracking

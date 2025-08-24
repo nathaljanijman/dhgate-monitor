@@ -118,7 +118,7 @@ export QA_REPORT_EMAIL="your-email@domain.com"
 ## 🤖 Automated Testing
 
 ### Daily Schedule
-Tests run automatically at **9:00 AM UTC** daily via GitHub Actions, covering:
+Tests run automatically at **6:00 AM UTC (8:00 AM Nederlandse tijd)** daily via GitHub Actions, covering:
 - Production environment health checks
 - All compliance validations
 - Performance benchmarking
@@ -143,10 +143,10 @@ Tests run automatically at **9:00 AM UTC** daily via GitHub Actions, covering:
 
 ### Automated Reports Include:
 - 📊 **Executive Summary**: Pass rates, critical issues, recommendations
-- 🔍 **Detailed Results**: Test-by-test breakdown with screenshots
+- 🔍 **Detailed Results**: Test-by-test breakdown with screenshots  
 - 💡 **Actionable Recommendations**: Prioritized fix suggestions
 - 🎯 **Next Actions**: Assigned tasks with deadlines
-- 📧 **Email Distribution**: Automatic stakeholder notifications
+- 📧 **Email Distribution**: Daily reports sent to nathaljanijman@hotmail.com at 6:00 AM UTC
 
 ### Report Formats:
 - **HTML**: Interactive dashboard with charts and drill-down
