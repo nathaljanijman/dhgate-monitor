@@ -5585,13 +5585,22 @@ function generateServiceHTML(t, lang, theme = 'light') {
             }
         }
         
-        body { 
+        /* CSS Reset for consistent spacing */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html, body { 
             font-family: 'Raleway', sans-serif;
             margin: 0;
             padding: 0;
             background: var(--bg-gradient);
             color: var(--text-primary);
             line-height: 1.6;
+            height: 100%;
+            overflow-x: hidden;
         }
         
         /* Skip to content for accessibility */
