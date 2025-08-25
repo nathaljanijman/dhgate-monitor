@@ -11996,12 +11996,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         
         .animate-fade-in-up {
             animation: animate-fade-in-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            opacity: 0;
         }
         
         .animate-scale-in {
             animation: animate-scale-in 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            opacity: 0;
         }
         
         .professional-card:hover .benefit-item {
