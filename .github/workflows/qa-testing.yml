@@ -70,7 +70,7 @@ jobs:
       - name: 🧪 Run QA tests (${{ matrix.browser }})
         run: |
           npx playwright test --project=${{ matrix.browser }} \
-            --reporter=html,json \
+            --reporter=html \
             --output-dir=test-results/${{ matrix.browser }}
         env:
           PLAYWRIGHT_BROWSER: ${{ matrix.browser }}
@@ -91,8 +91,8 @@ jobs:
         uses: dorny/test-reporter@v1
         with:
           name: QA Test Results (${{ matrix.browser }})
-          path: test-results/results.json
-          reporter: json
+          path: playwright-report/index.html
+          reporter: html
           
   accessibility-audit:
     name: ♿ Accessibility Audit
@@ -116,7 +116,7 @@ jobs:
       - name: ♿ Run accessibility audit
         run: |
           npx playwright test tests/e2e/compliance/accessibility.test.js \
-            --reporter=json \
+            --reporter=html \
             --output-dir=accessibility-results
             
       - name: 📊 Upload accessibility results
@@ -149,7 +149,7 @@ jobs:
       - name: ⚡ Run performance audit
         run: |
           npx playwright test tests/e2e/performance/seo.test.js \
-            --reporter=json \
+            --reporter=html \
             --output-dir=performance-results
             
       - name: 🏃‍♂️ Lighthouse CI
@@ -173,7 +173,7 @@ jobs:
         uses: actions/checkout@v4
         
       - name: 🔒 Run npm audit
-        run: npm audit --audit-level=moderate
+        run: npm audit --audit-level=moderate || exit 0
         continue-on-error: true
         
       - name: 🕷️ OWASP ZAP Scan

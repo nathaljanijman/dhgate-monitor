@@ -87,6 +87,258 @@ const CONFIG = {
 };
 
 // ============================================================================
+// UX DESIGN SYSTEM COMPONENTS
+// ============================================================================
+
+/**
+ * Generates standardized navigation header for all pages
+ * Ensures consistent UX across the entire application
+ * @param {string} lang - Language code (nl/en)
+ * @param {string} theme - Theme (light/dark)
+ * @param {string} currentPage - Current page for active states
+ * @returns {string} - Standardized navigation HTML
+ */
+function generateStandardNavigation(lang = 'nl', theme = 'light', currentPage = '') {
+  const menuItems = [
+    { href: '/', key: 'home', labelNl: 'Home', labelEn: 'Home' },
+    { href: '/dashboard', key: 'dashboard', labelNl: 'Dashboard', labelEn: 'Dashboard' },
+    { href: '/service', key: 'service', labelNl: 'Service', labelEn: 'Service' },
+  ];
+  
+  // Add additional pages if they are the current page (so they show in their own navigation)
+  if (currentPage === 'privacy') {
+    menuItems.push({ href: '/privacy', key: 'privacy', labelNl: 'Privacy', labelEn: 'Privacy' });
+  }
+  if (currentPage === 'terms') {
+    menuItems.push({ href: '/terms', key: 'terms', labelNl: 'Voorwaarden', labelEn: 'Terms' });
+  }
+  
+  // Add "Beginnen" button for homepage
+  if (currentPage === 'home') {
+    menuItems.push({ href: '#subscription-form', key: 'start', labelNl: 'Beginnen', labelEn: 'Get Started', isButton: true });
+  }
+
+  const menuHtml = menuItems.map(item => {
+    const isActive = currentPage === item.key;
+    const label = lang === 'nl' ? item.labelNl : item.labelEn;
+    const activeClass = isActive ? 'nav-link--active' : '';
+    
+    if (item.isButton) {
+      return `<a href="${item.href}" 
+                class="nav-cta-button" 
+                onclick="scrollToSubscription(); return false;"
+                aria-label="${lang === 'nl' ? 'Scroll naar aanmeldformulier' : 'Scroll to signup form'}">${label}</a>`;
+    }
+    
+    return `<a href="${item.href}?lang=${lang}&theme=${theme}" 
+              class="nav-link ${activeClass}" 
+              aria-current="${isActive ? 'page' : 'false'}">${label}</a>`;
+  }).join('');
+
+  return `
+    <nav class="site-navbar" role="navigation" aria-label="${lang === 'nl' ? 'Hoofdnavigatie' : 'Main navigation'}">
+        <div class="navbar-container">
+            ${generateStandardLogo(lang, theme)}
+            
+            <!-- Desktop Navigation -->
+            <div class="navbar-menu desktop-menu" role="menubar">
+                ${menuHtml}
+            </div>
+            
+            <!-- Mobile Hamburger -->
+            <button class="hamburger" 
+                    aria-label="${lang === 'nl' ? 'Menu openen' : 'Open menu'}"
+                    aria-expanded="false"
+                    aria-controls="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <!-- Controls (Theme & Language) -->
+            <div class="navbar-controls">
+                ${generateThemeToggle(theme, lang)}
+                ${generateLanguageSwitcher(lang, theme)}
+            </div>
+        </div>
+        
+        <!-- Mobile Menu Overlay -->
+        <div class="mobile-menu-overlay" aria-hidden="true"></div>
+        <div class="mobile-menu" id="mobile-menu" role="menu" aria-hidden="true">
+            ${menuItems.map(item => {
+              const label = lang === 'nl' ? item.labelNl : item.labelEn;
+              const isActive = currentPage === item.key;
+              
+              if (item.isButton) {
+                return `<a href="${item.href}" 
+                          class="mobile-nav-cta" 
+                          role="menuitem"
+                          onclick="scrollToSubscription(); toggleMobileMenu(); return false;">${label}</a>`;
+              }
+              
+              return `<a href="${item.href}?lang=${lang}&theme=${theme}" 
+                        class="mobile-nav-link ${isActive ? 'mobile-nav-link--active' : ''}" 
+                        role="menuitem">${label}</a>`;
+            }).join('')}
+        </div>
+    </nav>`;
+}
+
+/**
+ * Generates consistent logo component
+ * @param {string} lang - Language code
+ * @param {string} theme - Theme
+ * @returns {string} - Logo HTML
+ */
+function generateStandardLogo(lang = 'nl', theme = 'light') {
+  return `
+    <a href="/?lang=${lang}&theme=${theme}" class="navbar-brand" role="banner">
+        <div class="brand-icon">
+            <img src="/assets/DHGateVector.png" 
+                 alt="DHgate Monitor Logo" 
+                 width="32" 
+                 height="32"
+                 style="object-fit: contain;">
+        </div>
+        <div class="brand-text">
+            <span class="brand-name">DHgate Monitor</span>
+            <span class="brand-tagline">${lang === 'nl' ? 'E-commerce Intelligence' : 'E-commerce Intelligence'}</span>
+        </div>
+    </a>`;
+}
+
+/**
+ * Generates theme toggle component
+ * @param {string} theme - Current theme
+ * @param {string} lang - Language code
+ * @returns {string} - Theme toggle HTML
+ */
+function generateThemeToggle(theme = 'light', lang = 'nl') {
+  const isDark = theme === 'dark';
+  const toggleLabel = lang === 'nl' ? 'Thema wisselen' : 'Toggle theme';
+  
+  return `
+    <button class="theme-toggle" 
+            onclick="toggleTheme()" 
+            aria-label="${toggleLabel}"
+            role="switch" 
+            aria-checked="${isDark}">
+        <span class="theme-toggle-track">
+            <span class="theme-toggle-thumb"></span>
+        </span>
+        <span class="theme-toggle-label">${isDark ? '🌙' : '☀️'}</span>
+    </button>`;
+}
+
+/**
+ * Generates language switcher component
+ * @param {string} lang - Current language
+ * @param {string} theme - Current theme
+ * @returns {string} - Language switcher HTML
+ */
+function generateLanguageSwitcher(lang = 'nl', theme = 'light') {
+  return `
+    <div class="language-switcher" role="group" aria-label="${lang === 'nl' ? 'Taal selectie' : 'Language selection'}">
+        <button class="lang-btn ${lang === 'nl' ? 'lang-btn--active' : ''}" 
+                onclick="switchLanguage('nl')"
+                aria-pressed="${lang === 'nl'}">NL</button>
+        <button class="lang-btn ${lang === 'en' ? 'lang-btn--active' : ''}" 
+                onclick="switchLanguage('en')"
+                aria-pressed="${lang === 'en'}">EN</button>
+    </div>`;
+}
+
+/**
+ * Generates common JavaScript functionality for navbar
+ * @param {string} lang - Current language
+ * @param {string} theme - Current theme
+ * @returns {string} - JavaScript code
+ */
+function generateCommonNavbarJS(lang = 'nl', theme = 'light') {
+  return `
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentTheme = urlParams.get('theme') || 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('selectedTheme', newTheme);
+            const url = new URL(window.location);
+            url.searchParams.set('theme', newTheme);
+            // Preserve language parameter
+            const currentLang = url.searchParams.get('lang') || '${lang}';
+            url.searchParams.set('lang', currentLang);
+            window.location.href = url.toString();
+        }
+        
+        // Language switcher functionality
+        function switchLanguage(newLang) {
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('lang', newLang);
+            
+            // Track language change
+            if (typeof window.trackPreferenceChange === 'function') {
+                window.trackPreferenceChange('language', newLang);
+            }
+            
+            window.location.href = currentUrl.toString();
+        }
+        
+        // Mobile menu toggle functionality
+        function toggleMobileMenu() {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const overlay = document.querySelector('.mobile-menu-overlay');
+            
+            if (hamburger && mobileMenu && overlay) {
+                const isOpen = hamburger.getAttribute('aria-expanded') === 'true';
+                
+                hamburger.setAttribute('aria-expanded', !isOpen);
+                hamburger.classList.toggle('active');
+                mobileMenu.setAttribute('aria-hidden', isOpen);
+                mobileMenu.classList.toggle('active');
+                overlay.classList.toggle('active');
+                
+                // Prevent body scrolling when menu is open
+                document.body.style.overflow = !isOpen ? 'hidden' : '';
+            }
+        }
+        
+        // Scroll to subscription form (for homepage)
+        function scrollToSubscription() {
+            const subscriptionForm = document.querySelector('#subscription-form');
+            if (subscriptionForm) {
+                subscriptionForm.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            } else {
+                // If not on homepage, go to homepage with scroll
+                window.location.href = '/?lang=${lang}&theme=${theme}#subscription-form';
+            }
+        }
+        
+        // Close mobile menu when clicking overlay
+        document.addEventListener('DOMContentLoaded', function() {
+            const overlay = document.querySelector('.mobile-menu-overlay');
+            if (overlay) {
+                overlay.addEventListener('click', toggleMobileMenu);
+            }
+            
+            // Close mobile menu when pressing Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const mobileMenu = document.querySelector('.mobile-menu');
+                    if (mobileMenu && mobileMenu.classList.contains('active')) {
+                        toggleMobileMenu();
+                    }
+                }
+            });
+        });
+    </script>`;
+}
+
+// ============================================================================
 // SECURITY & VALIDATION UTILITIES
 // ============================================================================
 class SecurityUtils {
@@ -1029,6 +1281,25 @@ async function handleAsset(pathname, corsHeaders) {
     }
   }
   
+  if (pathname === '/assets/DHGateVector.png') {
+    // Fetch the DHGateVector logo from GitHub
+    try {
+      const response = await fetch('https://raw.githubusercontent.com/nathaljanijman/dhgate-monitor/main/assets/DHGateVector.png');
+      if (response.ok) {
+        const imageBuffer = await response.arrayBuffer();
+        return new Response(imageBuffer, {
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'image/png',
+            'Cache-Control': 'public, max-age=3600'
+          }
+        });
+      }
+    } catch (error) {
+      console.log('Failed to fetch DHGateVector logo from GitHub:', error);
+    }
+  }
+  
   // Return 404 for unknown assets
   return new Response('Asset not found', { 
     status: 404, 
@@ -1368,6 +1639,397 @@ ${cssVars}
       @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
+      }
+      
+      /* ========================================
+         STANDARDIZED NAVIGATION SYSTEM
+         ======================================== */
+      
+      .site-navbar {
+        background: var(--card-bg);
+        border-bottom: 1px solid var(--border-light);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .navbar-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        gap: 1rem;
+      }
+      
+      /* Brand/Logo Component */
+      .navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        transition: transform 0.2s ease;
+      }
+      
+      .navbar-brand:hover {
+        transform: translateY(-1px);
+      }
+      
+      .brand-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+        overflow: hidden;
+      }
+      
+      .brand-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+      }
+      
+      .navbar-brand:hover .brand-icon img {
+        transform: scale(1.1);
+      }
+      
+      .brand-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+      }
+      
+      .brand-name {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+      }
+      
+      .brand-tagline {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 400;
+        margin: 0;
+      }
+      
+      /* Desktop Navigation Menu */
+      .navbar-menu {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+      
+      .nav-link {
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        padding: 0.5rem 0;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+      
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-blue);
+        transition: width 0.3s ease;
+      }
+      
+      .nav-link:hover {
+        color: var(--text-primary);
+      }
+      
+      .nav-link:hover::after {
+        width: 100%;
+      }
+      
+      .nav-link--active {
+        color: var(--primary-blue);
+        font-weight: 600;
+      }
+      
+      .nav-link--active::after {
+        width: 100%;
+      }
+      
+      /* CTA Button in Navigation */
+      .nav-cta-button {
+        background: var(--primary-blue);
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        margin-left: 0.5rem;
+      }
+      
+      .nav-cta-button:hover {
+        background: var(--primary-dark);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      }
+      
+      /* Mobile Navigation */
+      .hamburger {
+        display: none;
+        flex-direction: column;
+        gap: 3px;
+        padding: 0.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+      
+      .hamburger span {
+        width: 20px;
+        height: 2px;
+        background: var(--text-primary);
+        transition: all 0.3s ease;
+        border-radius: 1px;
+      }
+      
+      .hamburger.active {
+        transform: rotate(90deg);
+      }
+      
+      .hamburger.active span:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+      }
+      
+      .hamburger.active span:nth-child(2) {
+        opacity: 0;
+      }
+      
+      .hamburger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+      }
+      
+      .mobile-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      
+      .mobile-menu-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      .mobile-menu {
+        position: fixed;
+        top: 0;
+        right: -300px;
+        width: 280px;
+        height: 100%;
+        background: var(--card-bg);
+        z-index: 1001;
+        padding: 2rem 1.5rem;
+        transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+        overflow-y: auto;
+      }
+      
+      .mobile-menu.active {
+        right: 0;
+      }
+      
+      .mobile-nav-link {
+        display: block;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-light);
+        transition: all 0.3s ease;
+      }
+      
+      .mobile-nav-link:hover {
+        color: var(--primary-blue);
+        padding-left: 0.5rem;
+      }
+      
+      .mobile-nav-link--active {
+        color: var(--primary-blue);
+        font-weight: 600;
+      }
+      
+      .mobile-nav-cta {
+        display: block;
+        background: var(--primary-blue);
+        color: white;
+        text-decoration: none;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 8px;
+        font-weight: 600;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+      
+      .mobile-nav-cta:hover {
+        background: var(--primary-dark);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      }
+      
+      /* Controls (Theme & Language) */
+      .navbar-controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      
+      /* Theme Toggle */
+      .theme-toggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+      }
+      
+      .theme-toggle:hover {
+        background: var(--hover-bg);
+      }
+      
+      .theme-toggle-track {
+        width: 36px;
+        height: 20px;
+        background: var(--border-medium);
+        border-radius: 10px;
+        position: relative;
+        transition: background-color 0.3s ease;
+      }
+      
+      .theme-toggle[aria-checked="true"] .theme-toggle-track {
+        background: var(--primary-blue);
+      }
+      
+      .theme-toggle-thumb {
+        width: 16px;
+        height: 16px;
+        background: white;
+        border-radius: 50%;
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        transition: transform 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+      
+      .theme-toggle[aria-checked="true"] .theme-toggle-thumb {
+        transform: translateX(16px);
+      }
+      
+      .theme-toggle-label {
+        font-size: 1rem;
+      }
+      
+      /* Language Switcher */
+      .language-switcher {
+        display: flex;
+        background: var(--hover-bg);
+        border-radius: 6px;
+        padding: 2px;
+      }
+      
+      .lang-btn {
+        background: none;
+        border: none;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 28px;
+      }
+      
+      .lang-btn--active {
+        background: var(--card-bg);
+        color: var(--primary-blue);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      
+      .lang-btn:hover:not(.lang-btn--active) {
+        color: var(--text-secondary);
+      }
+      
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .desktop-menu {
+          display: none;
+        }
+        
+        .hamburger {
+          display: flex;
+        }
+        
+        .navbar-container {
+          padding: 1rem;
+        }
+        
+        .brand-tagline {
+          display: none;
+        }
+        
+        .navbar-controls {
+          gap: 0.5rem;
+        }
+        
+        .theme-toggle-label {
+          display: none;
+        }
+        
+        .nav-cta-button {
+          display: none;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        .navbar-controls .theme-toggle {
+          padding: 0.25rem;
+        }
+        
+        .language-switcher {
+          padding: 1px;
+        }
+        
+        .lang-btn {
+          padding: 0.2rem 0.4rem;
+          font-size: 0.7rem;
+          min-width: 24px;
+        }
       }
       
       /* Premium Micro-Interactions */
@@ -3995,34 +4657,31 @@ function generateDashboardHTML(subscription, t, lang, theme = 'light') {
     </style>
 </head>
 <body data-page-type="dashboard">
+    <!-- Skip to content for accessibility -->
+    <a href="#main-content" class="skip-to-content" tabindex="1">
+        ${lang === 'nl' ? 'Ga naar inhoud' : 'Skip to content'}
+    </a>
+    
+    ${generateStandardNavigation(lang, theme, 'dashboard')}
+    
+    <!-- Dashboard Header -->
+    <header class="service-header">
+        <div class="container">
+            <h1 class="service-title">
+                ${lang === 'nl' ? 'Dashboard' : 'Dashboard'}
+            </h1>
+            <p class="service-subtitle">
+                ${lang === 'nl' ? 'Monitor en beheer uw DHgate zoekresultaten' : 'Monitor and manage your DHgate search results'}
+            </p>
+        </div>
+    </header>
+    
     <div class="dashboard-container">
         <div class="container">
-            <!-- Navigation -->
-            <div class="dashboard-nav">
-                <div class="nav-brand">DHgate Monitor</div>
-                <div class="nav-controls">
-                    <!-- Language Switcher -->
-                    <div class="lang-switcher">
-                        <a href="?key=${subscription.dashboard_token}&lang=en&theme=${theme}" class="lang-option ${lang === 'en' ? 'active' : ''}">EN</a>
-                        <span class="lang-separator">|</span>
-                        <a href="?key=${subscription.dashboard_token}&lang=nl&theme=${theme}" class="lang-option ${lang === 'nl' ? 'active' : ''}">NL</a>
-                    </div>
-                    
-                    <!-- Theme Toggle -->
-                    <div class="theme-toggle-wrapper">
-                        <div class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" onclick="toggleTheme()">
-                            <div class="theme-toggle-slider">
-                                ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            ${generateBreadcrumb('/dashboard', lang)}
+            ${generateBreadcrumb('/dashboard', lang, theme)}
             
             <!-- Dashboard Content -->
-            <div class="dashboard-content">
+            <main id="main-content" class="dashboard-content" role="main">
                 <!-- Main Content -->
                 <div>
                     <div class="dashboard-card">
@@ -4102,7 +4761,7 @@ function generateDashboardHTML(subscription, t, lang, theme = 'light') {
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     </div>
     
@@ -4121,8 +4780,34 @@ function generateDashboardHTML(subscription, t, lang, theme = 'light') {
             window.location.href = currentUrl.toString();
         }
         
+        // Enhanced mobile menu functionality
+        function toggleMobileMenu() {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const overlay = document.querySelector('.mobile-menu-overlay');
+            
+            if (hamburger && mobileMenu && overlay) {
+                const isOpen = mobileMenu.classList.contains('active');
+                
+                if (isOpen) {
+                    hamburger.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                    overlay.classList.remove('active');
+                    mobileMenu.setAttribute('aria-hidden', 'true');
+                    hamburger.setAttribute('aria-expanded', 'false');
+                } else {
+                    hamburger.classList.add('active');
+                    mobileMenu.classList.add('active');
+                    overlay.classList.add('active');
+                    mobileMenu.setAttribute('aria-hidden', 'false');
+                    hamburger.setAttribute('aria-expanded', 'true');
+                }
+            }
+        }
+        
         // Track dashboard access on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Track dashboard access
             if (typeof window.trackDashboardAccess === 'function') {
                 const urlParams = new URLSearchParams(window.location.search);
                 const accessMethod = urlParams.get('via') || 'direct';
@@ -4217,6 +4902,9 @@ function generateAddShopHTML(t, lang, theme = 'light') {
         
         // Show consent banner on page load
     </script>
+    
+    ${generateCommonNavbarJS(lang, theme)}
+    
 </body>
 </html>
   `;
@@ -4429,7 +5117,7 @@ function generatePrivacyHTML(t, lang) {
     </style>
 </head>
 <body>
-    ${generateResponsiveNavigation(lang, theme, '/privacy')}
+    ${generateStandardNavigation(lang, theme, 'privacy')}
     
     <div class="container py-5">
         <div class="row justify-content-center">
@@ -4452,6 +5140,9 @@ function generatePrivacyHTML(t, lang) {
     </div>
     
     ${generateCookieConsentBanner(lang)}
+    
+    ${generateCommonNavbarJS(lang, 'light')}
+    
 </body>
 </html>
   `;
@@ -4484,7 +5175,7 @@ function generateTermsHTML(t, lang) {
     </style>
 </head>
 <body>
-    ${generateResponsiveNavigation(lang, theme, '/terms')}
+    ${generateStandardNavigation(lang, theme, 'terms')}
     
     <div class="container py-5">
         <div class="row justify-content-center">
@@ -4507,6 +5198,9 @@ function generateTermsHTML(t, lang) {
     </div>
     
     ${generateCookieConsentBanner(lang)}
+    
+    ${generateCommonNavbarJS(lang, 'light')}
+    
 </body>
 </html>
   `;
@@ -4537,7 +5231,11 @@ function generateServiceHeaderStyles() {
         background: var(--bg-hero);
         color: white;
         text-align: center;
-        padding: 3rem 0 2rem;
+        padding: 0;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         position: relative;
         overflow: hidden;
     }
@@ -4578,7 +5276,7 @@ function generateServiceHeaderStyles() {
     
     @media (max-width: 768px) {
         .service-header {
-            padding: 2.5rem 0 1.5rem;
+            height: 180px;
         }
         
         .service-title {
@@ -4603,123 +5301,208 @@ function generateServiceHeaderStyles() {
 }
 
 // Minimalist Breadcrumb System
-function generateBreadcrumb(currentPath, lang = 'nl') {
+/**
+ * Enhanced Breadcrumb System with better UX and accessibility
+ * @param {string} currentPath - Current page path
+ * @param {string} lang - Language code (nl/en)
+ * @param {string} theme - Theme (light/dark)
+ * @param {Object} customItems - Optional custom breadcrumb items
+ * @returns {string} - Enhanced breadcrumb HTML
+ */
+function generateBreadcrumb(currentPath, lang = 'nl', theme = 'light', customItems = null) {
   const breadcrumbTranslations = {
     nl: {
       home: 'Home',
       service: 'Service & Contact',
       dashboard: 'Dashboard',
       unsubscribe: 'Uitschrijven',
-      test: 'Test',
-      login: 'Inloggen'
+      test: 'Test Centrum',
+      login: 'Inloggen',
+      settings: 'Instellingen',
+      profile: 'Profiel',
+      shops: 'Winkels',
+      tags: 'Tags'
     },
     en: {
       home: 'Home',
       service: 'Service & Contact', 
       dashboard: 'Dashboard',
       unsubscribe: 'Unsubscribe',
-      test: 'Test',
-      login: 'Login'
+      test: 'Test Center',
+      login: 'Login',
+      settings: 'Settings',
+      profile: 'Profile',
+      shops: 'Shops',
+      tags: 'Tags'
     }
   };
 
   const t = breadcrumbTranslations[lang] || breadcrumbTranslations.en;
   
+  // Enhanced path mapping with hierarchy
   const pathMapping = {
-    '/': { label: t.home, path: '/' },
-    '/service': { label: t.service, path: '/service' },
-    '/dashboard': { label: t.dashboard, path: '/dashboard' },
-    '/unsubscribe': { label: t.unsubscribe, path: '/unsubscribe' },
-    '/test': { label: t.test, path: '/test' },
-    '/login': { label: t.login, path: '/login' }
+    '/': { label: t.home, path: '/', parent: null },
+    '/service': { label: t.service, path: '/service', parent: '/' },
+    '/dashboard': { label: t.dashboard, path: '/dashboard', parent: '/' },
+    '/dashboard/settings': { label: t.settings, path: '/dashboard/settings', parent: '/dashboard' },
+    '/dashboard/shops': { label: t.shops, path: '/dashboard/shops', parent: '/dashboard' },
+    '/dashboard/tags': { label: t.tags, path: '/dashboard/tags', parent: '/dashboard' },
+    '/unsubscribe': { label: t.unsubscribe, path: '/unsubscribe', parent: '/' },
+    '/test': { label: t.test, path: '/test', parent: '/' },
+    '/login': { label: t.login, path: '/login', parent: '/' }
   };
 
-  const crumbs = [];
-  
-  // Always start with Home (except if we're on home)
-  if (currentPath !== '/') {
-    crumbs.push({ label: t.home, path: '/', active: false });
-  }
-  
-  // Add current page
-  if (pathMapping[currentPath]) {
-    crumbs.push({ 
-      label: pathMapping[currentPath].label, 
-      path: currentPath, 
-      active: true 
-    });
+  // Build breadcrumb trail
+  function buildBreadcrumbTrail(path) {
+    const trail = [];
+    let current = pathMapping[path];
+    
+    while (current) {
+      trail.unshift(current);
+      current = current.parent ? pathMapping[current.parent] : null;
+    }
+    
+    return trail;
   }
 
+  // Use custom items or build from path
+  let crumbs = [];
+  if (customItems) {
+    crumbs = customItems;
+  } else {
+    crumbs = buildBreadcrumbTrail(currentPath);
+  }
+
+  if (crumbs.length === 0) return ''; // No breadcrumbs needed
+
   return `
-    <nav class="breadcrumb-nav" role="navigation" aria-label="breadcrumb">
+    <nav class="breadcrumb-nav" role="navigation" aria-label="${lang === 'nl' ? 'Je bent hier' : 'You are here'}">
       <div class="container">
-        <div class="breadcrumb-list">
-          ${crumbs.map((crumb, index) => `
-            ${crumb.active ? `
-              <span class="breadcrumb-current" aria-current="page">
-                ${crumb.label}
-              </span>
-            ` : `
-              <a href="${crumb.path}?lang=${lang}" class="breadcrumb-link">
-                ${crumb.label}
-              </a>
-              <span class="breadcrumb-separator" aria-hidden="true">></span>
-            `}
-          `).join('')}
-        </div>
+        <ol class="breadcrumb-list" role="list">
+          ${crumbs.map((crumb, index) => {
+            const isLast = index === crumbs.length - 1;
+            const isFirst = index === 0;
+            
+            return `
+              <li class="breadcrumb-item ${isLast ? 'breadcrumb-item--current' : ''}" role="listitem">
+                ${!isFirst ? `
+                  <svg class="breadcrumb-separator" width="12" height="12" viewBox="0 0 24 24" fill="none" 
+                       stroke="currentColor" stroke-width="2" role="presentation" aria-hidden="true">
+                    <path d="M9 18l6-6-6-6"/>
+                  </svg>
+                ` : ''}
+                
+                ${isLast ? `
+                  <span class="breadcrumb-current" aria-current="page">
+                    ${crumb.label}
+                  </span>
+                ` : `
+                  <a href="${crumb.path}?lang=${lang}&theme=${theme}" 
+                     class="breadcrumb-link"
+                     aria-label="${lang === 'nl' ? `Ga naar ${crumb.label}` : `Go to ${crumb.label}`}">
+                    ${crumb.label}
+                  </a>
+                `}
+              </li>
+            `;
+          }).join('')}
+        </ol>
       </div>
     </nav>
   `;
 }
 
-// Minimalist Breadcrumb Styles
+// Enhanced Breadcrumb Styles
 function generateBreadcrumbStyles() {
   return `
-    /* Minimalist Breadcrumb System */
+    /* Enhanced Breadcrumb System */
     .breadcrumb-nav {
       background: var(--card-bg);
       border-bottom: 1px solid var(--border-light);
-      padding: 0.75rem 0;
-      margin-bottom: 1rem;
+      padding: 1rem 0;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
     }
     
     .breadcrumb-list {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0;
       font-size: 0.875rem;
       color: var(--text-muted);
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .breadcrumb-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
     
     .breadcrumb-link {
       color: var(--text-secondary);
       text-decoration: none;
-      transition: color 0.2s ease;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      position: relative;
     }
     
     .breadcrumb-link:hover {
       color: var(--primary-blue);
+      background: var(--hover-bg);
+      text-decoration: none;
     }
     
-    .breadcrumb-current {
-      color: var(--text-primary);
-      font-weight: 500;
+    .breadcrumb-link:focus {
+      outline: 2px solid var(--primary-blue);
+      outline-offset: 2px;
     }
     
     .breadcrumb-separator {
       color: var(--text-muted);
       margin: 0 0.25rem;
-      user-select: none;
+      opacity: 0.6;
     }
     
-    /* Mobile responsive */
+    .breadcrumb-current {
+      color: var(--text-primary);
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+    }
+    
+    .breadcrumb-item--current {
+      color: var(--text-primary);
+    }
+    
+    /* Responsive breadcrumbs */
     @media (max-width: 768px) {
       .breadcrumb-nav {
-        padding: 0.5rem 0;
+        padding: 0.75rem 0;
+        margin-bottom: 1rem;
       }
       
       .breadcrumb-list {
         font-size: 0.8rem;
+      }
+      
+      .breadcrumb-link,
+      .breadcrumb-current {
+        padding: 0.2rem 0.4rem;
+      }
+      
+      /* Hide long labels on mobile */
+      .breadcrumb-item:not(:first-child):not(:last-child) {
+        display: none;
+      }
+      
+      /* Add ellipsis indicator when items are hidden */
+      .breadcrumb-item:first-child:not(:last-child)::after {
+        content: '...';
+        margin: 0 0.5rem;
+        color: var(--text-muted);
       }
     }
   `;
@@ -4833,7 +5616,11 @@ function generateServiceHTML(t, lang, theme = 'light') {
             background: var(--bg-hero);
             color: white;
             text-align: center;
-            padding: 4rem 0 3rem;
+            padding: 0;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             position: relative;
             overflow: hidden;
         }
@@ -5045,7 +5832,7 @@ function generateServiceHTML(t, lang, theme = 'light') {
             }
             
             .service-header {
-                padding: 3rem 0 2rem;
+                height: 180px;
             }
         }
         
@@ -5073,9 +5860,9 @@ function generateServiceHTML(t, lang, theme = 'light') {
     </style>
 </head>
 <body>
-    ${generateResponsiveNavigation(lang, theme, '/service')}
+    ${generateStandardNavigation(lang, theme, 'service')}
     
-    ${generateBreadcrumb('/service', lang)}
+    ${generateBreadcrumb('/service', lang, theme)}
     
     <!-- Skip to content for accessibility -->
     <a href="#main-content" class="skip-to-content" tabindex="1">
@@ -5301,6 +6088,9 @@ function generateServiceHTML(t, lang, theme = 'light') {
             });
         }
     </script>
+    
+    ${generateCommonNavbarJS(lang, theme)}
+    
 </body>
 </html>
   `;
@@ -5801,12 +6591,24 @@ function generateContactHTML(t, lang, theme = 'light') {
     </style>
 </head>
 <body>
-    ${generateResponsiveNavigation(lang, theme, '/contact')}
+    ${generateStandardNavigation(lang, theme, 'contact')}
     
     <!-- Skip to content for accessibility -->
     <a href="#main-content" class="skip-to-content" tabindex="1">${lang === 'nl' ? 'Ga naar inhoud' : 'Skip to content'}</a>
     
-    <main id="main-content" role="main" style="padding-top: 70px;">
+    <!-- Contact Header -->
+    <header class="service-header">
+        <div class="container">
+            <h1 class="service-title">
+                ${lang === 'nl' ? 'Contact' : 'Contact'}
+            </h1>
+            <p class="service-subtitle">
+                ${lang === 'nl' ? 'Neem contact op voor vragen of ondersteuning' : 'Get in touch for questions or support'}
+            </p>
+        </div>
+    </header>
+    
+    <main id="main-content" role="main">
         <div class="container py-5">
             <!-- Dynamic Contact Pathfinder - ABN AMRO Style -->
             <div class="contact-pathfinder mb-5">
@@ -6621,6 +7423,9 @@ function generateContactHTML(t, lang, theme = 'light') {
         }
     });
     </script>
+    
+    ${generateCommonNavbarJS(lang, theme)}
+    
 </body>
 </html>
   `;
@@ -7561,14 +8366,21 @@ function generateDashboardErrorHTML(lang, theme, errorType) {
     </style>
 </head>
 <body>
-    ${generateServiceHeader(
-        lang === 'nl' ? 'Service & Contact' : 'Service & Contact',
-        lang === 'nl' ? 'Professionele ondersteuning voor DHgate Monitor' : 'Professional support for DHgate Monitor',
-        lang,
-        theme
-    )}
+    ${generateStandardNavigation(lang, theme, 'dashboard')}
     
-    ${generateBreadcrumb('/dashboard', lang)}
+    ${generateBreadcrumb('/dashboard', lang, theme)}
+    
+    <!-- Dashboard Error Header -->
+    <header class="service-header">
+        <div class="container">
+            <h1 class="service-title">
+                ${lang === 'nl' ? 'Dashboard' : 'Dashboard'}
+            </h1>
+            <p class="service-subtitle">
+                ${lang === 'nl' ? 'Monitor en beheer uw DHgate zoekresultaten' : 'Monitor and manage your DHgate search results'}
+            </p>
+        </div>
+    </header>
     
     <div class="error-container">
         <div class="error-card">
@@ -7624,6 +8436,9 @@ function generateDashboardErrorHTML(lang, theme, errorType) {
             </div>
         </div>
     </div>
+    
+    ${generateCommonNavbarJS(lang, theme)}
+    
 </body>
 </html>
   `;
@@ -10698,110 +11513,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
     <!-- Skip to content link for screen readers -->
     <a href="#main-content" class="skip-to-content" tabindex="1">${lang === 'nl' ? 'Ga naar inhoud' : 'Skip to content'}</a>
     
-    <!-- Professional Navigation Bar -->
-    <nav class="professional-navbar" role="navigation" aria-label="${lang === 'nl' ? 'Hoofdnavigatie' : 'Main navigation'}">
-        <div class="navbar-container">
-            <a href="/?lang=${lang}&theme=${theme}" class="navbar-brand">
-                <img src="/assets/logo.png?v=2" alt="DHgate Monitor - Automated Product Tracking for Dropshippers" height="80" style="max-width: 400px;">
-            </a>
-            
-            <div class="navbar-menu">
-                <a href="#subscription-form" class="nav-link" onclick="scrollToSubscription(); return false;">${lang === 'nl' ? 'Beginnen' : 'Get Started'}</a>
-                <a href="/dashboard?lang=${lang}&theme=${theme}" class="nav-link">${lang === 'nl' ? 'Dashboard' : 'Dashboard'}</a>
-                <a href="/service?lang=${lang}&theme=${theme}" class="nav-link">${lang === 'nl' ? 'Service' : 'Service'}</a>
-            </div>
-            
-            <div class="navbar-controls">
-                <!-- Language Switcher -->
-                <div class="nav-lang-switcher">
-                    <a href="/?lang=en&theme=${theme}" class="nav-lang-option ${lang === 'en' ? 'active' : ''}">EN</a>
-                    <span class="nav-lang-separator">|</span>
-                    <a href="/?lang=nl&theme=${theme}" class="nav-lang-option ${lang === 'nl' ? 'active' : ''}">NL</a>
-                </div>
-                
-                <!-- Theme Toggle -->
-                <div class="nav-theme-toggle">
-                    <button class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" 
-                            onclick="toggleTheme()" 
-                            aria-label="${lang === 'nl' ? (theme === 'dark' ? 'Schakel naar licht thema' : 'Schakel naar donker thema') : (theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme')}"
-                            role="switch"
-                            aria-checked="${theme === 'dark' ? 'true' : 'false'}"
-                            tabindex="0">
-                        <div class="theme-toggle-slider" aria-hidden="true">
-                            ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'}
-                        </div>
-                        <span class="sr-only">${lang === 'nl' ? (theme === 'dark' ? 'Donker thema actief' : 'Licht thema actief') : (theme === 'dark' ? 'Dark theme active' : 'Light theme active')}</span>
-                    </button>
-                </div>
-                
-                <a href="#subscription-form" class="nav-cta-button" onclick="scrollToSubscription(); return false;">
-                    ${lang === 'nl' ? 'START' : 'START'}
-                </a>
-                
-                <!-- Mobile Hamburger Menu -->
-                <button class="hamburger" onclick="toggleMobileMenu()" aria-label="${lang === 'nl' ? 'Menu in-/uitklappen' : 'Toggle menu'}" aria-expanded="false" aria-controls="mobileMenu">
-                    <span aria-hidden="true"></span>
-                    <span aria-hidden="true"></span>
-                    <span aria-hidden="true"></span>
-                    <span class="sr-only">${lang === 'nl' ? 'Menu' : 'Menu'}</span>
-                </button>
-            </div>
-        </div>
-    </nav>
+    ${generateStandardNavigation(lang, theme, 'home')}
     
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay" onclick="closeMobileMenu()"></div>
+    <!-- Main Content Starts Here -->
     
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu">
-        <div class="mobile-menu-header">
-            <div class="brand-logo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <defs>
-                        <linearGradient id="mobileBrandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#2563EB"/>
-                            <stop offset="100%" style="stop-color:#EA580C"/>
-                        </linearGradient>
-                    </defs>
-                    <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#mobileBrandGradient)"/>
-                    <path d="M2 17L12 22L22 17" stroke="url(#mobileBrandGradient)" stroke-width="2" fill="none"/>
-                    <path d="M2 12L12 17L22 12" stroke="url(#mobileBrandGradient)" stroke-width="2" fill="none"/>
-                </svg>
-            </div>
-            <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close menu">✕</button>
-        </div>
-        
-        <div class="mobile-menu-items">
-            <a href="#subscription-form" class="mobile-nav-link" onclick="scrollToSubscription(); closeMobileMenu(); return false;">${lang === 'nl' ? 'Beginnen' : 'Get Started'}</a>
-            <a href="/dashboard?lang=${lang}&theme=${theme}" class="mobile-nav-link">${lang === 'nl' ? 'Dashboard' : 'Dashboard'}</a>
-            <a href="/service?lang=${lang}&theme=${theme}" class="mobile-nav-link">${lang === 'nl' ? 'Service' : 'Service'}</a>
-        </div>
-        
-        <div class="mobile-controls">
-            <!-- Mobile Language Switcher -->
-            <div class="mobile-lang-switcher">
-                <a href="/?lang=en&theme=${theme}" class="mobile-lang-option ${lang === 'en' ? 'active' : ''}">English</a>
-                <a href="/?lang=nl&theme=${theme}" class="mobile-lang-option ${lang === 'nl' ? 'active' : ''}">Nederlands</a>
-            </div>
-            
-            <!-- Mobile Theme Toggle -->
-            <div class="mobile-theme-toggle">
-                <span style="color: var(--text-muted); font-size: 0.9rem;" id="mobile-theme-label">${lang === 'nl' ? 'Thema:' : 'Theme:'}</span>
-                <button class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" 
-                        onclick="toggleTheme()" 
-                        aria-labelledby="mobile-theme-label"
-                        aria-label="${lang === 'nl' ? (theme === 'dark' ? 'Schakel naar licht thema' : 'Schakel naar donker thema') : (theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme')}"
-                        role="switch"
-                        aria-checked="${theme === 'dark' ? 'true' : 'false'}">
-                    <div class="theme-toggle-slider" aria-hidden="true">
-                        ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'}
-                    </div>
-                    <span class="sr-only">${lang === 'nl' ? (theme === 'dark' ? 'Donker thema actief' : 'Licht thema actief') : (theme === 'dark' ? 'Dark theme active' : 'Light theme active')}</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Simplified Hero Section -->
     <main id="main-content" role="main">
         <section class="hero-section" aria-labelledby="hero-title">
@@ -12598,8 +13313,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
     <!-- Performance Optimization Scripts -->
     ${PerformanceUtils.generateLazyLoadScript()}
     
-    <!-- SEO Internal Linking Footer -->
-    ${generateSEOFooter(lang, 'home')}
+    ${generateCommonNavbarJS(lang, theme)}
     
     </main>
 </body>

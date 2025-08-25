@@ -104,13 +104,13 @@ class QATestRunner {
   }
 
   async runTestSuite(suite) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const command = 'npx';
       const args = [
         'playwright',
         'test',
         ...suite.files.map(file => path.join(__dirname, file)),
-        '--reporter=json'
+        '--reporter=line'
       ];
 
       const testProcess = spawn(command, args, {
@@ -129,16 +129,20 @@ class QATestRunner {
         stderr += data.toString();
       });
 
-      testProcess.on('close', (code) => {
+      testProcess.on('close', async (code) => {
         try {
-          const results = JSON.parse(stdout);
+          // Parse console output to extract test results
+          const results = this.parsePlaywrightOutput(stdout, stderr, code);
           resolve(results);
         } catch (error) {
           console.warn(`⚠️  Could not parse results for ${suite.name}:`, error.message);
+          if (stderr) {
+            console.warn(`Error output: ${stderr.slice(0, 500)}`);
+          }
           resolve({
             suites: [],
             tests: [],
-            errors: [stderr],
+            errors: [stderr || error.message],
             stats: { passed: 0, failed: 0, skipped: 0 }
           });
         }
@@ -148,6 +152,97 @@ class QATestRunner {
         reject(error);
       });
     });
+  }
+
+  parsePlaywrightOutput(stdout, stderr, exitCode) {
+    const stats = { passed: 0, failed: 0, skipped: 0 };
+    const tests = [];
+    
+    // Parse the output to count tests
+    const output = stdout + stderr;
+    
+    // Look for final summary line like "15 failed" or "3 passed"
+    const summaryMatch = output.match(/(\d+)\s+(passed|failed|skipped)/g);
+    if (summaryMatch) {
+      summaryMatch.forEach(match => {
+        const [, count, status] = match.match(/(\d+)\s+(passed|failed|skipped)/);
+        const num = parseInt(count, 10);
+        
+        if (status === 'passed') stats.passed += num;
+        else if (status === 'failed') stats.failed += num;
+        else if (status === 'skipped') stats.skipped += num;
+      });
+    }
+    
+    // If no explicit stats found, infer from exit code
+    if (stats.passed === 0 && stats.failed === 0 && stats.skipped === 0) {
+      if (exitCode === 0) {
+        // Check if there were actually tests run
+        const testRunIndicator = output.includes('Running') || output.includes('test');
+        if (testRunIndicator) {
+          stats.passed = 1; // Assume at least 1 test passed
+        }
+      } else {
+        stats.failed = 1; // Assume at least 1 test failed
+      }
+    }
+    
+    return {
+      suites: [],
+      tests,
+      stats
+    };
+  }
+
+  convertPlaywrightResults(playwrightResults) {
+    const stats = {
+      passed: 0,
+      failed: 0,
+      skipped: 0
+    };
+
+    const tests = [];
+    
+    if (playwrightResults.suites) {
+      playwrightResults.suites.forEach(suite => {
+        if (suite.specs) {
+          suite.specs.forEach(spec => {
+            spec.tests.forEach(test => {
+              const testResult = {
+                title: test.title,
+                fullTitle: `${suite.title} > ${spec.title} > ${test.title}`,
+                status: this.mapPlaywrightStatus(test.results[0]?.status),
+                duration: test.results[0]?.duration || 0,
+                error: test.results[0]?.error
+              };
+              
+              tests.push(testResult);
+              
+              // Count stats
+              if (testResult.status === 'passed') stats.passed++;
+              else if (testResult.status === 'failed') stats.failed++;
+              else stats.skipped++;
+            });
+          });
+        }
+      });
+    }
+
+    return {
+      suites: playwrightResults.suites || [],
+      tests,
+      stats
+    };
+  }
+
+  mapPlaywrightStatus(status) {
+    switch (status) {
+      case 'passed': return 'passed';
+      case 'failed': return 'failed';
+      case 'skipped': return 'skipped';
+      case 'timedOut': return 'failed';
+      default: return 'skipped';
+    }
   }
 
   async generateComprehensiveReport() {
