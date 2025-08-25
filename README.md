@@ -160,6 +160,13 @@ DEBUG_MODE=false
 | [`/api/unsubscribe`](https://dhgate-monitor.com/api/unsubscribe) | JSON | **Unsubscribe Action** |
 | [`/test-unsubscribe`](https://dhgate-monitor.com/test-unsubscribe) | Redirect | **Test Unsubscribe Flow** |
 
+### **🆕 Affiliate Program API**
+| URL | Type | Description | Access |
+|-----|------|-------------|--------|
+| [`/affiliate/dashboard`](https://dhgate-monitor.com/affiliate/dashboard) | HTML | **Affiliate Analytics Dashboard** | Public |
+| [`/api/affiliate/analytics`](https://dhgate-monitor.com/api/affiliate/analytics) | JSON | **Affiliate Performance Data** | API |
+| [`/affiliate/redirect`](https://dhgate-monitor.com/affiliate/redirect) | Redirect | **Tracked Affiliate Link Service** | System |
+
 ---
 
 ## User Journey
@@ -565,8 +572,37 @@ This project is proprietary software developed for automated DHgate product moni
 
 ---
 
-*Last Updated: August 24, 2025*
-*Version: 3.8 - Professional QA Testing Framework*
+*Last Updated: August 25, 2025*
+*Version: 4.0 - DHgate Affiliate Program Integration*
+
+### **Version 4.0 Highlights - DHgate Affiliate Program** 🆕
+- **💰 Complete Affiliate System** - Full DHgate affiliate program integration with commission tracking
+- **📊 Affiliate Dashboard** - Professional analytics dashboard at `/affiliate/dashboard`
+- **🔗 Automatic Link Conversion** - All DHgate URLs automatically converted to affiliate links
+- **📈 Click Tracking** - Comprehensive tracking with IP, user agent, and referrer data
+- **💡 Intelligent Categorization** - Auto-detection of product categories for optimized commission rates
+- **🏦 Earnings Management** - Real-time commission tracking with detailed analytics
+- **🔒 Transparent Disclosure** - GDPR-compliant affiliate disclosure on all pages
+- **⚡ High Performance** - Cached affiliate URLs with D1 database optimization
+- **🛡️ Security First** - Input validation and error handling for all affiliate operations
+
+#### **🔗 New Affiliate API Endpoints**
+- **`/affiliate/redirect`** - Tracked redirect service for affiliate link clicks
+- **`/api/affiliate/analytics`** - JSON API for affiliate performance data
+- **`/affiliate/dashboard`** - Professional analytics dashboard with earnings overview
+
+#### **💰 Commission Structure**
+- **Electronics**: 3% commission rate
+- **Fashion**: 8% commission rate  
+- **Beauty**: 12% commission rate
+- **Default Products**: 5% commission rate
+- **Minimum Payout**: €50 monthly processing
+
+#### **🛠️ Technical Implementation**
+- **Database Tables**: `affiliate_clicks`, `affiliate_earnings`, `affiliate_links`
+- **Caching System**: Intelligent URL caching for performance optimization
+- **Analytics Engine**: 30-day rolling analytics with conversion tracking
+- **Link Enhancement**: UTM parameters for comprehensive tracking
 
 ### **Version 3.8 Highlights**  
 - **🧪 Comprehensive QA Framework** - Professional testing system with Playwright for end-to-end validation
