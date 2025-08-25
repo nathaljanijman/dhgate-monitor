@@ -1329,12 +1329,14 @@ ${cssVars}
         --font-size-desktop: 16px;
       }
       
-      /* Premium Reset & Base Styles */
-      * {
+      /* CSS Reset for consistent spacing */
+      *, *::before, *::after {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
       
-      body { 
+      html, body { 
         font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         background: var(--bg-gradient);
         min-height: 100vh;
@@ -1344,6 +1346,9 @@ ${cssVars}
         line-height: 1.6;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
       }
       
       /* Premium Typography System */
@@ -5585,22 +5590,13 @@ function generateServiceHTML(t, lang, theme = 'light') {
             }
         }
         
-        /* CSS Reset for consistent spacing */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        html, body { 
+        body { 
             font-family: 'Raleway', sans-serif;
             margin: 0;
             padding: 0;
             background: var(--bg-gradient);
             color: var(--text-primary);
             line-height: 1.6;
-            height: 100%;
-            overflow-x: hidden;
         }
         
         /* Skip to content for accessibility */
