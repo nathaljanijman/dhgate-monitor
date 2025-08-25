@@ -11165,8 +11165,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             }
             
             .navbar-brand img {
-                height: 64px !important;
-                max-width: 280px !important;
+                height: 32px !important;
+                max-width: 32px !important;
             }
             
             .navbar-container {
@@ -11205,8 +11205,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             }
             
             .navbar-brand img {
-                height: 56px !important;
-                max-width: 240px !important;
+                height: 32px !important;
+                max-width: 32px !important;
             }
             
             .nav-lang-switcher {
