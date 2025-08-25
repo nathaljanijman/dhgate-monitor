@@ -11831,7 +11831,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 </div>
             </div>
             
-            <div style="display: none;">
+            <div>
                 
                 <!-- E-commerce Entrepreneurs -->
                 <div class="professional-card animate-fade-in-up" style="animation-delay: 0.2s;">
