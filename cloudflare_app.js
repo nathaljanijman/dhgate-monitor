@@ -113,10 +113,7 @@ function generateStandardNavigation(lang = 'nl', theme = 'light', currentPage = 
     menuItems.push({ href: '/terms', key: 'terms', labelNl: 'Voorwaarden', labelEn: 'Terms' });
   }
   
-  // Add "Beginnen" button for homepage
-  if (currentPage === 'home') {
-    menuItems.push({ href: '#subscription-form', key: 'start', labelNl: 'Beginnen', labelEn: 'Get Started', isButton: true });
-  }
+  // Removed "Beginnen" button for homepage to match other pages' navigation
 
   const menuHtml = menuItems.map(item => {
     const isActive = currentPage === item.key;
@@ -307,10 +304,15 @@ function generateCommonNavbarJS(lang = 'nl', theme = 'light') {
         // Scroll to subscription form (for homepage)
         function scrollToSubscription() {
             const subscriptionForm = document.querySelector('#subscription-form');
+            const navbar = document.querySelector('.site-navbar');
+            
             if (subscriptionForm) {
-                subscriptionForm.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
+                const navbarHeight = navbar ? navbar.offsetHeight : 80;
+                const targetPosition = subscriptionForm.getBoundingClientRect().top + window.pageYOffset - navbarHeight - 20;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
                 });
             } else {
                 // If not on homepage, go to homepage with scroll
@@ -1351,6 +1353,17 @@ ${cssVars}
         overflow-x: hidden;
       }
       
+      /* Page-specific padding for fixed navbar */
+      body[data-page-type="landing"] {
+        padding-top: 70px;
+      }
+      
+      body[data-page-type="dashboard"],
+      body[data-page-type="service"],
+      body[data-page-type="contact"] {
+        padding-top: 80px;
+      }
+      
       /* Premium Typography System */
       h1, h2, h3, h4, h5, h6 {
         font-weight: 700;
@@ -1607,6 +1620,8 @@ ${cssVars}
       }
       
       .animate-fade-in-up {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
         animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       }
       
@@ -1653,8 +1668,11 @@ ${cssVars}
       .site-navbar {
         background: var(--card-bg);
         border-bottom: 1px solid var(--border-light);
-        position: sticky;
+        position: fixed;
         top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
         z-index: 1000;
         backdrop-filter: blur(10px);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -9199,9 +9217,10 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         /* Simplified Hero */
         .hero-section {
             position: relative;
-            padding: 60px 0 40px;
+            padding: 20px 0 40px;
             background: var(--bg-gradient);
             overflow: hidden;
+            min-height: 500px;
         }
         
         .hero-background-pattern {
@@ -11831,150 +11850,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 </div>
             </div>
             
-            <div>
-                
-                <!-- E-commerce Entrepreneurs -->
-                <div class="professional-card animate-fade-in-up" style="animation-delay: 0.2s;">
-                    
-                    <div class="card-glow"></div>
-                    
-                    <div class="card-header">
-                        <div class="icon-wrapper animate-scale-in" style="margin: 0 auto 2rem; display: flex; justify-content: center;">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/>
-                                <circle cx="9" cy="7" r="4"/>
-                                <path d="M22 21v-2a4 4 0 00-3-3.87"/>
-                                <path d="M16 3.13a4 4 0 010 7.75"/>
-                            </svg>
-                        </div>
-                        
-                        <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--text-primary); margin-bottom: 1rem; min-height: 3rem; display: flex; align-items: center; justify-content: center;">
-                            ${lang === 'nl' ? 'E-commerce Ondernemers' : 'E-commerce Entrepreneurs'}
-                        </h3>
-                        
-                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem; min-height: 5rem; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: normal;">
-                            ${lang === 'nl' ? 'Dropshippers en retailers die trending producten vroeg willen ontdekken.' : 'Dropshippers and retailers who want to discover trending products early.'}
-                        </p>
-                    </div>
-                    
-                    <div class="separator" style="width: 60px; height: 1px; background: rgba(37, 99, 235, 0.2); margin: 0 auto 1.5rem; position: relative; z-index: 2;"></div>
-                    
-                    <div class="benefits-list" style="text-align: left; position: relative; z-index: 2;">
-                        <div class="benefit-item" style="display: flex; align-items: center; margin: 1rem 0; opacity: 0.8; transition: opacity 0.3s ease;">
-                            <div style="width: 6px; height: 6px; background: #2563EB; border-radius: 50%; margin-right: 1rem; flex-shrink: 0;"></div>
-                            <span style="color: var(--text-secondary); font-size: 0.95rem;">
-                                ${lang === 'nl' ? 'Nieuwe producten ontdekken' : 'Discover new products'}
-                            </span>
-                        </div>
-                        <div class="benefit-item" style="display: flex; align-items: center; margin: 1rem 0; opacity: 0.8; transition: opacity 0.3s ease;">
-                            <div style="width: 6px; height: 6px; background: #2563EB; border-radius: 50%; margin-right: 1rem; flex-shrink: 0;"></div>
-                            <span style="color: var(--text-secondary); font-size: 0.95rem;">
-                                ${lang === 'nl' ? 'Markttrends volgen' : 'Track market trends'}
-                            </span>
-                        </div>
-                        <div class="benefit-item" style="display: flex; align-items: center; margin: 1rem 0; opacity: 0.8; transition: opacity 0.3s ease;">
-                            <div style="width: 6px; height: 6px; background: #2563EB; border-radius: 50%; margin-right: 1rem; flex-shrink: 0;"></div>
-                            <span style="color: var(--text-secondary); font-size: 0.95rem;">
-                                ${lang === 'nl' ? 'Automatische alerts' : 'Automatic alerts'}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Business Professionals -->
-                <div class="professional-card animate-fade-in-up" style="animation-delay: 0.4s;">
-                    
-                    <div class="card-glow card-glow-business"></div>
-                    
-                    <div class="card-header">
-                        <div class="icon-wrapper animate-scale-in" style="margin: 0 auto 2rem; display: flex; justify-content: center; animation-delay: 0.4s;">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 3v18h18"/>
-                                <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
-                            </svg>
-                        </div>
-                        
-                        <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--text-primary); margin-bottom: 1rem; min-height: 3rem; display: flex; align-items: center; justify-content: center;">
-                            ${lang === 'nl' ? 'Business Professionals' : 'Business Professionals'}
-                        </h3>
-                        
-                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem; min-height: 5rem; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: normal;">
-                            ${lang === 'nl' ? 'Inkopers, productmanagers en analisten die datagedreven beslissingen willen maken.' : 'Buyers, product managers and analysts who want to make data-driven decisions.'}
-                        </p>
-                    </div>
-                    
-                    <div class="separator" style="width: 60px; height: 1px; background: rgba(37, 99, 235, 0.2); margin: 0 auto 1.5rem; position: relative; z-index: 2;"></div>
-                    
-                    <div class="benefits-list" style="text-align: left; position: relative; z-index: 2;">
-                        <div class="benefit-item" style="display: flex; align-items: center; margin: 1rem 0; opacity: 0.8; transition: opacity 0.3s ease;">
-                            <div style="width: 6px; height: 6px; background: #2563EB; border-radius: 50%; margin-right: 1rem; flex-shrink: 0;"></div>
-                            <span style="color: var(--text-secondary); font-size: 0.95rem;">
-                                ${lang === 'nl' ? 'Markt intelligence' : 'Market intelligence'}
-                            </span>
-                        </div>
-                        <div class="benefit-item" style="display: flex; align-items: center; margin: 1rem 0; opacity: 0.8; transition: opacity 0.3s ease;">
-                            <div style="width: 6px; height: 6px; background: #2563EB; border-radius: 50%; margin-right: 1rem; flex-shrink: 0;"></div>
-                            <span style="color: var(--text-secondary); font-size: 0.95rem;">
-                                ${lang === 'nl' ? 'Concurrentie analyse' : 'Competitor analysis'}
-                            </span>
-                        </div>
-                        <div class="benefit-item" style="display: flex; align-items: center; margin: 1rem 0; opacity: 0.8; transition: opacity 0.3s ease;">
-                            <div style="width: 6px; height: 6px; background: #2563EB; border-radius: 50%; margin-right: 1rem; flex-shrink: 0;"></div>
-                            <span style="color: var(--text-secondary); font-size: 0.95rem;">
-                                ${lang === 'nl' ? 'Leverancier monitoring' : 'Supplier monitoring'}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Smart Shoppers -->
-                <div class="professional-card animate-fade-in-up" style="animation-delay: 0.6s;">
-                    
-                    <div class="card-glow card-glow-shoppers"></div>
-                    
-                    <div class="card-header">
-                        <div class="icon-wrapper animate-scale-in" style="margin: 0 auto 2rem; display: flex; justify-content: center; animation-delay: 0.6s;">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="9" cy="21" r="1"/>
-                                <circle cx="20" cy="21" r="1"/>
-                                <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
-                            </svg>
-                        </div>
-                        
-                        <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--text-primary); margin-bottom: 1rem; min-height: 3rem; display: flex; align-items: center; justify-content: center;">
-                            ${lang === 'nl' ? 'Smart Shoppers' : 'Smart Shoppers'}
-                        </h3>
-                        
-                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem; min-height: 5rem; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: normal;">
-                            ${lang === 'nl' ? 'Deal hunters en bulk buyers die de beste prijzen en groothandelsmogelijkheden zoeken.' : 'Deal hunters and bulk buyers looking for best prices and wholesale opportunities.'}
-                        </p>
-                    </div>
-                    
-                    <div class="separator" style="width: 60px; height: 1px; background: rgba(37, 99, 235, 0.2); margin: 0 auto 1.5rem; position: relative; z-index: 2;"></div>
-                    
-                    <div class="benefits-list" style="text-align: left; position: relative; z-index: 2;">
-                        <div class="benefit-item" style="display: flex; align-items: center; margin: 1rem 0; opacity: 0.8; transition: opacity 0.3s ease;">
-                            <div style="width: 6px; height: 6px; background: #2563EB; border-radius: 50%; margin-right: 1rem; flex-shrink: 0;"></div>
-                            <span style="color: var(--text-secondary); font-size: 0.95rem;">
-                                ${lang === 'nl' ? 'Beste deals vinden' : 'Find best deals'}
-                            </span>
-                        </div>
-                        <div class="benefit-item" style="display: flex; align-items: center; margin: 1rem 0; opacity: 0.8; transition: opacity 0.3s ease;">
-                            <div style="width: 6px; height: 6px; background: #2563EB; border-radius: 50%; margin-right: 1rem; flex-shrink: 0;"></div>
-                            <span style="color: var(--text-secondary); font-size: 0.95rem;">
-                                ${lang === 'nl' ? 'Prijs alerts' : 'Price drop alerts'}
-                            </span>
-                        </div>
-                        <div class="benefit-item" style="display: flex; align-items: center; margin: 1rem 0; opacity: 0.8; transition: opacity 0.3s ease;">
-                            <div style="width: 6px; height: 6px; background: #2563EB; border-radius: 50%; margin-right: 1rem; flex-shrink: 0;"></div>
-                            <span style="color: var(--text-secondary); font-size: 0.95rem;">
-                                ${lang === 'nl' ? 'Bulk opportunities' : 'Bulk opportunities'}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
         </div>
     </section>
     
@@ -11995,10 +11870,14 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         }
         
         .animate-fade-in-up {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
             animation: animate-fade-in-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
         
         .animate-scale-in {
+            opacity: 1 !important;
+            transform: scale(1) !important;
             animation: animate-scale-in 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
         
@@ -12744,7 +12623,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         
         function scrollToSubscription() {
             const subscriptionSection = document.getElementById('subscription-form');
-            const navbar = document.querySelector('.professional-navbar');
+            const navbar = document.querySelector('.site-navbar');
             
             if (subscriptionSection) {
                 const navbarHeight = navbar ? navbar.offsetHeight : 80;
@@ -12899,7 +12778,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         const totalSteps = 4;
         
         function nextStep() {
-            const currentStepElement = document.querySelector(\`.form-step[data-step="\${currentStep}"]\`);
+            const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
             const emailInput = document.getElementById('email');
             const tagsInput = document.getElementById('tags');
             
@@ -12914,7 +12793,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 const storeUrl = document.getElementById('selected_store_url').value;
                 
                 if (!storeUrl) {
-                    alert('${lang}' === 'nl' ? 'Selecteer eerst een winkel' : 'Please select a store first');
+                    alert('${lang === 'nl' ? 'Selecteer eerst een winkel' : 'Please select a store first'}');
                     document.getElementById('store_search').focus();
                     return;
                 }
@@ -12940,7 +12819,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 
                 // Show next step
                 currentStep++;
-                const nextStepElement = document.querySelector(\`.form-step[data-step="\${currentStep}"]\`);
+                const nextStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
                 
                 setTimeout(() => {
                     nextStepElement.classList.add('active');
@@ -12966,12 +12845,12 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         function previousStep() {
             if (currentStep > 1) {
                 // Hide current step
-                const currentStepElement = document.querySelector(\`.form-step[data-step="\${currentStep}"]\`);
+                const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
                 currentStepElement.classList.remove('active');
                 
                 // Show previous step
                 currentStep--;
-                const prevStepElement = document.querySelector(\`.form-step[data-step="\${currentStep}"]\`);
+                const prevStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
                 
                 setTimeout(() => {
                     prevStepElement.classList.add('active');
