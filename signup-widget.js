@@ -1607,6 +1607,143 @@ function generateWidgetStoreBrowser(lang, theme) {
       console.log('=== JAVASCRIPT LOADING STARTED ===');
       
       // Define functions immediately in global scope
+      function selectWidgetStore(storeId) {
+        console.log('=== SELECT WIDGET STORE FUNCTION CALLED ===');
+        console.log('Widget store selected:', storeId);
+        console.log('Function called successfully!');
+        console.log('Current window.selectedStores:', window.selectedStores);
+        console.log('Current window.widgetStores:', window.widgetStores);
+        
+        const selectedTile = document.querySelector('.widget-store-tile[data-store-id="' + storeId + '"]');
+        const selectedCheck = document.getElementById('check-' + storeId);
+        const store = window.widgetStores.find(s => s.id === storeId);
+        
+        console.log('Selected tile:', selectedTile);
+        console.log('Selected check:', selectedCheck);
+        console.log('Store data:', store);
+        console.log('Current selectedStores:', window.selectedStores);
+        console.log('All tiles found:', document.querySelectorAll('.widget-store-tile').length);
+        console.log('All checks found:', document.querySelectorAll('.tile-check').length);
+        
+        if (!selectedTile) {
+          console.error('Selected tile not found for store ID:', storeId);
+          return;
+        }
+        
+        if (!selectedCheck) {
+          console.error('Selected check not found for store ID:', storeId);
+          return;
+        }
+        
+        if (!store) {
+          console.error('Store data not found for store ID:', storeId);
+          return;
+        }
+        
+        // Toggle selection
+        const isCurrentlySelected = selectedTile.classList.contains('selected');
+        console.log('Is currently selected:', isCurrentlySelected);
+        
+        if (isCurrentlySelected) {
+          // Deselect
+          console.log('Deselecting store:', store.name);
+          selectedTile.classList.remove('selected');
+          selectedCheck.classList.add('hidden');
+          window.selectedStores = window.selectedStores.filter(s => s.id !== storeId);
+        } else {
+          // Select
+          console.log('Selecting store:', store.name);
+          selectedTile.classList.add('selected');
+          selectedCheck.classList.remove('hidden');
+          window.selectedStores.push(store);
+        }
+        
+        console.log('Updated selectedStores:', window.selectedStores);
+        
+        // Update form data with all selected stores
+        console.log('Calling updateSelectedStoresFormData...');
+        updateSelectedStoresFormData();
+        
+        // Update selection counter
+        console.log('Calling updateSelectionCounter...');
+        updateSelectionCounter();
+        
+        console.log('Final selected stores:', window.selectedStores.map(s => s.name));
+        console.log('Selection complete!');
+      }
+      
+      function addWidgetCustomStore() {
+        console.log('Custom store function called!');
+        
+        const urlInput = document.getElementById('widget-custom-store');
+        const url = urlInput.value.trim();
+        
+        console.log('URL input:', urlInput);
+        console.log('URL value:', url);
+        
+        if (!url) {
+          alert('Voer een winkel URL in');
+          return;
+        }
+        
+        // Improved DHgate URL pattern
+        const dhgatePattern = /^https?:\\/\\/(www\\.)?dhgate\\.com\\/store\\/[a-zA-Z0-9]+/;
+        if (!dhgatePattern.test(url)) {
+          alert('Voer een geldige DHgate winkel URL in. Bijvoorbeeld: https://www.dhgate.com/store/21168508');
+          return;
+        }
+        
+        // Check if URL already exists
+        const existingStore = window.selectedStores.find(s => s.url === url);
+        if (existingStore) {
+          alert('Deze winkel is al geselecteerd!');
+          return;
+        }
+        
+        // Clear previous tile selections
+        document.querySelectorAll('.widget-store-tile').forEach(tile => {
+          tile.classList.remove('selected');
+        });
+        document.querySelectorAll('.tile-check').forEach(check => {
+          check.classList.add('hidden');
+        });
+        
+        // Add custom store to selection
+        const customStore = {
+          id: 'custom-' + Date.now(),
+          name: 'Custom Store',
+          url: url,
+          category: 'Custom',
+          description: 'Custom DHgate store'
+        };
+        
+        window.selectedStores = [customStore]; // Replace with custom store
+        updateSelectedStoresFormData();
+        updateSelectionCounter();
+        
+        // Visual feedback
+        urlInput.style.borderColor = '#10b981';
+        urlInput.style.backgroundColor = '#f0fdf4';
+        
+        // Show success message
+        const successMsg = document.createElement('div');
+        successMsg.style.cssText = 'color: #10b981; font-size: 0.9rem; margin-top: 0.5rem; font-weight: 600;';
+        successMsg.textContent = '✓ Winkel succesvol toegevoegd!';
+        
+        const parent = urlInput.parentElement;
+        const existingMsg = parent.querySelector('.success-msg');
+        if (existingMsg) existingMsg.remove();
+        successMsg.className = 'success-msg';
+        parent.appendChild(successMsg);
+        
+        setTimeout(() => {
+          urlInput.style.borderColor = '';
+          urlInput.style.backgroundColor = '';
+          if (successMsg.parentElement) successMsg.remove();
+        }, 3000);
+        
+        console.log('Custom store added:', url);
+      }
 
       
 
