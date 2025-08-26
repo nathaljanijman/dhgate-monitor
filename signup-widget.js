@@ -65,6 +65,7 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
     step2: 'Winkel',
     step3: 'Zoektermen',
     step4: 'Bevestiging',
+    step5: 'Succes',
     emailLabel: 'Email adres',
     emailPlaceholder: 'jouw@email.com',
     storeTitle: 'Kies je winkel',
@@ -76,10 +77,21 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
     tagsPlaceholder: 'Voer zoektermen in (bijv. smartphone, handtas)',
     tagsDescription: 'Voeg zoektermen toe om specifieke producten te monitoren',
     confirmTitle: 'Bevestig je aanmelding',
+    successTitle: 'Aanmelding Succesvol!',
+    successSubtitle: 'Je bent succesvol aangemeld voor DHgate Monitor',
+    successMessage: 'Je ontvangt binnenkort een bevestigingsemail met verdere instructies.',
+    nextSteps: 'Wat gebeurt er nu?',
+    nextStepsList: [
+      'Je ontvangt een bevestigingsemail binnen 5 minuten',
+      'We beginnen met het monitoren van je geselecteerde winkels',
+      'Je krijgt dagelijks updates over nieuwe producten en prijzen',
+      'Je kunt je voorkeuren altijd aanpassen via je dashboard'
+    ],
     nextButton: 'Volgende',
     backButton: 'Terug',
     submitButton: 'Aanmelden',
-    loadingText: 'Aanmelden...'
+    loadingText: 'Aanmelden...',
+    doneButton: 'Klaar'
   } : {
     title: 'DHgate Monitor',
     subtitle: 'Monitor your favorite DHgate stores and get real-time updates',
@@ -87,6 +99,7 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
     step2: 'Store',
     step3: 'Search Terms',
     step4: 'Confirmation',
+    step5: 'Success',
     emailLabel: 'Email address',
     emailPlaceholder: 'your@email.com',
     storeTitle: 'Choose your store',
@@ -98,10 +111,21 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
     tagsPlaceholder: 'Enter search terms (e.g. smartphone, handbag)',
     tagsDescription: 'Add search terms to monitor specific products',
     confirmTitle: 'Confirm your registration',
+    successTitle: 'Registration Successful!',
+    successSubtitle: 'You have successfully signed up for DHgate Monitor',
+    successMessage: 'You will receive a confirmation email shortly with further instructions.',
+    nextSteps: 'What happens next?',
+    nextStepsList: [
+      'You will receive a confirmation email within 5 minutes',
+      'We will start monitoring your selected stores',
+      'You will get daily updates about new products and prices',
+      'You can always adjust your preferences via your dashboard'
+    ],
     nextButton: 'Next',
     backButton: 'Back',
     submitButton: 'Sign Up',
-    loadingText: 'Signing up...'
+    loadingText: 'Signing up...',
+    doneButton: 'Done'
   };
   
   return `<!DOCTYPE html>
@@ -443,6 +467,80 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
             color: var(--text-secondary);
         }
         
+        .success-container {
+            text-align: center;
+            padding: 2rem 0;
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .success-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--success);
+        }
+        
+        .success-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .success-message {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        
+        .next-steps {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        
+        .next-steps-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .next-steps-list {
+            list-style: none;
+        }
+        
+        .next-steps-list li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        .next-steps-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+        
         .button-group {
             display: flex;
             gap: 1rem;
@@ -516,6 +614,10 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
             <div class="progress-step">
                 <div class="step-number" id="step-4">4</div>
                 <div class="step-label">${t.step4}</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-number" id="step-5">5</div>
+                <div class="step-label">${t.step5}</div>
             </div>
         </div>
         
@@ -602,6 +704,30 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
             </div>
         </div>
         
+        <!-- Step 5: Success -->
+        <div class="step-content" id="step-5-content">
+            <div class="success-container">
+                <div class="success-icon">✓</div>
+                <h2 class="success-title">${t.successTitle}</h2>
+                <p class="success-subtitle">${t.successSubtitle}</p>
+                
+                <div class="success-message">
+                    <p>${t.successMessage}</p>
+                </div>
+                
+                <div class="next-steps">
+                    <h3 class="next-steps-title">${t.nextSteps}</h3>
+                    <ul class="next-steps-list">
+                        ${t.nextStepsList.map(step => `<li>${step}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="resetForm()">${t.doneButton}</button>
+                </div>
+            </div>
+        </div>
+        
         <!-- Hidden form fields -->
         <input type="hidden" id="selected-store-url" name="selected_store_url">
         <input type="hidden" id="selected-store-name" name="selected_store_name">
@@ -617,7 +743,7 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
         // Navigation functions
         function nextStep() {
             if (validateCurrentStep()) {
-                if (currentStep < 4) {
+                if (currentStep < 5) {
                     currentStep++;
                     updateStep();
                 }
@@ -634,10 +760,10 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
         function updateStep() {
             // Update progress bar
             const progressFill = document.getElementById('progress-fill');
-            progressFill.style.width = ((currentStep - 1) / 3) * 100 + '%';
+            progressFill.style.width = ((currentStep - 1) / 4) * 100 + '%';
             
             // Update step indicators
-            for (let i = 1; i <= 4; i++) {
+            for (let i = 1; i <= 5; i++) {
                 const stepNumber = document.getElementById('step-' + i);
                 const stepLabel = stepNumber.nextElementSibling;
                 
@@ -654,7 +780,7 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
             }
             
             // Update step content
-            for (let i = 1; i <= 4; i++) {
+            for (let i = 1; i <= 5; i++) {
                 const stepContent = document.getElementById('step-' + i + '-content');
                 if (i === currentStep) {
                     stepContent.className = 'step-content active';
@@ -806,20 +932,27 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
             
             // Simulate form submission
             setTimeout(() => {
-                alert('Registration successful! You will receive updates about your selected stores.');
-                // Reset form
-                currentStep = 1;
-                selectedStores = [];
-                document.getElementById('email-input').value = '';
-                document.getElementById('tags-input').value = '';
-                document.querySelectorAll('.store-tile').forEach(tile => {
-                    tile.classList.remove('selected');
-                });
+                // Move to success step
+                currentStep = 5;
                 updateStep();
-                updateCounter();
+                
+                // Reset button
                 submitBtn.textContent = '${t.submitButton}';
                 submitBtn.disabled = false;
             }, 2000);
+        }
+        
+        function resetForm() {
+            // Reset form to step 1
+            currentStep = 1;
+            selectedStores = [];
+            document.getElementById('email-input').value = '';
+            document.getElementById('tags-input').value = '';
+            document.querySelectorAll('.store-tile').forEach(tile => {
+                tile.classList.remove('selected');
+            });
+            updateStep();
+            updateCounter();
         }
         
         // Initialize
