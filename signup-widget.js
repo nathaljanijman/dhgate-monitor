@@ -1625,29 +1625,50 @@ function generateWidgetStoreBrowser(lang, theme) {
         console.log('Selected tile:', selectedTile);
         console.log('Selected check:', selectedCheck);
         console.log('Store data:', store);
+        console.log('Current selectedStores:', selectedStores);
         
-        if (selectedTile && selectedCheck && store) {
-          // Toggle selection
-          if (selectedTile.classList.contains('selected')) {
-            // Deselect
-            selectedTile.classList.remove('selected');
-            selectedCheck.classList.add('hidden');
-            selectedStores = selectedStores.filter(s => s.id !== storeId);
-          } else {
-            // Select
-            selectedTile.classList.add('selected');
-            selectedCheck.classList.remove('hidden');
-            selectedStores.push(store);
-          }
-          
-          // Update form data with all selected stores
-          updateSelectedStoresFormData();
-          
-          // Update selection counter
-          updateSelectionCounter();
-          
-          console.log('Selected stores:', selectedStores.map(s => s.name));
+        if (!selectedTile) {
+          console.error('Selected tile not found for store ID:', storeId);
+          return;
         }
+        
+        if (!selectedCheck) {
+          console.error('Selected check not found for store ID:', storeId);
+          return;
+        }
+        
+        if (!store) {
+          console.error('Store data not found for store ID:', storeId);
+          return;
+        }
+        
+        // Toggle selection
+        const isCurrentlySelected = selectedTile.classList.contains('selected');
+        console.log('Is currently selected:', isCurrentlySelected);
+        
+        if (isCurrentlySelected) {
+          // Deselect
+          console.log('Deselecting store:', store.name);
+          selectedTile.classList.remove('selected');
+          selectedCheck.classList.add('hidden');
+          selectedStores = selectedStores.filter(s => s.id !== storeId);
+        } else {
+          // Select
+          console.log('Selecting store:', store.name);
+          selectedTile.classList.add('selected');
+          selectedCheck.classList.remove('hidden');
+          selectedStores.push(store);
+        }
+        
+        console.log('Updated selectedStores:', selectedStores);
+        
+        // Update form data with all selected stores
+        updateSelectedStoresFormData();
+        
+        // Update selection counter
+        updateSelectionCounter();
+        
+        console.log('Final selected stores:', selectedStores.map(s => s.name));
       };
       
       function updateSelectedStoresFormData() {
