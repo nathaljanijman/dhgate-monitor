@@ -4579,6 +4579,12 @@ export default {
         case '/api/testplan/execute':
           return await handleTestPlanExecution(request, env);
         
+        case '/api/widget-signup':
+          if (method === 'POST') {
+            return await handleWidgetSignup(request, env);
+          }
+          break;
+        
         case '/api/stores/update':
           return await handleStoreUpdate(request, env);
         
@@ -9334,6 +9340,71 @@ async function handleSignupWidget(request, env) {
       'X-Robots-Tag': 'noindex, nofollow'
     }
   });
+}
+
+// Widget Signup Handler
+async function handleWidgetSignup(request, env) {
+  try {
+    const requestData = await request.json();
+    const { email, stores, tags, lang } = requestData;
+    
+    console.log('📧 [WIDGET] Processing widget signup:', { email, storesCount: stores.length, tags, lang });
+    
+    // Validate email
+    const emailValidation = SecurityUtils.validateEmail(email);
+    if (!emailValidation.isValid) {
+      return new Response(JSON.stringify({
+        success: false,
+        message: 'Invalid email address'
+      }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
+    const sanitizedEmail = emailValidation.sanitized;
+    
+    // Create subscription data
+    const subscriptionData = {
+      email: sanitizedEmail,
+      stores: stores,
+      tags: tags,
+      lang: lang,
+      created_at: new Date().toISOString(),
+      last_updated: new Date().toISOString(),
+      source: 'widget_signup'
+    };
+    
+    // Store subscription in KV
+    await env.DHGATE_MONITOR_KV.put(`subscription:${sanitizedEmail}`, JSON.stringify(subscriptionData));
+    
+    // Send confirmation email
+    const emailSent = await sendWidgetConfirmationEmail(env, sanitizedEmail, stores, tags, lang);
+    
+    if (emailSent) {
+      console.log('✅ [WIDGET] Signup successful and confirmation email sent to:', sanitizedEmail);
+    } else {
+      console.log('⚠️ [WIDGET] Signup successful but confirmation email failed for:', sanitizedEmail);
+    }
+    
+    return new Response(JSON.stringify({
+      success: true,
+      message: 'Signup successful',
+      emailSent: emailSent
+    }), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+    
+  } catch (error) {
+    console.error('❌ [WIDGET] Error processing widget signup:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      message: 'Error processing signup: ' + error.message
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 }
 
 // Test Plan Execution Handler
@@ -14623,304 +14694,15 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
 
     <!-- How It Works Section -->
 
-    <!-- Subscription Form Section -->
+    <!-- Enhanced Widget Signup Section -->
     <section id="subscription-form" class="subscription-section" aria-labelledby="subscription-title">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-8">
+                <div class="col-lg-10">
                     <div class="subscription-card modern-signup">
-                        
-                        <!-- ✨ UX ENHANCEMENT: Progress Indicator -->
-                        <div class="signup-progress">
-                            <div class="progress-header">
-                                <h2 class="progress-title">
-                                    ${lang === 'nl' ? 'Stel je monitoring in' : 'Set up your monitoring'}
-                                </h2>
-                                <p class="progress-subtitle">
-                                    ${lang === 'nl' ? 'Het duurt slechts 2 minuten om te beginnen' : 'It takes just 2 minutes to get started'}
-                                </p>
-                            </div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar">
-                                    <div class="progress-fill" id="progressFill"></div>
-                                </div>
-                                <div class="progress-steps">
-                                    <div class="progress-step active" data-step="1">
-                                        <div class="step-circle">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2"/>
-                                                <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2"/>
-                                            </svg>
-                                        </div>
-                                        <span class="step-label">${lang === 'nl' ? 'Email' : 'Email'}</span>
-                                    </div>
-                                    <div class="progress-step" data-step="2">
-                                        <div class="step-circle">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                                <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" stroke="currentColor" stroke-width="2"/>
-                                                <polyline points="3.27,6.96 12,12.01 20.73,6.96" stroke="currentColor" stroke-width="2"/>
-                                                <line x1="12" y1="22.08" x2="12" y2="12" stroke="currentColor" stroke-width="2"/>
-                                            </svg>
-                                        </div>
-                                        <span class="step-label">${lang === 'nl' ? 'Winkel' : 'Store'}</span>
-                                    </div>
-                                    <div class="progress-step" data-step="3">
-                                        <div class="step-circle">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
-                                                <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1" stroke="currentColor" stroke-width="2"/>
-                                            </svg>
-                                        </div>
-                                        <span class="step-label">${lang === 'nl' ? 'Instellingen' : 'Settings'}</span>
-                                    </div>
-                                    <div class="progress-step" data-step="4">
-                                        <div class="step-circle">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                                <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2"/>
-                                            </svg>
-                                        </div>
-                                        <span class="step-label">${lang === 'nl' ? 'Klaar' : 'Done'}</span>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="widget-container">
+                            ${generateSignupWidget(env, lang, theme)}
                         </div>
-                        
-                        <form method="POST" action="/subscribe" class="subscription-form modern-form" id="progressiveForm" 
-                              role="form" aria-label="${lang === 'nl' ? 'Registratieformulier voor DHgate monitoring' : 'Registration form for DHgate monitoring'}"
-                              novalidate>
-                            <input type="hidden" name="lang" value="${lang}">
-                            <input type="hidden" name="theme" value="${theme}">
-                            
-                            
-                            <!-- Step 1: Email -->
-                            <div class="form-step active" data-step="1">
-                                <div class="step-content">
-                                    <h3 class="step-title">
-                                        ${lang === 'nl' ? 'Wat is je email adres?' : 'What\'s your email address?'}
-                                    </h3>
-                                    <p class="step-description">
-                                        ${lang === 'nl' ? 
-                                            'We sturen je alerts wanneer nieuwe producten worden gevonden die aan jouw criteria voldoen.' :
-                                            'We\'ll send you alerts when new products are found that match your criteria.'
-                                        }
-                                    </p>
-                                    <div class="form-group">
-                                        <label for="email" class="sr-only">${lang === 'nl' ? 'Email adres' : 'Email address'}</label>
-                                        <div class="input-wrapper">
-                                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                                <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2"/>
-                                                <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="2"/>
-                                            </svg>
-                                            <input 
-                                                type="email" 
-                                                id="email" 
-                                                name="email" 
-                                                class="form-control form-control-lg" 
-                                                placeholder="${lang === 'nl' ? 'jouw@email.com' : 'your@email.com'}" 
-                                                aria-label="${lang === 'nl' ? 'Voer je email adres in' : 'Enter your email address'}"
-                                                aria-describedby="email-error"
-                                                autocomplete="email"
-                                                spellcheck="false"
-                                                required
-                                            >
-                                        </div>
-                                        <div id="email-error" class="error-message" role="alert" aria-live="polite"></div>
-                                    </div>
-                                </div>
-                                <div class="step-actions">
-                                    <button type="button" class="btn-primary btn-next" onclick="nextStep()">
-                                        ${lang === 'nl' ? 'Volgende' : 'Next'}
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M5 12H19" stroke="currentColor" stroke-width="2"/>
-                                            <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Step 2: Store Search and Keywords -->
-                            <div class="form-step" data-step="2">
-                                <div class="step-content">
-                                    ${generateEnhancedStoreBrowser(lang, theme)}
-                                    
-                                    <div class="form-group">
-                                        <label for="tags" class="form-label">
-                                            ${lang === 'nl' ? 'Zoektermen' : 'Search terms'}
-                                        </label>
-                                        <div class="input-wrapper">
-                                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                                <path d="M7 7h.01M7 3h5c1.1 0 2 .9 2 2v5l-2.3 2.3c-.7.7-1.8.7-2.5 0L7 10V5c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2"/>
-                                            </svg>
-                                            <input 
-                                                type="text" 
-                                                id="tags" 
-                                                name="tags" 
-                                                class="form-control" 
-                                                placeholder="${lang === 'nl' ? 'jersey, shirt, voetbal' : 'jersey, shirt, soccer'}" 
-                                                required
-                                            >
-                                        </div>
-                                        <div class="form-text">
-                                            ${lang === 'nl' ? 
-                                                'We controleren producttitels en beschrijvingen op deze woorden' :
-                                                'We\'ll check product titles and descriptions for these words'
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="step-actions">
-                                    <button type="button" class="btn-secondary btn-back" onclick="previousStep()">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M19 12H5" stroke="currentColor" stroke-width="2"/>
-                                            <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2"/>
-                                        </svg>
-                                        ${lang === 'nl' ? 'Terug' : 'Back'}
-                                    </button>
-                                    <button type="button" class="btn-primary btn-next" onclick="nextStep()">
-                                        ${lang === 'nl' ? 'Volgende' : 'Next'}
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M5 12H19" stroke="currentColor" stroke-width="2"/>
-                                            <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Step 3: Monitoring Settings -->
-                            <div class="form-step" data-step="3">
-                                <div class="step-content">
-                                    <h3 class="step-title">
-                                        ${lang === 'nl' ? 'Hoe vaak wil je updates ontvangen?' : 'How often do you want to receive updates?'}
-                                    </h3>
-                                    <p class="step-description">
-                                        ${lang === 'nl' ? 
-                                            'Kies hoe vaak we moeten controleren op nieuwe producten en wanneer je een melding wilt ontvangen.' :
-                                            'Choose how often we should check for new products and when you want to be notified.'
-                                        }
-                                    </p>
-                                    
-                                    <div class="form-group">
-                                        <label for="frequency" class="form-label">
-                                            ${lang === 'nl' ? 'Controle frequentie' : 'Check frequency'}
-                                        </label>
-                                        <div class="select-wrapper">
-                                            <select id="frequency" name="frequency" class="form-control" required>
-                                                <option value="">${lang === 'nl' ? 'Selecteer frequentie...' : 'Select frequency...'}</option>
-                                                <option value="hourly">${lang === 'nl' ? 'Elk uur' : 'Every hour'}</option>
-                                                <option value="every_4_hours">${lang === 'nl' ? 'Elke 4 uur' : 'Every 4 hours'}</option>
-                                                <option value="daily">${lang === 'nl' ? 'Dagelijks' : 'Daily'}</option>
-                                                <option value="weekly">${lang === 'nl' ? 'Wekelijks' : 'Weekly'}</option>
-                                            </select>
-                                            <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none">
-                                                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2"/>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="preferred_time" class="form-label">
-                                            ${lang === 'nl' ? 'Voorkeurstijd voor meldingen' : 'Preferred notification time'}
-                                        </label>
-                                        <div class="select-wrapper">
-                                            <select id="preferred_time" name="preferred_time" class="form-control">
-                                                <option value="immediate">${lang === 'nl' ? 'Direct' : 'Immediately'}</option>
-                                                <option value="morning">${lang === 'nl' ? 'Ochtend (09:00)' : 'Morning (09:00)'}</option>
-                                                <option value="afternoon">${lang === 'nl' ? 'Middag (14:00)' : 'Afternoon (14:00)'}</option>
-                                                <option value="evening">${lang === 'nl' ? 'Avond (18:00)' : 'Evening (18:00)'}</option>
-                                            </select>
-                                            <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none">
-                                                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2"/>
-                                            </svg>
-                                        </div>
-                                        <div class="form-text">
-                                            ${lang === 'nl' ? 
-                                                'Bij "Direct" krijg je een melding zodra er nieuwe producten zijn gevonden' :
-                                                'With "Immediately" you\'ll get notified as soon as new products are found'
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="step-actions">
-                                    <button type="button" class="btn-secondary btn-back" onclick="previousStep()">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M19 12H5" stroke="currentColor" stroke-width="2"/>
-                                            <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2"/>
-                                        </svg>
-                                        ${lang === 'nl' ? 'Terug' : 'Back'}
-                                    </button>
-                                    <button type="button" class="btn-primary btn-next" onclick="nextStep()">
-                                        ${lang === 'nl' ? 'Volgende' : 'Next'}
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M5 12H19" stroke="currentColor" stroke-width="2"/>
-                                            <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Step 4: Confirmation -->
-                            <div class="form-step" data-step="4">
-                                <div class="step-content">
-                                    <h3 class="step-title">
-                                        ${lang === 'nl' ? 'Klaar om te starten!' : 'Ready to start!'}
-                                    </h3>
-                                    <p class="step-description">
-                                        ${lang === 'nl' ? 
-                                            'We gaan je monitoring nu instellen. Je ontvangt een email zodra nieuwe producten worden gevonden.' :
-                                            'We\'ll set up your monitoring now. You\'ll receive an email as soon as new products are found.'
-                                        }
-                                    </p>
-                                    <div class="summary-card">
-                                        <div class="summary-item">
-                                            <div class="summary-label">${lang === 'nl' ? 'Email:' : 'Email:'}</div>
-                                            <div class="summary-value" id="summaryEmail">-</div>
-                                        </div>
-                                        <div class="summary-item">
-                                            <div class="summary-label">${lang === 'nl' ? 'Winkel:' : 'Store:'}</div>
-                                            <div class="summary-value" id="summaryStore">${lang === 'nl' ? 'Alle winkels' : 'All stores'}</div>
-                                        </div>
-                                        <div class="summary-item">
-                                            <div class="summary-label">${lang === 'nl' ? 'Zoektermen:' : 'Search terms:'}</div>
-                                            <div class="summary-value" id="summaryTags">-</div>
-                                        </div>
-                                        <div class="summary-item">
-                                            <div class="summary-label">${lang === 'nl' ? 'Frequentie:' : 'Frequency:'}</div>
-                                            <div class="summary-value" id="summaryFrequency">-</div>
-                                        </div>
-                                        <div class="summary-item">
-                                            <div class="summary-label">${lang === 'nl' ? 'Tijd:' : 'Time:'}</div>
-                                            <div class="summary-value" id="summaryTime">-</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="step-actions">
-                                    <button type="button" class="btn-secondary btn-back" onclick="previousStep()">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M19 12H5" stroke="currentColor" stroke-width="2"/>
-                                            <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2"/>
-                                        </svg>
-                                        ${lang === 'nl' ? 'Terug' : 'Back'}
-                                    </button>
-                                    <button type="submit" class="btn-success btn-submit">
-                                        ${lang === 'nl' ? 'Start monitoring' : 'Start monitoring'}
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M5 12H19" stroke="currentColor" stroke-width="2"/>
-                                            <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <p class="form-notice">
-                                ${lang === 'nl' ? 
-                                    'Door te subscriben ga je akkoord met onze ' :
-                                    'By subscribing you agree to our '
-                                }
-                                <a href="/terms?lang=${lang}&theme=${theme}" target="_blank">${lang === 'nl' ? 'voorwaarden' : 'terms'}</a>
-                                ${lang === 'nl' ? ' en ' : ' and '}
-                                <a href="/privacy?lang=${lang}&theme=${theme}" target="_blank">${lang === 'nl' ? 'privacybeleid' : 'privacy policy'}</a>.
-                            </p>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -15659,6 +15441,32 @@ async function sendDashboardAccessEmail(env, email, dashboardToken, lang) {
   }
 }
 
+// Widget Confirmation Email Functions
+async function sendWidgetConfirmationEmail(env, email, stores, tags, lang) {
+  try {
+    const subject = lang === 'nl' ? 
+      'DHgate Monitor - Welkom bij je monitoring!' : 
+      'DHgate Monitor - Welcome to your monitoring!';
+    
+    const htmlContent = generateWidgetConfirmationEmailHTML(email, stores, tags, lang);
+    
+    // Use the shared email sender function
+    const emailSent = await sendEmail(env, email, subject, htmlContent);
+    
+    if (emailSent) {
+      console.log('Widget confirmation email sent successfully to:', email);
+      return true;
+    } else {
+      console.error('Failed to send widget confirmation email to:', email);
+      return false;
+    }
+    
+  } catch (error) {
+    console.error('Error sending widget confirmation email:', error);
+    return false;
+  }
+}
+
 // Generate reusable email footer with unsubscribe functionality
 function generateEmailFooter(email, lang, emailType = 'general') {
   // Generate unsubscribe token for this email
@@ -16046,6 +15854,288 @@ function generateDashboardAccessSuccessHTML(lang, theme, email) {
                 <a href="/dashboard?lang=${lang}&theme=${theme}" style="background: var(--secondary-color); color: var(--text-primary); padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 600; display: inline-block;">
                     ${lang === 'nl' ? 'Probeer Dashboard' : 'Try Dashboard'}
                 </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+  `;
+}
+
+function generateWidgetConfirmationEmailHTML(email, stores, tags, lang) {
+  const storeList = stores.map(store => `
+    <div style="margin-bottom: 12px; padding: 12px; background: #f8fafc; border-radius: 8px; border-left: 3px solid #2563eb;">
+      <div style="font-weight: 600; color: #1e293b; margin-bottom: 4px;">${store.name}</div>
+      <div style="font-size: 14px; color: #64748b;">${store.category}</div>
+    </div>
+  `).join('');
+  
+  const tagsList = tags ? tags.split(',').map(tag => `
+    <span style="display: inline-block; background: #e0e7ff; color: #3730a3; padding: 4px 8px; border-radius: 12px; font-size: 12px; margin: 2px;">${tag.trim()}</span>
+  `).join('') : '';
+  
+  return `
+<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${lang === 'nl' ? 'Welkom bij DHgate Monitor' : 'Welcome to DHgate Monitor'}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* DHgate Monitor Email Styling - Following Platform Design */
+        body { 
+            font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%);
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
+        }
+        .email-wrapper {
+            padding: 40px 20px;
+            background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%);
+        }
+        .email-container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(71, 85, 105, 0.1);
+        }
+        
+        /* Platform Header with Gradient */
+        .header { 
+            background: linear-gradient(135deg, #2563EB 0%, #3b82f6 50%, #1e40af 100%); 
+            padding: 50px 40px; 
+            text-align: center; 
+            color: white;
+            position: relative;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        }
+        .header h1 { 
+            margin: 0; 
+            font-size: 32px; 
+            font-weight: 700; 
+            letter-spacing: -0.025em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header p {
+            margin: 12px 0 0 0;
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+        
+        /* Platform Content Styling */
+        .content { 
+            padding: 50px 40px; 
+            background: white;
+        }
+        .content h2 { 
+            color: #2563EB; 
+            font-size: 24px; 
+            font-weight: 600;
+            margin: 0 0 24px 0;
+            letter-spacing: -0.025em;
+        }
+        .content p { 
+            color: #64748b; 
+            line-height: 1.7; 
+            margin-bottom: 24px;
+            font-size: 16px;
+        }
+        .content strong {
+            color: #1e293b;
+            font-weight: 600;
+        }
+        
+        /* Premium Card for Email Details */
+        .details-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 30px 0;
+        }
+        .details-card p {
+            margin: 0;
+            color: #475569;
+            font-size: 15px;
+        }
+        
+        /* Platform CTA Button */
+        .cta-container {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .cta-button { 
+            display: inline-block; 
+            background: linear-gradient(135deg, #2563EB, #1e40af); 
+            color: white !important; 
+            padding: 18px 36px; 
+            text-decoration: none; 
+            border-radius: 12px; 
+            font-weight: 600; 
+            font-size: 16px;
+            letter-spacing: 0.025em;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        .cta-button:hover::before { left: 100%; }
+        
+        /* Platform Divider */
+        .divider { 
+            height: 1px; 
+            background: linear-gradient(90deg, transparent, #e2e8f0, transparent); 
+            margin: 40px 0; 
+        }
+        
+        /* Success Icon */
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+        
+        /* Store and Tags Lists */
+        .stores-section, .tags-section {
+            margin: 24px 0;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+        
+        .store-item {
+            margin-bottom: 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid #2563eb;
+        }
+        
+        .store-name {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+        
+        .store-category {
+            font-size: 14px;
+            color: #64748b;
+        }
+        
+        .tags-list {
+            margin-top: 8px;
+        }
+        
+        .tag-item {
+            display: inline-block;
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin: 2px;
+        }
+        
+        /* Mobile Responsiveness */
+        @media only screen and (max-width: 600px) {
+            .email-wrapper { padding: 20px 10px; }
+            .header { padding: 40px 20px; }
+            .header h1 { font-size: 28px; }
+            .content { padding: 40px 20px; }
+            .cta-button { padding: 16px 32px; font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-wrapper">
+        <div class="email-container">
+            <!-- Header -->
+            <div class="header">
+                <div class="success-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                        <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h1>${lang === 'nl' ? 'Welkom bij DHgate Monitor!' : 'Welcome to DHgate Monitor!'}</h1>
+                <p>${lang === 'nl' ? 'Je monitoring is succesvol ingesteld' : 'Your monitoring has been successfully set up'}</p>
+            </div>
+            
+            <!-- Content -->
+            <div class="content">
+                <h2>${lang === 'nl' ? 'Je monitoring details' : 'Your monitoring details'}</h2>
+                
+                <p>${lang === 'nl' ? 
+                    `Hallo! We hebben je monitoring succesvol ingesteld voor <strong>${email}</strong>. Hier zijn de details van je monitoring setup:` :
+                    `Hello! We have successfully set up your monitoring for <strong>${email}</strong>. Here are the details of your monitoring setup:`
+                }</p>
+                
+                <!-- Stores Section -->
+                <div class="stores-section">
+                    <div class="section-title">${lang === 'nl' ? 'Geselecteerde winkels' : 'Selected stores'}</div>
+                    ${storeList}
+                </div>
+                
+                <!-- Tags Section -->
+                ${tags ? `
+                <div class="tags-section">
+                    <div class="section-title">${lang === 'nl' ? 'Zoektermen' : 'Search terms'}</div>
+                    <div class="tags-list">
+                        ${tagsList}
+                    </div>
+                </div>
+                ` : ''}
+                
+                <!-- Next Steps -->
+                <div class="details-card">
+                    <h3 style="color: #2563EB; margin-bottom: 16px; font-size: 18px;">
+                        ${lang === 'nl' ? 'Wat gebeurt er nu?' : 'What happens next?'}
+                    </h3>
+                    <ul style="margin: 0; padding-left: 20px; color: #475569;">
+                        <li style="margin-bottom: 8px;">${lang === 'nl' ? 'We beginnen met het monitoren van je geselecteerde winkels' : 'We start monitoring your selected stores'}</li>
+                        <li style="margin-bottom: 8px;">${lang === 'nl' ? 'Je krijgt dagelijks updates over nieuwe producten en prijzen' : 'You will receive daily updates about new products and prices'}</li>
+                        <li style="margin-bottom: 8px;">${lang === 'nl' ? 'Je kunt je voorkeuren altijd aanpassen via je dashboard' : 'You can always adjust your preferences via your dashboard'}</li>
+                        <li style="margin-bottom: 0;">${lang === 'nl' ? 'Voor vragen kun je altijd contact met ons opnemen' : 'For questions, you can always contact us'}</li>
+                    </ul>
+                </div>
+                
+                <!-- CTA Button -->
+                <div class="cta-container">
+                    <a href="https://dhgate-monitor.com?lang=${lang}" class="cta-button">
+                        ${lang === 'nl' ? 'Bezoek DHgate Monitor' : 'Visit DHgate Monitor'}
+                    </a>
+                </div>
+                
+                <div class="divider"></div>
+                
+                <!-- Footer -->
+                ${generateEmailFooter(email, lang, 'widget')}
             </div>
         </div>
     </div>

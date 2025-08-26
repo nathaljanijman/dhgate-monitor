@@ -1035,8 +1035,32 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
             submitBtn.textContent = '${t.loadingText}';
             submitBtn.disabled = true;
             
-            // Simulate form submission
-            setTimeout(() => {
+            // Get form data
+            const email = document.getElementById('email-input').value;
+            const tags = document.getElementById('tags-input').value;
+            const selectedStoresData = selectedStores.map(store => ({
+                name: store.name,
+                url: store.url,
+                category: store.category
+            }));
+            
+            // Send confirmation email
+            fetch('/api/widget-signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    stores: selectedStoresData,
+                    tags: tags,
+                    lang: '${lang}'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Signup response:', data);
+                
                 // Move to success step
                 currentStep = 5;
                 updateStep();
@@ -1044,7 +1068,18 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
                 // Reset button
                 submitBtn.textContent = '${t.submitButton}';
                 submitBtn.disabled = false;
-            }, 2000);
+            })
+            .catch(error => {
+                console.error('Signup error:', error);
+                
+                // Still move to success step even if email fails
+                currentStep = 5;
+                updateStep();
+                
+                // Reset button
+                submitBtn.textContent = '${t.submitButton}';
+                submitBtn.disabled = false;
+            });
         }
         
         function resetForm() {
