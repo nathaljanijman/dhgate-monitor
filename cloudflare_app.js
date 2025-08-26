@@ -9282,7 +9282,7 @@ async function handleEnglishLandingPage(request, env) {
   const theme = getTheme(request);
   const t = getTranslations('en');
   
-  const html = generateLandingPageHTML(t, 'en', theme);
+      const html = generateLandingPageHTML(t, 'en', theme, env);
   return new Response(html, {
     headers: { 
       'Content-Type': 'text/html',
@@ -9300,7 +9300,7 @@ async function handleLandingPage(request, env) {
   const theme = getTheme(request);
   const t = getTranslations(lang);
   
-  const html = generateLandingPageHTML(t, lang, theme);
+      const html = generateLandingPageHTML(t, lang, theme, env);
   return new Response(html, {
     headers: { 
       'Content-Type': 'text/html',
@@ -10922,7 +10922,7 @@ function generateUnsubscribePageHTML(subscription, token, t, lang, theme = 'ligh
 }
 
 // Generate Landing Page HTML
-function generateLandingPageHTML(t, lang, theme = 'light') {
+function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
   return `
 <!DOCTYPE html>
 <html lang="${lang}" dir="ltr">
