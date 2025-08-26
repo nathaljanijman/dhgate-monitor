@@ -5817,8 +5817,8 @@ async function fetchPreprArticles(options = {}) {
   }
   
   const query = `
-    query GetArticles($limit: Int, $skip: Int, $order: [ArticleOrderBy]) {
-      Articles(limit: $limit, skip: $skip, order: $order) {
+    query GetArticles {
+      Articles {
         total
         items {
           _id
@@ -5838,11 +5838,7 @@ async function fetchPreprArticles(options = {}) {
     }
   `;
   
-  const variables = {
-    limit,
-    skip: offset,
-    order: [orderBy]
-  };
+  const variables = {};
   
   try {
     const response = await fetch('https://graphql.prepr.io/ac_503514911c91f7c0ead966ff1e8c20ee1e0f26c2de6914ab1abaa50b4fd9b5f9', {
