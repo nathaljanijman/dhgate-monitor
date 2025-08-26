@@ -3,8 +3,6 @@
 // ============================================================================
 // Standalone signup form that can be embedded via iframe on any website
 
-import { generateEnhancedStoreBrowser } from './enhanced_store_browser_clean.js';
-
 export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
   const widgetId = 'dhgate-signup-widget-' + Date.now();
   
@@ -61,21 +59,49 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
   ];
 
   const t = lang === 'nl' ? {
-    title: 'Kies je winkel',
+    title: 'DHgate Monitor',
+    subtitle: 'Monitor je favoriete DHgate winkels en krijg real-time updates',
+    step1: 'Email',
+    step2: 'Winkel',
+    step3: 'Zoektermen',
+    step4: 'Bevestiging',
+    emailLabel: 'Email adres',
+    emailPlaceholder: 'jouw@email.com',
+    storeTitle: 'Kies je winkel',
     addCustomTitle: 'Eigen winkel toevoegen',
     addCustomDescription: 'Monitor elke DHgate winkel door de URL in te voeren',
     addStorePlaceholder: 'https://www.dhgate.com/store/jouw-winkel',
     addStoreButton: 'Winkel toevoegen',
+    tagsLabel: 'Zoektermen',
+    tagsPlaceholder: 'Voer zoektermen in (bijv. smartphone, handtas)',
+    tagsDescription: 'Voeg zoektermen toe om specifieke producten te monitoren',
+    confirmTitle: 'Bevestig je aanmelding',
     nextButton: 'Volgende',
-    backButton: 'Terug'
+    backButton: 'Terug',
+    submitButton: 'Aanmelden',
+    loadingText: 'Aanmelden...'
   } : {
-    title: 'Choose your store',
+    title: 'DHgate Monitor',
+    subtitle: 'Monitor your favorite DHgate stores and get real-time updates',
+    step1: 'Email',
+    step2: 'Store',
+    step3: 'Search Terms',
+    step4: 'Confirmation',
+    emailLabel: 'Email address',
+    emailPlaceholder: 'your@email.com',
+    storeTitle: 'Choose your store',
     addCustomTitle: 'Add custom store',
     addCustomDescription: 'Monitor any DHgate store by entering the URL',
     addStorePlaceholder: 'https://www.dhgate.com/store/your-store',
     addStoreButton: 'Add store',
+    tagsLabel: 'Search terms',
+    tagsPlaceholder: 'Enter search terms (e.g. smartphone, handbag)',
+    tagsDescription: 'Add search terms to monitor specific products',
+    confirmTitle: 'Confirm your registration',
     nextButton: 'Next',
-    backButton: 'Back'
+    backButton: 'Back',
+    submitButton: 'Sign Up',
+    loadingText: 'Signing up...'
   };
   
   return `<!DOCTYPE html>
@@ -119,11 +145,125 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
             padding: 2rem;
         }
         
-        .widget-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
+        .widget-header {
             text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .widget-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .widget-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+        
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border-light);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .step-number.active {
+            background: var(--accent-color);
+            color: white;
+        }
+        
+        .step-number.completed {
+            background: var(--success);
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .step-label.active {
+            color: var(--accent-color);
+        }
+        
+        .step-label.completed {
+            color: var(--success);
+        }
+        
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: var(--border-light);
+            z-index: 1;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-color);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        
+        .step-content {
+            display: none;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
         
         .store-grid {
@@ -267,6 +407,83 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
             color: var(--accent-color);
         }
         
+        .tags-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .tags-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+        
+        .summary-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .summary-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .summary-value {
+            color: var(--text-secondary);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: var(--accent-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border-light);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
         .hidden {
             display: none;
         }
@@ -274,41 +491,207 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
 </head>
 <body>
     <div class="widget-container">
-        <h2 class="widget-title">${t.title}</h2>
+        <div class="widget-header">
+            <h1 class="widget-title">${t.title}</h1>
+            <p class="widget-subtitle">${t.subtitle}</p>
+        </div>
         
-        <div class="store-grid">
-            ${featuredStores.map(store => `
-                <div class="store-tile" data-store-id="${store.id}" onclick="selectStore(${store.id})">
-                    <img src="${store.image}" alt="${store.name}" class="store-image">
-                    <div class="store-check">✓</div>
-                    <div class="store-content">
-                        <h3 class="store-name">${store.name}</h3>
-                        <div class="store-category">${store.category}</div>
-                        <p class="store-description">${store.description}</p>
-                        <div class="store-rating">★ ${store.rating} (${store.reviews} reviews)</div>
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-line">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-step">
+                <div class="step-number active" id="step-1">1</div>
+                <div class="step-label active">${t.step1}</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-number" id="step-2">2</div>
+                <div class="step-label">${t.step2}</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-number" id="step-3">3</div>
+                <div class="step-label">${t.step3}</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-number" id="step-4">4</div>
+                <div class="step-label">${t.step4}</div>
+            </div>
+        </div>
+        
+        <!-- Step 1: Email -->
+        <div class="step-content active" id="step-1-content">
+            <div class="form-group">
+                <label class="form-label">${t.emailLabel}</label>
+                <input type="email" class="form-input" id="email-input" placeholder="${t.emailPlaceholder}">
+            </div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="nextStep()">${t.nextButton}</button>
+            </div>
+        </div>
+        
+        <!-- Step 2: Store Selection -->
+        <div class="step-content" id="step-2-content">
+            <h2 class="form-label">${t.storeTitle}</h2>
+            
+            <div class="store-grid">
+                ${featuredStores.map(store => `
+                    <div class="store-tile" data-store-id="${store.id}" onclick="selectStore(${store.id})">
+                        <img src="${store.image}" alt="${store.name}" class="store-image">
+                        <div class="store-check">✓</div>
+                        <div class="store-content">
+                            <h3 class="store-name">${store.name}</h3>
+                            <div class="store-category">${store.category}</div>
+                            <p class="store-description">${store.description}</p>
+                            <div class="store-rating">★ ${store.rating} (${store.reviews} reviews)</div>
+                        </div>
                     </div>
-                </div>
-            `).join('')}
+                `).join('')}
+            </div>
+            
+            <div class="custom-store">
+                <h3 class="custom-title">${t.addCustomTitle}</h3>
+                <p class="custom-description">${t.addCustomDescription}</p>
+                <input type="url" class="custom-input" id="custom-store-url" placeholder="${t.addStorePlaceholder}">
+                <button class="custom-button" onclick="addCustomStore()">${t.addStoreButton}</button>
+            </div>
+            
+            <div class="selection-counter" id="selection-counter"></div>
+            
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="prevStep()">${t.backButton}</button>
+                <button class="btn btn-primary" onclick="nextStep()">${t.nextButton}</button>
+            </div>
         </div>
         
-        <div class="custom-store">
-            <h3 class="custom-title">${t.addCustomTitle}</h3>
-            <p class="custom-description">${t.addCustomDescription}</p>
-            <input type="url" class="custom-input" id="custom-store-url" placeholder="${t.addStorePlaceholder}">
-            <button class="custom-button" onclick="addCustomStore()">${t.addStoreButton}</button>
+        <!-- Step 3: Search Terms -->
+        <div class="step-content" id="step-3-content">
+            <div class="form-group">
+                <label class="form-label">${t.tagsLabel}</label>
+                <textarea class="tags-input" id="tags-input" placeholder="${t.tagsPlaceholder}"></textarea>
+                <p class="tags-description">${t.tagsDescription}</p>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="prevStep()">${t.backButton}</button>
+                <button class="btn btn-primary" onclick="nextStep()">${t.nextButton}</button>
+            </div>
         </div>
         
-        <div class="selection-counter" id="selection-counter"></div>
+        <!-- Step 4: Confirmation -->
+        <div class="step-content" id="step-4-content">
+            <h2 class="form-label">${t.confirmTitle}</h2>
+            
+            <div class="summary-item">
+                <div class="summary-label">Email:</div>
+                <div class="summary-value" id="summary-email"></div>
+            </div>
+            
+            <div class="summary-item">
+                <div class="summary-label">Selected Stores:</div>
+                <div class="summary-value" id="summary-stores"></div>
+            </div>
+            
+            <div class="summary-item">
+                <div class="summary-label">Search Terms:</div>
+                <div class="summary-value" id="summary-tags"></div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="prevStep()">${t.backButton}</button>
+                <button class="btn btn-primary" onclick="submitForm()" id="submit-btn">${t.submitButton}</button>
+            </div>
+        </div>
         
+        <!-- Hidden form fields -->
         <input type="hidden" id="selected-store-url" name="selected_store_url">
         <input type="hidden" id="selected-store-name" name="selected_store_name">
+        <input type="hidden" id="selected-tags" name="selected_tags">
     </div>
     
     <script>
-        // Store selection functionality
+        // Widget state
+        let currentStep = 1;
         let selectedStores = [];
         const stores = ${JSON.stringify(featuredStores)};
         
+        // Navigation functions
+        function nextStep() {
+            if (validateCurrentStep()) {
+                if (currentStep < 4) {
+                    currentStep++;
+                    updateStep();
+                }
+            }
+        }
+        
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStep();
+            }
+        }
+        
+        function updateStep() {
+            // Update progress bar
+            const progressFill = document.getElementById('progress-fill');
+            progressFill.style.width = ((currentStep - 1) / 3) * 100 + '%';
+            
+            // Update step indicators
+            for (let i = 1; i <= 4; i++) {
+                const stepNumber = document.getElementById('step-' + i);
+                const stepLabel = stepNumber.nextElementSibling;
+                
+                if (i < currentStep) {
+                    stepNumber.className = 'step-number completed';
+                    stepLabel.className = 'step-label completed';
+                } else if (i === currentStep) {
+                    stepNumber.className = 'step-number active';
+                    stepLabel.className = 'step-label active';
+                } else {
+                    stepNumber.className = 'step-number';
+                    stepLabel.className = 'step-label';
+                }
+            }
+            
+            // Update step content
+            for (let i = 1; i <= 4; i++) {
+                const stepContent = document.getElementById('step-' + i + '-content');
+                if (i === currentStep) {
+                    stepContent.className = 'step-content active';
+                } else {
+                    stepContent.className = 'step-content';
+                }
+            }
+            
+            // Update summary if on step 4
+            if (currentStep === 4) {
+                updateSummary();
+            }
+        }
+        
+        function validateCurrentStep() {
+            if (currentStep === 1) {
+                const email = document.getElementById('email-input').value;
+                if (!email || !email.includes('@')) {
+                    alert('Please enter a valid email address');
+                    return false;
+                }
+            } else if (currentStep === 2) {
+                if (selectedStores.length === 0) {
+                    alert('Please select at least one store');
+                    return false;
+                }
+            } else if (currentStep === 3) {
+                const tags = document.getElementById('tags-input').value.trim();
+                if (!tags) {
+                    alert('Please enter at least one search term');
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        // Store selection functions
         function selectStore(storeId) {
             console.log('Selecting store:', storeId);
             
@@ -320,13 +703,13 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
                 return;
             }
             
-            // Toggle selection
+            // Toggle selection (multiple stores allowed)
             if (tile.classList.contains('selected')) {
                 // Deselect
                 tile.classList.remove('selected');
                 selectedStores = selectedStores.filter(s => s.id !== storeId);
             } else {
-                // Select
+                // Select (add to existing selection)
                 tile.classList.add('selected');
                 selectedStores.push(store);
             }
@@ -346,12 +729,14 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
                 return;
             }
             
-            // Clear previous selections
-            document.querySelectorAll('.store-tile').forEach(tile => {
-                tile.classList.remove('selected');
-            });
+            // Check if URL already exists
+            const existingStore = selectedStores.find(s => s.url === url);
+            if (existingStore) {
+                alert('This store is already selected!');
+                return;
+            }
             
-            // Add custom store
+            // Add custom store to existing selection
             const customStore = {
                 id: 'custom-' + Date.now(),
                 name: 'Custom Store',
@@ -359,9 +744,12 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
                 category: 'Custom'
             };
             
-            selectedStores = [customStore];
+            selectedStores.push(customStore);
             updateFormData();
             updateCounter();
+            
+            // Clear input
+            urlInput.value = '';
             
             // Visual feedback
             urlInput.style.borderColor = '#10b981';
@@ -373,6 +761,7 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
             }, 2000);
             
             console.log('Custom store added:', url);
+            console.log('Total selected stores:', selectedStores);
         }
         
         function updateFormData() {
@@ -399,6 +788,38 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
                 counter.style.display = 'block';
                 counter.textContent = \`\${selectedStores.length} store(s) selected\`;
             }
+        }
+        
+        function updateSummary() {
+            const email = document.getElementById('email-input').value;
+            const tags = document.getElementById('tags-input').value;
+            
+            document.getElementById('summary-email').textContent = email;
+            document.getElementById('summary-stores').textContent = selectedStores.map(s => s.name).join(', ');
+            document.getElementById('summary-tags').textContent = tags || 'None';
+        }
+        
+        function submitForm() {
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.textContent = '${t.loadingText}';
+            submitBtn.disabled = true;
+            
+            // Simulate form submission
+            setTimeout(() => {
+                alert('Registration successful! You will receive updates about your selected stores.');
+                // Reset form
+                currentStep = 1;
+                selectedStores = [];
+                document.getElementById('email-input').value = '';
+                document.getElementById('tags-input').value = '';
+                document.querySelectorAll('.store-tile').forEach(tile => {
+                    tile.classList.remove('selected');
+                });
+                updateStep();
+                updateCounter();
+                submitBtn.textContent = '${t.submitButton}';
+                submitBtn.disabled = false;
+            }, 2000);
         }
         
         // Initialize
