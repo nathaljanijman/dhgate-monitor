@@ -3,6 +3,19 @@
 // catalog browsing, and manual URL input functionality.
 
 export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
+  // Function to get store icon based on category
+  function getStoreIconByType(logoType) {
+    const icons = {
+      electronics: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.5"/></svg>',
+      fashion: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" stroke="currentColor" stroke-width="1.5"/></svg>',
+      sports: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.5"/></svg>',
+      home: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.5"/><polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" stroke-width="1.5"/></svg>',
+      beauty: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.5"/></svg>',
+      gadget: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="5" y="2" width="14" height="20" rx="2" ry="2" stroke="currentColor" stroke-width="1.5"/><line x1="12" y1="18" x2="12.01" y2="18" stroke="currentColor" stroke-width="1.5"/></svg>'
+    };
+    return icons[logoType] || icons.electronics;
+  }
+
   const t = lang === 'nl' ? {
     title: 'Welke winkel wil je monitoren?',
     description: 'Kies uit aanbevolen winkels, zoek in de catalogus, of voeg een winkel handmatig toe via URL.',
@@ -60,7 +73,7 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
       products: 1234,
       category: 'Electronics',
       location: 'Shenzhen, China',
-      logo: '🏪',
+      logo: 'electronics',
       description: 'Premium electronics and gadgets'
     },
     {
@@ -72,7 +85,7 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
       products: 856,
       category: 'Fashion',
       location: 'Guangzhou, China',
-      logo: '👕',
+      logo: 'fashion',
       description: 'Trendy fashion and accessories'
     },
     {
@@ -84,7 +97,7 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
       products: 2145,
       category: 'Sports',
       location: 'Shanghai, China',
-      logo: '⚽',
+      logo: 'sports',
       description: 'Professional sports equipment'
     },
     {
@@ -96,7 +109,7 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
       products: 567,
       category: 'Home & Garden',
       location: 'Beijing, China',
-      logo: '🏡',
+      logo: 'home',
       description: 'Quality home and garden products'
     },
     {
@@ -108,7 +121,7 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
       products: 432,
       category: 'Beauty',
       location: 'Hangzhou, China',
-      logo: '💄',
+      logo: 'beauty',
       description: 'Beauty and personal care'
     },
     {
@@ -120,7 +133,7 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
       products: 1890,
       category: 'Electronics',
       location: 'Shenzhen, China',
-      logo: '📱',
+      logo: 'gadget',
       description: 'Latest gadgets and tech'
     }
   ];
@@ -136,19 +149,19 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
       <div class="store-selection-tabs">
         <button type="button" class="tab-button active" data-tab="recommended" onclick="switchStoreTab('recommended')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.5"/>
           </svg>
           ${t.recommended}
         </button>
         <button type="button" class="tab-button" data-tab="catalog" onclick="switchStoreTab('catalog')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h10v2H7V7zm0 4h10v2H7v-2zm0 4h6v2H7v-2z" stroke="currentColor" stroke-width="2"/>
+            <path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h10v2H7V7zm0 4h10v2H7v-2zm0 4h6v2H7v-2z" stroke="currentColor" stroke-width="1.5"/>
           </svg>
           ${t.catalog}
         </button>
         <button type="button" class="tab-button" data-tab="manual" onclick="switchStoreTab('manual')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke="currentColor" stroke-width="2"/>
+            <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke="currentColor" stroke-width="1.5"/>
           </svg>
           ${t.manual}
         </button>
@@ -159,16 +172,18 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
         <div class="recommended-stores">
           <h4 class="section-title">${t.popularStores}</h4>
           <div class="store-grid" id="recommended-stores-grid">
-            ${recommendedStores.map(store => `
-              <div class="store-card" data-store-id="${store.id}" onclick="selectStore(${store.id})">
-                <div class="store-card-header">
-                  <div class="store-logo">${store.logo}</div>
-                  <div class="store-rating">
-                    <span class="rating-stars">${'⭐'.repeat(Math.floor(store.rating))}</span>
-                    <span class="rating-number">${store.rating}</span>
-                    <span class="rating-count">(${store.reviews})</span>
-                  </div>
-                </div>
+                         ${recommendedStores.map(store => `
+               <div class="store-card" data-store-id="${store.id}" onclick="selectStore(${store.id})">
+                 <div class="store-card-header">
+                   <div class="store-logo">
+                     ${getStoreIconByType(store.logo)}
+                   </div>
+                   <div class="store-rating">
+                     <span class="rating-stars">${'★'.repeat(Math.floor(store.rating))}</span>
+                     <span class="rating-number">${store.rating}</span>
+                     <span class="rating-count">(${store.reviews})</span>
+                   </div>
+                 </div>
                 <div class="store-card-body">
                   <h5 class="store-name">${store.name}</h5>
                   <p class="store-description">${store.description}</p>
@@ -280,6 +295,8 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
       <input type="hidden" name="store_name" id="selected_store_name">
     </div>
 
+    <script>
+
     <style>
       .enhanced-store-browser {
         font-family: 'Raleway', sans-serif;
@@ -383,16 +400,21 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
         margin-bottom: 1rem;
       }
 
-      .store-logo {
-        font-size: 2rem;
-        width: 48px;
-        height: 48px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--bg-secondary);
-        border-radius: 8px;
-      }
+             .store-logo {
+         width: 48px;
+         height: 48px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         background: var(--bg-secondary);
+         border-radius: 8px;
+         color: var(--primary-blue);
+       }
+
+       .store-logo svg {
+         width: 24px;
+         height: 24px;
+       }
 
       .store-rating {
         display: flex;
@@ -401,9 +423,10 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
         font-size: 0.875rem;
       }
 
-      .rating-stars {
-        color: #fbbf24;
-      }
+             .rating-stars {
+         color: #fbbf24;
+         font-size: 0.875rem;
+       }
 
       .rating-number {
         font-weight: 700;
@@ -647,23 +670,23 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
       function showStorePreview(store) {
         const modal = document.createElement('div');
         modal.className = 'store-preview-modal';
-        modal.innerHTML = \`
-          <div class="modal-overlay">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h3>\${store.name}</h3>
-                <button onclick="this.closest('.store-preview-modal').remove()">&times;</button>
-              </div>
-              <div class="modal-body">
-                <div class="store-preview-info">
-                  <div class="store-preview-logo">\${store.logo}</div>
-                  <div class="store-preview-details">
-                    <p><strong>Rating:</strong> \${store.rating} ⭐ (\${store.reviews} reviews)</p>
-                    <p><strong>Products:</strong> \${store.products}</p>
-                    <p><strong>Category:</strong> \${store.category}</p>
-                    <p><strong>Location:</strong> \${store.location}</p>
-                  </div>
-                </div>
+                 modal.innerHTML = \`
+           <div class="modal-overlay">
+             <div class="modal-content">
+               <div class="modal-header">
+                 <h3>\${store.name}</h3>
+                 <button onclick="this.closest('.store-preview-modal').remove()">&times;</button>
+               </div>
+               <div class="modal-body">
+                 <div class="store-preview-info">
+                   <div class="store-preview-logo">\${getStoreIconByType(store.logo)}</div>
+                   <div class="store-preview-details">
+                     <p><strong>Rating:</strong> \${store.rating} ★ (\${store.reviews} reviews)</p>
+                     <p><strong>Products:</strong> \${store.products}</p>
+                     <p><strong>Category:</strong> \${store.category}</p>
+                     <p><strong>Location:</strong> \${store.location}</p>
+                   </div>
+                 </div>
                 <div class="store-preview-actions">
                   <button onclick="selectStore(\${store.id}); this.closest('.store-preview-modal').remove()">
                     \${t.selectStore}
@@ -680,16 +703,16 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
         document.body.appendChild(modal);
       }
 
-      function updateSelectedStoreDisplay() {
-        if (selectedStore) {
-          document.getElementById('selected-store-name').textContent = selectedStore.name;
-          document.getElementById('selected-store-details').textContent = 
-            \`\${selectedStore.rating} ⭐ • \${selectedStore.products} products • \${selectedStore.category}\`;
-          document.getElementById('selected-store-display').style.display = 'block';
-        } else {
-          document.getElementById('selected-store-display').style.display = 'none';
-        }
-      }
+             function updateSelectedStoreDisplay() {
+         if (selectedStore) {
+           document.getElementById('selected-store-name').textContent = selectedStore.name;
+           document.getElementById('selected-store-details').textContent = 
+             \`\${selectedStore.rating} ★ • \${selectedStore.products} products • \${selectedStore.category}\`;
+           document.getElementById('selected-store-display').style.display = 'block';
+         } else {
+           document.getElementById('selected-store-display').style.display = 'none';
+         }
+       }
 
       function clearStoreSelection() {
         selectedStore = null;
@@ -709,34 +732,34 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
           // Simulate API call to load catalog stores
           await new Promise(resolve => setTimeout(resolve, 1500));
           
-          // Mock catalog data
-          catalogStores = [
-            {
-              id: 101,
-              name: 'Electronics Pro',
-              url: 'https://www.dhgate.com/store/electronics-pro',
-              rating: 4.7,
-              reviews: 1890,
-              products: 2341,
-              category: 'Electronics',
-              location: 'Shenzhen, China',
-              logo: '📱',
-              description: 'Professional electronics store'
-            },
-            {
-              id: 102,
-              name: 'Fashion Trends',
-              url: 'https://www.dhgate.com/store/fashion-trends',
-              rating: 4.5,
-              reviews: 1234,
-              products: 987,
-              category: 'Fashion',
-              location: 'Guangzhou, China',
-              logo: '👗',
-              description: 'Latest fashion trends'
-            }
-            // Add more catalog stores as needed
-          ];
+                     // Mock catalog data
+           catalogStores = [
+             {
+               id: 101,
+               name: 'Electronics Pro',
+               url: 'https://www.dhgate.com/store/electronics-pro',
+               rating: 4.7,
+               reviews: 1890,
+               products: 2341,
+               category: 'Electronics',
+               location: 'Shenzhen, China',
+               logo: 'electronics',
+               description: 'Professional electronics store'
+             },
+             {
+               id: 102,
+               name: 'Fashion Trends',
+               url: 'https://www.dhgate.com/store/fashion-trends',
+               rating: 4.5,
+               reviews: 1234,
+               products: 987,
+               category: 'Fashion',
+               location: 'Guangzhou, China',
+               logo: 'fashion',
+               description: 'Latest fashion trends'
+             }
+             // Add more catalog stores as needed
+           ];
           
           renderCatalogStores(catalogStores);
         } catch (error) {
@@ -755,16 +778,18 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
           return;
         }
         
-        gridEl.innerHTML = stores.map(store => \`
-          <div class="store-card" data-store-id="\${store.id}" onclick="selectStore(\${store.id})">
-            <div class="store-card-header">
-              <div class="store-logo">\${store.logo}</div>
-              <div class="store-rating">
-                <span class="rating-stars">\${'⭐'.repeat(Math.floor(store.rating))}</span>
-                <span class="rating-number">\${store.rating}</span>
-                <span class="rating-count">(\${store.reviews})</span>
-              </div>
-            </div>
+                                   gridEl.innerHTML = stores.map(store => \`
+            <div class="store-card" data-store-id="\${store.id}" onclick="selectStore(\${store.id})">
+              <div class="store-card-header">
+                <div class="store-logo">
+                  \${getStoreIconByType(store.logo)}
+                </div>
+               <div class="store-rating">
+                 <span class="rating-stars">\${'★'.repeat(Math.floor(store.rating))}</span>
+                 <span class="rating-number">\${store.rating}</span>
+                 <span class="rating-count">(\${store.reviews})</span>
+               </div>
+             </div>
             <div class="store-card-body">
               <h5 class="store-name">\${store.name}</h5>
               <p class="store-description">\${store.description}</p>

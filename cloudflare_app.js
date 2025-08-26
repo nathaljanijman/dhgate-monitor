@@ -14425,16 +14425,6 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                             <!-- Step 2: Store Search and Keywords -->
                             <div class="form-step" data-step="2">
                                 <div class="step-content">
-                                    <h3 class="step-title">
-                                        ${lang === 'nl' ? 'Welke winkel wil je monitoren?' : 'Which store do you want to monitor?'}
-                                    </h3>
-                                    <p class="step-description">
-                                        ${lang === 'nl' ? 
-                                            'Selecteer een specifieke DHgate winkel om te monitoren, of voeg zoektermen toe om producten te vinden.' :
-                                            'Select a specific DHgate store to monitor, or add search terms to find products.'
-                                        }
-                                    </p>
-                                    
                                     ${generateEnhancedStoreBrowser(lang, theme)}
                                     
                                     <div class="form-group">
