@@ -5832,9 +5832,7 @@ async function fetchPreprArticles(options = {}) {
           afbeeldingen {
             url
           }
-          samenvatting
-          tags
-          categorie
+          intro
         }
       }
     }
@@ -5867,14 +5865,14 @@ async function fetchPreprArticles(options = {}) {
       id: item._id,
       slug: item._slug,
       title: item.title,
-      excerpt: item.samenvatting || '',
+      excerpt: item.intro || '',
       author: item.auteur?.[0]?.name || 'Redactie',
       publishedAt: item._created_on,
       updatedAt: item._changed_on,
       image: item.afbeeldingen?.[0]?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
       category: item.categorie || 'general',
       tags: Array.isArray(item.tags) ? item.tags : [],
-      readTime: Math.max(1, Math.ceil((item.samenvatting?.length || 0) / 200)), // Estimate reading time
+      readTime: Math.max(1, Math.ceil((item.intro?.length || 100) / 200)), // Estimate reading time
       views: 0, // Could be stored separately
       featured: false // Could be a field in Prepr
     })) || [];
@@ -5887,6 +5885,52 @@ async function fetchPreprArticles(options = {}) {
     console.error('Failed to fetch articles from Prepr:', error);
     return { articles: [], total: 0 };
   }
+}
+
+/**
+ * Format article content from Prepr body blocks into proper HTML structure
+ */
+function formatArticleContent(bodyBlocks) {
+  if (!bodyBlocks || !Array.isArray(bodyBlocks)) {
+    return '<p>Geen content beschikbaar.</p>';
+  }
+
+  let formattedContent = '';
+  
+  for (let i = 0; i < bodyBlocks.length; i++) {
+    const block = bodyBlocks[i];
+    const text = block.text || '';
+    
+    if (!text.trim()) continue;
+    
+    // Check if this looks like a heading (short text, often followed by longer text, ends with ?)
+    const isHeading = text.length < 100 && (text.endsWith('?') || text.endsWith(':') || 
+                     (i < bodyBlocks.length - 1 && bodyBlocks[i + 1]?.text?.length > text.length));
+    
+    if (isHeading) {
+      formattedContent += `<h2>${text.replace(/[?:]$/, '')}</h2>\n`;
+    } else {
+      // Process text for lists and paragraphs
+      const lines = text.split(/(?=[A-Z][a-z])/g).filter(line => line.trim());
+      
+      if (lines.length > 1 && lines.some(line => line.includes(':') && line.length < 80)) {
+        // This looks like a list
+        formattedContent += '<ul>\n';
+        lines.forEach(line => {
+          const cleanLine = line.trim().replace(/^[•\-\*]\s*/, '');
+          if (cleanLine.length > 10) {
+            formattedContent += `<li>${cleanLine}</li>\n`;
+          }
+        });
+        formattedContent += '</ul>\n';
+      } else {
+        // Regular paragraph
+        formattedContent += `<p>${text}</p>\n`;
+      }
+    }
+  }
+  
+  return formattedContent;
 }
 
 /**
@@ -5946,7 +5990,7 @@ async function fetchPreprArticle(slug) {
       slug: item._slug,
       title: item.title,
       excerpt: item.intro || 'Geen samenvatting beschikbaar',
-      content: item.body?.map(block => block.text || '').join('<br><br>') || `<p>Geen content beschikbaar.</p>`,
+      content: formatArticleContent(item.body) || `<p>Geen content beschikbaar.</p>`,
       author: item.auteur?.[0]?.name || 'Redactie',
       publishedAt: item.publicatiedatum || item._created_on,
       updatedAt: item._changed_on,
