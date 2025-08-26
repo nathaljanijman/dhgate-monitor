@@ -17,49 +17,81 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
   }
 
   const t = lang === 'nl' ? {
-    title: 'Welke winkel wil je monitoren?',
-    description: 'Kies uit aanbevolen winkels, zoek in de catalogus, of voeg een winkel handmatig toe via URL.',
-    recommended: 'Aanbevolen',
-    catalog: 'Catalogus',
-    manual: 'Handmatig',
-    popularStores: '🏆 Populaire Winkels',
-    searchCatalog: 'Zoek in catalogus...',
+    title: 'Ontdek Geweldige Winkels',
+    subtitle: 'Word gevonden door duizenden kopers wereldwijd',
+    description: 'Bekijk onze featured stores, ontdek nieuwe winkels, of voeg je eigen winkel toe.',
+    recommended: 'Featured',
+    catalog: 'Ontdekken',
+    manual: 'Toevoegen',
+    featuredStores: '🏆 Featured Stores - Word Gevonden!',
+    discoverStores: '🔍 Ontdek Geweldige Winkels',
+    addYourStore: '💡 Wil je hier je winkel tonen?',
+    joinStores: 'Sluit je aan bij 500+ winkels die dagelijks worden ontdekt!',
+    addStore: 'Winkel Toevoegen',
+    learnMore: 'Meer Info',
+    searchCatalog: 'Zoek winkels...',
     allCategories: 'Alle categorieën',
     allRatings: 'Alle ratings',
+    sortBy: 'Sorteren op',
+    popular: 'Populair',
+    newest: 'Nieuwste',
+    rating: 'Rating',
+    products: 'Producten',
     storeUrl: 'DHgate Store URL',
     storeUrlPlaceholder: 'https://www.dhgate.com/store/example-store',
-    storeUrlHelp: 'Plak de volledige URL van de DHgate winkel die je wilt monitoren',
+    storeUrlHelp: 'Plak de volledige URL van je DHgate winkel',
     loadingStores: 'Winkels laden...',
     change: 'Wijzigen',
     selectStore: 'Deze winkel selecteren',
-    previewStore: 'Voorvertoning bekijken',
+    previewStore: 'Winkel bekijken',
+    visitStore: 'Winkel bezoeken',
+    contactStore: 'Contact opnemen',
+    startMonitoring: 'Monitoring starten',
     noStoresFound: 'Geen winkels gevonden',
     storeRating: 'Rating',
     storeProducts: 'producten',
     storeLocation: 'Locatie',
-    storeCategory: 'Categorie'
+    storeCategory: 'Categorie',
+    activeHours: 'Actief',
+    lastUpdated: 'Laatst bijgewerkt'
   } : {
-    title: 'Which store do you want to monitor?',
-    description: 'Choose from recommended stores, search the catalog, or add a store manually via URL.',
-    recommended: 'Recommended',
-    catalog: 'Catalog',
-    manual: 'Manual',
-    popularStores: '🏆 Popular Stores',
-    searchCatalog: 'Search catalog...',
+    title: 'Discover Amazing Stores',
+    subtitle: 'Get found by thousands of buyers worldwide',
+    description: 'Browse our featured stores, discover new shops, or add your own store.',
+    recommended: 'Featured',
+    catalog: 'Discover',
+    manual: 'Add',
+    featuredStores: '🏆 Featured Stores - Get Discovered!',
+    discoverStores: '🔍 Discover Amazing Stores',
+    addYourStore: '💡 Want to showcase your store here?',
+    joinStores: 'Join 500+ stores already being discovered daily!',
+    addStore: 'Add Your Store',
+    learnMore: 'Learn More',
+    searchCatalog: 'Search stores...',
     allCategories: 'All categories',
     allRatings: 'All ratings',
+    sortBy: 'Sort by',
+    popular: 'Popular',
+    newest: 'Newest',
+    rating: 'Rating',
+    products: 'Products',
     storeUrl: 'DHgate Store URL',
     storeUrlPlaceholder: 'https://www.dhgate.com/store/example-store',
-    storeUrlHelp: 'Paste the full URL of the DHgate store you want to monitor',
+    storeUrlHelp: 'Paste the full URL of your DHgate store',
     loadingStores: 'Loading stores...',
     change: 'Change',
     selectStore: 'Select this store',
-    previewStore: 'Preview store',
+    previewStore: 'View store',
+    visitStore: 'Visit store',
+    contactStore: 'Contact store',
+    startMonitoring: 'Start monitoring',
     noStoresFound: 'No stores found',
     storeRating: 'Rating',
     storeProducts: 'products',
     storeLocation: 'Location',
-    storeCategory: 'Category'
+    storeCategory: 'Category',
+    activeHours: 'Active',
+    lastUpdated: 'Last updated'
   };
 
   // Mock data for recommended stores
@@ -141,7 +173,8 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
   return `
     <div class="enhanced-store-browser" data-theme="${theme}">
       <div class="store-browser-header">
-        <h3 class="store-browser-title">${t.title}</h3>
+        <h2 class="store-browser-title">${t.title}</h2>
+        <p class="store-browser-subtitle">${t.subtitle}</p>
         <p class="store-browser-description">${t.description}</p>
       </div>
 
@@ -167,39 +200,69 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
         </button>
       </div>
 
-      <!-- Recommended Stores Tab -->
+            <!-- Featured Stores Tab -->
       <div id="recommended-tab" class="store-tab-content active">
-        <div class="recommended-stores">
-          <h4 class="section-title">${t.popularStores}</h4>
-          <div class="store-grid" id="recommended-stores-grid">
-                         ${recommendedStores.map(store => `
-               <div class="store-card" data-store-id="${store.id}" onclick="selectStore(${store.id})">
-                 <div class="store-card-header">
-                   <div class="store-logo">
-                     ${getStoreIconByType(store.logo)}
-                   </div>
-                   <div class="store-rating">
-                     <span class="rating-stars">${'★'.repeat(Math.floor(store.rating))}</span>
-                     <span class="rating-number">${store.rating}</span>
-                     <span class="rating-count">(${store.reviews})</span>
-                   </div>
-                 </div>
-                <div class="store-card-body">
-                  <h5 class="store-name">${store.name}</h5>
-                  <p class="store-description">${store.description}</p>
-                  <div class="store-meta">
-                    <span class="store-products">${store.products} ${t.storeProducts}</span>
-                    <span class="store-category">${store.category}</span>
+        <div class="featured-stores">
+          <div class="featured-header">
+            <h3 class="section-title">${t.featuredStores}</h3>
+            <div class="featured-cta">
+              <p class="cta-text">${t.addYourStore}</p>
+              <p class="cta-subtext">${t.joinStores}</p>
+              <div class="cta-buttons">
+                <button class="btn-primary" onclick="showAddStoreModal()">${t.addStore}</button>
+                <button class="btn-secondary" onclick="showLearnMore()">${t.learnMore}</button>
+              </div>
+            </div>
+          </div>
+          <div class="store-showcase-grid" id="recommended-stores-grid">
+            ${recommendedStores.map(store => `
+              <div class="store-showcase-card" data-store-id="${store.id}">
+                <div class="store-banner">
+                  <div class="store-logo-large">
+                    ${getStoreIconByType(store.logo)}
                   </div>
-                  <div class="store-location">${store.location}</div>
+                  <div class="store-badge">
+                    <span class="badge-text">Featured</span>
+                  </div>
                 </div>
-                <div class="store-card-actions">
-                  <button type="button" class="btn-preview" onclick="previewStore(${store.id})">
-                    ${t.previewStore}
-                  </button>
-                  <button type="button" class="btn-select" onclick="selectStore(${store.id})">
-                    ${t.selectStore}
-                  </button>
+                <div class="store-showcase-content">
+                  <div class="store-header">
+                    <h4 class="store-name">${store.name}</h4>
+                    <div class="store-rating">
+                      <span class="rating-stars">${'★'.repeat(Math.floor(store.rating))}</span>
+                      <span class="rating-text">${store.rating} (${store.reviews})</span>
+                    </div>
+                  </div>
+                  <p class="store-description">${store.description}</p>
+                  <div class="store-stats">
+                    <div class="stat-item">
+                      <span class="stat-icon">📦</span>
+                      <span class="stat-value">${store.products}</span>
+                      <span class="stat-label">${t.storeProducts}</span>
+                    </div>
+                    <div class="stat-item">
+                      <span class="stat-icon">📍</span>
+                      <span class="stat-value">${store.location}</span>
+                    </div>
+                  </div>
+                  <div class="store-category">
+                    <span class="category-tag">${store.category}</span>
+                  </div>
+                  <div class="store-actions">
+                    <button class="btn-view" onclick="previewStore(${store.id})">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                      ${t.previewStore}
+                    </button>
+                    <button class="btn-monitor" onclick="selectStore(${store.id})">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                      ${t.startMonitoring}
+                    </button>
+                  </div>
                 </div>
               </div>
             `).join('')}
@@ -300,26 +363,42 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
     <style>
       .enhanced-store-browser {
         font-family: 'Raleway', sans-serif;
-        max-width: 800px;
+        max-width: 1200px;
         margin: 0 auto;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
       }
 
       .store-browser-header {
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 3rem;
+        color: white;
       }
 
       .store-browser-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--text-primary);
+        font-size: 2.5rem;
+        font-weight: 800;
         margin: 0 0 0.5rem 0;
+        background: linear-gradient(45deg, #fff, #f0f8ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .store-browser-subtitle {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin: 0 0 1rem 0;
+        opacity: 0.9;
       }
 
       .store-browser-description {
-        color: var(--text-secondary);
+        font-size: 1rem;
         margin: 0;
         line-height: 1.6;
+        opacity: 0.8;
       }
 
       .store-selection-tabs {
@@ -362,59 +441,178 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
         display: block;
       }
 
-      .section-title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin: 0 0 1.5rem 0;
-      }
-
-      .store-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-      }
-
-      .store-card {
-        background: var(--card-bg);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        padding: 1.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .store-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        border-color: var(--primary-blue);
-      }
-
-      .store-card-header {
+      .featured-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 2rem;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1.5rem;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+        margin: 0;
+      }
+
+      .featured-cta {
+        text-align: right;
+        color: white;
+      }
+
+      .cta-text {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem 0;
+      }
+
+      .cta-subtext {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin: 0 0 1rem 0;
+      }
+
+      .cta-buttons {
+        display: flex;
+        gap: 0.75rem;
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .store-showcase-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .store-showcase-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        cursor: pointer;
+      }
+
+      .store-showcase-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+      }
+
+      .store-banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .store-logo-large {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(10px);
+      }
+
+      .store-logo-large svg {
+        width: 40px;
+        height: 40px;
+        color: white;
+      }
+
+      .store-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+      }
+
+            .store-showcase-content {
+        padding: 2rem;
+      }
+
+      .store-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
         margin-bottom: 1rem;
       }
 
-             .store-logo {
-         width: 48px;
-         height: 48px;
-         display: flex;
-         align-items: center;
-         justify-content: center;
-         background: var(--bg-secondary);
-         border-radius: 8px;
-         color: var(--primary-blue);
-       }
+      .store-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0;
+        line-height: 1.2;
+      }
 
-       .store-logo svg {
-         width: 24px;
-         height: 24px;
-       }
+      .store-rating {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #f7fafc;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+      }
+
+      .rating-stars {
+        color: #fbbf24;
+        font-size: 0.9rem;
+      }
+
+      .rating-text {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #4a5568;
+      }
 
       .store-rating {
         display: flex;
@@ -449,66 +647,101 @@ export function generateEnhancedStoreBrowser(lang = 'nl', theme = 'light') {
       }
 
       .store-description {
-        color: var(--text-secondary);
-        margin: 0 0 1rem 0;
-        line-height: 1.5;
+        color: #718096;
+        margin: 0 0 1.5rem 0;
+        line-height: 1.6;
+        font-size: 1rem;
       }
 
-      .store-meta {
+      .store-stats {
         display: flex;
-        gap: 1rem;
-        margin-bottom: 0.5rem;
-        font-size: 0.875rem;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
       }
 
-      .store-products {
-        color: var(--success);
+      .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #f7fafc;
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        font-size: 0.9rem;
+      }
+
+      .stat-icon {
+        font-size: 1.1rem;
+      }
+
+      .stat-value {
         font-weight: 600;
+        color: #2d3748;
+      }
+
+      .stat-label {
+        color: #718096;
       }
 
       .store-category {
-        color: var(--primary-blue);
-        font-weight: 600;
+        margin-bottom: 1.5rem;
       }
 
-      .store-location {
-        color: var(--text-muted);
-        font-size: 0.875rem;
-      }
-
-      .store-card-actions {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 1rem;
-      }
-
-      .btn-preview, .btn-select {
+      .category-tag {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
         padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .store-actions {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .btn-view, .btn-monitor {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
         border: none;
-        border-radius: 6px;
-        font-size: 0.875rem;
+        border-radius: 12px;
+        font-size: 0.9rem;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
-      }
-
-      .btn-preview {
-        background: var(--bg-secondary);
-        color: var(--text-primary);
-      }
-
-      .btn-preview:hover {
-        background: var(--border-color);
-      }
-
-      .btn-select {
-        background: var(--primary-blue);
-        color: white;
         flex: 1;
       }
 
-      .btn-select:hover {
-        background: var(--primary-dark);
+      .btn-view {
+        background: #f7fafc;
+        color: #4a5568;
+        border: 2px solid #e2e8f0;
+      }
+
+      .btn-view:hover {
+        background: #edf2f7;
+        border-color: #cbd5e0;
+        transform: translateY(-2px);
+      }
+
+      .btn-monitor {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      .btn-monitor:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-view svg, .btn-monitor svg {
+        width: 16px;
+        height: 16px;
       }
 
       .search-wrapper {
