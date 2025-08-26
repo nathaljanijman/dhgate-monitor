@@ -90,6 +90,7 @@ const CONFIG = {
 // IMPORT ENHANCED ADMIN DASHBOARD
 // ============================================================================
 import { generateEnhancedAdminDashboard } from './enhanced_admin_dashboard.js';
+import { generateEnhancedStoreBrowser } from './enhanced_store_browser.js';
 import { API_CONFIG, getRegionsByPriority, calculateRetryDelay } from './api-config.js';
 
 // ============================================================================
@@ -14434,26 +14435,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                                         }
                                     </p>
                                     
-                                    <div class="form-group">
-                                        <div class="store-search-wrapper">
-                                            <div class="input-wrapper">
-                                                <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
-                                                    <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2"/>
-                                                </svg>
-                                                <input 
-                                                    type="text" 
-                                                    id="store_search" 
-                                                    class="form-control" 
-                                                    placeholder="${lang === 'nl' ? 'Zoek winkel naam...' : 'Search store name...'}" 
-                                                    onkeyup="searchStores(this.value)"
-                                                    autocomplete="off"
-                                                >
-                                            </div>
-                                            <div id="store_results" class="store-results"></div>
-                                            <input type="hidden" name="store_url" id="selected_store_url">
-                                        </div>
-                                    </div>
+                                    ${generateEnhancedStoreBrowser(lang, theme)}
                                     
                                     <div class="form-group">
                                         <label for="tags" class="form-label">
@@ -14963,74 +14945,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         let storeDatabase = [];
         let selectedStore = null;
         
-        // Real-time store search using DHgate sitemap data
-        let searchTimeout = null;
-        
-        function searchStores(query) {
-            const resultsDiv = document.getElementById('store_results');
-            
-            if (!query || query.length < 2) {
-                resultsDiv.classList.remove('show');
-                return;
-            }
-            
-            // Clear previous timeout to debounce search
-            if (searchTimeout) {
-                clearTimeout(searchTimeout);
-            }
-            
-            // Show loading state
-            resultsDiv.innerHTML = '<div class="store-result-item" style="opacity: 0.6; cursor: default;">' + 
-                ('${lang === 'nl' ? 'Zoeken...' : 'Searching...'}') + '</div>';
-            resultsDiv.classList.add('show');
-            
-            // Debounce search to avoid too many API calls
-            searchTimeout = setTimeout(async () => {
-                try {
-                    const response = await fetch(\`/api/stores/search?q=\${encodeURIComponent(query)}\`);
-                    const stores = await response.json();
-                    
-                    if (stores.length > 0) {
-                        resultsDiv.innerHTML = stores.map(store => 
-                            \`<div class="store-result-item" onclick="selectStore('\${store.name.replace(/'/g, "\\\\'")}', '\${store.url}')">
-                                <div class="store-result-name">\${store.name}</div>
-                                <div class="store-result-url">\${store.url}</div>
-                            </div>\`
-                        ).join('');
-                        resultsDiv.classList.add('show');
-                    } else {
-                        resultsDiv.innerHTML = '<div class="store-result-item" style="opacity: 0.6; cursor: default;">' + 
-                            ('${lang === 'nl' ? 'Geen winkels gevonden' : 'No stores found'}') + '</div>';
-                        resultsDiv.classList.add('show');
-                    }
-                } catch (error) {
-                    console.error('Store search error:', error);
-                    resultsDiv.innerHTML = '<div class="store-result-item" style="opacity: 0.6; cursor: default; color: red;">' + 
-                        ('${lang === 'nl' ? 'Zoeken mislukt. Probeer opnieuw.' : 'Search failed. Please try again.'}') + '</div>';
-                    resultsDiv.classList.add('show');
-                }
-            }, 300); // 300ms debounce
-        }
-        
-        function selectStore(storeName, storeUrl) {
-            selectedStore = { name: storeName, url: storeUrl };
-            document.getElementById('store_search').value = storeName;
-            document.getElementById('selected_store_url').value = storeUrl;
-            document.getElementById('store_results').classList.remove('show');
-            
-            // Update store options visual state
-            document.querySelectorAll('.store-option').forEach(option => {
-                option.classList.remove('selected');
-            });
-        }
-        
-        
-        // Hide results when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.store-search-wrapper')) {
-                document.getElementById('store_results').classList.remove('show');
-            }
-        });
+        // Enhanced Store Browser functionality is now handled by the enhanced_store_browser.js component
+        // The old searchStores and selectStore functions have been replaced with the new visual interface
         
         // Allow Enter key to advance steps
         document.addEventListener('keydown', function(e) {
