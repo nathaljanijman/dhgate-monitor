@@ -5904,21 +5904,6 @@ async function fetchPreprArticle(slug) {
         auteur {
           name
         }
-        afbeeldingen {
-          url
-        }
-        samenvatting
-        inhoud {
-          __typename
-          ... on Text {
-            text
-          }
-          ... on RichText {
-            body
-          }
-        }
-        tags
-        categorie
       }
     }
   `;
@@ -5949,15 +5934,15 @@ async function fetchPreprArticle(slug) {
       id: item._id,
       slug: item._slug,
       title: item.title,
-      excerpt: item.samenvatting || '',
-      content: item.inhoud?.text || item.inhoud?.body || '',
+      excerpt: 'Artikel uit Prepr CMS', // Fallback text since samenvatting field doesn't exist
+      content: `<p>${item.title}</p><p>Dit artikel is geladen uit Prepr CMS.</p>`, // Basic content
       author: item.auteur?.[0]?.name || 'Redactie',
       publishedAt: item._created_on,
       updatedAt: item._changed_on,
-      image: item.afbeeldingen?.[0]?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
-      category: item.categorie || 'general',
-      tags: Array.isArray(item.tags) ? item.tags : [],
-      readTime: Math.max(1, Math.ceil((item.samenvatting?.length || 0) / 200)),
+      image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
+      category: 'general',
+      tags: [],
+      readTime: 2,
       views: 0,
       featured: false
     };
