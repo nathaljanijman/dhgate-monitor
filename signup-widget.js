@@ -1143,7 +1143,7 @@ function generateWidgetStoreBrowser(lang, theme) {
       <!-- Store Tiles -->
       <div class="widget-store-grid">
         ${featuredStores.map((store, index) => `
-          <div class="widget-store-tile" data-store-id="${store.id}" style="background-color: ${store.color};" onclick="selectWidgetStore(${store.id})">
+          <div class="widget-store-tile" data-store-id="${store.id}" style="background-color: ${store.color};" data-store-click="${store.id}">
             <div class="tile-image">
               <img src="${store.image}" alt="${store.name}" class="store-image" loading="lazy">
               <div class="tile-overlay">
@@ -1205,7 +1205,7 @@ function generateWidgetStoreBrowser(lang, theme) {
             class="custom-store-input" 
             placeholder="${t.addStorePlaceholder}"
           >
-          <button type="button" class="custom-store-btn" onclick="addWidgetCustomStore()">
+          <button type="button" class="custom-store-btn" id="add-custom-store-btn">
             ${t.addStoreButton}
           </button>
         </div>
@@ -1926,7 +1926,23 @@ function generateWidgetStoreBrowser(lang, theme) {
           console.error('No store tiles found!');
         }
         
-
+        // Add event listeners for store tiles
+        document.querySelectorAll('.widget-store-tile').forEach(tile => {
+          tile.addEventListener('click', function() {
+            const storeId = parseInt(this.getAttribute('data-store-click'));
+            console.log('Tile clicked, store ID:', storeId);
+            selectWidgetStore(storeId);
+          });
+        });
+        
+        // Add event listener for custom store button
+        const customStoreBtn = document.getElementById('add-custom-store-btn');
+        if (customStoreBtn) {
+          customStoreBtn.addEventListener('click', function() {
+            console.log('Custom store button clicked');
+            addWidgetCustomStore();
+          });
+        }
       });
       
       // Tags functionality
