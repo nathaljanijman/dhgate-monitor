@@ -5865,7 +5865,7 @@ async function fetchPreprArticles(options = {}) {
       author: item.auteur?.[0]?.name || 'Redactie',
       publishedAt: item._created_on,
       updatedAt: item._changed_on,
-      image: item.afbeeldingen?.[0]?.url || null,
+      image: item.afbeeldingen?.[0]?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
       category: item.categorie || 'general',
       tags: Array.isArray(item.tags) ? item.tags : [],
       readTime: Math.max(1, Math.ceil((item.intro?.length || 100) / 200)), // Estimate reading time
@@ -5990,7 +5990,7 @@ async function fetchPreprArticle(slug) {
       author: item.auteur?.[0]?.name || 'Redactie',
       publishedAt: item.publicatiedatum || item._created_on,
       updatedAt: item._changed_on,
-      image: item.afbeeldingen?.[0]?.url || null,
+      image: item.afbeeldingen?.[0]?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
       category: 'general',
       tags: [],
       readTime: Math.max(1, Math.ceil((item.intro?.length || 100) / 200)),
@@ -6751,12 +6751,10 @@ async function handleNewsroomPage(request, env) {
                            class="article-card-link"
                            itemprop="url">
                             ${article.featured ? '<span class="featured-badge">Featured</span>' : ''}
-                            ${article.image ? `
                             <img src="${article.image}" 
                                  alt="${article.title}" 
                                  class="article-image"
                                  loading="lazy">
-                            ` : ''}
                             <div class="article-content">
                                 <div class="article-meta">
                                     <span class="article-category">${article.category}</span>
@@ -7324,115 +7322,274 @@ async function handleNewsroomArticle(request, env) {
                     grid-template-columns: 1fr;
                 }
             }
+            
+            /* ===== MINIMALIST ARTICLE STYLES ===== */
+            
+            .article-main {
+                background: var(--bg-primary);
+                min-height: 100vh;
+            }
+            
+            .article-header {
+                background: var(--bg-secondary);
+                border-bottom: 1px solid var(--border-light);
+                padding: 2rem 0;
+            }
+            
+            .article-header-content {
+                max-width: 42rem;
+                margin: 0 auto;
+                padding: 0 1rem;
+            }
+            
+            .back-nav {
+                display: inline-flex;
+                align-items: center;
+                color: var(--text-secondary);
+                text-decoration: none;
+                font-size: 0.875rem;
+                font-weight: 500;
+                margin-bottom: 1rem;
+                transition: color 0.2s ease;
+            }
+            
+            .back-nav:hover {
+                color: var(--primary);
+            }
+            
+            .article-title {
+                font-size: 2.5rem;
+                font-weight: 700;
+                line-height: 1.2;
+                color: var(--text-primary);
+                margin: 0 0 1rem 0;
+                letter-spacing: -0.025em;
+            }
+            
+            .article-meta {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: var(--text-secondary);
+                font-size: 0.875rem;
+                font-weight: 500;
+            }
+            
+            .meta-separator {
+                opacity: 0.5;
+            }
+            
+            .article-body {
+                max-width: 42rem;
+                margin: 0 auto;
+                padding: 3rem 1rem;
+            }
+            
+            .article-lead {
+                font-size: 1.25rem;
+                font-weight: 400;
+                line-height: 1.6;
+                color: var(--text-secondary);
+                margin: 0 0 2.5rem 0;
+                border-left: 4px solid var(--primary);
+                padding-left: 1.5rem;
+            }
+            
+            .article-content {
+                font-size: 1.125rem;
+                line-height: 1.7;
+                color: var(--text-primary);
+            }
+            
+            /* Typography hierarchy */
+            .article-content h2 {
+                font-size: 1.875rem;
+                font-weight: 600;
+                line-height: 1.3;
+                margin: 3rem 0 1.5rem 0;
+                color: var(--text-primary);
+                letter-spacing: -0.02em;
+            }
+            
+            .article-content h3 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                line-height: 1.4;
+                margin: 2.5rem 0 1rem 0;
+                color: var(--text-primary);
+            }
+            
+            .article-content p {
+                margin: 0 0 1.5rem 0;
+                line-height: 1.7;
+            }
+            
+            .article-content ul,
+            .article-content ol {
+                margin: 1.5rem 0;
+                padding-left: 1.5rem;
+            }
+            
+            .article-content li {
+                margin-bottom: 0.5rem;
+                line-height: 1.6;
+            }
+            
+            .article-content ul li::marker {
+                color: var(--primary);
+            }
+            
+            .article-content strong {
+                font-weight: 600;
+                color: var(--text-primary);
+            }
+            
+            .article-footer {
+                margin-top: 3rem;
+                padding-top: 2rem;
+                border-top: 1px solid var(--border-light);
+            }
+            
+            .share-section {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+            
+            .share-label {
+                font-size: 0.875rem;
+                font-weight: 500;
+                color: var(--text-secondary);
+            }
+            
+            .share-buttons {
+                display: flex;
+                gap: 0.5rem;
+            }
+            
+            .share-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                border: 1px solid var(--border-light);
+                border-radius: 8px;
+                background: var(--bg-primary);
+                color: var(--text-secondary);
+                transition: all 0.2s ease;
+                cursor: pointer;
+            }
+            
+            .share-btn:hover {
+                background: var(--primary);
+                border-color: var(--primary);
+                color: white;
+                transform: translateY(-1px);
+            }
+            
+            /* Mobile optimizations */
+            @media (max-width: 768px) {
+                .article-title {
+                    font-size: 2rem;
+                }
+                
+                .article-meta {
+                    flex-wrap: wrap;
+                    gap: 0.25rem;
+                }
+                
+                .article-body {
+                    padding: 2rem 1rem;
+                }
+                
+                .article-lead {
+                    font-size: 1.125rem;
+                    margin-bottom: 2rem;
+                }
+                
+                .article-content {
+                    font-size: 1rem;
+                }
+                
+                .article-content h2 {
+                    font-size: 1.625rem;
+                    margin: 2rem 0 1rem 0;
+                }
+                
+                .share-section {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 1rem;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .article-header {
+                    padding: 1.5rem 0;
+                }
+                
+                .article-title {
+                    font-size: 1.75rem;
+                }
+                
+                .article-body {
+                    padding: 1.5rem 1rem;
+                }
+            }
         </style>
     </head>
     <body>
         ${generateStandardNavigation(lang, theme, 'newsroom')}
         
-        ${generateBreadcrumb('/newsroom', lang, theme)}
-        
-        <!-- Article Header -->
-        <header class="service-header">
-            <div class="container">
-                <h1 class="service-title">
-                    ${article.title}
-                </h1>
-                <p class="service-subtitle">
-                    ${article.excerpt}
-                </p>
-            </div>
-        </header>
-        
-        ${generateBreadcrumb('/newsroom', lang, theme)}
-        
-        <main>
-            <div class="container">
-                <div class="article-container">
-                    <!-- Article Meta -->
+        <!-- Minimalist Article Layout -->
+        <main class="article-main">
+            <!-- Article Header -->
+            <header class="article-header">
+                <div class="article-header-content">
+                    <a href="/newsroom?lang=${lang}&theme=${theme}" class="back-nav">
+                        ← ${t.backToNewsroom}
+                    </a>
+                    <h1 class="article-title">${article.title}</h1>
                     <div class="article-meta">
-                        <span class="article-category">${article.category}</span>
-                        <span>${t.publishedOn} ${new Date(article.publishedAt).toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-US')}</span>
-                        <span>${t.by} ${article.author}</span>
-                        <span>${article.readTime} ${t.readTime}</span>
+                        <span class="meta-item">${t.by} ${article.author}</span>
+                        <span class="meta-separator">•</span>
+                        <span class="meta-item">${new Date(article.publishedAt).toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-US')}</span>
+                        <span class="meta-separator">•</span>
+                        <span class="meta-item">${article.readTime} ${t.readTime}</span>
                     </div>
-                    
-                    <!-- Article Image -->
-                    ${article.image && !article.image.includes('unsplash') ? `
-                    <img src="${article.image}" 
-                         alt="${article.title}" 
-                         class="article-image"
-                         loading="lazy">
-                    ` : ''}
-                    
-                    <!-- Article Content -->
-                    <article class="article-content">
-                        ${article.content}
-                    </article>
-                    
-                    <!-- Article Tags -->
-                    <div class="article-tags">
-                        ${article.tags.map(tag => `
-                        <a href="/newsroom?tag=${tag}&lang=${lang}&theme=${theme}" 
-                           class="article-tag">
-                            #${tag}
-                        </a>
-                        `).join('')}
-                    </div>
-                    
-                    <!-- Article Actions -->
-                    <div class="article-actions">
-                        <a href="/newsroom?lang=${lang}&theme=${theme}" class="back-link">
-                            ← ${t.backToNewsroom}
-                        </a>
-                        
+                </div>
+            </header>
+
+            <!-- Article Body -->
+            <article class="article-body">
+                <!-- Lead paragraph -->
+                <p class="article-lead">${article.excerpt}</p>
+                
+                <!-- Article content -->
+                <div class="article-content">
+                    ${article.content}
+                </div>
+
+                <!-- Article footer -->
+                <footer class="article-footer">
+                    <div class="share-section">
+                        <span class="share-label">${t.share}:</span>
                         <div class="share-buttons">
-                            <button class="share-button" 
-                                    onclick="shareArticle('twitter')"
-                                    aria-label="Share on Twitter">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <button class="share-btn" onclick="shareArticle('twitter')" aria-label="Share on Twitter">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
                                 </svg>
                             </button>
-                            <button class="share-button" 
-                                    onclick="shareArticle('linkedin')"
-                                    aria-label="Share on LinkedIn">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <button class="share-btn" onclick="shareArticle('linkedin')" aria-label="Share on LinkedIn">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                </svg>
-                            </button>
-                            <button class="share-button" 
-                                    onclick="shareArticle('facebook')"
-                                    aria-label="Share on Facebook">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                 </svg>
                             </button>
                         </div>
                     </div>
-                    
-
-                    
-                    <!-- Related Articles -->
-                    <section class="related-articles">
-                        <h2>${t.relatedArticles}</h2>
-                        <div class="related-grid">
-                            ${[].map(relatedArticle => `
-                            <a href="/newsroom/${relatedArticle.slug}?lang=${lang}&theme=${theme}" 
-                               class="related-card">
-                                <img src="${relatedArticle.image}" 
-                                     alt="${relatedArticle.title}" 
-                                     class="related-image"
-                                     loading="lazy">
-                                <div class="related-content">
-                                    <h3 class="related-title">${relatedArticle.title}</h3>
-                                    <p class="related-excerpt">${relatedArticle.excerpt}</p>
-                                </div>
-                            </a>
-                            `).join('')}
-                        </div>
-                    </section>
-                </div>
-            </div>
+                </footer>
+            </article>
         </main>
         
         <!-- Footer -->
