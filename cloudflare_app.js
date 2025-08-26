@@ -7405,7 +7405,7 @@ async function handleNewsroomArticle(request, env) {
                     <section class="related-articles">
                         <h2>${t.relatedArticles}</h2>
                         <div class="related-grid">
-                            ${articles.filter(a => a.id !== article.id).slice(0, 3).map(relatedArticle => `
+                            ${[].map(relatedArticle => `
                             <a href="/newsroom/${relatedArticle.slug}?lang=${lang}&theme=${theme}" 
                                class="related-card">
                                 <img src="${relatedArticle.image}" 
