@@ -1606,8 +1606,11 @@ function generateWidgetStoreBrowser(lang, theme) {
     <script>
       // Define functions immediately in global scope
       function selectWidgetStore(storeId) {
+        console.log('=== SELECT WIDGET STORE FUNCTION CALLED ===');
         console.log('Widget store selected:', storeId);
         console.log('Function called successfully!');
+        console.log('Current window.selectedStores:', window.selectedStores);
+        console.log('Current window.widgetStores:', window.widgetStores);
         
         const selectedTile = document.querySelector('.widget-store-tile[data-store-id="' + storeId + '"]');
         const selectedCheck = document.getElementById('check-' + storeId);
@@ -1617,6 +1620,8 @@ function generateWidgetStoreBrowser(lang, theme) {
         console.log('Selected check:', selectedCheck);
         console.log('Store data:', store);
         console.log('Current selectedStores:', window.selectedStores);
+        console.log('All tiles found:', document.querySelectorAll('.widget-store-tile').length);
+        console.log('All checks found:', document.querySelectorAll('.tile-check').length);
         
         if (!selectedTile) {
           console.error('Selected tile not found for store ID:', storeId);
@@ -1933,10 +1938,17 @@ function generateWidgetStoreBrowser(lang, theme) {
         }
         
         // Add event listeners for store tiles
-        document.querySelectorAll('.widget-store-tile').forEach(tile => {
-          tile.addEventListener('click', function() {
+        const tiles = document.querySelectorAll('.widget-store-tile');
+        console.log('Found tiles:', tiles.length);
+        
+        tiles.forEach((tile, index) => {
+          console.log('Adding event listener to tile', index, 'with data-store-click:', tile.getAttribute('data-store-click'));
+          tile.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             const storeId = parseInt(this.getAttribute('data-store-click'));
             console.log('Tile clicked, store ID:', storeId);
+            console.log('Tile element:', this);
             selectWidgetStore(storeId);
           });
         });
