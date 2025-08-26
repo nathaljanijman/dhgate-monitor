@@ -3,7 +3,7 @@
 // ============================================================================
 // Standalone signup form that can be embedded via iframe on any website
 
-export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
+export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
   const widgetId = 'dhgate-signup-widget-' + Date.now();
   
   // Featured stores data
