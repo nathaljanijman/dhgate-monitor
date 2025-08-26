@@ -1612,7 +1612,7 @@ function generateWidgetStoreBrowser(lang, theme) {
       let selectedStores = [];
       
       // Make widgetStores globally available
-      window.widgetStores = ${JSON.stringify(featuredStores)};
+      window.widgetStores = JSON.parse('${JSON.stringify(featuredStores).replace(/'/g, "\\'")}');
       
       window.selectWidgetStore = function(storeId) {
         console.log('Widget store selected:', storeId);
@@ -1671,7 +1671,7 @@ function generateWidgetStoreBrowser(lang, theme) {
             counter.style.display = 'none';
           } else {
             counter.style.display = 'block';
-            counter.textContent = selectedStores.length + ' ${lang === 'nl' ? 'winkel(s) geselecteerd' : 'store(s) selected'}';
+            counter.textContent = selectedStores.length + ' ' + (lang === 'nl' ? 'winkel(s) geselecteerd' : 'store(s) selected');
           }
         }
       }
@@ -1686,21 +1686,21 @@ function generateWidgetStoreBrowser(lang, theme) {
         console.log('URL value:', url);
         
         if (!url) {
-          alert('${lang === 'nl' ? 'Voer een winkel URL in' : 'Please enter a store URL'}');
+          alert(lang === 'nl' ? 'Voer een winkel URL in' : 'Please enter a store URL');
           return;
         }
         
         // Improved DHgate URL pattern
         const dhgatePattern = /^https?:\\/\\/(www\\.)?dhgate\\.com\\/store\\/[a-zA-Z0-9]+/;
         if (!dhgatePattern.test(url)) {
-          alert('${lang === 'nl' ? 'Voer een geldige DHgate winkel URL in. Bijvoorbeeld: https://www.dhgate.com/store/21168508' : 'Please enter a valid DHgate store URL. Example: https://www.dhgate.com/store/21168508'}');
+          alert(lang === 'nl' ? 'Voer een geldige DHgate winkel URL in. Bijvoorbeeld: https://www.dhgate.com/store/21168508' : 'Please enter a valid DHgate store URL. Example: https://www.dhgate.com/store/21168508');
           return;
         }
         
         // Check if URL already exists
         const existingStore = selectedStores.find(s => s.url === url);
         if (existingStore) {
-          alert('${lang === 'nl' ? 'Deze winkel is al geselecteerd!' : 'This store is already selected!'}');
+          alert(lang === 'nl' ? 'Deze winkel is al geselecteerd!' : 'This store is already selected!');
           return;
         }
         
@@ -1732,7 +1732,7 @@ function generateWidgetStoreBrowser(lang, theme) {
         // Show success message
         const successMsg = document.createElement('div');
         successMsg.style.cssText = 'color: #10b981; font-size: 0.9rem; margin-top: 0.5rem; font-weight: 600;';
-        successMsg.textContent = '${lang === 'nl' ? '✓ Winkel succesvol toegevoegd!' : '✓ Store successfully added!'}';
+        successMsg.textContent = lang === 'nl' ? '✓ Winkel succesvol toegevoegd!' : '✓ Store successfully added!';
         
         const parent = urlInput.parentElement;
         const existingMsg = parent.querySelector('.success-msg');
