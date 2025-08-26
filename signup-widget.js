@@ -1616,10 +1616,15 @@ function generateWidgetStoreBrowser(lang, theme) {
       
       window.selectWidgetStore = function(storeId) {
         console.log('Widget store selected:', storeId);
+        console.log('Function called successfully!');
         
         const selectedTile = document.querySelector('.widget-store-tile[data-store-id="' + storeId + '"]');
         const selectedCheck = document.getElementById('check-' + storeId);
         const store = window.widgetStores.find(s => s.id === storeId);
+        
+        console.log('Selected tile:', selectedTile);
+        console.log('Selected check:', selectedCheck);
+        console.log('Store data:', store);
         
         if (selectedTile && selectedCheck && store) {
           // Toggle selection
@@ -1672,8 +1677,13 @@ function generateWidgetStoreBrowser(lang, theme) {
       }
       
       window.addWidgetCustomStore = function() {
+        console.log('Custom store function called!');
+        
         const urlInput = document.getElementById('widget-custom-store');
         const url = urlInput.value.trim();
+        
+        console.log('URL input:', urlInput);
+        console.log('URL value:', url);
         
         if (!url) {
           alert('${lang === 'nl' ? 'Voer een winkel URL in' : 'Please enter a store URL'}');
@@ -1745,6 +1755,28 @@ function generateWidgetStoreBrowser(lang, theme) {
       console.log('Global functions available:', {
         selectWidgetStore: typeof window.selectWidgetStore,
         addWidgetCustomStore: typeof window.addWidgetCustomStore
+      });
+      
+      // Force initialization after DOM is loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded - initializing widget functions');
+        
+        // Re-initialize functions to ensure they're available
+        if (typeof window.selectWidgetStore !== 'function') {
+          console.error('selectWidgetStore function not found!');
+        }
+        
+        if (typeof window.addWidgetCustomStore !== 'function') {
+          console.error('addWidgetCustomStore function not found!');
+        }
+        
+        // Test store selection
+        const testTile = document.querySelector('.widget-store-tile');
+        if (testTile) {
+          console.log('Store tiles found:', document.querySelectorAll('.widget-store-tile').length);
+        } else {
+          console.error('No store tiles found!');
+        }
       });
       
       // Tags functionality
