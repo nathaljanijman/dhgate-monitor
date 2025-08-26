@@ -18,7 +18,13 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
       category: lang === 'nl' ? 'Mode & Tassen' : 'Fashion & Bags',
       description: lang === 'nl' ? 'Luxe handtassen en mode accessoires' : 'Luxury handbags and fashion accessories',
       image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300&h=200&fit=crop&auto=format',
-      color: '#fef3e2'
+      color: '#fef3e2',
+      monthlySales: lang === 'nl' ? '2.847 verkopen/maand' : '2,847 sales/month',
+      topProduct: lang === 'nl' ? 'Luxe lederen handtas' : 'Premium leather handbag',
+      shippingTime: lang === 'nl' ? '7-12 dagen' : '7-12 days',
+      returnRate: lang === 'nl' ? '98% tevredenheid' : '98% satisfaction',
+      whyTrack: lang === 'nl' ? 'Trending mode items, snelle restocking, exclusieve designs' : 'Trending fashion items, fast restocking, exclusive designs',
+      priceRange: lang === 'nl' ? '€15-€89' : '$15-$89'
     },
     {
       id: 2,
@@ -30,7 +36,13 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
       category: lang === 'nl' ? 'Elektronica' : 'Electronics',
       description: lang === 'nl' ? 'Telefoons, gadgets en elektronica' : 'Phones, gadgets and electronics',
       image: 'https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?w=300&h=200&fit=crop&auto=format',
-      color: '#e8f5e8'
+      color: '#e8f5e8',
+      monthlySales: lang === 'nl' ? '5.234 verkopen/maand' : '5,234 sales/month',
+      topProduct: lang === 'nl' ? 'Smartphone accessoires' : 'Smartphone accessories',
+      shippingTime: lang === 'nl' ? '5-10 dagen' : '5-10 days',
+      returnRate: lang === 'nl' ? '96% tevredenheid' : '96% satisfaction',
+      whyTrack: lang === 'nl' ? 'Nieuwe tech releases, prijsdalingen, limited editions' : 'New tech releases, price drops, limited editions',
+      priceRange: lang === 'nl' ? '€8-€156' : '$8-$156'
     },
     {
       id: 3,
@@ -42,7 +54,13 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
       category: lang === 'nl' ? 'Horloges' : 'Watches',
       description: lang === 'nl' ? 'Premium horloges en sieraden' : 'Premium watches and jewelry',
       image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=200&fit=crop&auto=format',
-      color: '#f0f9ff'
+      color: '#f0f9ff',
+      monthlySales: lang === 'nl' ? '1.892 verkopen/maand' : '1,892 sales/month',
+      topProduct: lang === 'nl' ? 'Luxe automatische horloges' : 'Luxury automatic watches',
+      shippingTime: lang === 'nl' ? '10-15 dagen' : '10-15 days',
+      returnRate: lang === 'nl' ? '99% tevredenheid' : '99% satisfaction',
+      whyTrack: lang === 'nl' ? 'Exclusieve collecties, seizoensaanbiedingen, vintage stukken' : 'Exclusive collections, seasonal offers, vintage pieces',
+      priceRange: lang === 'nl' ? '€45-€298' : '$45-$298'
     },
     {
       id: 4,
@@ -54,7 +72,13 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
       category: lang === 'nl' ? 'Sport & Outdoor' : 'Sports & Outdoors',
       description: lang === 'nl' ? 'Sportkleding en sneakers' : 'Sports apparel and sneakers',
       image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop&auto=format',
-      color: '#fdf2f8'
+      color: '#fdf2f8',
+      monthlySales: lang === 'nl' ? '3.156 verkopen/maand' : '3,156 sales/month',
+      topProduct: lang === 'nl' ? 'Premium sneakers' : 'Premium sneakers',
+      shippingTime: lang === 'nl' ? '8-14 dagen' : '8-14 days',
+      returnRate: lang === 'nl' ? '97% tevredenheid' : '97% satisfaction',
+      whyTrack: lang === 'nl' ? 'Nieuwe sportlijnen, outlet deals, team merchandise' : 'New sport lines, outlet deals, team merchandise',
+      priceRange: lang === 'nl' ? '€22-€134' : '$22-$134'
     }
   ];
 
@@ -354,6 +378,58 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
         .store-rating {
             font-size: 0.8rem;
             color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+        
+        .store-stats {
+            margin: 0.75rem 0;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-color);
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.25rem;
+            font-size: 0.8rem;
+        }
+        
+        .stat-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .stat-value {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .why-track {
+            margin: 0.75rem 0;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(16, 185, 129, 0.1));
+            border-radius: 8px;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+        }
+        
+        .why-track-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .why-track-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
         }
         
         .store-check {
@@ -645,6 +721,35 @@ export function generateSignupWidget(env, lang = 'nl', theme = 'light') {
                             <h3 class="store-name">${store.name}</h3>
                             <div class="store-category">${store.category}</div>
                             <p class="store-description">${store.description}</p>
+                            
+                            <div class="store-stats">
+                                <div class="stat-row">
+                                    <span class="stat-label">${lang === 'nl' ? 'Verkopen/maand' : 'Sales/month'}:</span>
+                                    <span class="stat-value">${store.monthlySales}</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">${lang === 'nl' ? 'Top product' : 'Top product'}:</span>
+                                    <span class="stat-value">${store.topProduct}</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">${lang === 'nl' ? 'Levering' : 'Shipping'}:</span>
+                                    <span class="stat-value">${store.shippingTime}</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">${lang === 'nl' ? 'Tevredenheid' : 'Satisfaction'}:</span>
+                                    <span class="stat-value">${store.returnRate}</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">${lang === 'nl' ? 'Prijsbereik' : 'Price range'}:</span>
+                                    <span class="stat-value">${store.priceRange}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="why-track">
+                                <div class="why-track-title">${lang === 'nl' ? 'Waarom tracken?' : 'Why track?'}</div>
+                                <div class="why-track-text">${store.whyTrack}</div>
+                            </div>
+                            
                             <div class="store-rating">★ ${store.rating} (${store.reviews} reviews)</div>
                         </div>
                     </div>
