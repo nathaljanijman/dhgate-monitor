@@ -5894,33 +5894,31 @@ async function fetchPreprArticles(options = {}) {
  */
 async function fetchPreprArticle(slug) {
   const query = `
-    query GetArticle($slug: String) {
-      Articles(where: {_slug: $slug}) {
-        items {
-          _id
-          title
-          _slug
-          _created_on
-          _changed_on
-          auteur {
-            name
-          }
-          afbeeldingen {
-            url
-          }
-          samenvatting
-          inhoud {
-            __typename
-            ... on Text {
-              text
-            }
-            ... on RichText {
-              body
-            }
-          }
-          tags
-          categorie
+    query GetArticle($slug: String!) {
+      Article(slug: $slug) {
+        _id
+        title
+        _slug
+        _created_on
+        _changed_on
+        auteur {
+          name
         }
+        afbeeldingen {
+          url
+        }
+        samenvatting
+        inhoud {
+          __typename
+          ... on Text {
+            text
+          }
+          ... on RichText {
+            body
+          }
+        }
+        tags
+        categorie
       }
     }
   `;
@@ -5943,7 +5941,7 @@ async function fetchPreprArticle(slug) {
       return null;
     }
     
-    const item = data.data?.Articles?.items?.[0];
+    const item = data.data?.Article;
     if (!item) return null;
     
     // Transform Prepr data to our expected format
