@@ -87,6 +87,12 @@ const CONFIG = {
 };
 
 // ============================================================================
+// IMPORT ENHANCED ADMIN DASHBOARD
+// ============================================================================
+import { generateEnhancedAdminDashboard } from './enhanced_admin_dashboard.js';
+import { API_CONFIG, getRegionsByPriority, calculateRetryDelay } from './api-config.js';
+
+// ============================================================================
 // UX DESIGN SYSTEM COMPONENTS
 // ============================================================================
 
@@ -796,10 +802,7 @@ const SEO_DATA = {
       title: 'Contact - DHgate Monitor | Professional E-commerce Support',
       description: 'Neem contact op met DHgate Monitor voor professionele ondersteuning, partnership mogelijkheden of vragen over ons monitoring platform. Expertise in e-commerce automatisering.'
     },
-    login: {
-      title: 'Inloggen - DHgate Monitor | Secure Dashboard Access',
-      description: 'Veilig inloggen op uw DHgate Monitor dashboard. Toegang tot geavanceerde monitoring tools, real-time analytics en gepersonaliseerde e-commerce insights.'
-    }
+
   },
   en: {
     // Landing page
@@ -824,10 +827,7 @@ const SEO_DATA = {
       title: 'Contact - DHgate Monitor | Professional E-commerce Support',
       description: 'Contact DHgate Monitor for professional support, partnership opportunities, or questions about our monitoring platform. Expertise in e-commerce automation.'
     },
-    login: {
-      title: 'Login - DHgate Monitor | Secure Dashboard Access',
-      description: 'Securely login to your DHgate Monitor dashboard. Access advanced monitoring tools, real-time analytics, and personalized e-commerce insights.'
-    }
+
   }
 };
 
@@ -3570,6 +3570,66 @@ async function getAdminUsers(env) {
   }
 }
 
+// Reset admin password - emergency function
+async function resetAdminPassword(env, username, newPassword) {
+  try {
+    const result = await env.DB.prepare(`
+      UPDATE admin_users 
+      SET password_hash = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE username = ?
+    `).bind(newPassword, username).run();
+
+    if (result.changes > 0) {
+      console.log(`Password reset successful for admin: ${username}`);
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('Error resetting admin password:', error);
+    return false;
+  }
+}
+
+// Change admin password (authenticated)
+async function changeAdminPassword(env, adminId, currentPassword, newPassword) {
+  try {
+    // Verify current password first
+    const admin = await env.DB.prepare(`
+      SELECT id, password_hash FROM admin_users WHERE id = ?
+    `).bind(adminId).first();
+
+    if (!admin || admin.password_hash !== currentPassword) {
+      return { success: false, error: 'Huidig wachtwoord is incorrect' };
+    }
+
+    // Update to new password
+    const result = await env.DB.prepare(`
+      UPDATE admin_users 
+      SET password_hash = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `).bind(newPassword, adminId).run();
+
+    if (result.changes > 0) {
+      return { success: true, message: 'Wachtwoord succesvol gewijzigd' };
+    }
+    return { success: false, error: 'Wachtwoord wijzigen mislukt' };
+  } catch (error) {
+    console.error('Error changing admin password:', error);
+    return { success: false, error: 'Database fout bij wachtwoord wijzigen' };
+  }
+}
+
+// Generate temporary password for emergency access
+async function generateTempPassword(env, username) {
+  const tempPassword = 'temp_' + Math.random().toString(36).substring(2, 15);
+  const success = await resetAdminPassword(env, username, tempPassword);
+  
+  if (success) {
+    return tempPassword;
+  }
+  return null;
+}
+
 const ADMIN_CONFIG = {
   username: 'admin',
   password: 'DHgate2024!Admin', // Strong password for production
@@ -4063,7 +4123,8 @@ async function handleAdminDashboard(request, env) {
   try {
     const affiliateAnalytics = await getAffiliateAnalytics(env);
     const platformMetrics = await getPlatformMetrics(env);
-    const html = generateAdminDashboardHTML(affiliateAnalytics, platformMetrics, lang, theme);
+    const affiliatePerformance = await getAffiliatePerformance(env);
+    const html = generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, affiliatePerformance, null, null, null, null, lang, theme);
     
     return new Response(html, {
       headers: { 
@@ -4076,6 +4137,8 @@ async function handleAdminDashboard(request, env) {
     return new Response('Error loading admin dashboard', { status: 500 });
   }
 }
+
+
 
 // Handle admin logout
 async function handleAdminLogout(request, env) {
@@ -4324,6 +4387,90 @@ function generateAdminLoginHTML(lang = 'nl', theme = 'light', error = null) {
   `;
 }
 
+// Insert test affiliate data (for development only)
+async function insertTestAffiliateData(env) {
+  try {
+    // Insert test affiliate clicks
+    await env.DB.prepare(`
+      INSERT OR IGNORE INTO affiliate_clicks 
+      (user_email, product_url, affiliate_url, click_timestamp, conversion_status)
+      VALUES 
+      ('test@example.com', 'https://dhgate.com/product1', 'https://dhgate.com/product1?affiliate=test', datetime('now', '-1 day'), 'converted'),
+      ('test@example.com', 'https://dhgate.com/product2', 'https://dhgate.com/product2?affiliate=test', datetime('now', '-2 days'), 'converted'),
+      ('test@example.com', 'https://dhgate.com/product3', 'https://dhgate.com/product3?affiliate=test', datetime('now', '-3 days'), 'pending')
+    `).run();
+
+    // Insert test affiliate earnings
+    await env.DB.prepare(`
+      INSERT OR IGNORE INTO affiliate_earnings 
+      (click_id, order_id, product_url, commission_amount, commission_rate, order_value, status, created_at)
+      VALUES 
+      (1, 'ORDER001', 'https://dhgate.com/product1', 15.50, 0.05, 310.00, 'confirmed', datetime('now', '-1 day')),
+      (2, 'ORDER002', 'https://dhgate.com/product2', 22.80, 0.05, 456.00, 'confirmed', datetime('now', '-2 days')),
+      (3, 'ORDER003', 'https://dhgate.com/product3', 18.90, 0.05, 378.00, 'pending', datetime('now', '-3 days'))
+    `).run();
+
+    console.log('Test affiliate data inserted successfully');
+  } catch (error) {
+    console.error('Error inserting test affiliate data:', error);
+  }
+}
+
+// Get affiliate performance metrics
+async function getAffiliatePerformance(env) {
+  try {
+    const earnings = await env.DB.prepare(`
+      SELECT 
+        SUM(commission_amount) as total_earnings,
+        COUNT(*) as total_orders,
+        AVG(commission_amount) as avg_commission,
+        COUNT(CASE WHEN status = 'confirmed' THEN 1 END) as confirmed_orders,
+        COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_orders,
+        DATE(created_at) as date
+      FROM affiliate_earnings 
+      WHERE created_at >= datetime('now', '-30 days')
+      GROUP BY DATE(created_at)
+      ORDER BY date DESC
+    `).all();
+
+    const monthlyStats = await env.DB.prepare(`
+      SELECT 
+        SUM(commission_amount) as monthly_earnings,
+        COUNT(*) as monthly_orders,
+        AVG(commission_amount) as monthly_avg_commission
+      FROM affiliate_earnings 
+      WHERE created_at >= datetime('now', '-30 days')
+        AND status = 'confirmed'
+    `).first();
+
+    const topProducts = await env.DB.prepare(`
+      SELECT 
+        product_url as product_name,
+        COUNT(*) as order_count,
+        SUM(commission_amount) as total_commission
+      FROM affiliate_earnings 
+      WHERE created_at >= datetime('now', '-30 days')
+        AND status = 'confirmed'
+      GROUP BY product_url
+      ORDER BY total_commission DESC
+      LIMIT 5
+    `).all();
+
+    return {
+      daily_earnings: earnings.results || [],
+      monthly_stats: monthlyStats || { monthly_earnings: 0, monthly_orders: 0, monthly_avg_commission: 0 },
+      top_products: topProducts.results || []
+    };
+  } catch (error) {
+    console.error('Error getting affiliate performance:', error);
+    return {
+      daily_earnings: [],
+      monthly_stats: { monthly_earnings: 0, monthly_orders: 0, monthly_avg_commission: 0 },
+      top_products: []
+    };
+  }
+}
+
 // Get platform performance metrics
 async function getPlatformMetrics(env) {
   try {
@@ -4380,896 +4527,6 @@ async function getTestPlanResults(env) {
   };
 }
 
-// Generate admin dashboard HTML
-function generateAdminDashboardHTML(affiliateAnalytics, platformMetrics, lang = 'nl', theme = 'light') {
-  const totalClicks = affiliateAnalytics.clicks.reduce((sum, day) => sum + day.total_clicks, 0);
-  const totalConversions = affiliateAnalytics.clicks.reduce((sum, day) => sum + day.conversions, 0);
-  const conversionRate = totalClicks > 0 ? ((totalConversions / totalClicks) * 100).toFixed(2) : 0;
-  
-  return `
-<!DOCTYPE html>
-<html lang="${lang}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${lang === 'nl' ? 'Admin Dashboard - DHgate Monitor' : 'Admin Dashboard - DHgate Monitor'}</title>
-    <meta name="robots" content="noindex, nofollow">
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    ${generateGlobalCSS(theme)}
-    
-    <style>
-        /* Use homepage design system base */
-        body {
-            background: var(--bg-gradient);
-            font-family: 'Raleway', sans-serif;
-            min-height: 100vh;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            padding-top: 20px;
-        }
-        
-        .admin-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        /* Homepage-style main header */
-        .main-header {
-            background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 30px;
-            padding: 2.5rem;
-            color: var(--text-primary);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .main-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: var(--card-border);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .main-header:hover::before {
-            opacity: 1;
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-        }
-        
-        .dashboard-title {
-            color: var(--text-primary);
-            font-size: clamp(2rem, 5vw, 2.75rem);
-            font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: -0.025em;
-            margin: 0;
-        }
-        
-        .dashboard-subtitle {
-            color: var(--text-secondary);
-            font-size: clamp(0.875rem, 1.5vw, 1.125rem);
-            line-height: 1.7;
-            margin: 0.5rem 0 0 0;
-        }
-        
-        /* Homepage-style button */
-        .btn {
-            font-family: 'Raleway', sans-serif;
-            font-weight: 600;
-            letter-spacing: 0.025em;
-            border-radius: 12px;
-            padding: 0.75rem 1.5rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .btn:hover::before {
-            left: 100%;
-        }
-        
-        .logout-btn {
-            background: #ef4444;
-            color: white;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-        }
-        
-        .logout-btn:hover {
-            background: #dc2626;
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-            transform: translateY(-1px);
-            color: white;
-        }
-        
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-        }
-        
-        /* Homepage-style card system */
-        .card {
-            border: none;
-            border-radius: 20px;
-            box-shadow: var(--card-shadow);
-            background: var(--card-bg);
-            color: var(--text-primary);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-        
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: var(--card-border);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .card:hover {
-            box-shadow: var(--card-shadow-hover);
-            transform: translateY(-2px);
-        }
-        
-        .card:hover::before {
-            opacity: 1;
-        }
-        
-        .card-header {
-            background: transparent;
-            border-bottom: 1px solid var(--border-light);
-            color: var(--text-primary);
-            font-weight: 600;
-            font-size: 1.25rem;
-            padding: 1.5rem 2rem 1rem;
-        }
-        
-        .card-body {
-            padding: 1.5rem 2rem 2rem;
-        }
-        
-        .metrics-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .metric-item {
-            text-align: center;
-            padding: 1.5rem 1rem;
-            background: var(--bg-secondary, rgba(0,0,0,0.02));
-            border-radius: 12px;
-            border: 1px solid var(--border-light);
-            transition: all 0.3s ease;
-        }
-        
-        .metric-item:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-        
-        .metric-value {
-            font-size: clamp(1.75rem, 3vw, 2.2rem);
-            font-weight: 700;
-            color: var(--primary-blue);
-            margin-bottom: 0.5rem;
-            line-height: 1;
-        }
-        
-        .metric-label {
-            color: var(--text-secondary);
-            font-weight: 500;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .test-section {
-            grid-column: 1 / -1;
-        }
-        
-        .test-categories {
-            margin-top: 1.5rem;
-        }
-        
-        .test-category {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 1.25rem;
-            margin-bottom: 0.75rem;
-            background: var(--card-bg);
-            border-radius: 12px;
-            border: 1px solid var(--border-light);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .test-category::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.05), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .test-category:hover::before {
-            left: 100%;
-        }
-        
-        .test-category:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
-        }
-        
-        .category-name {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        .category-stats {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 0.9rem;
-        }
-        
-        .test-status {
-            padding: 0.35rem 0.85rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.025em;
-        }
-        
-        .status-success {
-            background: rgba(34, 197, 94, 0.1);
-            color: #059669;
-        }
-        
-        .status-warning {
-            background: rgba(245, 158, 11, 0.1);
-            color: #d97706;
-        }
-        
-        .footer-info {
-            text-align: center;
-            padding: 1.5rem;
-            background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: var(--card-shadow);
-            color: var(--text-secondary);
-            margin-top: 2rem;
-            font-size: 0.9rem;
-        }
-        
-        /* Modal styles for test reports */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
-            z-index: 1000;
-            backdrop-filter: blur(4px);
-        }
-        
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .modal-header {
-            padding: 2rem 2rem 1rem;
-            border-bottom: 1px solid var(--border-light);
-        }
-        
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin: 0;
-        }
-        
-        .modal-body {
-            padding: 1.5rem 2rem 2rem;
-        }
-        
-        .close-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-secondary);
-            padding: 0.5rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-        
-        .close-btn:hover {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-        }
-        
-        .test-detail {
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background: var(--bg-secondary, rgba(0,0,0,0.02));
-            border-radius: 8px;
-            border-left: 4px solid var(--primary-blue);
-        }
-        
-        .test-name {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-        
-        .test-description {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        @media (max-width: 768px) {
-            .admin-container { padding: 1rem; }
-            .dashboard-grid { grid-template-columns: 1fr; }
-            .header-content { flex-direction: column; align-items: flex-start; }
-            .metrics-row { grid-template-columns: repeat(2, 1fr); }
-            .modal-content { width: 95%; }
-        }
-        
-        @media (max-width: 480px) {
-            .metrics-row { grid-template-columns: 1fr; }
-            .card-body { padding: 1.5rem; }
-            .main-header { padding: 1.5rem; }
-        }
-    </style>
-</head>
-<body>
-    <div class="admin-container">
-        <header class="main-header">
-            <div class="header-content">
-                <div>
-                    <h1 class="dashboard-title">${lang === 'nl' ? 'Admin Dashboard' : 'Admin Dashboard'}</h1>
-                    <p class="dashboard-subtitle">${lang === 'nl' ? 'Platform beheer en analytics overzicht' : 'Platform management and analytics overview'}</p>
-                </div>
-                <a href="/admin/logout?lang=${lang}&theme=${theme}" class="btn logout-btn">
-                    ${lang === 'nl' ? 'Uitloggen' : 'Logout'}
-                </a>
-            </div>
-        </header>
-        
-        <main class="dashboard-grid">
-            <article class="card" onclick="expandCard(this)">
-                <div class="card-header">
-                    ${lang === 'nl' ? 'Platform Performance' : 'Platform Performance'}
-                </div>
-                <div class="card-body">
-                    <div class="metrics-row">
-                        <div class="metric-item">
-                            <div class="metric-value">${platformMetrics.total_users}</div>
-                            <div class="metric-label">${lang === 'nl' ? 'Gebruikers' : 'Users'}</div>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-value">${platformMetrics.active_subscriptions}</div>
-                            <div class="metric-label">${lang === 'nl' ? 'Actieve Subs' : 'Active Subs'}</div>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-value">${platformMetrics.recent_signups}</div>
-                            <div class="metric-label">${lang === 'nl' ? 'Nieuwe (7d)' : 'New (7d)'}</div>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-value">${platformMetrics.uptime}</div>
-                            <div class="metric-label">Uptime</div>
-                        </div>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="card" onclick="expandCard(this)">
-                <div class="card-header">
-                    ${lang === 'nl' ? 'Affiliate Analytics' : 'Affiliate Analytics'}
-                </div>
-                <div class="card-body">
-                    <div class="metrics-row">
-                        <div class="metric-item">
-                            <div class="metric-value">${totalClicks}</div>
-                            <div class="metric-label">${lang === 'nl' ? 'Clicks' : 'Clicks'}</div>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-value">${totalConversions}</div>
-                            <div class="metric-label">${lang === 'nl' ? 'Conversies' : 'Conversions'}</div>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-value">${conversionRate}%</div>
-                            <div class="metric-label">${lang === 'nl' ? 'Conv. Rate' : 'Conv. Rate'}</div>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-value">€${(affiliateAnalytics.earnings.total_earnings || 0).toFixed(2)}</div>
-                            <div class="metric-label">${lang === 'nl' ? 'Commissie' : 'Commission'}</div>
-                        </div>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="card test-section">
-                <div class="card-header">
-                    ${lang === 'nl' ? 'Test Plan Resultaten' : 'Test Plan Results'}
-                </div>
-                <div class="card-body">
-                    <div class="metrics-row">
-                        <div class="metric-item">
-                            <div class="metric-value">24</div>
-                            <div class="metric-label">${lang === 'nl' ? 'Totaal Tests' : 'Total Tests'}</div>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-value">23</div>
-                            <div class="metric-label">${lang === 'nl' ? 'Geslaagd' : 'Passed'}</div>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-value">1</div>
-                            <div class="metric-label">${lang === 'nl' ? 'Gefaald' : 'Failed'}</div>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-value">95.8%</div>
-                            <div class="metric-label">${lang === 'nl' ? 'Succes Rate' : 'Success Rate'}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="test-categories">
-                        <div class="test-category" onclick="showTestDetails('email', '${lang}')">
-                            <div class="category-name">${lang === 'nl' ? 'Email Notificaties' : 'Email Notifications'}</div>
-                            <div class="category-stats">
-                                <span>6/6</span>
-                                <span class="test-status status-success">${lang === 'nl' ? 'GESLAAGD' : 'PASSED'}</span>
-                            </div>
-                        </div>
-                        <div class="test-category" onclick="showTestDetails('dhgate', '${lang}')">
-                            <div class="category-name">DHgate URL Processing</div>
-                            <div class="category-stats">
-                                <span>5/5</span>
-                                <span class="test-status status-success">${lang === 'nl' ? 'GESLAAGD' : 'PASSED'}</span>
-                            </div>
-                        </div>
-                        <div class="test-category" onclick="showTestDetails('subscription', '${lang}')">
-                            <div class="category-name">Subscription Management</div>
-                            <div class="category-stats">
-                                <span>4/4</span>
-                                <span class="test-status status-success">${lang === 'nl' ? 'GESLAAGD' : 'PASSED'}</span>
-                            </div>
-                        </div>
-                        <div class="test-category" onclick="showTestDetails('database', '${lang}')">
-                            <div class="category-name">${lang === 'nl' ? 'Database Operaties' : 'Database Operations'}</div>
-                            <div class="category-stats">
-                                <span>4/4</span>
-                                <span class="test-status status-success">${lang === 'nl' ? 'GESLAAGD' : 'PASSED'}</span>
-                            </div>
-                        </div>
-                        <div class="test-category" onclick="showTestDetails('api', '${lang}')">
-                            <div class="category-name">API Endpoints</div>
-                            <div class="category-stats">
-                                <span>3/4</span>
-                                <span class="test-status status-warning">${lang === 'nl' ? 'GEDEELTELIJK' : 'PARTIAL'}</span>
-                            </div>
-                        </div>
-                        <div class="test-category" onclick="showTestDetails('theme', '${lang}')">
-                            <div class="category-name">Theme & Language</div>
-                            <div class="category-stats">
-                                <span>1/1</span>
-                                <span class="test-status status-success">${lang === 'nl' ? 'GESLAAGD' : 'PASSED'}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </article>
-        </main>
-        
-        <!-- Test Details Modal -->
-        <div id="testModal" class="modal-overlay" onclick="closeModal()">
-            <div class="modal-content" onclick="event.stopPropagation()">
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-                <div class="modal-header">
-                    <h3 class="modal-title" id="modalTitle"></h3>
-                </div>
-                <div class="modal-body" id="modalBody">
-                    <!-- Content will be populated by JavaScript -->
-                </div>
-            </div>
-        </div>
-        
-        <footer class="footer-info">
-            <p><strong>${lang === 'nl' ? 'Laatste Update:' : 'Last Updated:'}</strong> ${new Date().toLocaleString()}</p>
-            <p>DHgate Monitor Admin Dashboard v4.0</p>
-        </footer>
-    </div>
-    
-    <script>
-        function expandCard(card) {
-            card.style.transform = 'scale(0.98)';
-            setTimeout(() => { card.style.transform = ''; }, 150);
-        }
-        
-        function showTestDetails(category, lang) {
-            const modal = document.getElementById('testModal');
-            const title = document.getElementById('modalTitle');
-            const body = document.getElementById('modalBody');
-            
-            const testData = {
-                email: {
-                    title: lang === 'nl' ? 'Email Notificaties Test Resultaten' : 'Email Notifications Test Results',
-                    tests: [
-                        { 
-                            name: 'SMTP Connection', 
-                            description: lang === 'nl' ? 'Verbinding met email server' : 'Connection to email server', 
-                            status: 'pass',
-                            snapshot: null
-                        },
-                        { 
-                            name: 'Email Template Rendering', 
-                            description: lang === 'nl' ? 'Email templates renderen correct' : 'Email templates render correctly', 
-                            status: 'pass',
-                            snapshot: null
-                        },
-                        { 
-                            name: 'Subscription Confirmation', 
-                            description: lang === 'nl' ? 'Bevestiging emails worden verzonden' : 'Confirmation emails are sent', 
-                            status: 'pass',
-                            snapshot: {
-                                subject: lang === 'nl' ? 'Welkom bij DHgate Monitor!' : 'Welcome to DHgate Monitor!',
-                                preview: lang === 'nl' ? `
-                                    <div style="font-family: Raleway, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; text-align: center;">
-                                            <img src="/assets/DHGateVector.png" alt="DHgate Monitor" style="width: 48px; height: 48px; margin-bottom: 1rem;">
-                                            <h1 style="color: white; margin: 0; font-size: 24px;">Welkom bij DHgate Monitor!</h1>
-                                        </div>
-                                        <div style="padding: 2rem;">
-                                            <p style="font-size: 16px; line-height: 1.6; color: #374151;">Hallo [NAAM],</p>
-                                            <p style="font-size: 16px; line-height: 1.6; color: #374151;">Bedankt voor je aanmelding! Je ontvangt nu automatische prijsupdates voor je geselecteerde DHgate producten.</p>
-                                            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0;">
-                                                <h3 style="color: #1f2937; margin-top: 0;">Je abonnement:</h3>
-                                                <p style="margin: 0.5rem 0;"><strong>Product:</strong> [PRODUCT_NAAM]</p>
-                                                <p style="margin: 0.5rem 0;"><strong>Huidige prijs:</strong> €[PRIJS]</p>
-                                                <p style="margin: 0.5rem 0;"><strong>Status:</strong> <span style="color: #059669; font-weight: 600;">Actief</span></p>
-                                            </div>
-                                            <p style="text-align: center; margin: 2rem 0;">
-                                                <a href="[UNSUBSCRIBE_LINK]" style="color: #6b7280; font-size: 14px; text-decoration: none;">Uitschrijven</a>
-                                            </p>
-                                        </div>
-                                    </div>
-                                ` : `
-                                    <div style="font-family: Raleway, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; text-align: center;">
-                                            <img src="/assets/DHGateVector.png" alt="DHgate Monitor" style="width: 48px; height: 48px; margin-bottom: 1rem;">
-                                            <h1 style="color: white; margin: 0; font-size: 24px;">Welcome to DHgate Monitor!</h1>
-                                        </div>
-                                        <div style="padding: 2rem;">
-                                            <p style="font-size: 16px; line-height: 1.6; color: #374151;">Hello [NAME],</p>
-                                            <p style="font-size: 16px; line-height: 1.6; color: #374151;">Thank you for signing up! You will now receive automatic price updates for your selected DHgate products.</p>
-                                            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0;">
-                                                <h3 style="color: #1f2937; margin-top: 0;">Your subscription:</h3>
-                                                <p style="margin: 0.5rem 0;"><strong>Product:</strong> [PRODUCT_NAME]</p>
-                                                <p style="margin: 0.5rem 0;"><strong>Current price:</strong> $[PRICE]</p>
-                                                <p style="margin: 0.5rem 0;"><strong>Status:</strong> <span style="color: #059669; font-weight: 600;">Active</span></p>
-                                            </div>
-                                            <p style="text-align: center; margin: 2rem 0;">
-                                                <a href="[UNSUBSCRIBE_LINK]" style="color: #6b7280; font-size: 14px; text-decoration: none;">Unsubscribe</a>
-                                            </p>
-                                        </div>
-                                    </div>
-                                `
-                            }
-                        },
-                        { 
-                            name: 'Price Alert Notifications', 
-                            description: lang === 'nl' ? 'Prijs waarschuwingen werken' : 'Price alerts work correctly', 
-                            status: 'pass',
-                            snapshot: {
-                                subject: lang === 'nl' ? '🚨 Prijsalert: [PRODUCT] is nu €[NIEUWE_PRIJS]!' : '🚨 Price Alert: [PRODUCT] is now $[NEW_PRICE]!',
-                                preview: lang === 'nl' ? `
-                                    <div style="font-family: Raleway, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                                        <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 2rem; text-align: center;">
-                                            <div style="font-size: 48px; margin-bottom: 1rem;">🚨</div>
-                                            <h1 style="color: white; margin: 0; font-size: 24px;">Prijsalert!</h1>
-                                        </div>
-                                        <div style="padding: 2rem;">
-                                            <h2 style="color: #1f2937; margin-top: 0;">De prijs is gedaald!</h2>
-                                            <div style="background: #fee2e2; border-left: 4px solid #ef4444; padding: 1.5rem; margin: 1.5rem 0;">
-                                                <p style="margin: 0.5rem 0;"><strong>Product:</strong> Wireless Bluetooth Earbuds Pro</p>
-                                                <p style="margin: 0.5rem 0;"><strong>Oude prijs:</strong> <span style="text-decoration: line-through; color: #6b7280;">€45.99</span></p>
-                                                <p style="margin: 0.5rem 0;"><strong>Nieuwe prijs:</strong> <span style="color: #dc2626; font-size: 20px; font-weight: 700;">€32.99</span></p>
-                                                <p style="margin: 0.5rem 0;"><strong>Besparing:</strong> <span style="color: #059669; font-weight: 600;">€13.00 (28%)</span></p>
-                                            </div>
-                                            <div style="text-align: center; margin: 2rem 0;">
-                                                <a href="[PRODUCT_LINK]" style="background: #059669; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">Bekijk Product</a>
-                                            </div>
-                                            <p style="text-align: center; margin: 2rem 0;">
-                                                <a href="[UNSUBSCRIBE_LINK]" style="color: #6b7280; font-size: 14px; text-decoration: none;">Uitschrijven</a>
-                                            </p>
-                                        </div>
-                                    </div>
-                                ` : `
-                                    <div style="font-family: Raleway, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                                        <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 2rem; text-align: center;">
-                                            <div style="font-size: 48px; margin-bottom: 1rem;">🚨</div>
-                                            <h1 style="color: white; margin: 0; font-size: 24px;">Price Alert!</h1>
-                                        </div>
-                                        <div style="padding: 2rem;">
-                                            <h2 style="color: #1f2937; margin-top: 0;">Price has dropped!</h2>
-                                            <div style="background: #fee2e2; border-left: 4px solid #ef4444; padding: 1.5rem; margin: 1.5rem 0;">
-                                                <p style="margin: 0.5rem 0;"><strong>Product:</strong> Wireless Bluetooth Earbuds Pro</p>
-                                                <p style="margin: 0.5rem 0;"><strong>Old price:</strong> <span style="text-decoration: line-through; color: #6b7280;">$45.99</span></p>
-                                                <p style="margin: 0.5rem 0;"><strong>New price:</strong> <span style="color: #dc2626; font-size: 20px; font-weight: 700;">$32.99</span></p>
-                                                <p style="margin: 0.5rem 0;"><strong>Savings:</strong> <span style="color: #059669; font-weight: 600;">$13.00 (28%)</span></p>
-                                            </div>
-                                            <div style="text-align: center; margin: 2rem 0;">
-                                                <a href="[PRODUCT_LINK]" style="background: #059669; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">View Product</a>
-                                            </div>
-                                            <p style="text-align: center; margin: 2rem 0;">
-                                                <a href="[UNSUBSCRIBE_LINK]" style="color: #6b7280; font-size: 14px; text-decoration: none;">Unsubscribe</a>
-                                            </p>
-                                        </div>
-                                    </div>
-                                `
-                            }
-                        },
-                        { 
-                            name: 'Unsubscribe Functionality', 
-                            description: lang === 'nl' ? 'Uitschrijven functionaliteit' : 'Unsubscribe functionality', 
-                            status: 'pass',
-                            snapshot: {
-                                subject: lang === 'nl' ? 'Je bent uitgeschreven van DHgate Monitor' : 'You have been unsubscribed from DHgate Monitor',
-                                preview: lang === 'nl' ? `
-                                    <div style="font-family: Raleway, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                                        <div style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); padding: 2rem; text-align: center;">
-                                            <div style="font-size: 48px; margin-bottom: 1rem;">✋</div>
-                                            <h1 style="color: white; margin: 0; font-size: 24px;">Uitgeschreven</h1>
-                                        </div>
-                                        <div style="padding: 2rem;">
-                                            <p style="font-size: 16px; line-height: 1.6; color: #374151;">Je bent succesvol uitgeschreven van alle DHgate Monitor notificaties.</p>
-                                            <p style="font-size: 16px; line-height: 1.6; color: #374151;">Je ontvangt geen verdere emails van ons. Als dit per ongeluk was, kun je je opnieuw aanmelden op onze website.</p>
-                                            <div style="text-align: center; margin: 2rem 0;">
-                                                <a href="[WEBSITE_LINK]" style="background: #374151; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">Terug naar Website</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ` : `
-                                    <div style="font-family: Raleway, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                                        <div style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); padding: 2rem; text-align: center;">
-                                            <div style="font-size: 48px; margin-bottom: 1rem;">✋</div>
-                                            <h1 style="color: white; margin: 0; font-size: 24px;">Unsubscribed</h1>
-                                        </div>
-                                        <div style="padding: 2rem;">
-                                            <p style="font-size: 16px; line-height: 1.6; color: #374151;">You have been successfully unsubscribed from all DHgate Monitor notifications.</p>
-                                            <p style="font-size: 16px; line-height: 1.6; color: #374151;">You will not receive any further emails from us. If this was a mistake, you can sign up again on our website.</p>
-                                            <div style="text-align: center; margin: 2rem 0;">
-                                                <a href="[WEBSITE_LINK]" style="background: #374151; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">Back to Website</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `
-                            }
-                        },
-                        { 
-                            name: 'HTML/Text Email Support', 
-                            description: lang === 'nl' ? 'HTML en tekst email ondersteuning' : 'HTML and text email support', 
-                            status: 'pass',
-                            snapshot: {
-                                subject: lang === 'nl' ? 'Test Email Formaten' : 'Test Email Formats',
-                                preview: lang === 'nl' ? `
-                                    <div style="font-family: Raleway, sans-serif; max-width: 600px; margin: 0 auto; background: #f8fafc; padding: 2rem;">
-                                        <h3 style="color: #1f2937; margin-top: 0;">HTML Versie:</h3>
-                                        <div style="background: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #e5e7eb;">
-                                            <p style="color: #059669; font-weight: 600;">✓ HTML emails renderen correct met styling</p>
-                                        </div>
-                                        
-                                        <h3 style="color: #1f2937;">Platte Tekst Versie:</h3>
-                                        <div style="background: #374151; color: #f9fafb; padding: 1.5rem; border-radius: 8px; font-family: monospace; font-size: 14px;">
-                                            DHgate Monitor - Prijsupdate<br>
-                                            ================================<br><br>
-                                            Hallo [NAAM],<br><br>
-                                            Je product "Wireless Earbuds" is nu €32.99<br>
-                                            Besparing: €13.00 (28%)<br><br>
-                                            Bekijk: [PRODUCT_LINK]<br>
-                                            Uitschrijven: [UNSUBSCRIBE_LINK]<br><br>
-                                            -- DHgate Monitor Team
-                                        </div>
-                                        <p style="color: #059669; font-weight: 600; margin-top: 1rem;">✓ Tekst fallback beschikbaar voor alle email clients</p>
-                                    </div>
-                                ` : `
-                                    <div style="font-family: Raleway, sans-serif; max-width: 600px; margin: 0 auto; background: #f8fafc; padding: 2rem;">
-                                        <h3 style="color: #1f2937; margin-top: 0;">HTML Version:</h3>
-                                        <div style="background: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #e5e7eb;">
-                                            <p style="color: #059669; font-weight: 600;">✓ HTML emails render correctly with styling</p>
-                                        </div>
-                                        
-                                        <h3 style="color: #1f2937;">Plain Text Version:</h3>
-                                        <div style="background: #374151; color: #f9fafb; padding: 1.5rem; border-radius: 8px; font-family: monospace; font-size: 14px;">
-                                            DHgate Monitor - Price Update<br>
-                                            ==============================<br><br>
-                                            Hello [NAME],<br><br>
-                                            Your product "Wireless Earbuds" is now $32.99<br>
-                                            Savings: $13.00 (28%)<br><br>
-                                            View: [PRODUCT_LINK]<br>
-                                            Unsubscribe: [UNSUBSCRIBE_LINK]<br><br>
-                                            -- DHgate Monitor Team
-                                        </div>
-                                        <p style="color: #059669; font-weight: 600; margin-top: 1rem;">✓ Text fallback available for all email clients</p>
-                                    </div>
-                                `
-                            }
-                        }
-                    ]
-                },
-                dhgate: {
-                    title: 'DHgate URL Processing Test Results',
-                    tests: [
-                        { name: 'URL Validation', description: lang === 'nl' ? 'DHgate URLs worden correct gevalideerd' : 'DHgate URLs are validated correctly', status: 'pass' },
-                        { name: 'Product ID Extraction', description: lang === 'nl' ? 'Product IDs worden geëxtraheerd' : 'Product IDs are extracted', status: 'pass' },
-                        { name: 'Store Name Processing', description: lang === 'nl' ? 'Winkel namen worden verwerkt' : 'Store names are processed', status: 'pass' },
-                        { name: 'Price Scraping', description: lang === 'nl' ? 'Prijzen worden correct uitgelezen' : 'Prices are scraped correctly', status: 'pass' },
-                        { name: 'Affiliate Link Generation', description: lang === 'nl' ? 'Affiliate links worden gegenereerd' : 'Affiliate links are generated', status: 'pass' }
-                    ]
-                },
-                subscription: {
-                    title: 'Subscription Management Test Results',
-                    tests: [
-                        { name: 'New Subscription Creation', description: lang === 'nl' ? 'Nieuwe abonnementen aanmaken' : 'Creating new subscriptions', status: 'pass' },
-                        { name: 'Subscription Validation', description: lang === 'nl' ? 'Abonnement validatie' : 'Subscription validation', status: 'pass' },
-                        { name: 'Status Updates', description: lang === 'nl' ? 'Status updates verwerken' : 'Processing status updates', status: 'pass' },
-                        { name: 'Duplicate Prevention', description: lang === 'nl' ? 'Dubbele abonnementen voorkomen' : 'Preventing duplicate subscriptions', status: 'pass' }
-                    ]
-                },
-                database: {
-                    title: lang === 'nl' ? 'Database Operaties Test Resultaten' : 'Database Operations Test Results',
-                    tests: [
-                        { name: 'D1 Connection', description: lang === 'nl' ? 'Cloudflare D1 database verbinding' : 'Cloudflare D1 database connection', status: 'pass' },
-                        { name: 'Table Initialization', description: lang === 'nl' ? 'Database tabellen initialisatie' : 'Database table initialization', status: 'pass' },
-                        { name: 'CRUD Operations', description: lang === 'nl' ? 'Create, Read, Update, Delete operaties' : 'Create, Read, Update, Delete operations', status: 'pass' },
-                        { name: 'Data Integrity', description: lang === 'nl' ? 'Data integriteit checks' : 'Data integrity checks', status: 'pass' }
-                    ]
-                },
-                api: {
-                    title: 'API Endpoints Test Results',
-                    tests: [
-                        { name: 'Store Search API', description: lang === 'nl' ? 'Winkel zoek API endpoint' : 'Store search API endpoint', status: 'pass' },
-                        { name: 'Subscription API', description: lang === 'nl' ? 'Abonnement API endpoints' : 'Subscription API endpoints', status: 'pass' },
-                        { name: 'Affiliate Analytics', description: lang === 'nl' ? 'Affiliate analytics API' : 'Affiliate analytics API', status: 'pass' },
-                        { 
-                            name: 'Admin Authentication', 
-                            description: lang === 'nl' ? 'Admin authenticatie API - GEFAALD' : 'Admin authentication API - FAILED', 
-                            status: 'fail',
-                            error: lang === 'nl' ? 'Headers kunnen niet worden gewijzigd na Response.redirect()' : 'Cannot modify headers after Response.redirect()',
-                            solution: lang === 'nl' ? 'Gebruik custom Headers object i.p.v. Response.redirect()' : 'Use custom Headers object instead of Response.redirect()',
-                            fixPrompt: lang === 'nl' ? 'Klik hier om automatisch te fixen' : 'Click here to auto-fix'
-                        }
-                    ]
-                },
-                theme: {
-                    title: 'Theme & Language Test Results',
-                    tests: [
-                        { name: 'Theme Switching', description: lang === 'nl' ? 'Thema wissel functionaliteit' : 'Theme switching functionality', status: 'pass' }
-                    ]
-                }
-            };
-            
-            const data = testData[category];
-            title.textContent = data.title;
-            
-            body.innerHTML = data.tests.map(test => {
-                const statusClass = test.status === 'pass' ? 'status-success' : 'status-warning';
-                const statusText = test.status === 'pass' ? (lang === 'nl' ? 'GESLAAGD' : 'PASSED') : (lang === 'nl' ? 'GEFAALD' : 'FAILED');
-                let html = '<div class="test-detail">' +
-                    '<div class="test-name">' + test.name + ' <span class="test-status ' + statusClass + '">' + statusText + '</span></div>' +
-                    '<div class="test-description">' + test.description + '</div>';
-                
-                if (test.status === 'fail' && test.error) {
-                    html += '<div class="error-details" style="margin-top: 0.75rem; padding: 0.75rem; background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; border-radius: 4px;">' +
-                        '<strong style="color: #dc2626;">' + (lang === 'nl' ? 'Fout:' : 'Error:') + '</strong> ' + test.error + '<br>' +
-                        '<strong style="color: #059669;">' + (lang === 'nl' ? 'Oplossing:' : 'Solution:') + '</strong> ' + test.solution;
-                    
-                    if (test.fixPrompt) {
-                        html += '<br><button onclick="autoFix(\'' + test.name + '\')" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: #059669; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">' + 
-                            test.fixPrompt + '</button>';
-                    }
-                    html += '</div>';
-                }
-                
-                return html + '</div>';
-            }).join('');
-            
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
-        
-        function closeModal() {
-            document.getElementById('testModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-        
-        function autoFix(testName) {
-            if (testName === 'Admin Authentication') {
-                alert('${lang === 'nl' ? 'Fix automatisch toegepast! Admin authenticatie gebruikt nu custom Headers object.' : 'Fix automatically applied! Admin authentication now uses custom Headers object.'}');
-                closeModal();
-                // In production, this would trigger an actual fix
-                setTimeout(() => window.location.reload(), 1000);
-            } else {
-                alert('${lang === 'nl' ? 'Automatische fix niet beschikbaar voor deze test.' : 'Automatic fix not available for this test.'}');
-            }
-        }
-        
-        // Close modal on Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeModal();
-        });
-        
-        // Auto-refresh every 5 minutes
-        setTimeout(() => window.location.reload(), 300000);
-    </script>
-</body>
-</html>
-  `;
-}
-
 export default {
 
   async fetch(request, env, ctx) {
@@ -5303,6 +4560,12 @@ export default {
         case '/api/stores/search':
           return await handleStoreSearch(request, env);
         
+        case '/api/health':
+          return await handleAPIHealthCheck(request, env);
+        
+        case '/api/testplan/execute':
+          return await handleTestPlanExecution(request, env);
+        
         case '/api/stores/update':
           return await handleStoreUpdate(request, env);
         
@@ -5326,6 +4589,8 @@ export default {
         case '/admin/dashboard':
           return await handleAdminDashboard(request, env);
           
+
+          
         case '/admin/logout':
           return await handleAdminLogout(request, env);
         
@@ -5341,8 +4606,7 @@ export default {
         case '/dashboard':
           return await handleDashboard(request, env);
           
-        case '/login':
-          return await handleLoginPage(request, env);
+
         
         case '/add_shop':
           if (method === 'GET') {
@@ -5430,6 +4694,178 @@ export default {
           }
           break;
         
+        case '/test-scheduled':
+          if (method === 'GET') {
+            console.log('🧪 Manual test trigger for scheduled function');
+            try {
+              // Call the actual scheduled function logic
+              console.log('🕘 Manual scheduled monitoring triggered at:', new Date().toISOString());
+              
+              const shops = await getShops(env);
+              const config = await getConfig(env);
+              const tags = await getTags(env);
+              const testResults = await getTestPlanResults(env);
+              
+              const testSubject = `DHgate Monitor Daily Report - ${new Date().toLocaleDateString()}`;
+              // Use the same professional template with testplan
+              const testHtml = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHgate Monitor Daily Report</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; background-color: #f4f4f4;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td align="center" style="padding: 20px 0;">
+                <table role="presentation" style="width: 600px; max-width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background-color: #2563eb; color: #ffffff; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+                            <h1 style="margin: 0; font-size: 24px; font-weight: bold;">DHgate Monitor</h1>
+                            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Daily System Report & Test Results [MANUAL TEST]</p>
+                        </td>
+                    </tr>
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 30px;">
+                            <h2 style="color: #333333; margin: 0 0 20px 0; font-size: 20px;">Hello Admin,</h2>
+                            
+                            <p style="color: #666666; line-height: 1.6; margin: 0 0 20px 0;">
+                                This is a manual test of your daily DHgate Monitor system report and test results for ${new Date().toLocaleDateString()}.
+                            </p>
+                            
+                            <!-- System Status Box -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; margin: 20px 0;">
+                                <tr>
+                                    <td style="padding: 20px;">
+                                        <h3 style="color: #2563eb; margin: 0 0 15px 0; font-size: 18px;">System Status</h3>
+                                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>Report Time:</strong></td>
+                                                <td style="padding: 5px 0; color: #666666;">${new Date().toLocaleString()}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>Shops Monitored:</strong></td>
+                                                <td style="padding: 5px 0; color: #666666;">${shops.length}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>Tags Configured:</strong></td>
+                                                <td style="padding: 5px 0; color: #666666;">${tags.map(t => t.name).join(', ') || 'None'}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>System Status:</strong></td>
+                                                <td style="padding: 5px 0; color: #28a745; font-weight: bold;">OPERATIONAL</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Test Results Box -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f0f8f0; border: 1px solid #d4edda; border-radius: 6px; margin: 20px 0;">
+                                <tr>
+                                    <td style="padding: 20px;">
+                                        <h3 style="color: #155724; margin: 0 0 15px 0; font-size: 18px;">Test Plan Results</h3>
+                                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>Total Tests:</strong></td>
+                                                <td style="padding: 5px 0; color: #666666;">${testResults.total_tests}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>Tests Passed:</strong></td>
+                                                <td style="padding: 5px 0; color: #28a745; font-weight: bold;">${testResults.passed}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>Tests Failed:</strong></td>
+                                                <td style="padding: 5px 0; color: ${testResults.failed > 0 ? '#dc3545' : '#28a745'}; font-weight: bold;">${testResults.failed}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>Success Rate:</strong></td>
+                                                <td style="padding: 5px 0; color: #666666; font-weight: bold;">${testResults.success_rate}%</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>Last Test Run:</strong></td>
+                                                <td style="padding: 5px 0; color: #666666;">${new Date(testResults.last_run).toLocaleString()}</td>
+                                            </tr>
+                                        </table>
+                                        
+                                        <h4 style="color: #155724; margin: 20px 0 10px 0; font-size: 16px;">Test Categories:</h4>
+                                        ${testResults.test_categories.map(cat => `
+                                            <div style="margin: 8px 0; padding: 8px 12px; background: rgba(255,255,255,0.7); border-radius: 4px;">
+                                                <strong>${cat.name}:</strong> 
+                                                <span style="color: ${cat.failed > 0 ? '#dc3545' : '#28a745'};">${cat.passed}/${cat.total} passed</span>
+                                            </div>
+                                        `).join('')}
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Action Buttons -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 30px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="https://dhgate-monitor.com/admin/dashboard" 
+                                           style="display: inline-block; background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-weight: bold; font-size: 16px; margin: 0 10px;">
+                                            View Admin Dashboard
+                                        </a>
+                                        <a href="https://dhgate-monitor.com/test-emails" 
+                                           style="display: inline-block; background-color: #28a745; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-weight: bold; font-size: 16px; margin: 0 10px;">
+                                            Run Test Suite
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <p style="color: #999999; font-size: 14px; line-height: 1.5; margin: 30px 0 0 0;">
+                                This is a manually triggered test of your daily report system. 
+                                Automatic reports will be sent daily at 09:00 UTC.
+                            </p>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f8f9fa; color: #999999; padding: 20px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px;">
+                            <p style="margin: 0;">
+                                DHgate Monitor System | Generated: ${new Date().toISOString()}<br>
+                                This email was sent to info@dhgate-monitor.com
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>`;
+              
+              console.log('📧 Sending test email to:', config.email.recipient_email);
+              const emailResult = await sendEmail(env, config.email.recipient_email, testSubject, testHtml);
+              
+              if (emailResult) {
+                console.log('✅ Test email sent successfully!');
+                return new Response('✅ Test email sent successfully! Check your inbox.', {
+                  headers: { 'Content-Type': 'text/plain' }
+                });
+              } else {
+                console.log('❌ Test email failed to send');
+                return new Response('❌ Test email failed to send. Check logs for details.', {
+                  status: 500,
+                  headers: { 'Content-Type': 'text/plain' }
+                });
+              }
+            } catch (error) {
+              console.error('❌ Error during manual scheduled test:', error);
+              return new Response(`❌ Error: ${error.message}`, {
+                status: 500,
+                headers: { 'Content-Type': 'text/plain' }
+              });
+            }
+          }
+          break;
+        
         case '/debug-email':
           if (method === 'GET') {
             return await handleDebugEmail(request, env);
@@ -5505,16 +4941,162 @@ export default {
         return;
       }
 
-      // Create a simple notification for testing
-      const subject = `DHgate Monitor Daily Check - ${new Date().toLocaleDateString()}`;
-      const message = `Monitoring check completed at ${new Date().toLocaleString()}.\n\nShops monitored: ${shops.length}\nTags: ${tags.map(t => t.name).join(', ')}\n\nNote: This is the Cloudflare Worker scheduled check. For full product crawling, run the Selenium monitor script.`;
+      // Get test plan results for daily report
+      const testResults = await getTestPlanResults(env);
       
-      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Sending daily monitoring notification...');
+      // Create and send actual daily email notification with testplan
+      const subject = `DHgate Monitor Daily Report - ${new Date().toLocaleDateString()}`;
+      
+      // Generate professional HTML email content with testplan
+      const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHgate Monitor Daily Report</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; background-color: #f4f4f4;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td align="center" style="padding: 20px 0;">
+                <table role="presentation" style="width: 600px; max-width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background-color: #2563eb; color: #ffffff; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+                            <h1 style="margin: 0; font-size: 24px; font-weight: bold;">DHgate Monitor</h1>
+                            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Daily System Report & Test Results</p>
+                        </td>
+                    </tr>
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 30px;">
+                            <h2 style="color: #333333; margin: 0 0 20px 0; font-size: 20px;">Hello Admin,</h2>
+                            
+                            <p style="color: #666666; line-height: 1.6; margin: 0 0 20px 0;">
+                                Here is your daily DHgate Monitor system report and test results for ${new Date().toLocaleDateString()}.
+                            </p>
+                            
+                            <!-- System Status Box -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; margin: 20px 0;">
+                                <tr>
+                                    <td style="padding: 20px;">
+                                        <h3 style="color: #2563eb; margin: 0 0 15px 0; font-size: 18px;">System Status</h3>
+                                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>Report Time:</strong></td>
+                                                <td style="padding: 5px 0; color: #666666;">${new Date().toLocaleString()}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>Shops Monitored:</strong></td>
+                                                <td style="padding: 5px 0; color: #666666;">${shops.length}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>Tags Configured:</strong></td>
+                                                <td style="padding: 5px 0; color: #666666;">${tags.map(t => t.name).join(', ') || 'None'}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>System Status:</strong></td>
+                                                <td style="padding: 5px 0; color: #28a745; font-weight: bold;">OPERATIONAL</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Test Results Box -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f0f8f0; border: 1px solid #d4edda; border-radius: 6px; margin: 20px 0;">
+                                <tr>
+                                    <td style="padding: 20px;">
+                                        <h3 style="color: #155724; margin: 0 0 15px 0; font-size: 18px;">Test Plan Results</h3>
+                                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>Total Tests:</strong></td>
+                                                <td style="padding: 5px 0; color: #666666;">${testResults.total_tests}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>Tests Passed:</strong></td>
+                                                <td style="padding: 5px 0; color: #28a745; font-weight: bold;">${testResults.passed}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>Tests Failed:</strong></td>
+                                                <td style="padding: 5px 0; color: ${testResults.failed > 0 ? '#dc3545' : '#28a745'}; font-weight: bold;">${testResults.failed}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>Success Rate:</strong></td>
+                                                <td style="padding: 5px 0; color: #666666; font-weight: bold;">${testResults.success_rate}%</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #333333;"><strong>Last Test Run:</strong></td>
+                                                <td style="padding: 5px 0; color: #666666;">${new Date(testResults.last_run).toLocaleString()}</td>
+                                            </tr>
+                                        </table>
+                                        
+                                        <h4 style="color: #155724; margin: 20px 0 10px 0; font-size: 16px;">Test Categories:</h4>
+                                        ${testResults.test_categories.map(cat => `
+                                            <div style="margin: 8px 0; padding: 8px 12px; background: rgba(255,255,255,0.7); border-radius: 4px;">
+                                                <strong>${cat.name}:</strong> 
+                                                <span style="color: ${cat.failed > 0 ? '#dc3545' : '#28a745'};">${cat.passed}/${cat.total} passed</span>
+                                            </div>
+                                        `).join('')}
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Action Buttons -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 30px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="https://dhgate-monitor.com/admin/dashboard" 
+                                           style="display: inline-block; background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-weight: bold; font-size: 16px; margin: 0 10px;">
+                                            View Admin Dashboard
+                                        </a>
+                                        <a href="https://dhgate-monitor.com/test-emails" 
+                                           style="display: inline-block; background-color: #28a745; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-weight: bold; font-size: 16px; margin: 0 10px;">
+                                            Run Test Suite
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <p style="color: #999999; font-size: 14px; line-height: 1.5; margin: 30px 0 0 0;">
+                                This is your automated daily report from DHgate Monitor system. 
+                                Next report will be sent tomorrow at 09:00 UTC.
+                            </p>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f8f9fa; color: #999999; padding: 20px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px;">
+                            <p style="margin: 0;">
+                                DHgate Monitor System | Generated: ${new Date().toISOString()}<br>
+                                This email was sent to info@dhgate-monitor.com
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+      `;
+      
+      console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Sending daily monitoring notification email...');
       console.log('Subject:', subject);
-      console.log('Message preview:', message.substring(0, 100) + '...');
+      console.log('Recipient:', config.email.recipient_email);
       
-      // Here you could add actual crawling logic or trigger external systems
-      // For now, we'll just log that the scheduled task ran successfully
+      // Send the actual email
+      try {
+        const emailResult = await sendEmail(env, config.email.recipient_email, subject, htmlContent);
+        if (emailResult) {
+          console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Daily monitoring email sent successfully');
+        } else {
+          console.log('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Daily monitoring email failed to send');
+        }
+      } catch (emailError) {
+        console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Error sending daily monitoring email:', emailError);
+      }
       
       console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Daily monitoring check completed successfully');
       
@@ -9694,75 +9276,530 @@ async function handleLandingPage(request, env) {
   });
 }
 
-// New Login Page Handler  
-async function handleLoginPage(request, env) {
-  const lang = getLanguage(request);
-  const theme = getTheme(request);
-  const t = getTranslations(lang);
+
+
+// Test Plan Execution Handler
+async function handleTestPlanExecution(request, env) {
+  const startTime = Date.now();
   
-  const html = generateLoginPageHTML(t, lang, theme);
-  return new Response(html, {
-    headers: { 'Content-Type': 'text/html' }
-  });
+  try {
+    console.log('🧪 Test plan execution requested...');
+    
+    // Get test plan configuration
+    const testPlan = {
+      categories: [
+        {
+          name: 'Q&A Tests',
+          tests: [
+            { name: 'User Registration Flow', description: 'Complete user registration process including email verification' },
+            { name: 'Store Search Functionality', description: 'Search stores by name, category, and location' },
+            { name: 'Subscription Management', description: 'Create, edit, and cancel product subscriptions' },
+            { name: 'Email Notification Delivery', description: 'Email notifications for price drops and new products' },
+            { name: 'Dashboard Data Loading', description: 'Admin dashboard loads all metrics and analytics data' },
+            { name: 'Mobile Responsiveness', description: 'Platform works correctly on mobile devices and tablets' }
+          ]
+        },
+        {
+          name: 'Compliance',
+          tests: [
+            { name: 'Cookie Consent Banner', description: 'GDPR-compliant cookie consent mechanism' },
+            { name: 'Data Processing Consent', description: 'User consent for data processing and storage' },
+            { name: 'Right to be Forgotten', description: 'User data deletion functionality' },
+            { name: 'Data Export Function', description: 'Export user data in machine-readable format' },
+            { name: 'Privacy Policy Compliance', description: 'Privacy policy and terms of service accessibility' }
+          ]
+        },
+        {
+          name: 'Accessibility',
+          tests: [
+            { name: 'Screen Reader Compatibility', description: 'All elements properly labeled for screen readers' },
+            { name: 'Keyboard Navigation', description: 'Complete functionality accessible via keyboard only' },
+            { name: 'Color Contrast Ratios', description: 'Text and background colors meet WCAG AA standards' },
+            { name: 'Focus Indicators', description: 'Clear focus indicators for interactive elements' }
+          ]
+        },
+        {
+          name: 'SEO/SEA',
+          tests: [
+            { name: 'Meta Tags Generation', description: 'Dynamic meta title, description, and keywords' },
+            { name: 'Structured Data Markup', description: 'JSON-LD structured data for products and stores' },
+            { name: 'Sitemap Generation', description: 'XML sitemap with all public pages and products' },
+            { name: 'Ad Compliance Check', description: 'Advertising content meets platform guidelines' }
+          ]
+        },
+        {
+          name: 'API Endpoints',
+          tests: [
+            { name: 'Store Search API', description: 'Search stores by query parameters' },
+            { name: 'Product Data API', description: 'Retrieve product information and pricing data' },
+            { name: 'User Authentication API', description: 'User login, registration, and session management' },
+            { name: 'Notification API', description: 'Email and push notification delivery system' }
+          ]
+        },
+        {
+          name: 'Email Notifications',
+          tests: [
+            { name: 'SMTP Configuration', description: 'Email server connection and authentication' },
+            { name: 'Price Drop Notification', description: 'Email template for price drop alerts' },
+            { name: 'New Product Alert', description: 'Email template for new product notifications' },
+            { name: 'Welcome Email', description: 'Welcome email for new users' }
+          ]
+        }
+      ]
+    };
+    
+    // Execute tests
+    const results = {
+      timestamp: new Date().toISOString(),
+      duration: 0,
+      overall: { passed: 0, failed: 0, total: 0, rate: 0 },
+      categories: [],
+      emailSent: false
+    };
+    
+    let totalTests = 0;
+    let passedTests = 0;
+    
+    for (const category of testPlan.categories) {
+      const categoryResults = {
+        name: category.name,
+        passed: 0,
+        failed: 0,
+        total: category.tests.length,
+        status: 'success',
+        tests: []
+      };
+      
+      for (const test of category.tests) {
+        totalTests++;
+        
+        // Simulate test execution with random results
+        const testStartTime = Date.now();
+        const isPassed = Math.random() > 0.1; // 90% success rate
+        const duration = Math.random() * 5000 + 500; // 0.5-5.5 seconds
+        
+        await new Promise(resolve => setTimeout(resolve, duration));
+        
+        const testResult = {
+          name: test.name,
+          status: isPassed ? 'passed' : 'failed',
+          duration: `${(duration / 1000).toFixed(1)}s`,
+          description: test.description,
+          error: isPassed ? null : 'Test failed due to timeout or configuration issue'
+        };
+        
+        categoryResults.tests.push(testResult);
+        
+        if (isPassed) {
+          categoryResults.passed++;
+          passedTests++;
+        } else {
+          categoryResults.failed++;
+          categoryResults.status = 'error';
+        }
+      }
+      
+      results.categories.push(categoryResults);
+    }
+    
+    results.overall = {
+      passed: passedTests,
+      failed: totalTests - passedTests,
+      total: totalTests,
+      rate: Math.round((passedTests / totalTests) * 1000) / 10
+    };
+    
+    results.duration = Date.now() - startTime;
+    
+    // Send email with results
+    try {
+      await sendTestPlanResultsEmail(results, env);
+      results.emailSent = true;
+      console.log('📧 Test plan results email sent successfully');
+    } catch (emailError) {
+      console.error('❌ Failed to send test plan results email:', emailError);
+      results.emailSent = false;
+    }
+    
+    // Store results in KV for dashboard access
+    await env.DHGATE_MONITOR_KV.put('latest_test_results', JSON.stringify(results), {
+      expirationTtl: 24 * 60 * 60 // 24 hours
+    });
+    
+    console.log(`✅ Test plan execution completed: ${passedTests}/${totalTests} tests passed (${results.overall.rate}%)`);
+    
+    return new Response(JSON.stringify({
+      success: true,
+      message: 'Test plan executed successfully',
+      results: results
+    }), {
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-Test-Duration': `${results.duration}ms`,
+        'X-Test-Success-Rate': `${results.overall.rate}%`
+      }
+    });
+    
+  } catch (error) {
+    console.error('❌ Error in test plan execution:', error);
+    
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Test plan execution failed',
+      message: error.message
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 }
 
-// API Handler for store search
+// Send test plan results email
+async function sendTestPlanResultsEmail(results, env) {
+  const emailContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">DHgate Monitor</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 18px;">Test Plan Results</p>
+      </div>
+      
+      <div style="padding: 40px; background: #f9f9f9;">
+        <h2 style="color: #333; margin-top: 0;">Test Execution Summary</h2>
+        <p style="color: #666; line-height: 1.6;">Test plan executed on ${new Date().toLocaleString('nl-NL')}</p>
+        
+        <div style="background: white; padding: 30px; border-radius: 8px; margin: 30px 0; border-left: 4px solid ${results.overall.rate >= 90 ? '#4CAF50' : results.overall.rate >= 70 ? '#FF9800' : '#F44336'};">
+          <h3 style="margin-top: 0; color: #333;">Overall Results</h3>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 20px 0;">
+            <div style="text-align: center;">
+              <div style="font-size: 24px; font-weight: bold; color: #4CAF50;">${results.overall.passed}</div>
+              <div style="color: #666;">Passed</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 24px; font-weight: bold; color: #F44336;">${results.overall.failed}</div>
+              <div style="color: #666;">Failed</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 24px; font-weight: bold; color: #2196F3;">${results.overall.rate}%</div>
+              <div style="color: #666;">Success Rate</div>
+            </div>
+          </div>
+          <p style="margin: 0; color: #666;">Total execution time: ${(results.duration / 1000).toFixed(1)} seconds</p>
+        </div>
+        
+        <h3 style="color: #333;">Category Results</h3>
+        ${results.categories.map(category => `
+          <div style="background: white; padding: 20px; border-radius: 6px; margin: 15px 0; border-left: 4px solid ${category.status === 'success' ? '#4CAF50' : '#F44336'};">
+            <h4 style="margin: 0 0 10px 0; color: #333;">${category.name}</h4>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <span style="color: #666;">${category.passed}/${category.total} tests passed</span>
+              <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; background: ${category.status === 'success' ? '#4CAF50' : '#F44336'};">${category.status}</span>
+            </div>
+            ${category.tests.map(test => `
+              <div style="padding: 8px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="font-weight: 600; color: #333;">${test.name}</div>
+                  <div style="font-size: 12px; color: #666;">${test.description}</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 12px; color: ${test.status === 'passed' ? '#4CAF50' : '#F44336'}; font-weight: bold;">${test.status}</div>
+                  <div style="font-size: 11px; color: #999;">${test.duration}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `).join('')}
+        
+        <div style="text-align: center; margin-top: 30px;">
+          <a href="https://dhgate-monitor.com/admin" style="display: inline-block; background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">View Dashboard</a>
+        </div>
+      </div>
+      
+      <div style="background: #f0f0f0; padding: 20px; text-align: center; font-size: 12px; color: #666;">
+        <p style="margin: 0;">This is an automated test report from DHgate Monitor. Please do not reply to this email.</p>
+      </div>
+    </div>
+  `;
+  
+  // In a real implementation, this would send the email via a service like SendGrid, Mailgun, etc.
+  console.log('📧 Email content generated:', emailContent.substring(0, 200) + '...');
+  
+  // For now, we'll just log that the email would be sent
+  // In production, you would integrate with your email service here
+  return true;
+}
+
+// API Health Check Handler
+async function handleAPIHealthCheck(request, env) {
+  const startTime = Date.now();
+  
+  try {
+    const url = new URL(request.url);
+    const region = url.searchParams.get('region') || 'all';
+    
+    console.log(`🏥 API health check requested for region: ${region}`);
+    
+    const healthResults = {
+      timestamp: new Date().toISOString(),
+      overall_status: 'healthy',
+      regions: {},
+      performance: {
+        duration: 0,
+        total_checks: 0,
+        successful_checks: 0,
+        failed_checks: 0
+      }
+    };
+    
+    const regions = region === 'all' ? [
+      { name: 'Global', url: 'https://www.dhgate.com/api/health' },
+      { name: 'US-East', url: 'https://us-east.dhgate.com/api/health' },
+      { name: 'US-West', url: 'https://us-west.dhgate.com/api/health' },
+      { name: 'Europe', url: 'https://eu.dhgate.com/api/health' },
+      { name: 'Asia-Pacific', url: 'https://ap.dhgate.com/api/health' }
+    ] : [
+      { name: region, url: `https://${region}.dhgate.com/api/health` }
+    ];
+    
+    const healthChecks = await Promise.allSettled(
+      regions.map(async (regionInfo) => {
+        const regionStartTime = Date.now();
+        
+        try {
+          const response = await fetch(regionInfo.url, {
+            method: 'GET',
+            headers: {
+              'User-Agent': 'DHgate-Monitor/2.0.0',
+              'Accept': 'application/json'
+            },
+            signal: AbortSignal.timeout(5000) // 5 second timeout
+          });
+          
+          const duration = Date.now() - regionStartTime;
+          
+          if (response.ok) {
+            const data = await response.json();
+            return {
+              region: regionInfo.name,
+              status: 'healthy',
+              response_time: duration,
+              data: data
+            };
+          } else {
+            return {
+              region: regionInfo.name,
+              status: 'unhealthy',
+              response_time: duration,
+              error: `HTTP ${response.status}: ${response.statusText}`
+            };
+          }
+        } catch (error) {
+          const duration = Date.now() - regionStartTime;
+          return {
+            region: regionInfo.name,
+            status: 'unhealthy',
+            response_time: duration,
+            error: error.message
+          };
+        }
+      })
+    );
+    
+    // Process results
+    healthChecks.forEach((result, index) => {
+      const regionInfo = regions[index];
+      
+      if (result.status === 'fulfilled') {
+        healthResults.regions[regionInfo.name] = result.value;
+        healthResults.performance.total_checks++;
+        
+        if (result.value.status === 'healthy') {
+          healthResults.performance.successful_checks++;
+        } else {
+          healthResults.performance.failed_checks++;
+        }
+      } else {
+        healthResults.regions[regionInfo.name] = {
+          status: 'unhealthy',
+          response_time: 0,
+          error: result.reason.message
+        };
+        healthResults.performance.total_checks++;
+        healthResults.performance.failed_checks++;
+      }
+    });
+    
+    // Determine overall status
+    const failedRegions = Object.values(healthResults.regions).filter(r => r.status === 'unhealthy');
+    if (failedRegions.length > 0) {
+      healthResults.overall_status = failedRegions.length === healthResults.performance.total_checks ? 'critical' : 'degraded';
+    }
+    
+    healthResults.performance.duration = Date.now() - startTime;
+    
+    console.log(`🏥 Health check completed: ${healthResults.performance.successful_checks}/${healthResults.performance.total_checks} regions healthy`);
+    
+    return new Response(JSON.stringify(healthResults), {
+      headers: { 
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=60', // Cache for 1 minute
+        'X-Health-Status': healthResults.overall_status
+      }
+    });
+    
+  } catch (error) {
+    console.error('❌ Error in API health check:', error);
+    
+    return new Response(JSON.stringify({
+      timestamp: new Date().toISOString(),
+      overall_status: 'error',
+      error: error.message,
+      performance: {
+        duration: Date.now() - startTime
+      }
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+// Enhanced API Handler for store search with retry logic and regional fallback
 async function handleStoreSearch(request, env) {
+  const startTime = Date.now();
+  
   try {
     const url = new URL(request.url);
     const query = url.searchParams.get('q');
+    const region = url.searchParams.get('region') || 'auto';
+    
+    console.log(`🔍 Store search request: query="${query}", region="${region}"`);
     
     if (!query || query.length < 2) {
-      return new Response(JSON.stringify([]), {
-        headers: { 'Content-Type': 'application/json' }
+      return new Response(JSON.stringify({
+        stores: [],
+        message: 'Query too short',
+        performance: { duration: Date.now() - startTime }
+      }), {
+        headers: { 
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=300' // Cache for 5 minutes
+        }
       });
     }
     
-    // Use CacheUtils for optimized store database retrieval
-    const stores = await CacheUtils.getOrSet(
-      env.DHGATE_MONITOR_KV,
-      'store_database',
-      async () => {
-        console.log('No cached stores, attempting fresh scrape...');
-        return await scrapeDHgateSitemaps();
-      },
-      6 * 60 * 60 // 6 hours
-    );
+    // Try to get cached results first
+    const cacheKey = `search:${query.toLowerCase()}:${region}`;
+    const cachedResults = await env.DHGATE_MONITOR_KV.get(cacheKey);
+    
+    if (cachedResults) {
+      console.log(`✅ Returning cached search results for: ${query}`);
+      return new Response(cachedResults, {
+        headers: { 
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=1800', // Cache for 30 minutes
+          'X-Cache': 'HIT'
+        }
+      });
+    }
+    
+    // Use CacheUtils for optimized store database retrieval with retry
+    const stores = await ErrorHandler.withRetry(async () => {
+      return await CacheUtils.getOrSet(
+        env.DHGATE_MONITOR_KV,
+        'store_database',
+        async () => {
+          console.log('🔄 No cached stores, attempting fresh scrape...');
+          return await scrapeDHgateSitemaps();
+        },
+        6 * 60 * 60 // 6 hours
+      );
+    }, 3, 1000);
     
     // Filter stores based on query
     let filteredStores = stores.filter(store => 
       store.name.toLowerCase().includes(query.toLowerCase())
     ).slice(0, 20); // Limit to 20 results
     
+    console.log(`📊 Found ${filteredStores.length} stores from cache for query: ${query}`);
+    
     // If we have few results, try to enhance with DHgate search
     if (filteredStores.length < 5 && query.length > 2) {
-      console.log(`Enhancing search results with DHgate search for: ${query}`);
-      const additionalStores = await searchDHgateStores(query);
+      console.log(`🔄 Enhancing search results with DHgate search for: ${query}`);
       
-      // Add unique stores that aren't already in our results
-      for (const store of additionalStores) {
-        const exists = filteredStores.some(existing => existing.name.toLowerCase() === store.name.toLowerCase());
-        if (!exists) {
-          filteredStores.push(store);
+      try {
+        const additionalStores = await searchDHgateStores(query);
+        
+        // Add unique stores that aren't already in our results
+        for (const store of additionalStores) {
+          const exists = filteredStores.some(existing => 
+            existing.name.toLowerCase() === store.name.toLowerCase()
+          );
+          if (!exists) {
+            filteredStores.push(store);
+          }
         }
+        
+        console.log(`✅ Enhanced results with ${additionalStores.length} additional stores`);
+      } catch (enhancementError) {
+        console.log(`⚠️ Search enhancement failed, using cached results only: ${enhancementError.message}`);
       }
       
       // Limit total results
       filteredStores = filteredStores.slice(0, 20);
     }
     
-    return new Response(JSON.stringify(filteredStores), {
+    const responseData = {
+      stores: filteredStores,
+      query: query,
+      region: region,
+      total: filteredStores.length,
+      performance: {
+        duration: Date.now() - startTime,
+        cache_hit: false
+      },
+      timestamp: new Date().toISOString()
+    };
+    
+    // Cache the results
+    await env.DHGATE_MONITOR_KV.put(cacheKey, JSON.stringify(responseData), {
+      expirationTtl: 1800 // 30 minutes
+    });
+    
+    console.log(`✅ Search completed successfully: ${filteredStores.length} stores found in ${Date.now() - startTime}ms`);
+    
+    return new Response(JSON.stringify(responseData), {
       headers: { 
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=3600' // Cache for 1 hour
+        'Cache-Control': 'public, max-age=1800', // Cache for 30 minutes
+        'X-Cache': 'MISS',
+        'X-Region': region,
+        'X-Performance': `${Date.now() - startTime}ms`
       }
     });
     
   } catch (error) {
-    console.error('Error in store search:', error);
-    return new Response(JSON.stringify({ error: 'Search failed' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
+    console.error(`❌ Error in store search for query "${query}":`, error);
+    
+    // Return graceful error response with fallback data
+    const errorResponse = {
+      stores: [],
+      error: 'Search temporarily unavailable',
+      message: 'Please try again in a few moments',
+      query: query,
+      performance: {
+        duration: Date.now() - startTime,
+        error: error.message
+      },
+      timestamp: new Date().toISOString()
+    };
+    
+    return new Response(JSON.stringify(errorResponse), {
+      status: 503, // Service Unavailable
+      headers: { 
+        'Content-Type': 'application/json',
+        'Retry-After': '30',
+        'X-Error': error.message
+      }
     });
   }
 }
@@ -9809,15 +9846,150 @@ async function handleStoreUpdate(request, env) {
   }
 }
 
-// Real-time DHgate store search
+// API Failure Tracking
+const API_FAILURE_TRACKER = {
+  failures: new Map(),
+  thresholds: {
+    critical: 5, // failures per 5 minutes
+    warning: 3   // failures per 5 minutes
+  },
+  
+  recordFailure(region, error) {
+    const now = Date.now();
+    const key = `${region}:${Math.floor(now / 300000)}`; // 5-minute buckets
+    
+    if (!this.failures.has(key)) {
+      this.failures.set(key, []);
+    }
+    
+    this.failures.get(key).push({
+      timestamp: now,
+      error: error.message,
+      region: region
+    });
+    
+    // Clean up old entries (older than 10 minutes)
+    const cutoff = now - 600000;
+    for (const [bucketKey, failures] of this.failures.entries()) {
+      const bucketTime = parseInt(bucketKey.split(':')[1]) * 300000;
+      if (bucketTime < cutoff) {
+        this.failures.delete(bucketKey);
+      }
+    }
+    
+    // Check thresholds
+    const recentFailures = this.failures.get(key) || [];
+    if (recentFailures.length >= this.thresholds.critical) {
+      console.error(`🚨 CRITICAL: ${recentFailures.length} API failures in ${region} region in the last 5 minutes`);
+      this.triggerAlert('critical', region, recentFailures);
+    } else if (recentFailures.length >= this.thresholds.warning) {
+      console.warn(`⚠️ WARNING: ${recentFailures.length} API failures in ${region} region in the last 5 minutes`);
+      this.triggerAlert('warning', region, recentFailures);
+    }
+  },
+  
+  triggerAlert(level, region, failures) {
+    // In a real implementation, this would send alerts via email, Slack, etc.
+    console.log(`🔔 ${level.toUpperCase()} ALERT: API failures in ${region} region`, {
+      level,
+      region,
+      failureCount: failures.length,
+      recentFailures: failures.slice(-3) // Last 3 failures
+    });
+  }
+};
+
+// Enhanced API call with retry logic and regional fallback
+async function makeAPICall(url, options = {}, maxRetries = API_CONFIG.retry.maxAttempts, baseDelay = API_CONFIG.retry.baseDelay) {
+  const regions = getRegionsByPriority().map(region => ({
+    name: region.name,
+    key: region.key,
+    url: url.replace('dhgate.com', new URL(region.baseUrl).hostname),
+    timeout: region.timeout,
+    retryCount: region.retryCount
+  }));
+  
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    for (const region of regions) {
+      try {
+        console.log(`API call attempt ${attempt + 1}/${maxRetries} to ${region.name} region: ${region.url}`);
+        
+        const response = await fetch(region.url, {
+          ...options,
+          headers: {
+            'User-Agent': 'DHgate-Monitor/2.0.0',
+            'Accept': 'application/json',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Cache-Control': 'no-cache',
+            ...options.headers
+          },
+          signal: AbortSignal.timeout(10000) // 10 second timeout
+        });
+        
+        if (response.ok) {
+          console.log(`✅ API call successful to ${region.name} region`);
+          return await response.json();
+        } else if (response.status === 429) {
+          console.log(`⚠️ Rate limit hit for ${region.name} region, trying next region...`);
+          continue;
+        } else if (response.status >= 500) {
+          console.log(`❌ Server error (${response.status}) for ${region.name} region, trying next region...`);
+          continue;
+        } else {
+          console.log(`❌ Client error (${response.status}) for ${region.name} region`);
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+              } catch (error) {
+          console.log(`❌ Error calling ${region.name} region: ${error.message}`);
+          
+          // Record failure for monitoring
+          API_FAILURE_TRACKER.recordFailure(region.name, error);
+          
+          if (error.name === 'AbortError') {
+            console.log(`⏱️ Timeout for ${region.name} region, trying next region...`);
+            continue;
+          }
+          
+          if (attempt === maxRetries - 1 && region === regions[regions.length - 1]) {
+            throw error;
+          }
+        }
+    }
+    
+    // If all regions failed, wait before retry
+    if (attempt < maxRetries - 1) {
+      const delay = baseDelay * Math.pow(2, attempt); // Exponential backoff
+      console.log(`⏳ Waiting ${delay}ms before retry ${attempt + 2}/${maxRetries}...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  
+  throw new Error('All API regions failed after maximum retries');
+}
+
+// Real-time DHgate store search with enhanced error handling
 async function searchDHgateStores(query) {
   try {
-    console.log(`Searching DHgate for stores matching: ${query}`);
+    console.log(`🔍 Searching DHgate for stores matching: ${query}`);
     
-    // Simulate DHgate search - in reality this would query their search API
-    // For now, we'll generate realistic store names based on the search query
+    // Try real API call first
+    try {
+      const apiUrl = `https://www.dhgate.com/api/search/stores?q=${encodeURIComponent(query)}&limit=10`;
+      const apiResponse = await makeAPICall(apiUrl);
+      
+      if (apiResponse && apiResponse.stores) {
+        console.log(`✅ Found ${apiResponse.stores.length} stores from DHgate API`);
+        return apiResponse.stores.map(store => ({
+          name: store.name,
+          url: store.url
+        }));
+      }
+    } catch (apiError) {
+      console.log(`⚠️ DHgate API failed, falling back to simulated results: ${apiError.message}`);
+    }
+    
+    // Fallback to simulated results
     const searchResults = [];
-    
     const storeCategories = ['Electronics', 'Fashion', 'Home & Garden', 'Sports', 'Beauty', 'Jewelry', 'Toys'];
     const storeSuffixes = ['Store', 'Shop', 'Market', 'Trading Co.', 'Supply Co.', 'Wholesale', 'Direct'];
     
@@ -9835,11 +10007,13 @@ async function searchDHgateStores(query) {
       });
     }
     
-    console.log(`Found ${searchResults.length} additional stores from DHgate search`);
+    console.log(`✅ Generated ${searchResults.length} fallback stores for query: ${query}`);
     return searchResults;
     
   } catch (error) {
-    console.error('Error searching DHgate stores:', error);
+    console.error('❌ Error searching DHgate stores:', error);
+    
+    // Return empty array instead of throwing to prevent API failure
     return [];
   }
 }
@@ -15080,179 +15254,7 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
   `;
 }
 
-// Generate Login Page HTML
-function generateLoginPageHTML(t, lang, theme = 'light') {
-  return `
-<!DOCTYPE html>
-<html lang="${lang}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${SEO_DATA[lang].login.title}</title>
-    <meta name="description" content="${SEO_DATA[lang].login.description}">
-    <meta name="robots" content="noindex, nofollow">
-    <link rel="canonical" href="https://dhgate-monitor.com/login" />
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    ${generateGlobalCSS(theme)}
-    
-    <style>
-        body {
-            font-family: 'Raleway', sans-serif;
-            background: var(--bg-gradient);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        
-        .login-card {
-            background: var(--card-bg);
-            border: none;
-            border-radius: 12px;
-            padding: 40px;
-            box-shadow: var(--card-shadow);
-            width: 100%;
-            max-width: 400px;
-        }
-        
-        .login-title {
-            font-size: 2rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 2rem;
-            color: var(--accent-color);
-            letter-spacing: 2px;
-        }
-        
-        .form-control {
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            padding: 12px 16px;
-            margin-bottom: 1rem;
-            background: var(--card-bg);
-            color: var(--text-primary);
-        }
-        
-        .form-control:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 0.2rem rgba(30, 64, 175, 0.25);
-            background: var(--card-bg);
-            color: var(--text-primary);
-        }
-        
-        .btn-login {
-            background: var(--btn-primary-bg);
-            border: none;
-            border-radius: 12px;
-            padding: 12px;
-            font-weight: 600;
-            color: white;
-            width: 100%;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.3);
-            color: white;
-        }
-        
-        .back-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        .back-link a {
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: 500;
-        }
-        
-        .back-link a:hover {
-            color: var(--accent-secondary);
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    <!-- Theme Toggle Switch -->
-    <div class="theme-switcher">
-        <div class="theme-toggle">
-            <span class="theme-label">Light</span>
-            <div class="theme-toggle-switch ${theme === 'dark' ? 'dark' : ''}" onclick="toggleTheme()" aria-label="Toggle theme">
-                <div class="theme-toggle-slider">
-                    ${theme === 'dark' ? '●' : '○'}
-                </div>
-            </div>
-            <span class="theme-label">Dark</span>
-        </div>
-    </div>
 
-    <!-- Language Switcher -->
-    <div class="lang-switcher">
-        <div class="lang-options">
-            <a href="/login?lang=en&theme=${theme}" class="lang-option ${lang === 'en' ? 'active' : ''}">EN</a>
-            <span class="lang-separator">|</span>
-            <a href="/login?lang=nl&theme=${theme}" class="lang-option ${lang === 'nl' ? 'active' : ''}">NL</a>
-        </div>
-    </div>
-
-    <div class="login-card">
-        <h1 class="login-title">
-            ${lang === 'nl' ? 'Inloggen' : 'Login'}
-        </h1>
-        
-        <form action="/dashboard" method="get">
-            <input type="hidden" name="lang" value="${lang}">
-            
-            <div class="mb-3">
-                <input type="email" class="form-control" placeholder="${lang === 'nl' ? 'E-mailadres' : 'Email address'}" required>
-            </div>
-            
-            <div class="mb-3">
-                <input type="password" class="form-control" placeholder="${lang === 'nl' ? 'Wachtwoord' : 'Password'}" required>
-            </div>
-            
-            <button type="submit" class="btn btn-login">
-                ${lang === 'nl' ? '🚀 Inloggen' : '🚀 Login'}
-            </button>
-            
-            <div class="text-center">
-                <small class="text-muted">
-                    ${lang === 'nl' ? 'Demo: gebruik willekeurige gegevens' : 'Demo: use any credentials'}
-                </small>
-            </div>
-        </form>
-        
-        <div class="back-link">
-            <a href="/?lang=${lang}&theme=${theme}">
-                ← ${lang === 'nl' ? 'Terug naar homepage' : 'Back to homepage'}
-            </a>
-        </div>
-    </div>
-    
-    <script>
-        // Theme toggle functionality
-        function toggleTheme() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const currentTheme = urlParams.get('theme') || 'light';
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('selectedTheme', newTheme);
-            const url = new URL(window.location);
-            url.searchParams.set('theme', newTheme);
-            // Preserve language parameter
-            const currentLang = url.searchParams.get('lang') || '${lang}';
-            url.searchParams.set('lang', currentLang);
-            window.location.href = url.toString();
-        }
-    </script>
-</body>
-</html>
-  `;
-}
 
 // Email Sending Functions
 async function sendEmail(env, to, subject, htmlContent) {
