@@ -9763,14 +9763,14 @@ async function handleStoreSearch(request, env) {
     // Use CacheUtils for optimized store database retrieval with retry
     const stores = await ErrorHandler.withRetry(async () => {
       return await CacheUtils.getOrSet(
-        env.DHGATE_MONITOR_KV,
-        'store_database',
-        async () => {
+      env.DHGATE_MONITOR_KV,
+      'store_database',
+      async () => {
           console.log('🔄 No cached stores, attempting fresh scrape...');
-          return await scrapeDHgateSitemaps();
-        },
-        6 * 60 * 60 // 6 hours
-      );
+        return await scrapeDHgateSitemaps();
+      },
+      6 * 60 * 60 // 6 hours
+    );
     }, 3, 1000);
     
     // Filter stores based on query
@@ -9785,16 +9785,16 @@ async function handleStoreSearch(request, env) {
       console.log(`🔄 Enhancing search results with DHgate search for: ${query}`);
       
       try {
-        const additionalStores = await searchDHgateStores(query);
-        
-        // Add unique stores that aren't already in our results
-        for (const store of additionalStores) {
+      const additionalStores = await searchDHgateStores(query);
+      
+      // Add unique stores that aren't already in our results
+      for (const store of additionalStores) {
           const exists = filteredStores.some(existing => 
             existing.name.toLowerCase() === store.name.toLowerCase()
           );
-          if (!exists) {
-            filteredStores.push(store);
-          }
+        if (!exists) {
+          filteredStores.push(store);
+        }
         }
         
         console.log(`✅ Enhanced results with ${additionalStores.length} additional stores`);
