@@ -6014,8 +6014,11 @@ async function handleNewsroomPage(request, env) {
     return true;
   });
   
-  // Use Prepr articles or fallback to hardcoded ones if Prepr fails
-  const finalArticles = paginatedArticles.length > 0 ? paginatedArticles : [
+  // Pagination
+  const finalTotalPages = Math.ceil(filteredArticles.length / articlesPerPage);
+  
+  // Use Prepr articles from filtering, or fallback to hardcoded ones if Prepr fails  
+  const finalArticles = filteredArticles.length > 0 ? filteredArticles.slice(offset, offset + articlesPerPage) : [
     {
       id: 1,
       slug: 'dhgate-monitor-launches-new-features',
@@ -6767,7 +6770,7 @@ async function handleNewsroomPage(request, env) {
                 </section>
                 
                 <!-- Pagination -->
-                ${totalPages > 1 ? `
+                ${finalTotalPages > 1 ? `
                 <nav class="pagination" role="navigation" aria-label="Pagination">
                     ${page > 1 ? `
                     <a href="?${new URLSearchParams({...Object.fromEntries(url.searchParams), page: page - 1})}" 
@@ -6776,14 +6779,14 @@ async function handleNewsroomPage(request, env) {
                     </a>
                     ` : ''}
                     
-                    ${Array.from({length: totalPages}, (_, i) => i + 1).map(pageNum => `
+                    ${Array.from({length: finalTotalPages}, (_, i) => i + 1).map(pageNum => `
                     <a href="?${new URLSearchParams({...Object.fromEntries(url.searchParams), page: pageNum})}" 
                        class="pagination-button ${pageNum === page ? 'active' : ''}">
                         ${pageNum}
                     </a>
                     `).join('')}
                     
-                    ${page < totalPages ? `
+                    ${page < finalTotalPages ? `
                     <a href="?${new URLSearchParams({...Object.fromEntries(url.searchParams), page: page + 1})}" 
                        class="pagination-button">
                         Next →
