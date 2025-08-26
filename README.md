@@ -46,6 +46,13 @@ In de dynamische wereld van e-commerce is het cruciaal om continu inzicht te heb
 - **Conversie Monitoring**: Tracking van dalende conversieratio's
 - **Custom Thresholds**: Configureerbare alerting op basis van business requirements
 
+### Content Management
+- **Newsroom**: Dynamische nieuwsartikelen beheerd via Prepr CMS
+- **GraphQL API**: Real-time content ophalen met filtering en paginering
+- **Multi-taal Support**: Nederlandse en Engelse content versies
+- **SEO Geoptimaliseerd**: Meta tags, structured data en sociale media integratie
+- **Responsive Design**: Mobile-first artikelen met moderne typografie
+
 ---
 
 ## 📊 Dashboard & Interface
@@ -75,11 +82,13 @@ Het platform bevat een geavanceerd testplan systeem dat:
 - **Backend**: Cloudflare Workers voor serverless performance
 - **Frontend**: React met TailwindCSS en shadcn/ui componenten
 - **Database**: D1 (SQLite) voor persistent data storage
+- **CMS**: Prepr headless CMS voor content management
 - **Caching**: KV storage voor optimale performance
 - **Monitoring**: Custom health checks en alerting systemen
 
 ### Integraties
 - **Google Analytics 4**: Uitgebreide gebruikersanalyse en tracking
+- **Prepr CMS**: Headless content management system voor nieuwsartikelen
 - **Test Pipelines**: Geautomatiseerde QA en compliance testing
 - **Monitoring Endpoints**: Real-time health checks voor alle services
 - **Email Services**: Geautomatiseerde notificaties en rapportages
@@ -188,11 +197,13 @@ The platform includes an advanced test plan system that:
 - **Backend**: Cloudflare Workers for serverless performance
 - **Frontend**: React with TailwindCSS and shadcn/ui components
 - **Database**: D1 (SQLite) for persistent data storage
+- **CMS**: Prepr headless CMS for content management
 - **Caching**: KV storage for optimal performance
 - **Monitoring**: Custom health checks and alerting systems
 
 ### Integrations
 - **Google Analytics 4**: Comprehensive user analysis and tracking
+- **Prepr CMS**: Headless content management system for news articles
 - **Test Pipelines**: Automated QA and compliance testing
 - **Monitoring Endpoints**: Real-time health checks for all services
 - **Email Services**: Automated notifications and reporting

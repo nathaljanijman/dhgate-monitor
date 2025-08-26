@@ -5901,8 +5901,19 @@ async function fetchPreprArticle(slug) {
         _slug
         _created_on
         _changed_on
+        intro
+        body {
+          __typename
+          ... on Text {
+            text
+          }
+        }
         auteur {
           name
+        }
+        publicatiedatum
+        afbeeldingen {
+          url
         }
       }
     }
@@ -5934,15 +5945,15 @@ async function fetchPreprArticle(slug) {
       id: item._id,
       slug: item._slug,
       title: item.title,
-      excerpt: 'Artikel uit Prepr CMS', // Fallback text since samenvatting field doesn't exist
-      content: `<p>${item.title}</p><p>Dit artikel is geladen uit Prepr CMS.</p>`, // Basic content
+      excerpt: item.intro || 'Geen samenvatting beschikbaar',
+      content: item.body?.map(block => block.text || '').join('<br><br>') || `<p>Geen content beschikbaar.</p>`,
       author: item.auteur?.[0]?.name || 'Redactie',
-      publishedAt: item._created_on,
+      publishedAt: item.publicatiedatum || item._created_on,
       updatedAt: item._changed_on,
-      image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
+      image: item.afbeeldingen?.[0]?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
       category: 'general',
       tags: [],
-      readTime: 2,
+      readTime: Math.max(1, Math.ceil((item.intro?.length || 100) / 200)),
       views: 0,
       featured: false
     };
@@ -6000,24 +6011,8 @@ async function handleNewsroomPage(request, env) {
   // Pagination
   const finalTotalPages = Math.ceil(filteredArticles.length / articlesPerPage);
   
-  // Use Prepr articles from filtering, or fallback to hardcoded ones if Prepr fails  
-  const finalArticles = filteredArticles.length > 0 ? filteredArticles.slice(offset, offset + articlesPerPage) : [
-    {
-      id: 1,
-      slug: 'dhgate-monitor-launches-new-features',
-      title: lang === 'nl' ? 'DHgate Monitor lanceert nieuwe features voor betere winkelmonitoring' : 'DHgate Monitor launches new features for better store monitoring',
-      excerpt: lang === 'nl' ? 'Ontdek de nieuwste features die het monitoren van DHgate winkels nog eenvoudiger maken.' : 'Discover the latest features that make monitoring DHgate stores even easier.',
-      content: lang === 'nl' ? 'Volledige artikel content hier...' : 'Full article content here...',
-      author: 'DHgate Monitor Team',
-      publishedAt: '2024-01-15T10:00:00Z',
-      readTime: 3,
-      category: 'product-updates',
-      tags: ['features', 'monitoring', 'dhgate'],
-      image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
-      views: 1247,
-      featured: true
-    }
-  ];
+  // Use only Prepr articles - no fallbacks
+  const finalArticles = filteredArticles.slice(offset, offset + articlesPerPage);
   
   const t = lang === 'nl' ? {
     title: 'Newsroom',
@@ -6863,144 +6858,9 @@ async function handleNewsroomArticle(request, env) {
   // Fetch article from Prepr CMS
   let article = await fetchPreprArticle(slug);
   
-  // If article not found in Prepr, try fallback articles
+  // If article not found in Prepr, redirect to newsroom
   if (!article) {
-    // Fallback articles for development/demo
-    const fallbackArticles = [
-    {
-      id: 1,
-      slug: 'dhgate-monitor-launches-new-features',
-      title: lang === 'nl' ? 'DHgate Monitor lanceert nieuwe features voor betere winkelmonitoring' : 'DHgate Monitor launches new features for better store monitoring',
-      excerpt: lang === 'nl' ? 'Ontdek de nieuwste features die het monitoren van DHgate winkels nog eenvoudiger maken.' : 'Discover the latest features that make monitoring DHgate stores even easier.',
-      content: lang === 'nl' ? `
-        <p>DHgate Monitor is verheugd om de lancering van nieuwe features aan te kondigen die het monitoren van DHgate winkels nog eenvoudiger en effectiever maken.</p>
-        
-        <h2>Nieuwe Features</h2>
-        <p>Onze nieuwste update bevat verschillende verbeteringen:</p>
-        <ul>
-          <li><strong>Real-time monitoring:</strong> Ontvang directe updates wanneer er veranderingen zijn in je gemonitorde winkels</li>
-          <li><strong>Uitgebreide analytics:</strong> Gedetailleerde inzichten in verkoopprestaties en trends</li>
-          <li><strong>Verbeterde notificaties:</strong> Meer flexibele en gepersonaliseerde meldingen</li>
-          <li><strong>Mobile app:</strong> Monitor je winkels onderweg met onze nieuwe mobile applicatie</li>
-        </ul>
-        
-        <h2>Hoe het werkt</h2>
-        <p>De nieuwe features zijn direct beschikbaar voor alle bestaande gebruikers. Je hoeft niets te doen om de verbeteringen te activeren - ze worden automatisch toegepast op je account.</p>
-        
-        <h2>Toekomstige Updates</h2>
-        <p>We blijven werken aan verdere verbeteringen en nieuwe features. Houd onze newsroom in de gaten voor de laatste updates.</p>
-      ` : `
-        <p>DHgate Monitor is excited to announce the launch of new features that make monitoring DHgate stores even easier and more effective.</p>
-        
-        <h2>New Features</h2>
-        <p>Our latest update includes several improvements:</p>
-        <ul>
-          <li><strong>Real-time monitoring:</strong> Receive instant updates when there are changes in your monitored stores</li>
-          <li><strong>Enhanced analytics:</strong> Detailed insights into sales performance and trends</li>
-          <li><strong>Improved notifications:</strong> More flexible and personalized alerts</li>
-          <li><strong>Mobile app:</strong> Monitor your stores on the go with our new mobile application</li>
-        </ul>
-        
-        <h2>How it works</h2>
-        <p>The new features are immediately available to all existing users. You don't need to do anything to activate the improvements - they are automatically applied to your account.</p>
-        
-        <h2>Future Updates</h2>
-        <p>We continue to work on further improvements and new features. Keep an eye on our newsroom for the latest updates.</p>
-      `,
-      author: 'DHgate Monitor Team',
-      publishedAt: '2024-01-15T10:00:00Z',
-      readTime: 3,
-      category: 'product-updates',
-      tags: ['features', 'monitoring', 'dhgate'],
-      image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
-      views: 1247,
-      featured: true
-    },
-    {
-      id: 2,
-      slug: 'how-to-optimize-your-dhgate-store',
-      title: lang === 'nl' ? 'Hoe je je DHgate winkel kunt optimaliseren voor betere verkopen' : 'How to optimize your DHgate store for better sales',
-      excerpt: lang === 'nl' ? 'Praktische tips en strategieën om je DHgate winkel te optimaliseren en meer verkopen te genereren.' : 'Practical tips and strategies to optimize your DHgate store and generate more sales.',
-      content: lang === 'nl' ? `
-        <p>Het optimaliseren van je DHgate winkel is cruciaal voor het behalen van betere verkopen en het aantrekken van meer klanten. In dit artikel delen we praktische tips en strategieën.</p>
-        
-        <h2>Productbeschrijvingen optimaliseren</h2>
-        <p>Zorg ervoor dat je productbeschrijvingen gedetailleerd en overtuigend zijn:</p>
-        <ul>
-          <li>Gebruik duidelijke, beschrijvende titels</li>
-          <li>Voeg hoogwaardige productafbeeldingen toe</li>
-          <li>Schrijf gedetailleerde beschrijvingen met voordelen</li>
-          <li>Vermeld specificaties en technische details</li>
-        </ul>
-        
-        <h2>Prijzen strategisch instellen</h2>
-        <p>Competitieve prijzen zijn essentieel voor succes op DHgate:</p>
-        <ul>
-          <li>Onderzoek de marktprijzen van vergelijkbare producten</li>
-          <li>Bied bulk kortingen aan</li>
-          <li>Overweeg seizoensgebonden prijzen</li>
-          <li>Houd je winstmarges in de gaten</li>
-        </ul>
-        
-        <h2>Klantenservice verbeteren</h2>
-        <p>Uitstekende klantenservice kan het verschil maken:</p>
-        <ul>
-          <li>Reageer snel op klantvragen</li>
-          <li>Bied meertalige ondersteuning</li>
-          <li>Los problemen proactief op</li>
-          <li>Verzamel en handel naar klantfeedback</li>
-        </ul>
-      ` : `
-        <p>Optimizing your DHgate store is crucial for achieving better sales and attracting more customers. In this article, we share practical tips and strategies.</p>
-        
-        <h2>Optimize Product Descriptions</h2>
-        <p>Make sure your product descriptions are detailed and compelling:</p>
-        <ul>
-          <li>Use clear, descriptive titles</li>
-          <li>Add high-quality product images</li>
-          <li>Write detailed descriptions with benefits</li>
-          <li>Include specifications and technical details</li>
-        </ul>
-        
-        <h2>Set Strategic Prices</h2>
-        <p>Competitive pricing is essential for success on DHgate:</p>
-        <ul>
-          <li>Research market prices of similar products</li>
-          <li>Offer bulk discounts</li>
-          <li>Consider seasonal pricing</li>
-          <li>Monitor your profit margins</li>
-        </ul>
-        
-        <h2>Improve Customer Service</h2>
-        <p>Excellent customer service can make the difference:</p>
-        <ul>
-          <li>Respond quickly to customer inquiries</li>
-          <li>Offer multilingual support</li>
-          <li>Solve problems proactively</li>
-          <li>Collect and act on customer feedback</li>
-        </ul>
-      `,
-      author: 'Sarah Johnson',
-      publishedAt: '2024-01-10T14:30:00Z',
-      readTime: 5,
-      category: 'monitoring-tips',
-      tags: ['optimization', 'sales', 'tips'],
-      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop&auto=format',
-      views: 892,
-      featured: false
-    }
-  ];
-    
-    // Try to find fallback article by slug
-    const fallbackArticle = fallbackArticles.find(a => a.slug === slug);
-    
-    if (!fallbackArticle) {
-      // Article not found - redirect to newsroom
-      return Response.redirect(`${url.origin}/newsroom?lang=${lang}&theme=${theme}`, 302);
-    }
-    
-    // Use fallback article
-    article = fallbackArticle;
+    return Response.redirect(`${url.origin}/newsroom?lang=${lang}&theme=${theme}`, 302);
   }
   
   const t = lang === 'nl' ? {
