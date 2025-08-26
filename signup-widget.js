@@ -1614,7 +1614,7 @@ function generateWidgetStoreBrowser(lang, theme) {
       // Make widgetStores globally available
       window.widgetStores = JSON.parse('${JSON.stringify(featuredStores).replace(/'/g, "\\'")}');
       
-      window.selectWidgetStore = function(storeId) {
+      function selectWidgetStore(storeId) {
         console.log('Widget store selected:', storeId);
         console.log('Function called successfully!');
         
@@ -1697,7 +1697,7 @@ function generateWidgetStoreBrowser(lang, theme) {
         }
       }
       
-      window.addWidgetCustomStore = function() {
+      function addWidgetCustomStore() {
         console.log('Custom store function called!');
         
         const urlInput = document.getElementById('widget-custom-store');
@@ -1774,8 +1774,8 @@ function generateWidgetStoreBrowser(lang, theme) {
       console.log('Widget store browser initialized');
       console.log('Available stores:', window.widgetStores);
       console.log('Global functions available:', {
-        selectWidgetStore: typeof window.selectWidgetStore,
-        addWidgetCustomStore: typeof window.addWidgetCustomStore
+        selectWidgetStore: typeof selectWidgetStore,
+        addWidgetCustomStore: typeof addWidgetCustomStore
       });
       
       // Force initialization after DOM is loaded
@@ -1783,11 +1783,11 @@ function generateWidgetStoreBrowser(lang, theme) {
         console.log('DOM loaded - initializing widget functions');
         
         // Re-initialize functions to ensure they're available
-        if (typeof window.selectWidgetStore !== 'function') {
+        if (typeof selectWidgetStore !== 'function') {
           console.error('selectWidgetStore function not found!');
         }
         
-        if (typeof window.addWidgetCustomStore !== 'function') {
+        if (typeof addWidgetCustomStore !== 'function') {
           console.error('addWidgetCustomStore function not found!');
         }
         
@@ -1803,7 +1803,7 @@ function generateWidgetStoreBrowser(lang, theme) {
       // Tags functionality
       let selectedTags = [];
       
-      window.addTag = function(tag) {
+      function addTag(tag) {
         const cleanTag = tag.trim().toLowerCase();
         if (cleanTag && !selectedTags.includes(cleanTag)) {
           selectedTags.push(cleanTag);
@@ -1831,7 +1831,7 @@ function generateWidgetStoreBrowser(lang, theme) {
         }
       }
       
-      window.removeTag = function(tag) {
+      function removeTag(tag) {
         selectedTags = selectedTags.filter(t => t !== tag);
         updateTagsDisplay();
         updateTagsInput();
