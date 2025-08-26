@@ -373,18 +373,44 @@ ${generateWidgetStoreBrowser(lang, theme)}
         <div class="widget-step" data-step="3">
           <div class="step-content">
             <h3 class="step-title">${t.step3}</h3>
-            <p class="step-description">${t.step3Desc}</p>
+            <p class="step-description">${lang === 'nl' ? 'Welke producten wil je monitoren? Voeg zoektermen toe om specifieke producten te vinden' : 'Which products do you want to monitor? Add search terms to find specific products'}</p>
             
-            <div class="form-group">
-              <input 
-                type="text" 
-                id="widget-tags" 
-                name="tags" 
-                class="widget-input"
-                placeholder="${t.tagsPlaceholder}"
-                required
-              >
-              <div class="form-help">${t.tagsHelp}</div>
+            <!-- Smart Tags Input -->
+            <div class="tags-input-container">
+              <div class="tags-input-wrapper">
+                <div id="tags-display" class="tags-display"></div>
+                <input 
+                  type="text" 
+                  id="widget-tags-input" 
+                  class="widget-input tags-input"
+                  placeholder="${lang === 'nl' ? 'Typ een zoekterm en druk op Enter...' : 'Type a search term and press Enter...'}"
+                >
+              </div>
+              
+              <!-- Popular Tags Suggestions -->
+              <div class="popular-tags">
+                <h4 class="popular-tags-title">${lang === 'nl' ? 'Populaire zoektermen:' : 'Popular search terms:'}</h4>
+                <div class="tags-suggestions">
+                  <button type="button" class="tag-suggestion" onclick="addTag('jersey')">jersey</button>
+                  <button type="button" class="tag-suggestion" onclick="addTag('shirt')">shirt</button>
+                  <button type="button" class="tag-suggestion" onclick="addTag('sneakers')">sneakers</button>
+                  <button type="button" class="tag-suggestion" onclick="addTag('handbag')">handbag</button>
+                  <button type="button" class="tag-suggestion" onclick="addTag('watch')">watch</button>
+                  <button type="button" class="tag-suggestion" onclick="addTag('phone')">phone</button>
+                  <button type="button" class="tag-suggestion" onclick="addTag('dress')">dress</button>
+                  <button type="button" class="tag-suggestion" onclick="addTag('jacket')">jacket</button>
+                </div>
+              </div>
+              
+              <!-- Hidden input for form submission -->
+              <input type="hidden" id="widget-tags" name="tags" required>
+            </div>
+            
+            <div class="form-help">
+              ${lang === 'nl' ? 
+                '💡 Tip: Voeg meerdere zoektermen toe voor betere resultaten. We controleren producttitels, beschrijvingen en categorieën.' : 
+                '💡 Tip: Add multiple search terms for better results. We check product titles, descriptions and categories.'
+              }
             </div>
           </div>
           
@@ -398,17 +424,77 @@ ${generateWidgetStoreBrowser(lang, theme)}
         <div class="widget-step" data-step="4">
           <div class="step-content">
             <h3 class="step-title">${t.step4}</h3>
-            <p class="step-description">${t.step4Desc}</p>
+            <p class="step-description">${lang === 'nl' ? 'Controleer je instellingen en start monitoring' : 'Review your settings and start monitoring'}</p>
             
             <div class="summary-card">
-              <div class="summary-item">
-                <strong>Email:</strong> <span id="summary-email"></span>
+              <!-- Email Summary -->
+              <div class="summary-section">
+                <div class="summary-header">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  <h4>${lang === 'nl' ? 'Email Notificaties' : 'Email Notifications'}</h4>
+                </div>
+                <div class="summary-content">
+                  <span id="summary-email"></span>
+                </div>
               </div>
-              <div class="summary-item">
-                <strong>${lang === 'nl' ? 'Winkel:' : 'Store:'}:</strong> <span id="summary-store"></span>
+              
+              <!-- Stores Summary -->
+              <div class="summary-section">
+                <div class="summary-header">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                    <polyline points="3.27,6.96 12,12.01 20.73,6.96"/>
+                  </svg>
+                  <h4>${lang === 'nl' ? 'Gemonitorde Winkels' : 'Monitored Stores'}</h4>
+                  <span class="store-count" id="summary-store-count"></span>
+                </div>
+                <div class="summary-content" id="summary-stores-list">
+                  <!-- Stores will be populated here -->
+                </div>
               </div>
-              <div class="summary-item">
-                <strong>${lang === 'nl' ? 'Zoektermen:' : 'Search terms:'}:</strong> <span id="summary-tags"></span>
+              
+              <!-- Tags Summary -->
+              <div class="summary-section">
+                <div class="summary-header">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+                  </svg>
+                  <h4>${lang === 'nl' ? 'Zoektermen' : 'Search Terms'}</h4>
+                  <span class="tags-count" id="summary-tags-count"></span>
+                </div>
+                <div class="summary-content" id="summary-tags-list">
+                  <!-- Tags will be populated here -->
+                </div>
+              </div>
+              
+              <!-- Monitoring Info -->
+              <div class="monitoring-info">
+                <div class="info-item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12,6 12,12 16,14"/>
+                  </svg>
+                  <span>${lang === 'nl' ? '24/7 monitoring van nieuwe producten' : '24/7 monitoring of new products'}</span>
+                </div>
+                <div class="info-item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  <span>${lang === 'nl' ? 'Directe email notificaties' : 'Direct email notifications'}</span>
+                </div>
+                <div class="info-item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 12l2 2 4-4"/>
+                    <path d="M21 12c-1 0-2-1-2-2s1-2 2-2 2 1 2 2-1 2-2 2z"/>
+                    <path d="M3 12c1 0 2-1 2-2s-1-2-2-2-2 1-2 2 1 2 2 2z"/>
+                  </svg>
+                  <span>${lang === 'nl' ? 'Gratis en zonder verplichtingen' : 'Free and no obligations'}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -637,6 +723,113 @@ ${generateWidgetStoreBrowser(lang, theme)}
         padding: 1.5rem;
       }
       
+      .summary-section {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-light);
+      }
+      
+      .summary-section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+      
+      .summary-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+      }
+      
+      .summary-header svg {
+        color: var(--accent-color);
+      }
+      
+      .summary-header h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+        flex: 1;
+      }
+      
+      .store-count, .tags-count {
+        background: var(--accent-color);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      
+      .summary-content {
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+      
+      .summary-stores {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .summary-store-item {
+        background: rgba(37, 99, 235, 0.1);
+        border: 1px solid rgba(37, 99, 235, 0.2);
+        border-radius: 8px;
+        padding: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .summary-store-item svg {
+        color: var(--accent-color);
+        flex-shrink: 0;
+      }
+      
+      .summary-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      
+      .summary-tag {
+        background: var(--accent-color);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+      
+      .monitoring-info {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1.5rem;
+      }
+      
+      .info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+      }
+      
+      .info-item:last-child {
+        margin-bottom: 0;
+      }
+      
+      .info-item svg {
+        color: #10b981;
+        flex-shrink: 0;
+      }
+      
       .summary-item {
         margin-bottom: 0.75rem;
         padding-bottom: 0.75rem;
@@ -725,7 +918,7 @@ ${generateWidgetStoreBrowser(lang, theme)}
         } else if (currentWidgetStep === 3) {
           const tags = document.getElementById('widget-tags').value;
           if (!tags.trim()) {
-            alert('${lang === 'nl' ? 'Voer zoektermen in' : 'Please enter search terms'}');
+            alert('${lang === 'nl' ? 'Voer minimaal één zoekterm in' : 'Please enter at least one search term'}');
             return;
           }
         }
@@ -768,27 +961,77 @@ ${generateWidgetStoreBrowser(lang, theme)}
         const storeUrl = document.getElementById('selected_store_url')?.value || '';
         const storeName = document.getElementById('selected_store_name')?.value || storeUrl;
         
+        // Update email
         document.getElementById('summary-email').textContent = email;
         
-        // Handle multiple stores in summary
+        // Update stores summary
+        updateStoresSummary(storeUrl, storeName);
+        
+        // Update tags summary
+        updateTagsSummary(tags);
+      }
+      
+      function updateStoresSummary(storeUrl, storeName) {
+        const storesList = document.getElementById('summary-stores-list');
+        const storeCount = document.getElementById('summary-store-count');
+        
         if (storeUrl.startsWith('[')) {
           // Multiple stores (JSON array)
           try {
             const storeUrls = JSON.parse(storeUrl);
             const storeNames = storeName.split(', ');
-            const summaryText = storeNames.map((name, index) => 
-              name + ' (' + storeUrls[index] + ')'
-            ).join(', ');
-            document.getElementById('summary-store').textContent = summaryText;
+            
+            storeCount.textContent = storeNames.length + ' ${lang === 'nl' ? 'winkels' : 'stores'}';
+            
+            storesList.innerHTML = storeNames.map((name, index) => 
+              '<div class="summary-store-item">' +
+                '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                  '<path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>' +
+                  '<polyline points="3.27,6.96 12,12.01 20.73,6.96"/>' +
+                '</svg>' +
+                '<span>' + name + '</span>' +
+              '</div>'
+            ).join('');
           } catch (e) {
-            document.getElementById('summary-store').textContent = storeName;
+            storeCount.textContent = '1 ${lang === 'nl' ? 'winkel' : 'store'}';
+            storesList.innerHTML = 
+              '<div class="summary-store-item">' +
+                '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                  '<path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>' +
+                  '<polyline points="3.27,6.96 12,12.01 20.73,6.96"/>' +
+                '</svg>' +
+                '<span>' + storeName + '</span>' +
+              '</div>';
           }
         } else {
           // Single store
-          document.getElementById('summary-store').textContent = storeName;
+          storeCount.textContent = '1 ${lang === 'nl' ? 'winkel' : 'store'}';
+          storesList.innerHTML = 
+            '<div class="summary-store-item">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                '<path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>' +
+                '<polyline points="3.27,6.96 12,12.01 20.73,6.96"/>' +
+              '</svg>' +
+              '<span>' + storeName + '</span>' +
+            '</div>';
         }
+      }
+      
+      function updateTagsSummary(tags) {
+        const tagsList = document.getElementById('summary-tags-list');
+        const tagsCount = document.getElementById('summary-tags-count');
         
-        document.getElementById('summary-tags').textContent = tags;
+        if (tags) {
+          const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+          tagsCount.textContent = tagsArray.length + ' ${lang === 'nl' ? 'termen' : 'terms'}';
+          
+          tagsList.innerHTML = tagsArray.map(tag => 
+            '<span class="summary-tag">' + tag + '</span>'
+          ).join('');
+        } else {
+          tagsCount.textContent = '0 ${lang === 'nl' ? 'termen' : 'terms'}';
+          tagsList.innerHTML = '<span style="color: var(--text-muted); font-style: italic;">${lang === 'nl' ? 'Geen zoektermen toegevoegd' : 'No search terms added'}</span>';
+        }
       }
       
       function submitWidgetForm() {
@@ -1016,6 +1259,130 @@ function generateWidgetStoreBrowser(lang, theme) {
       .stat-value {
         color: var(--text-primary);
         font-weight: 600;
+      }
+      
+      /* Tags Input Styling */
+      .tags-input-container {
+        margin-bottom: 1rem;
+      }
+      
+      .tags-input-wrapper {
+        position: relative;
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+        background: var(--bg-primary);
+        min-height: 60px;
+        padding: 0.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .tags-input-wrapper:focus-within {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+      
+      .tags-display {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        flex: 1;
+      }
+      
+      .tag-item {
+        background: var(--accent-color);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        animation: tagAppear 0.3s ease;
+      }
+      
+      @keyframes tagAppear {
+        from {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      
+      .tag-remove {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.75rem;
+        transition: all 0.2s ease;
+      }
+      
+      .tag-remove:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+      }
+      
+      .tags-input {
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        flex: 1;
+        min-width: 120px;
+        padding: 0.5rem 0 !important;
+      }
+      
+      .tags-input:focus {
+        outline: none !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+      
+      .popular-tags {
+        margin-top: 1rem;
+      }
+      
+      .popular-tags-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 0.75rem 0;
+      }
+      
+      .tags-suggestions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      
+      .tag-suggestion {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-light);
+        color: var(--text-secondary);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      
+      .tag-suggestion:hover {
+        background: var(--accent-color);
+        color: white;
+        border-color: var(--accent-color);
+        transform: translateY(-1px);
       }
       
       .widget-store-grid {
@@ -1372,6 +1739,60 @@ function generateWidgetStoreBrowser(lang, theme) {
       
       // Initialize widget store browser
       console.log('Widget store browser initialized');
+      
+      // Tags functionality
+      let selectedTags = [];
+      
+      window.addTag = function(tag) {
+        const cleanTag = tag.trim().toLowerCase();
+        if (cleanTag && !selectedTags.includes(cleanTag)) {
+          selectedTags.push(cleanTag);
+          updateTagsDisplay();
+          updateTagsInput();
+        }
+      };
+      
+      function updateTagsDisplay() {
+        const display = document.getElementById('tags-display');
+        if (!display) return;
+        
+        display.innerHTML = selectedTags.map(tag => 
+          '<div class="tag-item">' +
+            '<span>' + tag + '</span>' +
+            '<button type="button" class="tag-remove" onclick="removeTag(\'' + tag + '\')">×</button>' +
+          '</div>'
+        ).join('');
+      }
+      
+      function updateTagsInput() {
+        const hiddenInput = document.getElementById('widget-tags');
+        if (hiddenInput) {
+          hiddenInput.value = selectedTags.join(', ');
+        }
+      }
+      
+      window.removeTag = function(tag) {
+        selectedTags = selectedTags.filter(t => t !== tag);
+        updateTagsDisplay();
+        updateTagsInput();
+      };
+      
+      // Handle Enter key in tags input
+      document.addEventListener('DOMContentLoaded', function() {
+        const tagsInput = document.getElementById('widget-tags-input');
+        if (tagsInput) {
+          tagsInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              const value = this.value.trim();
+              if (value) {
+                addTag(value);
+                this.value = '';
+              }
+            }
+          });
+        }
+      });
     </script>
   `;
 }
