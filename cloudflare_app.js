@@ -6014,12 +6014,8 @@ async function handleNewsroomPage(request, env) {
     return true;
   });
   
-  // Pagination
-  const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
-  const paginatedArticles = filteredArticles.slice(offset, offset + articlesPerPage);
-  
-  // Fallback articles if Prepr is empty or fails
-  const fallbackArticles = [
+  // Use Prepr articles or fallback to hardcoded ones if Prepr fails
+  const finalArticles = paginatedArticles.length > 0 ? paginatedArticles : [
     {
       id: 1,
       slug: 'dhgate-monitor-launches-new-features',
@@ -6034,88 +6030,8 @@ async function handleNewsroomPage(request, env) {
       image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
       views: 1247,
       featured: true
-    },
-    {
-      id: 2,
-      slug: 'how-to-optimize-your-dhgate-store',
-      title: lang === 'nl' ? 'Hoe je je DHgate winkel kunt optimaliseren voor betere verkopen' : 'How to optimize your DHgate store for better sales',
-      excerpt: lang === 'nl' ? 'Praktische tips en strategieën om je DHgate winkel te optimaliseren en meer verkopen te genereren.' : 'Practical tips and strategies to optimize your DHgate store and generate more sales.',
-      content: lang === 'nl' ? 'Volledige artikel content hier...' : 'Full article content here...',
-      author: 'Sarah Johnson',
-      publishedAt: '2024-01-10T14:30:00Z',
-      readTime: 5,
-      category: 'monitoring-tips',
-      tags: ['optimization', 'sales', 'tips'],
-      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop&auto=format',
-      views: 892,
-      featured: false
-    },
-    {
-      id: 3,
-      slug: 'new-partnership-announcement',
-      title: lang === 'nl' ? 'Nieuwe samenwerking aangekondigd: DHgate Monitor en Global Suppliers' : 'New partnership announced: DHgate Monitor and Global Suppliers',
-      excerpt: lang === 'nl' ? 'We zijn verheugd om onze nieuwe samenwerking met Global Suppliers aan te kondigen.' : 'We are excited to announce our new partnership with Global Suppliers.',
-      content: lang === 'nl' ? 'Volledige artikel content hier...' : 'Full article content here...',
-      author: 'Marketing Team',
-      publishedAt: '2024-01-05T09:15:00Z',
-      readTime: 2,
-      category: 'company-news',
-      tags: ['partnership', 'announcement', 'business'],
-      image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=400&fit=crop&auto=format',
-      views: 567,
-      featured: false
-    },
-    {
-      id: 4,
-      slug: 'trending-products-2024',
-      title: lang === 'nl' ? 'Trending producten op DHgate in 2024: Wat je moet weten' : 'Trending products on DHgate in 2024: What you need to know',
-      excerpt: lang === 'nl' ? 'Een overzicht van de meest populaire producten en trends op DHgate dit jaar.' : 'An overview of the most popular products and trends on DHgate this year.',
-      content: lang === 'nl' ? 'Volledige artikel content hier...' : 'Full article content here...',
-      author: 'Trend Analyst',
-      publishedAt: '2024-01-01T12:00:00Z',
-      readTime: 7,
-      category: 'market-insights',
-      tags: ['trends', 'products', '2024'],
-      image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=400&fit=crop&auto=format',
-      views: 2156,
-      featured: true
     }
   ];
-  
-  // Filter articles based on search parameters
-  let filteredArticles = articles.filter(article => {
-    if (search && !article.title.toLowerCase().includes(search.toLowerCase()) && 
-        !article.excerpt.toLowerCase().includes(search.toLowerCase())) {
-      return false;
-    }
-    if (category && article.category !== category) {
-      return false;
-    }
-    if (tag && !article.tags.includes(tag)) {
-      return false;
-    }
-    return true;
-  });
-  
-  // Sort articles
-  switch (sort) {
-    case 'oldest':
-      filteredArticles.sort((a, b) => new Date(a.publishedAt) - new Date(b.publishedAt));
-      break;
-    case 'popular':
-      filteredArticles.sort((a, b) => b.views - a.views);
-      break;
-    case 'newest':
-    default:
-      filteredArticles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
-      break;
-  }
-  
-  // Pagination
-  const articlesPerPage = 5;
-  const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
-  const startIndex = (page - 1) * articlesPerPage;
-  const paginatedArticles = filteredArticles.slice(startIndex, startIndex + articlesPerPage);
   
   const t = lang === 'nl' ? {
     title: 'Newsroom',
@@ -6806,9 +6722,9 @@ async function handleNewsroomPage(request, env) {
                 </section>
                 
                 <!-- Articles Grid -->
-                ${paginatedArticles.length > 0 ? `
+                ${finalArticles.length > 0 ? `
                 <section class="articles-grid">
-                    ${paginatedArticles.map(article => `
+                    ${finalArticles.map(article => `
                     <article class="article-card" itemscope itemtype="https://schema.org/Article">
                         <a href="/newsroom/${article.slug}?lang=${lang}&theme=${theme}" 
                            class="article-card-link"
