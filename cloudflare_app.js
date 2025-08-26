@@ -5865,7 +5865,7 @@ async function fetchPreprArticles(options = {}) {
       author: item.auteur?.[0]?.name || 'Redactie',
       publishedAt: item._created_on,
       updatedAt: item._changed_on,
-      image: item.afbeeldingen?.[0]?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
+      image: item.afbeeldingen?.[0]?.url || null,
       category: item.categorie || 'general',
       tags: Array.isArray(item.tags) ? item.tags : [],
       readTime: Math.max(1, Math.ceil((item.intro?.length || 100) / 200)), // Estimate reading time
@@ -5990,7 +5990,7 @@ async function fetchPreprArticle(slug) {
       author: item.auteur?.[0]?.name || 'Redactie',
       publishedAt: item.publicatiedatum || item._created_on,
       updatedAt: item._changed_on,
-      image: item.afbeeldingen?.[0]?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
+      image: item.afbeeldingen?.[0]?.url || null,
       category: 'general',
       tags: [],
       readTime: Math.max(1, Math.ceil((item.intro?.length || 100) / 200)),
@@ -6751,10 +6751,12 @@ async function handleNewsroomPage(request, env) {
                            class="article-card-link"
                            itemprop="url">
                             ${article.featured ? '<span class="featured-badge">Featured</span>' : ''}
+                            ${article.image ? `
                             <img src="${article.image}" 
                                  alt="${article.title}" 
                                  class="article-image"
                                  loading="lazy">
+                            ` : ''}
                             <div class="article-content">
                                 <div class="article-meta">
                                     <span class="article-category">${article.category}</span>
@@ -7355,10 +7357,12 @@ async function handleNewsroomArticle(request, env) {
                     </div>
                     
                     <!-- Article Image -->
+                    ${article.image && !article.image.includes('unsplash') ? `
                     <img src="${article.image}" 
                          alt="${article.title}" 
                          class="article-image"
                          loading="lazy">
+                    ` : ''}
                     
                     <!-- Article Content -->
                     <article class="article-content">
