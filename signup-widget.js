@@ -1614,7 +1614,8 @@ function generateWidgetStoreBrowser(lang, theme) {
       // Make widgetStores globally available
       window.widgetStores = JSON.parse('${JSON.stringify(featuredStores).replace(/'/g, "\\'")}');
       
-      function selectWidgetStore(storeId) {
+      // Define functions immediately to ensure they're available
+      window.selectWidgetStore = function(storeId) {
         console.log('Widget store selected:', storeId);
         console.log('Function called successfully!');
         
@@ -1671,33 +1672,7 @@ function generateWidgetStoreBrowser(lang, theme) {
         console.log('Final selected stores:', selectedStores.map(s => s.name));
       };
       
-      function updateSelectedStoresFormData() {
-        if (selectedStores.length === 0) {
-          document.getElementById('selected_store_url').value = '';
-          document.getElementById('selected_store_name').value = '';
-        } else if (selectedStores.length === 1) {
-          document.getElementById('selected_store_url').value = selectedStores[0].url;
-          document.getElementById('selected_store_name').value = selectedStores[0].name;
-        } else {
-          // Multiple stores - store as JSON
-          document.getElementById('selected_store_url').value = JSON.stringify(selectedStores.map(s => s.url));
-          document.getElementById('selected_store_name').value = selectedStores.map(s => s.name).join(', ');
-        }
-      }
-      
-      function updateSelectionCounter() {
-        const counter = document.getElementById('store-selection-counter');
-        if (counter) {
-          if (selectedStores.length === 0) {
-            counter.style.display = 'none';
-          } else {
-            counter.style.display = 'block';
-            counter.textContent = selectedStores.length + ' ' + (lang === 'nl' ? 'winkel(s) geselecteerd' : 'store(s) selected');
-          }
-        }
-      }
-      
-      function addWidgetCustomStore() {
+      window.addWidgetCustomStore = function() {
         console.log('Custom store function called!');
         
         const urlInput = document.getElementById('widget-custom-store');
@@ -1770,12 +1745,42 @@ function generateWidgetStoreBrowser(lang, theme) {
         console.log('Custom store added:', url);
       };
       
+
+      
+      function updateSelectedStoresFormData() {
+        if (selectedStores.length === 0) {
+          document.getElementById('selected_store_url').value = '';
+          document.getElementById('selected_store_name').value = '';
+        } else if (selectedStores.length === 1) {
+          document.getElementById('selected_store_url').value = selectedStores[0].url;
+          document.getElementById('selected_store_name').value = selectedStores[0].name;
+        } else {
+          // Multiple stores - store as JSON
+          document.getElementById('selected_store_url').value = JSON.stringify(selectedStores.map(s => s.url));
+          document.getElementById('selected_store_name').value = selectedStores.map(s => s.name).join(', ');
+        }
+      }
+      
+      function updateSelectionCounter() {
+        const counter = document.getElementById('store-selection-counter');
+        if (counter) {
+          if (selectedStores.length === 0) {
+            counter.style.display = 'none';
+          } else {
+            counter.style.display = 'block';
+            counter.textContent = selectedStores.length + ' ' + (lang === 'nl' ? 'winkel(s) geselecteerd' : 'store(s) selected');
+          }
+        }
+      }
+      
+
+      
       // Initialize widget store browser
       console.log('Widget store browser initialized');
       console.log('Available stores:', window.widgetStores);
       console.log('Global functions available:', {
-        selectWidgetStore: typeof selectWidgetStore,
-        addWidgetCustomStore: typeof addWidgetCustomStore
+        selectWidgetStore: typeof window.selectWidgetStore,
+        addWidgetCustomStore: typeof window.addWidgetCustomStore
       });
       
       // Force initialization after DOM is loaded
@@ -1783,11 +1788,11 @@ function generateWidgetStoreBrowser(lang, theme) {
         console.log('DOM loaded - initializing widget functions');
         
         // Re-initialize functions to ensure they're available
-        if (typeof selectWidgetStore !== 'function') {
+        if (typeof window.selectWidgetStore !== 'function') {
           console.error('selectWidgetStore function not found!');
         }
         
-        if (typeof addWidgetCustomStore !== 'function') {
+        if (typeof window.addWidgetCustomStore !== 'function') {
           console.error('addWidgetCustomStore function not found!');
         }
         
