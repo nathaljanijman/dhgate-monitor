@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHgate Monitor Widget - Embed Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2563eb;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+        
+        .demo-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+        
+        .widget-container {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .widget-iframe {
+            width: 100%;
+            border: none;
+            min-height: 800px;
+        }
+        
+        .embed-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+        
+        .copy-button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+        
+        .copy-button:hover {
+            background: #1d4ed8;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .feature {
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: #2563eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+        
+        .feature h3 {
+            margin: 0 0 0.5rem 0;
+            color: #1e293b;
+        }
+        
+        .feature p {
+            color: #64748b;
+            margin: 0;
+            font-size: 0.875rem;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .demo-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DHgate Monitor Signup Widget</h1>
+        <p class="subtitle">Embeddable signup form for any website</p>
+        
+        <!-- Live Demo Section -->
+        <div class="demo-section">
+            <h2 class="demo-title">🎯 Live Demo</h2>
+            <p>This is how the widget looks when embedded on your website:</p>
+            
+            <div class="widget-container">
+                <iframe 
+                    id="widget-iframe"
+                    class="widget-iframe"
+                    src="http://localhost:3000/widget?lang=nl&theme=light"
+                    title="DHgate Monitor Signup Widget"
+                    allow="clipboard-write"
+                    referrerpolicy="strict-origin-when-cross-origin">
+                </iframe>
+            </div>
+        </div>
+        
+        <!-- Embed Code Section -->
+        <div class="demo-section">
+            <h2 class="demo-title">🔗 Embed Code</h2>
+            <p>Copy and paste this code into your website:</p>
+            
+            <div class="embed-code" id="embed-code">
+&lt;iframe 
+  src="http://localhost:3000/widget?lang=nl&amp;theme=light"
+  width="100%" 
+  height="800"
+  frameborder="0"
+  title="DHgate Monitor Signup"
+  allow="clipboard-write"
+  style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"&gt;
+&lt;/iframe&gt;</div>
+            <button class="copy-button" onclick="copyEmbedCode()">📋 Copy Code</button>
+        </div>
+        
+        <!-- Configuration Section -->
+        <div class="demo-section">
+            <h2 class="demo-title">⚙️ Configuration Options</h2>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Language:</label>
+                <select id="lang-select" onchange="updateWidget()" style="padding: 0.5rem; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <option value="nl">Nederlands</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Theme:</label>
+                <select id="theme-select" onchange="updateWidget()" style="padding: 0.5rem; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Features Section -->
+        <div class="demo-section">
+            <h2 class="demo-title">✨ Features</h2>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7v10c0 5.5 3.8 7.7 9 9 5.2-1.3 9-3.5 9-9V7l-10-5z"/>
+                        </svg>
+                    </div>
+                    <h3>Responsive</h3>
+                    <p>Works perfectly on all devices and screen sizes</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+                            <path d="M7 4V2a1 1 0 0 1 2 0v2h6V2a1 1 0 0 1 2 0v2h2a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h2z"/>
+                        </svg>
+                    </div>
+                    <h3>Multi-language</h3>
+                    <p>Supports Dutch and English with easy switching</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <h3>Modern Design</h3>
+                    <p>Beautiful UI with smooth animations and interactions</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                    </div>
+                    <h3>Fast Loading</h3>
+                    <p>Optimized for performance and quick loading times</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function updateWidget() {
+            const lang = document.getElementById('lang-select').value;
+            const theme = document.getElementById('theme-select').value;
+            const iframe = document.getElementById('widget-iframe');
+            const newSrc = `http://localhost:3000/widget?lang=${lang}&theme=${theme}`;
+            
+            iframe.src = newSrc;
+            updateEmbedCode(lang, theme);
+        }
+        
+        function updateEmbedCode(lang, theme) {
+            const embedCode = document.getElementById('embed-code');
+            embedCode.innerHTML = `&lt;iframe 
+  src="http://localhost:3000/widget?lang=${lang}&amp;theme=${theme}"
+  width="100%" 
+  height="800"
+  frameborder="0"
+  title="DHgate Monitor Signup"
+  allow="clipboard-write"
+  style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"&gt;
+&lt;/iframe&gt;`;
+        }
+        
+        function copyEmbedCode() {
+            const embedCodeText = document.getElementById('embed-code').textContent;
+            navigator.clipboard.writeText(embedCodeText).then(() => {
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = '✅ Copied!';
+                button.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '#2563eb';
+                }, 2000);
+            });
+        }
+        
+        // Listen for widget messages
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'dhgate-monitor-widget') {
+                console.log('Widget event:', event.data.event, event.data.data);
+                
+                if (event.data.event === 'resize') {
+                    const iframe = document.getElementById('widget-iframe');
+                    iframe.style.height = event.data.data.height + 'px';
+                }
+                
+                if (event.data.event === 'signup-success') {
+                    alert('Signup successful! Email: ' + event.data.data.email);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -90,7 +90,8 @@ const CONFIG = {
 // IMPORT ENHANCED ADMIN DASHBOARD
 // ============================================================================
 import { generateEnhancedAdminDashboard } from './enhanced_admin_dashboard.js';
-import { generateEnhancedStoreBrowser } from './enhanced_store_browser.js';
+import { generateEnhancedStoreBrowser } from './enhanced_store_browser_clean.js';
+import { generateSignupWidget } from './signup-widget.js';
 import { API_CONFIG, getRegionsByPriority, calculateRetryDelay } from './api-config.js';
 
 // ============================================================================
@@ -4557,6 +4558,10 @@ export default {
       switch (url.pathname) {
         case '/':
           return await handleLandingPage(request, env);
+        
+        case '/widget':
+        case '/embed':
+          return await handleSignupWidget(request, env);
         
         case '/api/stores/search':
           return await handleStoreSearch(request, env);
@@ -9277,7 +9282,27 @@ async function handleLandingPage(request, env) {
   });
 }
 
-
+// Embeddable Signup Widget Handler
+async function handleSignupWidget(request, env) {
+  const url = new URL(request.url);
+  const lang = url.searchParams.get('lang') || 'nl';
+  const theme = url.searchParams.get('theme') || 'light';
+  
+  // Generate the standalone widget HTML
+  const widgetHTML = generateSignupWidget(env, lang, theme);
+  
+  return new Response(widgetHTML, {
+    headers: { 
+      'Content-Type': 'text/html',
+      'Cache-Control': 'public, max-age=300', // Shorter cache for widgets
+      'X-Content-Type-Options': 'nosniff',
+      // Allow embedding in iframes (no X-Frame-Options)
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
+      // Add iframe-specific headers
+      'X-Robots-Tag': 'noindex, nofollow'
+    }
+  });
+}
 
 // Test Plan Execution Handler
 async function handleTestPlanExecution(request, env) {
@@ -12180,6 +12205,210 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
             background: var(--btn-primary-bg);
         }
         
+        /* ✨ MODERN UX ENHANCEMENTS */
+        .modern-signup {
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(var(--accent-color-rgb), 0.02) 100%);
+            border: 2px solid rgba(var(--accent-color-rgb), 0.1);
+            padding: 3rem 2.5rem;
+        }
+        
+        /* Progress Indicator */
+        .signup-progress {
+            margin-bottom: 3rem;
+        }
+        
+        .progress-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .progress-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 0.5rem 0;
+            letter-spacing: -0.02em;
+        }
+        
+        .progress-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin: 0;
+            font-weight: 400;
+        }
+        
+        .progress-bar-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: linear-gradient(90deg, rgba(var(--accent-color-rgb), 0.08) 0%, rgba(var(--accent-color-rgb), 0.12) 100%);
+            border-radius: 3px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-color) 0%, #3b82f6 50%, #8b5cf6 100%);
+            border-radius: 3px;
+            width: 25%;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 0 2px 8px rgba(var(--accent-color-rgb), 0.3);
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+        
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(var(--accent-color-rgb), 0.05) 100%);
+            border: 2px solid rgba(var(--accent-color-rgb), 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .step-circle::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: conic-gradient(from 0deg, var(--accent-color), #3b82f6, var(--accent-color));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .step-circle svg {
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s ease;
+        }
+        
+        .progress-step.active .step-circle {
+            border-color: var(--accent-color);
+            background: var(--accent-color);
+            color: white;
+            box-shadow: 0 8px 25px rgba(var(--accent-color-rgb), 0.3);
+            transform: scale(1.1);
+        }
+        
+        .progress-step.active .step-circle::before {
+            opacity: 1;
+        }
+        
+        .progress-step.completed .step-circle {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .progress-step.completed .step-circle svg {
+            transform: scale(1.2);
+        }
+        
+        .step-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-align: center;
+            transition: color 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .progress-step.active .step-label {
+            color: var(--accent-color);
+        }
+        
+        .progress-step.completed .step-label {
+            color: #10b981;
+        }
+        
+        /* Enhanced Form Styling */
+        .modern-form {
+            position: relative;
+        }
+        
+        .form-step {
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid rgba(var(--accent-color-rgb), 0.08);
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-step.active {
+            animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .step-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 0.75rem 0;
+            letter-spacing: -0.01em;
+        }
+        
+        .step-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin: 0 0 2rem 0;
+            line-height: 1.6;
+        }
+        
         .subscription-icon {
             width: 80px;
             height: 80px;
@@ -14367,9 +14596,64 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
-                    <div class="subscription-card">
+                    <div class="subscription-card modern-signup">
                         
-                        <form method="POST" action="/subscribe" class="subscription-form" id="progressiveForm" 
+                        <!-- ✨ UX ENHANCEMENT: Progress Indicator -->
+                        <div class="signup-progress">
+                            <div class="progress-header">
+                                <h2 class="progress-title">
+                                    ${lang === 'nl' ? 'Stel je monitoring in' : 'Set up your monitoring'}
+                                </h2>
+                                <p class="progress-subtitle">
+                                    ${lang === 'nl' ? 'Het duurt slechts 2 minuten om te beginnen' : 'It takes just 2 minutes to get started'}
+                                </p>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progressFill"></div>
+                                </div>
+                                <div class="progress-steps">
+                                    <div class="progress-step active" data-step="1">
+                                        <div class="step-circle">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2"/>
+                                                <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2"/>
+                                            </svg>
+                                        </div>
+                                        <span class="step-label">${lang === 'nl' ? 'Email' : 'Email'}</span>
+                                    </div>
+                                    <div class="progress-step" data-step="2">
+                                        <div class="step-circle">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                                <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" stroke="currentColor" stroke-width="2"/>
+                                                <polyline points="3.27,6.96 12,12.01 20.73,6.96" stroke="currentColor" stroke-width="2"/>
+                                                <line x1="12" y1="22.08" x2="12" y2="12" stroke="currentColor" stroke-width="2"/>
+                                            </svg>
+                                        </div>
+                                        <span class="step-label">${lang === 'nl' ? 'Winkel' : 'Store'}</span>
+                                    </div>
+                                    <div class="progress-step" data-step="3">
+                                        <div class="step-circle">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                                                <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1" stroke="currentColor" stroke-width="2"/>
+                                            </svg>
+                                        </div>
+                                        <span class="step-label">${lang === 'nl' ? 'Instellingen' : 'Settings'}</span>
+                                    </div>
+                                    <div class="progress-step" data-step="4">
+                                        <div class="step-circle">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                                <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2"/>
+                                            </svg>
+                                        </div>
+                                        <span class="step-label">${lang === 'nl' ? 'Klaar' : 'Done'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <form method="POST" action="/subscribe" class="subscription-form modern-form" id="progressiveForm" 
                               role="form" aria-label="${lang === 'nl' ? 'Registratieformulier voor DHgate monitoring' : 'Registration form for DHgate monitoring'}"
                               novalidate>
                             <input type="hidden" name="lang" value="${lang}">
@@ -14800,6 +15084,32 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
         let currentStep = 1;
         const totalSteps = 4;
         
+        function updateProgressIndicator(step) {
+            // Update progress fill
+            const progressFill = document.getElementById('progressFill');
+            const progressPercentage = (step / totalSteps) * 100;
+            if (progressFill) {
+                progressFill.style.width = progressPercentage + '%';
+            }
+            
+            // Update progress steps
+            document.querySelectorAll('.progress-step').forEach((stepEl, index) => {
+                const stepNumber = index + 1;
+                stepEl.classList.remove('active', 'completed');
+                
+                if (stepNumber === step) {
+                    stepEl.classList.add('active');
+                } else if (stepNumber < step) {
+                    stepEl.classList.add('completed');
+                }
+            });
+        }
+        
+        // Initialize progress indicator
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgressIndicator(currentStep);
+        });
+        
         function nextStep() {
             const currentStepElement = document.querySelector('.form-step[data-step="' + currentStep + '"]');
             const emailInput = document.getElementById('email');
@@ -14842,6 +15152,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 
                 // Show next step
                 currentStep++;
+                updateProgressIndicator(currentStep);
+                
                 const nextStepElement = document.querySelector('.form-step[data-step="' + currentStep + '"]');
                 
                 setTimeout(() => {
@@ -14873,6 +15185,8 @@ function generateLandingPageHTML(t, lang, theme = 'light') {
                 
                 // Show previous step
                 currentStep--;
+                updateProgressIndicator(currentStep);
+                
                 const prevStepElement = document.querySelector('.form-step[data-step="' + currentStep + '"]');
                 
                 setTimeout(() => {
