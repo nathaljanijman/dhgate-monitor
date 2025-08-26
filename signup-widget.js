@@ -1604,6 +1604,8 @@ function generateWidgetStoreBrowser(lang, theme) {
     </style>
     
     <script>
+      console.log('=== JAVASCRIPT LOADING STARTED ===');
+      
       // Define functions immediately in global scope
       function selectWidgetStore(storeId) {
         console.log('=== SELECT WIDGET STORE FUNCTION CALLED ===');
@@ -1747,30 +1749,46 @@ function generateWidgetStoreBrowser(lang, theme) {
       window.selectedStores = [];
       window.widgetStores = JSON.parse('${JSON.stringify(featuredStores).replace(/'/g, "\\'")}');
       
+      console.log('Variables initialized');
+      console.log('selectedStores:', window.selectedStores);
+      console.log('widgetStores:', window.widgetStores);
+      
       // Helper functions
       function updateSelectedStoresFormData() {
-        if (window.selectedStores.length === 0) {
-          document.getElementById('selected_store_url').value = '';
-          document.getElementById('selected_store_name').value = '';
-        } else if (window.selectedStores.length === 1) {
-          document.getElementById('selected_store_url').value = window.selectedStores[0].url;
-          document.getElementById('selected_store_name').value = window.selectedStores[0].name;
-        } else {
-          // Multiple stores - store as JSON
-          document.getElementById('selected_store_url').value = JSON.stringify(window.selectedStores.map(s => s.url));
-          document.getElementById('selected_store_name').value = window.selectedStores.map(s => s.name).join(', ');
+        console.log('updateSelectedStoresFormData called');
+        try {
+          if (window.selectedStores.length === 0) {
+            document.getElementById('selected_store_url').value = '';
+            document.getElementById('selected_store_name').value = '';
+          } else if (window.selectedStores.length === 1) {
+            document.getElementById('selected_store_url').value = window.selectedStores[0].url;
+            document.getElementById('selected_store_name').value = window.selectedStores[0].name;
+          } else {
+            // Multiple stores - store as JSON
+            document.getElementById('selected_store_url').value = JSON.stringify(window.selectedStores.map(s => s.url));
+            document.getElementById('selected_store_name').value = window.selectedStores.map(s => s.name).join(', ');
+          }
+          console.log('updateSelectedStoresFormData completed');
+        } catch (error) {
+          console.error('Error in updateSelectedStoresFormData:', error);
         }
       }
       
       function updateSelectionCounter() {
-        const counter = document.getElementById('store-selection-counter');
-        if (counter) {
-          if (window.selectedStores.length === 0) {
-            counter.style.display = 'none';
-          } else {
-            counter.style.display = 'block';
-            counter.textContent = window.selectedStores.length + ' ' + (lang === 'nl' ? 'winkel(s) geselecteerd' : 'store(s) selected');
+        console.log('updateSelectionCounter called');
+        try {
+          const counter = document.getElementById('store-selection-counter');
+          if (counter) {
+            if (window.selectedStores.length === 0) {
+              counter.style.display = 'none';
+            } else {
+              counter.style.display = 'block';
+              counter.textContent = window.selectedStores.length + ' ' + (lang === 'nl' ? 'winkel(s) geselecteerd' : 'store(s) selected');
+            }
           }
+          console.log('updateSelectionCounter completed');
+        } catch (error) {
+          console.error('Error in updateSelectionCounter:', error);
         }
       }
         console.log('Widget store selected:', storeId);
