@@ -1606,18 +1606,20 @@ function generateWidgetStoreBrowser(lang, theme) {
     <script>
       // Widget store selection functions
       let widgetSelectedStoreId = null;
-      const widgetStores = ${JSON.stringify(featuredStores)};
       
       // Make functions globally available
       // Track multiple selected stores
       let selectedStores = [];
+      
+      // Make widgetStores globally available
+      window.widgetStores = ${JSON.stringify(featuredStores)};
       
       window.selectWidgetStore = function(storeId) {
         console.log('Widget store selected:', storeId);
         
         const selectedTile = document.querySelector('.widget-store-tile[data-store-id="' + storeId + '"]');
         const selectedCheck = document.getElementById('check-' + storeId);
-        const store = widgetStores.find(s => s.id === storeId);
+        const store = window.widgetStores.find(s => s.id === storeId);
         
         if (selectedTile && selectedCheck && store) {
           // Toggle selection
@@ -1739,6 +1741,11 @@ function generateWidgetStoreBrowser(lang, theme) {
       
       // Initialize widget store browser
       console.log('Widget store browser initialized');
+      console.log('Available stores:', window.widgetStores);
+      console.log('Global functions available:', {
+        selectWidgetStore: typeof window.selectWidgetStore,
+        addWidgetCustomStore: typeof window.addWidgetCustomStore
+      });
       
       // Tags functionality
       let selectedTags = [];
