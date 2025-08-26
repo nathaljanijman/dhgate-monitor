@@ -110,6 +110,7 @@ function generateStandardNavigation(lang = 'nl', theme = 'light', currentPage = 
   const menuItems = [
     { href: '/', key: 'home', labelNl: 'Home', labelEn: 'Home' },
     { href: '/dashboard', key: 'dashboard', labelNl: 'Dashboard', labelEn: 'Dashboard' },
+    { href: '/newsroom', key: 'newsroom', labelNl: 'Newsroom', labelEn: 'Newsroom' },
     { href: '/service', key: 'service', labelNl: 'Service', labelEn: 'Service' },
   ];
   
@@ -1687,7 +1688,7 @@ ${cssVars}
         left: 0;
         right: 0;
         width: 100%;
-        z-index: 1000;
+        z-index: 1002;
         backdrop-filter: blur(10px);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
@@ -3089,7 +3090,7 @@ function generateCookieConsentBanner(lang = 'en') {
 function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage = '') {
   return `
     <!-- Responsive Navigation Bar -->
-    <nav class="site-navbar" style="background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000;">
+    <nav class="site-navbar" style="background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1002;">
         <div class="container">
             <div class="navbar-container" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;">
                 <a href="/?lang=${lang}&theme=${theme}" class="navbar-brand" style="text-decoration: none; display: flex; align-items: center; gap: 0.75rem;">
@@ -4687,6 +4688,9 @@ export default {
         case '/service':
           return await handleServicePage(request, env);
         
+        case '/newsroom':
+          return await handleNewsroomPage(request, env);
+        
         case '/sitemap.xml':
           return await handleSitemap(request, env);
         
@@ -4900,6 +4904,11 @@ export default {
           });
         
         default:
+          // Handle individual newsroom articles
+          if (url.pathname.startsWith('/newsroom/') && url.pathname !== '/newsroom/') {
+            return await handleNewsroomArticle(request, env);
+          }
+          
           // Handle favicon
           if (url.pathname === '/favicon.ico') {
             const origin = url.origin;
@@ -5786,6 +5795,1579 @@ async function handleServicePage(request, env) {
   const html = generateServiceHTML(t, lang, theme);
   return new Response(html, {
     headers: { 'Content-Type': 'text/html' }
+  });
+}
+
+/**
+ * Handles the newsroom overview page
+ * @param {Request} request - The incoming request
+ * @param {Object} env - Environment variables
+ * @returns {Response} - HTML response
+ */
+async function handleNewsroomPage(request, env) {
+  const url = new URL(request.url);
+  const lang = getLanguage(request);
+  const theme = getTheme(request);
+  
+  // Get query parameters for filtering
+  const search = url.searchParams.get('search') || '';
+  const category = url.searchParams.get('category') || '';
+  const tag = url.searchParams.get('tag') || '';
+  const sort = url.searchParams.get('sort') || 'newest';
+  const page = parseInt(url.searchParams.get('page') || '1');
+  
+  // Mock articles data (in production, this would come from D1 database)
+  const articles = [
+    {
+      id: 1,
+      slug: 'dhgate-monitor-launches-new-features',
+      title: lang === 'nl' ? 'DHgate Monitor lanceert nieuwe features voor betere winkelmonitoring' : 'DHgate Monitor launches new features for better store monitoring',
+      excerpt: lang === 'nl' ? 'Ontdek de nieuwste features die het monitoren van DHgate winkels nog eenvoudiger maken.' : 'Discover the latest features that make monitoring DHgate stores even easier.',
+      content: lang === 'nl' ? 'Volledige artikel content hier...' : 'Full article content here...',
+      author: 'DHgate Monitor Team',
+      publishedAt: '2024-01-15T10:00:00Z',
+      readTime: 3,
+      category: 'product-updates',
+      tags: ['features', 'monitoring', 'dhgate'],
+      image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
+      views: 1247,
+      featured: true
+    },
+    {
+      id: 2,
+      slug: 'how-to-optimize-your-dhgate-store',
+      title: lang === 'nl' ? 'Hoe je je DHgate winkel kunt optimaliseren voor betere verkopen' : 'How to optimize your DHgate store for better sales',
+      excerpt: lang === 'nl' ? 'Praktische tips en strategieën om je DHgate winkel te optimaliseren en meer verkopen te genereren.' : 'Practical tips and strategies to optimize your DHgate store and generate more sales.',
+      content: lang === 'nl' ? 'Volledige artikel content hier...' : 'Full article content here...',
+      author: 'Sarah Johnson',
+      publishedAt: '2024-01-10T14:30:00Z',
+      readTime: 5,
+      category: 'monitoring-tips',
+      tags: ['optimization', 'sales', 'tips'],
+      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop&auto=format',
+      views: 892,
+      featured: false
+    },
+    {
+      id: 3,
+      slug: 'new-partnership-announcement',
+      title: lang === 'nl' ? 'Nieuwe samenwerking aangekondigd: DHgate Monitor en Global Suppliers' : 'New partnership announced: DHgate Monitor and Global Suppliers',
+      excerpt: lang === 'nl' ? 'We zijn verheugd om onze nieuwe samenwerking met Global Suppliers aan te kondigen.' : 'We are excited to announce our new partnership with Global Suppliers.',
+      content: lang === 'nl' ? 'Volledige artikel content hier...' : 'Full article content here...',
+      author: 'Marketing Team',
+      publishedAt: '2024-01-05T09:15:00Z',
+      readTime: 2,
+      category: 'company-news',
+      tags: ['partnership', 'announcement', 'business'],
+      image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=400&fit=crop&auto=format',
+      views: 567,
+      featured: false
+    },
+    {
+      id: 4,
+      slug: 'trending-products-2024',
+      title: lang === 'nl' ? 'Trending producten op DHgate in 2024: Wat je moet weten' : 'Trending products on DHgate in 2024: What you need to know',
+      excerpt: lang === 'nl' ? 'Een overzicht van de meest populaire producten en trends op DHgate dit jaar.' : 'An overview of the most popular products and trends on DHgate this year.',
+      content: lang === 'nl' ? 'Volledige artikel content hier...' : 'Full article content here...',
+      author: 'Trend Analyst',
+      publishedAt: '2024-01-01T12:00:00Z',
+      readTime: 7,
+      category: 'market-insights',
+      tags: ['trends', 'products', '2024'],
+      image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=400&fit=crop&auto=format',
+      views: 2156,
+      featured: true
+    }
+  ];
+  
+  // Filter articles based on search parameters
+  let filteredArticles = articles.filter(article => {
+    if (search && !article.title.toLowerCase().includes(search.toLowerCase()) && 
+        !article.excerpt.toLowerCase().includes(search.toLowerCase())) {
+      return false;
+    }
+    if (category && article.category !== category) {
+      return false;
+    }
+    if (tag && !article.tags.includes(tag)) {
+      return false;
+    }
+    return true;
+  });
+  
+  // Sort articles
+  switch (sort) {
+    case 'oldest':
+      filteredArticles.sort((a, b) => new Date(a.publishedAt) - new Date(b.publishedAt));
+      break;
+    case 'popular':
+      filteredArticles.sort((a, b) => b.views - a.views);
+      break;
+    case 'newest':
+    default:
+      filteredArticles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+      break;
+  }
+  
+  // Pagination
+  const articlesPerPage = 5;
+  const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
+  const startIndex = (page - 1) * articlesPerPage;
+  const paginatedArticles = filteredArticles.slice(startIndex, startIndex + articlesPerPage);
+  
+  const t = lang === 'nl' ? {
+    title: 'Newsroom',
+    subtitle: 'Het laatste nieuws, updates en inzichten over DHgate Monitor',
+    searchPlaceholder: 'Zoek in artikelen...',
+    filterAll: 'Alle categorieën',
+    filterProductUpdates: 'Product Updates',
+    filterMonitoringTips: 'Monitoring Tips',
+    filterMarketInsights: 'Markt Inzichten',
+    filterCompanyNews: 'Bedrijfsnieuws',
+    filterHelpSupport: 'Help & Support',
+    sortNewest: 'Nieuwste eerst',
+    sortOldest: 'Oudste eerst',
+    sortPopular: 'Meest populair',
+    readMore: 'Lees meer',
+    readTime: 'min lezen',
+    by: 'door',
+    noResults: 'Geen artikelen gevonden',
+    loadMore: 'Laad meer artikelen',
+    categories: 'Categorieën',
+    tags: 'Tags',
+    sortBy: 'Sorteren op'
+  } : {
+    title: 'Newsroom',
+    subtitle: 'Latest news, updates and insights about DHgate Monitor',
+    searchPlaceholder: 'Search articles...',
+    filterAll: 'All categories',
+    filterProductUpdates: 'Product Updates',
+    filterMonitoringTips: 'Monitoring Tips',
+    filterMarketInsights: 'Market Insights',
+    filterCompanyNews: 'Company News',
+    filterHelpSupport: 'Help & Support',
+    sortNewest: 'Newest first',
+    sortOldest: 'Oldest first',
+    sortPopular: 'Most popular',
+    readMore: 'Read more',
+    readTime: 'min read',
+    by: 'by',
+    noResults: 'No articles found',
+    loadMore: 'Load more articles',
+    categories: 'Categories',
+    tags: 'Tags',
+    sortBy: 'Sort by'
+  };
+  
+  const html = `
+    <!DOCTYPE html>
+    <html lang="${lang}" dir="ltr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${t.title} - DHgate Monitor</title>
+        <meta name="description" content="${t.subtitle}">
+        
+        <!-- Open Graph -->
+        <meta property="og:title" content="${t.title} - DHgate Monitor">
+        <meta property="og:description" content="${t.subtitle}">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="${url.origin}/newsroom">
+        
+        <!-- Structured Data -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "${t.title}",
+          "description": "${t.subtitle}",
+          "url": "${url.origin}/newsroom"
+        }
+        </script>
+        
+        ${generateGlobalCSS(theme)}
+        
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                padding-top: 80px;
+                overflow-x: hidden;
+            }
+            
+            /* Service Header Styles */
+            .service-header {
+                background: var(--bg-hero);
+                color: white;
+                text-align: center;
+                padding: 0;
+                height: 200px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                overflow: hidden;
+                margin-top: 0;
+                top: 0;
+                z-index: 1000;
+            }
+            
+            .service-header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+                animation: shimmer 3s ease-in-out infinite;
+            }
+            
+            @keyframes shimmer {
+                0%, 100% { transform: translateX(-100%); }
+                50% { transform: translateX(100%); }
+            }
+            
+            .service-title {
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin-bottom: 1rem;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                position: relative;
+                z-index: 1;
+            }
+            
+            .service-subtitle {
+                font-size: 1.1rem;
+                opacity: 0.9;
+                max-width: 600px;
+                margin: 0 auto;
+                position: relative;
+                z-index: 1;
+            }
+            
+            @media (max-width: 768px) {
+                .service-header {
+                    height: 180px;
+                }
+                
+                .service-title {
+                    font-size: 2rem;
+                }
+                
+                .service-subtitle {
+                    font-size: 1rem;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .service-title {
+                    font-size: 1.75rem;
+                }
+                
+                .service-subtitle {
+                    font-size: 0.95rem;
+                }
+            }
+            
+            /* Newsroom Specific Styles */
+            .newsroom-container {
+                padding: 2rem 0;
+                position: relative;
+                z-index: 1;
+            }
+            
+            .newsroom-filters {
+                background: var(--card-bg);
+                border: 1px solid var(--border-light);
+                border-radius: 16px;
+                padding: 2rem;
+                margin: 2rem 0;
+                box-shadow: var(--shadow);
+            }
+            
+            .articles-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 2rem;
+                margin: 3rem 0;
+                align-items: start;
+                max-width: 100%;
+            }
+            
+            .article-card {
+                background: var(--card-bg);
+                border: 1px solid var(--border-light);
+                border-radius: 20px;
+                overflow: hidden;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                backdrop-filter: blur(10px);
+            }
+            
+            .article-card:hover {
+                transform: translateY(-8px) scale(1.02);
+                box-shadow: 0 20px 40px rgba(37, 99, 235, 0.12);
+                border-color: var(--primary);
+            }
+            
+            .article-card:hover .article-image {
+                transform: scale(1.05);
+            }
+            
+            .article-card:hover .article-title {
+                color: var(--primary);
+            }
+            
+            .article-card-link {
+                display: block;
+                text-decoration: none;
+                color: inherit;
+                height: 100%;
+            }
+            
+            .article-card-link:hover {
+                text-decoration: none;
+                color: inherit;
+            }
+            
+            .filter-row {
+                display: grid;
+                grid-template-columns: 1fr auto auto;
+                gap: 1.5rem;
+                align-items: end;
+                margin-bottom: 1rem;
+            }
+            
+            .filter-row:last-child {
+                margin-bottom: 0;
+            }
+            
+            .filter-group {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .filter-label {
+                font-size: 0.875rem;
+                font-weight: 500;
+                color: var(--text-secondary);
+            }
+            
+            .search-input {
+                padding: 0.75rem 1rem;
+                border: 1px solid var(--border-light);
+                border-radius: 8px;
+                background: var(--bg-primary);
+                color: var(--text-primary);
+                font-size: 1rem;
+                min-width: 300px;
+                transition: border-color 0.3s ease;
+            }
+            
+            .search-input:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            }
+            
+            .filter-select {
+                padding: 0.75rem 1rem;
+                border: 1px solid var(--border-light);
+                border-radius: 8px;
+                background: var(--bg-primary);
+                color: var(--text-primary);
+                font-size: 1rem;
+                cursor: pointer;
+                transition: border-color 0.3s ease;
+            }
+            
+            .filter-select:focus {
+                outline: none;
+                border-color: var(--primary);
+            }
+            
+            .active-filters {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid var(--border-light);
+            }
+            
+            .active-filter {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+                background: var(--primary);
+                color: white;
+                border-radius: 20px;
+                font-size: 0.875rem;
+                font-weight: 500;
+            }
+            
+            .active-filter-remove {
+                background: none;
+                border: none;
+                color: white;
+                cursor: pointer;
+                font-size: 1.2rem;
+                padding: 0;
+                width: 20px;
+                height: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                transition: background 0.3s ease;
+            }
+            
+            .active-filter-remove:hover {
+                background: rgba(255, 255, 255, 0.2);
+            }
+            
+            .articles-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                gap: 2rem;
+                margin: 2rem 0;
+            }
+            
+            .article-card {
+                background: var(--card-bg);
+                border: 1px solid var(--border-light);
+                border-radius: 16px;
+                overflow: hidden;
+                transition: all 0.3s ease;
+                box-shadow: var(--shadow);
+            }
+            
+            .article-card:hover {
+                transform: translateY(-4px);
+                box-shadow: var(--shadow-lg);
+                border-color: var(--primary);
+            }
+            
+            .article-image {
+                width: 100%;
+                height: 240px;
+                object-fit: cover;
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+            }
+            
+            .article-image::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.1) 100%);
+                pointer-events: none;
+            }
+            
+            .article-content {
+                padding: 2rem;
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                position: relative;
+            }
+            
+            .article-meta {
+                display: flex;
+                align-items: center;
+                gap: 1.5rem;
+                margin-bottom: 1.5rem;
+                font-size: 0.875rem;
+                color: var(--text-muted);
+                flex-wrap: wrap;
+                font-weight: 500;
+            }
+            
+            .article-category {
+                background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.75px;
+                box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .article-category::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                transition: left 0.5s ease;
+            }
+            
+            .article-card:hover .article-category::before {
+                left: 100%;
+            }
+            
+            .article-title {
+                font-size: 1.5rem;
+                font-weight: 800;
+                color: var(--text-primary);
+                margin-bottom: 1.25rem;
+                line-height: 1.25;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                letter-spacing: -0.025em;
+            }
+            
+            .article-excerpt {
+                color: var(--text-secondary);
+                line-height: 1.7;
+                margin-bottom: 2rem;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                flex: 1;
+                font-size: 1rem;
+                font-weight: 400;
+            }
+            
+            .article-tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                margin-bottom: 2rem;
+                margin-top: auto;
+            }
+            
+            .article-tag {
+                background: var(--bg-secondary);
+                color: var(--text-secondary);
+                padding: 0.375rem 0.875rem;
+                border-radius: 16px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                border: 1px solid var(--border-light);
+            }
+            
+            .article-tag:hover {
+                background: var(--primary);
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+                border-color: var(--primary);
+            }
+            
+            .article-link {
+                color: var(--primary);
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 0.875rem;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                transition: all 0.3s ease;
+                margin-top: auto;
+            }
+            
+            .article-link:hover {
+                gap: 0.75rem;
+            }
+            
+            .featured-badge {
+                position: absolute;
+                top: 1.5rem;
+                right: 1.5rem;
+                background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.75px;
+                box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+                z-index: 2;
+                backdrop-filter: blur(10px);
+            }
+            
+            .pagination {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 0.5rem;
+                margin: 3rem 0;
+            }
+            
+            .pagination-button {
+                padding: 0.75rem 1rem;
+                border: 1px solid var(--border-light);
+                background: var(--card-bg);
+                color: var(--text-primary);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-decoration: none;
+            }
+            
+            .pagination-button:hover {
+                border-color: var(--primary);
+                background: var(--primary);
+                color: white;
+            }
+            
+            .pagination-button.active {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+            }
+            
+            .pagination-button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+            
+            .no-results {
+                text-align: center;
+                padding: 4rem 2rem;
+                color: var(--text-secondary);
+            }
+            
+            .no-results h3 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+                color: var(--text-primary);
+            }
+            
+            @media (min-width: 1200px) {
+                .articles-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 2.5rem;
+                }
+            }
+            
+            @media (min-width: 768px) and (max-width: 1199px) {
+                .articles-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 2rem;
+                }
+            }
+            
+            @media (max-width: 768px) {
+                .filter-row {
+                    grid-template-columns: 1fr;
+                    gap: 1rem;
+                }
+                
+                .search-input {
+                    min-width: auto;
+                }
+                
+                .articles-grid {
+                    grid-template-columns: 1fr;
+                    gap: 1.5rem;
+                    margin: 2rem 0;
+                }
+                
+                .newsroom-filters {
+                    padding: 1.5rem;
+                }
+                
+                .article-title {
+                    font-size: 1.375rem;
+                }
+                
+                .article-content {
+                    padding: 1.5rem;
+                }
+                
+                .article-image {
+                    height: 200px;
+                }
+                
+                .article-card:hover {
+                    transform: translateY(-4px) scale(1.01);
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .articles-grid {
+                    gap: 1rem;
+                }
+                
+                .article-content {
+                    padding: 1rem;
+                }
+                
+                .article-meta {
+                    gap: 0.75rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        ${generateStandardNavigation(lang, theme, 'newsroom')}
+        
+        <!-- Newsroom Header -->
+        <header class="service-header">
+            <div class="container">
+                <h1 class="service-title">
+                    ${t.title}
+                </h1>
+                <p class="service-subtitle">
+                    ${t.subtitle}
+                </p>
+            </div>
+        </header>
+        
+        ${generateBreadcrumb('/newsroom', lang, theme)}
+        
+        <main>
+            <div class="newsroom-container">
+                <div class="container">
+                    <!-- Filters Section -->
+                    <section class="newsroom-filters">
+                    <form method="GET" action="/newsroom" id="newsroom-filters">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label class="filter-label" for="search">${t.searchPlaceholder}</label>
+                                <input type="text" 
+                                       id="search" 
+                                       name="search" 
+                                       class="search-input" 
+                                       value="${search}"
+                                       placeholder="${t.searchPlaceholder}">
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label class="filter-label" for="category">${t.categories}</label>
+                                <select id="category" name="category" class="filter-select">
+                                    <option value="">${t.filterAll}</option>
+                                    <option value="product-updates" ${category === 'product-updates' ? 'selected' : ''}>${t.filterProductUpdates}</option>
+                                    <option value="monitoring-tips" ${category === 'monitoring-tips' ? 'selected' : ''}>${t.filterMonitoringTips}</option>
+                                    <option value="market-insights" ${category === 'market-insights' ? 'selected' : ''}>${t.filterMarketInsights}</option>
+                                    <option value="company-news" ${category === 'company-news' ? 'selected' : ''}>${t.filterCompanyNews}</option>
+                                    <option value="help-support" ${category === 'help-support' ? 'selected' : ''}>${t.filterHelpSupport}</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label class="filter-label" for="sort">${t.sortBy}</label>
+                                <select id="sort" name="sort" class="filter-select">
+                                    <option value="newest" ${sort === 'newest' ? 'selected' : ''}>${t.sortNewest}</option>
+                                    <option value="oldest" ${sort === 'oldest' ? 'selected' : ''}>${t.sortOldest}</option>
+                                    <option value="popular" ${sort === 'popular' ? 'selected' : ''}>${t.sortPopular}</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        ${(search || category || tag) ? `
+                        <div class="active-filters">
+                            ${search ? `
+                            <span class="active-filter">
+                                ${t.searchPlaceholder}: "${search}"
+                                <button type="button" class="active-filter-remove" onclick="removeFilter('search')">×</button>
+                            </span>
+                            ` : ''}
+                            ${category ? `
+                            <span class="active-filter">
+                                ${t.categories}: ${category}
+                                <button type="button" class="active-filter-remove" onclick="removeFilter('category')">×</button>
+                            </span>
+                            ` : ''}
+                            ${tag ? `
+                            <span class="active-filter">
+                                ${t.tags}: ${tag}
+                                <button type="button" class="active-filter-remove" onclick="removeFilter('tag')">×</button>
+                            </span>
+                            ` : ''}
+                        </div>
+                        ` : ''}
+                    </form>
+                </section>
+                
+                <!-- Articles Grid -->
+                ${paginatedArticles.length > 0 ? `
+                <section class="articles-grid">
+                    ${paginatedArticles.map(article => `
+                    <article class="article-card" itemscope itemtype="https://schema.org/Article">
+                        <a href="/newsroom/${article.slug}?lang=${lang}&theme=${theme}" 
+                           class="article-card-link"
+                           itemprop="url">
+                            ${article.featured ? '<span class="featured-badge">Featured</span>' : ''}
+                            <img src="${article.image}" 
+                                 alt="${article.title}" 
+                                 class="article-image"
+                                 loading="lazy">
+                            <div class="article-content">
+                                <div class="article-meta">
+                                    <span class="article-category">${article.category}</span>
+                                    <span>${new Date(article.publishedAt).toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-US')}</span>
+                                    <span>${article.readTime} ${t.readTime}</span>
+                                </div>
+                                
+                                <h2 class="article-title" itemprop="headline">
+                                    ${article.title}
+                                </h2>
+                                
+                                <p class="article-excerpt" itemprop="description">${article.excerpt}</p>
+                                
+                                <div class="article-tags">
+                                    ${article.tags.map(tag => `
+                                    <span class="article-tag">${tag}</span>
+                                    `).join('')}
+                                </div>
+                                
+                                <span class="article-link">
+                                    ${t.readMore} →
+                                </span>
+                            </div>
+                        </a>
+                        
+                        <meta itemprop="author" content="${article.author}">
+                        <meta itemprop="datePublished" content="${article.publishedAt}">
+                        <meta itemprop="image" content="${article.image}">
+                    </article>
+                    `).join('')}
+                </section>
+                
+                <!-- Pagination -->
+                ${totalPages > 1 ? `
+                <nav class="pagination" role="navigation" aria-label="Pagination">
+                    ${page > 1 ? `
+                    <a href="?${new URLSearchParams({...Object.fromEntries(url.searchParams), page: page - 1})}" 
+                       class="pagination-button">
+                        ← Previous
+                    </a>
+                    ` : ''}
+                    
+                    ${Array.from({length: totalPages}, (_, i) => i + 1).map(pageNum => `
+                    <a href="?${new URLSearchParams({...Object.fromEntries(url.searchParams), page: pageNum})}" 
+                       class="pagination-button ${pageNum === page ? 'active' : ''}">
+                        ${pageNum}
+                    </a>
+                    `).join('')}
+                    
+                    ${page < totalPages ? `
+                    <a href="?${new URLSearchParams({...Object.fromEntries(url.searchParams), page: page + 1})}" 
+                       class="pagination-button">
+                        Next →
+                    </a>
+                    ` : ''}
+                </nav>
+                ` : ''}
+                ` : `
+                <div class="no-results">
+                    <h3>${t.noResults}</h3>
+                    <p>${t.searchPlaceholder}</p>
+                </div>
+                `}
+                </div>
+            </div>
+        </main>
+        
+        <!-- Footer -->
+        <footer style="background: var(--card-bg); border-top: 1px solid var(--card-border); margin-top: 4rem; padding: 2rem 0;">
+            <div class="container">
+                <div style="text-align: center;">
+                    <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                        <a href="/privacy?lang=${lang}&theme=${theme}" style="color: var(--text-muted); text-decoration: none;">
+                            ${lang === 'nl' ? 'Privacybeleid' : 'Privacy Policy'}
+                        </a>
+                        <a href="/terms?lang=${lang}&theme=${theme}" style="color: var(--text-muted); text-decoration: none;">
+                            ${lang === 'nl' ? 'Algemene voorwaarden' : 'Terms of Service'}
+                        </a>
+                        <a href="/service?lang=${lang}&theme=${theme}" style="color: var(--text-muted); text-decoration: none;">
+                            ${lang === 'nl' ? 'Service' : 'Service'}
+                        </a>
+                    </div>
+                    <div style="color: var(--text-muted); font-size: 0.875rem;">
+                        © ${new Date().getFullYear()} DHgate Monitor - ${lang === 'nl' ? 'Professionele DHgate monitoring oplossingen' : 'Professional DHgate monitoring solutions'}
+                    </div>
+                </div>
+            </div>
+        </footer>
+        
+        <script>
+            // Auto-submit form on filter change
+            document.getElementById('category').addEventListener('change', function() {
+                document.getElementById('newsroom-filters').submit();
+            });
+            
+            document.getElementById('sort').addEventListener('change', function() {
+                document.getElementById('newsroom-filters').submit();
+            });
+            
+            // Remove filter function
+            function removeFilter(filterName) {
+                const url = new URL(window.location);
+                url.searchParams.delete(filterName);
+                window.location.href = url.toString();
+            }
+            
+            // Search with debounce
+            let searchTimeout;
+            document.getElementById('search').addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    document.getElementById('newsroom-filters').submit();
+                }, 500);
+            });
+        </script>
+    </body>
+    </html>`;
+  
+  return new Response(html, {
+    headers: {
+      'Content-Type': 'text/html;charset=UTF-8',
+      'Cache-Control': 'public, max-age=300'
+    }
+  });
+}
+
+/**
+ * Handles individual newsroom article pages
+ * @param {Request} request - The incoming request
+ * @param {Object} env - Environment variables
+ * @returns {Response} - HTML response
+ */
+async function handleNewsroomArticle(request, env) {
+  const url = new URL(request.url);
+  const lang = getLanguage(request);
+  const theme = getTheme(request);
+  
+  // Extract slug from URL
+  const slug = url.pathname.replace('/newsroom/', '');
+  
+  // Mock articles data (in production, this would come from D1 database)
+  const articles = [
+    {
+      id: 1,
+      slug: 'dhgate-monitor-launches-new-features',
+      title: lang === 'nl' ? 'DHgate Monitor lanceert nieuwe features voor betere winkelmonitoring' : 'DHgate Monitor launches new features for better store monitoring',
+      excerpt: lang === 'nl' ? 'Ontdek de nieuwste features die het monitoren van DHgate winkels nog eenvoudiger maken.' : 'Discover the latest features that make monitoring DHgate stores even easier.',
+      content: lang === 'nl' ? `
+        <p>DHgate Monitor is verheugd om de lancering van nieuwe features aan te kondigen die het monitoren van DHgate winkels nog eenvoudiger en effectiever maken.</p>
+        
+        <h2>Nieuwe Features</h2>
+        <p>Onze nieuwste update bevat verschillende verbeteringen:</p>
+        <ul>
+          <li><strong>Real-time monitoring:</strong> Ontvang directe updates wanneer er veranderingen zijn in je gemonitorde winkels</li>
+          <li><strong>Uitgebreide analytics:</strong> Gedetailleerde inzichten in verkoopprestaties en trends</li>
+          <li><strong>Verbeterde notificaties:</strong> Meer flexibele en gepersonaliseerde meldingen</li>
+          <li><strong>Mobile app:</strong> Monitor je winkels onderweg met onze nieuwe mobile applicatie</li>
+        </ul>
+        
+        <h2>Hoe het werkt</h2>
+        <p>De nieuwe features zijn direct beschikbaar voor alle bestaande gebruikers. Je hoeft niets te doen om de verbeteringen te activeren - ze worden automatisch toegepast op je account.</p>
+        
+        <h2>Toekomstige Updates</h2>
+        <p>We blijven werken aan verdere verbeteringen en nieuwe features. Houd onze newsroom in de gaten voor de laatste updates.</p>
+      ` : `
+        <p>DHgate Monitor is excited to announce the launch of new features that make monitoring DHgate stores even easier and more effective.</p>
+        
+        <h2>New Features</h2>
+        <p>Our latest update includes several improvements:</p>
+        <ul>
+          <li><strong>Real-time monitoring:</strong> Receive instant updates when there are changes in your monitored stores</li>
+          <li><strong>Enhanced analytics:</strong> Detailed insights into sales performance and trends</li>
+          <li><strong>Improved notifications:</strong> More flexible and personalized alerts</li>
+          <li><strong>Mobile app:</strong> Monitor your stores on the go with our new mobile application</li>
+        </ul>
+        
+        <h2>How it works</h2>
+        <p>The new features are immediately available to all existing users. You don't need to do anything to activate the improvements - they are automatically applied to your account.</p>
+        
+        <h2>Future Updates</h2>
+        <p>We continue to work on further improvements and new features. Keep an eye on our newsroom for the latest updates.</p>
+      `,
+      author: 'DHgate Monitor Team',
+      publishedAt: '2024-01-15T10:00:00Z',
+      readTime: 3,
+      category: 'product-updates',
+      tags: ['features', 'monitoring', 'dhgate'],
+      image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
+      views: 1247,
+      featured: true
+    },
+    {
+      id: 2,
+      slug: 'how-to-optimize-your-dhgate-store',
+      title: lang === 'nl' ? 'Hoe je je DHgate winkel kunt optimaliseren voor betere verkopen' : 'How to optimize your DHgate store for better sales',
+      excerpt: lang === 'nl' ? 'Praktische tips en strategieën om je DHgate winkel te optimaliseren en meer verkopen te genereren.' : 'Practical tips and strategies to optimize your DHgate store and generate more sales.',
+      content: lang === 'nl' ? `
+        <p>Het optimaliseren van je DHgate winkel is cruciaal voor het behalen van betere verkopen en het aantrekken van meer klanten. In dit artikel delen we praktische tips en strategieën.</p>
+        
+        <h2>Productbeschrijvingen optimaliseren</h2>
+        <p>Zorg ervoor dat je productbeschrijvingen gedetailleerd en overtuigend zijn:</p>
+        <ul>
+          <li>Gebruik duidelijke, beschrijvende titels</li>
+          <li>Voeg hoogwaardige productafbeeldingen toe</li>
+          <li>Schrijf gedetailleerde beschrijvingen met voordelen</li>
+          <li>Vermeld specificaties en technische details</li>
+        </ul>
+        
+        <h2>Prijzen strategisch instellen</h2>
+        <p>Competitieve prijzen zijn essentieel voor succes op DHgate:</p>
+        <ul>
+          <li>Onderzoek de marktprijzen van vergelijkbare producten</li>
+          <li>Bied bulk kortingen aan</li>
+          <li>Overweeg seizoensgebonden prijzen</li>
+          <li>Houd je winstmarges in de gaten</li>
+        </ul>
+        
+        <h2>Klantenservice verbeteren</h2>
+        <p>Uitstekende klantenservice kan het verschil maken:</p>
+        <ul>
+          <li>Reageer snel op klantvragen</li>
+          <li>Bied meertalige ondersteuning</li>
+          <li>Los problemen proactief op</li>
+          <li>Verzamel en handel naar klantfeedback</li>
+        </ul>
+      ` : `
+        <p>Optimizing your DHgate store is crucial for achieving better sales and attracting more customers. In this article, we share practical tips and strategies.</p>
+        
+        <h2>Optimize Product Descriptions</h2>
+        <p>Make sure your product descriptions are detailed and compelling:</p>
+        <ul>
+          <li>Use clear, descriptive titles</li>
+          <li>Add high-quality product images</li>
+          <li>Write detailed descriptions with benefits</li>
+          <li>Include specifications and technical details</li>
+        </ul>
+        
+        <h2>Set Strategic Prices</h2>
+        <p>Competitive pricing is essential for success on DHgate:</p>
+        <ul>
+          <li>Research market prices of similar products</li>
+          <li>Offer bulk discounts</li>
+          <li>Consider seasonal pricing</li>
+          <li>Monitor your profit margins</li>
+        </ul>
+        
+        <h2>Improve Customer Service</h2>
+        <p>Excellent customer service can make the difference:</p>
+        <ul>
+          <li>Respond quickly to customer inquiries</li>
+          <li>Offer multilingual support</li>
+          <li>Solve problems proactively</li>
+          <li>Collect and act on customer feedback</li>
+        </ul>
+      `,
+      author: 'Sarah Johnson',
+      publishedAt: '2024-01-10T14:30:00Z',
+      readTime: 5,
+      category: 'monitoring-tips',
+      tags: ['optimization', 'sales', 'tips'],
+      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop&auto=format',
+      views: 892,
+      featured: false
+    }
+  ];
+  
+  // Find the article by slug
+  const article = articles.find(a => a.slug === slug);
+  
+  if (!article) {
+    // Article not found - redirect to newsroom
+    return Response.redirect(`${url.origin}/newsroom?lang=${lang}&theme=${theme}`, 302);
+  }
+  
+  const t = lang === 'nl' ? {
+    backToNewsroom: 'Terug naar Newsroom',
+    publishedOn: 'Gepubliceerd op',
+    by: 'door',
+    readTime: 'min lezen',
+    share: 'Delen',
+    relatedArticles: 'Gerelateerde artikelen',
+    notFound: 'Artikel niet gevonden',
+    notFoundMessage: 'Het artikel dat je zoekt bestaat niet meer.'
+  } : {
+    backToNewsroom: 'Back to Newsroom',
+    publishedOn: 'Published on',
+    by: 'by',
+    readTime: 'min read',
+    share: 'Share',
+    relatedArticles: 'Related Articles',
+    notFound: 'Article not found',
+    notFoundMessage: 'The article you are looking for no longer exists.'
+  };
+  
+  const html = `
+    <!DOCTYPE html>
+    <html lang="${lang}" dir="ltr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${article.title} - DHgate Monitor</title>
+        <meta name="description" content="${article.excerpt}">
+        
+        <!-- Open Graph -->
+        <meta property="og:title" content="${article.title}">
+        <meta property="og:description" content="${article.excerpt}">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="${url.origin}/newsroom/${article.slug}">
+        <meta property="og:image" content="${article.image}">
+        <meta property="article:published_time" content="${article.publishedAt}">
+        <meta property="article:author" content="${article.author}">
+        <meta property="article:section" content="${article.category}">
+        ${article.tags.map(tag => `<meta property="article:tag" content="${tag}">`).join('')}
+        
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="${article.title}">
+        <meta name="twitter:description" content="${article.excerpt}">
+        <meta name="twitter:image" content="${article.image}">
+        
+        <!-- Structured Data -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": "${article.title}",
+          "description": "${article.excerpt}",
+          "image": "${article.image}",
+          "author": {
+            "@type": "Person",
+            "name": "${article.author}"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "DHgate Monitor",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "${url.origin}/assets/DHGateVector.png"
+            }
+          },
+          "datePublished": "${article.publishedAt}",
+          "dateModified": "${article.publishedAt}",
+          "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "${url.origin}/newsroom/${article.slug}"
+          }
+        }
+        </script>
+        
+        ${generateGlobalCSS(theme)}
+        ${generateServiceHeaderStyles()}
+        
+        <style>
+            /* Article Specific Styles */
+            .article-container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 2rem 0;
+            }
+            
+            .article-container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 2rem 0;
+            }
+            
+            .article-meta {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 2rem;
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+                flex-wrap: wrap;
+            }
+            
+            .article-category {
+                background: var(--primary);
+                color: white;
+                padding: 0.25rem 0.75rem;
+                border-radius: 12px;
+                font-size: 0.75rem;
+                font-weight: 500;
+                text-transform: uppercase;
+            }
+            
+            .article-image {
+                width: 100%;
+                height: 400px;
+                object-fit: cover;
+                border-radius: 16px;
+                margin-bottom: 2rem;
+            }
+            
+            .article-content {
+                font-size: 1.125rem;
+                line-height: 1.8;
+                color: var(--text-primary);
+            }
+            
+            .article-content h2 {
+                font-size: 1.75rem;
+                font-weight: 600;
+                margin: 2rem 0 1rem 0;
+                color: var(--text-primary);
+            }
+            
+            .article-content h3 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 1.5rem 0 0.75rem 0;
+                color: var(--text-primary);
+            }
+            
+            .article-content p {
+                margin-bottom: 1.5rem;
+            }
+            
+            .article-content ul, .article-content ol {
+                margin-bottom: 1.5rem;
+                padding-left: 1.5rem;
+            }
+            
+            .article-content li {
+                margin-bottom: 0.5rem;
+            }
+            
+            .article-content strong {
+                font-weight: 600;
+                color: var(--text-primary);
+            }
+            
+            .article-tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                margin: 2rem 0;
+                padding: 1.5rem 0;
+                border-top: 1px solid var(--border-light);
+                border-bottom: 1px solid var(--border-light);
+            }
+            
+            .article-tag {
+                background: var(--bg-secondary);
+                color: var(--text-secondary);
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                font-size: 0.875rem;
+                font-weight: 500;
+                text-decoration: none;
+                transition: all 0.3s ease;
+            }
+            
+            .article-tag:hover {
+                background: var(--primary);
+                color: white;
+            }
+            
+            .article-actions {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin: 2rem 0;
+                padding: 1.5rem 0;
+                border-top: 1px solid var(--border-light);
+            }
+            
+            .back-link {
+                color: var(--primary);
+                text-decoration: none;
+                font-weight: 500;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                transition: gap 0.3s ease;
+            }
+            
+            .back-link:hover {
+                gap: 0.75rem;
+            }
+            
+            .share-buttons {
+                display: flex;
+                gap: 0.5rem;
+            }
+            
+            .share-button {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                background: var(--bg-secondary);
+                color: var(--text-secondary);
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-decoration: none;
+            }
+            
+            .share-button:hover {
+                background: var(--primary);
+                color: white;
+            }
+            
+
+            
+            .related-articles {
+                margin: 3rem 0;
+            }
+            
+            .related-articles h2 {
+                font-size: 1.75rem;
+                font-weight: 600;
+                margin-bottom: 1.5rem;
+                color: var(--text-primary);
+            }
+            
+            .related-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 1.5rem;
+            }
+            
+            .related-card {
+                background: var(--card-bg);
+                border: 1px solid var(--border-light);
+                border-radius: 12px;
+                overflow: hidden;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                color: inherit;
+            }
+            
+            .related-card:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-lg);
+                border-color: var(--primary);
+            }
+            
+            .related-image {
+                width: 100%;
+                height: 150px;
+                object-fit: cover;
+            }
+            
+            .related-content {
+                padding: 1rem;
+            }
+            
+            .related-title {
+                font-size: 1rem;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                color: var(--text-primary);
+            }
+            
+            .related-excerpt {
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+                line-height: 1.5;
+            }
+            
+            @media (max-width: 768px) {
+                
+                .article-container {
+                    padding: 1rem;
+                }
+                
+                .article-image {
+                    height: 250px;
+                }
+                
+                .article-actions {
+                    flex-direction: column;
+                    gap: 1rem;
+                    align-items: stretch;
+                }
+                
+
+                
+                .related-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        ${generateStandardNavigation(lang, theme, 'newsroom')}
+        
+        ${generateBreadcrumb('/newsroom', lang, theme)}
+        
+        <!-- Article Header -->
+        <header class="service-header">
+            <div class="container">
+                <h1 class="service-title">
+                    ${article.title}
+                </h1>
+                <p class="service-subtitle">
+                    ${article.excerpt}
+                </p>
+            </div>
+        </header>
+        
+        ${generateBreadcrumb('/newsroom', lang, theme)}
+        
+        <main>
+            <div class="container">
+                <div class="article-container">
+                    <!-- Article Meta -->
+                    <div class="article-meta">
+                        <span class="article-category">${article.category}</span>
+                        <span>${t.publishedOn} ${new Date(article.publishedAt).toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-US')}</span>
+                        <span>${t.by} ${article.author}</span>
+                        <span>${article.readTime} ${t.readTime}</span>
+                    </div>
+                    
+                    <!-- Article Image -->
+                    <img src="${article.image}" 
+                         alt="${article.title}" 
+                         class="article-image"
+                         loading="lazy">
+                    
+                    <!-- Article Content -->
+                    <article class="article-content">
+                        ${article.content}
+                    </article>
+                    
+                    <!-- Article Tags -->
+                    <div class="article-tags">
+                        ${article.tags.map(tag => `
+                        <a href="/newsroom?tag=${tag}&lang=${lang}&theme=${theme}" 
+                           class="article-tag">
+                            #${tag}
+                        </a>
+                        `).join('')}
+                    </div>
+                    
+                    <!-- Article Actions -->
+                    <div class="article-actions">
+                        <a href="/newsroom?lang=${lang}&theme=${theme}" class="back-link">
+                            ← ${t.backToNewsroom}
+                        </a>
+                        
+                        <div class="share-buttons">
+                            <button class="share-button" 
+                                    onclick="shareArticle('twitter')"
+                                    aria-label="Share on Twitter">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                                </svg>
+                            </button>
+                            <button class="share-button" 
+                                    onclick="shareArticle('linkedin')"
+                                    aria-label="Share on LinkedIn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                            </button>
+                            <button class="share-button" 
+                                    onclick="shareArticle('facebook')"
+                                    aria-label="Share on Facebook">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+
+                    
+                    <!-- Related Articles -->
+                    <section class="related-articles">
+                        <h2>${t.relatedArticles}</h2>
+                        <div class="related-grid">
+                            ${articles.filter(a => a.id !== article.id).slice(0, 3).map(relatedArticle => `
+                            <a href="/newsroom/${relatedArticle.slug}?lang=${lang}&theme=${theme}" 
+                               class="related-card">
+                                <img src="${relatedArticle.image}" 
+                                     alt="${relatedArticle.title}" 
+                                     class="related-image"
+                                     loading="lazy">
+                                <div class="related-content">
+                                    <h3 class="related-title">${relatedArticle.title}</h3>
+                                    <p class="related-excerpt">${relatedArticle.excerpt}</p>
+                                </div>
+                            </a>
+                            `).join('')}
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Footer -->
+        <footer style="background: var(--card-bg); border-top: 1px solid var(--card-border); margin-top: 4rem; padding: 2rem 0;">
+            <div class="container">
+                <div style="text-align: center;">
+                    <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                        <a href="/privacy?lang=${lang}&theme=${theme}" style="color: var(--text-muted); text-decoration: none;">
+                            ${lang === 'nl' ? 'Privacybeleid' : 'Privacy Policy'}
+                        </a>
+                        <a href="/terms?lang=${lang}&theme=${theme}" style="color: var(--text-muted); text-decoration: none;">
+                            ${lang === 'nl' ? 'Algemene voorwaarden' : 'Terms of Service'}
+                        </a>
+                        <a href="/service?lang=${lang}&theme=${theme}" style="color: var(--text-muted); text-decoration: none;">
+                            ${lang === 'nl' ? 'Service' : 'Service'}
+                        </a>
+                    </div>
+                    <div style="color: var(--text-muted); font-size: 0.875rem;">
+                        © ${new Date().getFullYear()} DHgate Monitor - ${lang === 'nl' ? 'Professionele DHgate monitoring oplossingen' : 'Professional DHgate monitoring solutions'}
+                    </div>
+                </div>
+            </div>
+        </footer>
+        
+        <script>
+            // Share article function
+            function shareArticle(platform) {
+                const url = encodeURIComponent(window.location.href);
+                const title = encodeURIComponent('${article.title}');
+                const text = encodeURIComponent('${article.excerpt}');
+                
+                let shareUrl;
+                switch (platform) {
+                    case 'twitter':
+                        shareUrl = \`https://twitter.com/intent/tweet?url=\${url}&text=\${title}&via=dhgatemonitor\`;
+                        break;
+                    case 'linkedin':
+                        shareUrl = \`https://www.linkedin.com/sharing/share-offsite/?url=\${url}\`;
+                        break;
+                    case 'facebook':
+                        shareUrl = \`https://www.facebook.com/sharer/sharer.php?u=\${url}\`;
+                        break;
+                    default:
+                        return;
+                }
+                
+                window.open(shareUrl, '_blank', 'width=600,height=400');
+            }
+            
+
+        </script>
+    </body>
+    </html>`;
+  
+  return new Response(html, {
+    headers: {
+      'Content-Type': 'text/html;charset=UTF-8',
+      'Cache-Control': 'public, max-age=300'
+    }
   });
 }
 
@@ -14702,7 +16284,7 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
                     <div class="subscription-card modern-signup">
                         <div class="widget-container">
                             ${generateSignupWidget(env, lang, theme)}
-                        </div>
+                                        </div>
                     </div>
                 </div>
             </div>
