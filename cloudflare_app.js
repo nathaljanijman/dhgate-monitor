@@ -5799,6 +5799,177 @@ async function handleServicePage(request, env) {
 }
 
 /**
+ * Fetch articles from Prepr CMS
+ */
+async function fetchPreprArticles(options = {}) {
+  const { limit = 10, offset = 0, search = '', category = '', sort = 'newest' } = options;
+  
+  let orderBy = '_created_on_DESC';
+  switch (sort) {
+    case 'oldest':
+      orderBy = '_created_on_ASC';
+      break;
+    case 'popular':
+      orderBy = '_created_on_DESC'; // Could be changed to views or other metric
+      break;
+    default:
+      orderBy = '_created_on_DESC';
+  }
+  
+  const query = `
+    query GetArticles($limit: Int, $skip: Int, $order: [ArticleOrderBy]) {
+      Articles(limit: $limit, skip: $skip, order: $order) {
+        total
+        items {
+          _id
+          title
+          _slug
+          _created_on
+          _changed_on
+          auteur {
+            name
+          }
+          afbeeldingen {
+            url
+          }
+          samenvatting
+          tags
+          categorie
+        }
+      }
+    }
+  `;
+  
+  const variables = {
+    limit,
+    skip: offset,
+    order: [orderBy]
+  };
+  
+  try {
+    const response = await fetch('https://graphql.prepr.io/ac_503514911c91f7c0ead966ff1e8c20ee1e0f26c2de6914ab1abaa50b4fd9b5f9', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query, variables })
+    });
+    
+    const data = await response.json();
+    
+    if (data.errors) {
+      console.error('Prepr GraphQL errors:', data.errors);
+      return { articles: [], total: 0 };
+    }
+    
+    // Transform Prepr data to our expected format
+    const articles = data.data?.Articles?.items?.map(item => ({
+      id: item._id,
+      slug: item._slug,
+      title: item.title,
+      excerpt: item.samenvatting || '',
+      author: item.auteur?.[0]?.name || 'Redactie',
+      publishedAt: item._created_on,
+      updatedAt: item._changed_on,
+      image: item.afbeeldingen?.[0]?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
+      category: item.categorie || 'general',
+      tags: Array.isArray(item.tags) ? item.tags : [],
+      readTime: Math.max(1, Math.ceil((item.samenvatting?.length || 0) / 200)), // Estimate reading time
+      views: 0, // Could be stored separately
+      featured: false // Could be a field in Prepr
+    })) || [];
+    
+    return {
+      articles,
+      total: data.data?.Articles?.total || 0
+    };
+  } catch (error) {
+    console.error('Failed to fetch articles from Prepr:', error);
+    return { articles: [], total: 0 };
+  }
+}
+
+/**
+ * Fetch a single article from Prepr CMS by slug
+ */
+async function fetchPreprArticle(slug) {
+  const query = `
+    query GetArticle($slug: String) {
+      Articles(where: {_slug: $slug}) {
+        items {
+          _id
+          title
+          _slug
+          _created_on
+          _changed_on
+          auteur {
+            name
+          }
+          afbeeldingen {
+            url
+          }
+          samenvatting
+          inhoud {
+            __typename
+            ... on Text {
+              text
+            }
+            ... on RichText {
+              body
+            }
+          }
+          tags
+          categorie
+        }
+      }
+    }
+  `;
+  
+  const variables = { slug };
+  
+  try {
+    const response = await fetch('https://graphql.prepr.io/ac_503514911c91f7c0ead966ff1e8c20ee1e0f26c2de6914ab1abaa50b4fd9b5f9', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query, variables })
+    });
+    
+    const data = await response.json();
+    
+    if (data.errors) {
+      console.error('Prepr GraphQL errors:', data.errors);
+      return null;
+    }
+    
+    const item = data.data?.Articles?.items?.[0];
+    if (!item) return null;
+    
+    // Transform Prepr data to our expected format
+    return {
+      id: item._id,
+      slug: item._slug,
+      title: item.title,
+      excerpt: item.samenvatting || '',
+      content: item.inhoud?.text || item.inhoud?.body || '',
+      author: item.auteur?.[0]?.name || 'Redactie',
+      publishedAt: item._created_on,
+      updatedAt: item._changed_on,
+      image: item.afbeeldingen?.[0]?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
+      category: item.categorie || 'general',
+      tags: Array.isArray(item.tags) ? item.tags : [],
+      readTime: Math.max(1, Math.ceil((item.samenvatting?.length || 0) / 200)),
+      views: 0,
+      featured: false
+    };
+  } catch (error) {
+    console.error('Failed to fetch article from Prepr:', error);
+    return null;
+  }
+}
+
+/**
  * Handles the newsroom overview page
  * @param {Request} request - The incoming request
  * @param {Object} env - Environment variables
@@ -5816,8 +5987,39 @@ async function handleNewsroomPage(request, env) {
   const sort = url.searchParams.get('sort') || 'newest';
   const page = parseInt(url.searchParams.get('page') || '1');
   
-  // Mock articles data (in production, this would come from D1 database)
-  const articles = [
+  // Fetch articles from Prepr CMS
+  const articlesPerPage = 5;
+  const offset = (page - 1) * articlesPerPage;
+  
+  const { articles: allArticles, total } = await fetchPreprArticles({
+    limit: 50, // Get more to allow for local filtering
+    offset: 0,
+    search,
+    category,
+    sort
+  });
+  
+  // Local filtering (could be moved to GraphQL query for better performance)
+  let filteredArticles = allArticles.filter(article => {
+    if (search && !article.title.toLowerCase().includes(search.toLowerCase()) && 
+        !article.excerpt.toLowerCase().includes(search.toLowerCase())) {
+      return false;
+    }
+    if (category && article.category !== category) {
+      return false;
+    }
+    if (tag && !article.tags.includes(tag)) {
+      return false;
+    }
+    return true;
+  });
+  
+  // Pagination
+  const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
+  const paginatedArticles = filteredArticles.slice(offset, offset + articlesPerPage);
+  
+  // Fallback articles if Prepr is empty or fails
+  const fallbackArticles = [
     {
       id: 1,
       slug: 'dhgate-monitor-launches-new-features',
@@ -6756,8 +6958,13 @@ async function handleNewsroomArticle(request, env) {
   // Extract slug from URL
   const slug = url.pathname.replace('/newsroom/', '');
   
-  // Mock articles data (in production, this would come from D1 database)
-  const articles = [
+  // Fetch article from Prepr CMS
+  let article = await fetchPreprArticle(slug);
+  
+  // If article not found in Prepr, try fallback articles
+  if (!article) {
+    // Fallback articles for development/demo
+    const fallbackArticles = [
     {
       id: 1,
       slug: 'dhgate-monitor-launches-new-features',
@@ -6881,13 +7088,17 @@ async function handleNewsroomArticle(request, env) {
       featured: false
     }
   ];
-  
-  // Find the article by slug
-  const article = articles.find(a => a.slug === slug);
-  
-  if (!article) {
-    // Article not found - redirect to newsroom
-    return Response.redirect(`${url.origin}/newsroom?lang=${lang}&theme=${theme}`, 302);
+    
+    // Try to find fallback article by slug
+    const fallbackArticle = fallbackArticles.find(a => a.slug === slug);
+    
+    if (!fallbackArticle) {
+      // Article not found - redirect to newsroom
+      return Response.redirect(`${url.origin}/newsroom?lang=${lang}&theme=${theme}`, 302);
+    }
+    
+    // Use fallback article
+    article = fallbackArticle;
   }
   
   const t = lang === 'nl' ? {
