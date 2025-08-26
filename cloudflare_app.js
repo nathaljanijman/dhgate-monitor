@@ -4563,6 +4563,13 @@ export default {
         case '/embed':
           return await handleSignupWidget(request, env);
         
+        case '/en/widget':
+        case '/en/embed':
+          return await handleSignupWidget(request, env);
+        
+        case '/en':
+          return await handleEnglishLandingPage(request, env);
+        
         case '/api/stores/search':
           return await handleStoreSearch(request, env);
         
@@ -9264,6 +9271,23 @@ function generateTermsContentEN() {
   `;
 }
 
+// English Landing Page Handler
+async function handleEnglishLandingPage(request, env) {
+  const theme = getTheme(request);
+  const t = getTranslations('en');
+  
+  const html = generateLandingPageHTML(t, 'en', theme);
+  return new Response(html, {
+    headers: { 
+      'Content-Type': 'text/html',
+      'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'X-XSS-Protection': '1; mode=block'
+    }
+  });
+}
+
 // New Landing Page Handler
 async function handleLandingPage(request, env) {
   const lang = getLanguage(request);
@@ -9285,7 +9309,15 @@ async function handleLandingPage(request, env) {
 // Embeddable Signup Widget Handler
 async function handleSignupWidget(request, env) {
   const url = new URL(request.url);
-  const lang = url.searchParams.get('lang') || 'nl';
+  
+  // Auto-detect language from URL path
+  let lang = 'nl'; // default
+  if (url.pathname.startsWith('/en/')) {
+    lang = 'en';
+  }
+  
+  // Override with query parameter if provided
+  lang = url.searchParams.get('lang') || lang;
   const theme = url.searchParams.get('theme') || 'light';
   
   // Generate the standalone widget HTML
