@@ -7031,38 +7031,142 @@ async function handleNewsroomArticle(request, env) {
                 font-size: 1.125rem;
                 line-height: 1.8;
                 color: var(--text-primary);
+                max-width: none;
+                font-family: 'Raleway', -apple-system, BlinkMacSystemFont, sans-serif;
+            }
+            
+            /* Comprehensive Typography System */
+            .article-content h1 {
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin: 3rem 0 1.5rem 0;
+                color: var(--text-primary);
+                line-height: 1.2;
+                letter-spacing: -0.025em;
             }
             
             .article-content h2 {
-                font-size: 1.75rem;
+                font-size: 2rem;
                 font-weight: 600;
-                margin: 2rem 0 1rem 0;
+                margin: 2.5rem 0 1.25rem 0;
                 color: var(--text-primary);
+                line-height: 1.3;
+                letter-spacing: -0.02em;
+                position: relative;
+                padding-bottom: 0.5rem;
+            }
+            
+            .article-content h2::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 60px;
+                height: 3px;
+                background: linear-gradient(90deg, var(--primary), var(--accent-color));
+                border-radius: 2px;
             }
             
             .article-content h3 {
                 font-size: 1.5rem;
                 font-weight: 600;
+                margin: 2rem 0 1rem 0;
+                color: var(--text-primary);
+                line-height: 1.4;
+            }
+            
+            .article-content h4 {
+                font-size: 1.25rem;
+                font-weight: 600;
                 margin: 1.5rem 0 0.75rem 0;
                 color: var(--text-primary);
+                line-height: 1.4;
+            }
+            
+            .article-content h5 {
+                font-size: 1.125rem;
+                font-weight: 600;
+                margin: 1.25rem 0 0.5rem 0;
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+            
+            .article-content h6 {
+                font-size: 1rem;
+                font-weight: 600;
+                margin: 1rem 0 0.5rem 0;
+                color: var(--text-secondary);
+                line-height: 1.5;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
             }
             
             .article-content p {
                 margin-bottom: 1.5rem;
+                line-height: 1.8;
+                color: var(--text-primary);
+            }
+            
+            .article-content p:first-of-type {
+                font-size: 1.25rem;
+                font-weight: 400;
+                color: var(--text-secondary);
+                margin-bottom: 2rem;
             }
             
             .article-content ul, .article-content ol {
                 margin-bottom: 1.5rem;
-                padding-left: 1.5rem;
+                padding-left: 2rem;
             }
             
             .article-content li {
-                margin-bottom: 0.5rem;
+                margin-bottom: 0.75rem;
+                line-height: 1.7;
+                color: var(--text-primary);
             }
             
-            .article-content strong {
+            .article-content ul li::marker {
+                color: var(--primary);
+                font-weight: 600;
+            }
+            
+            .article-content ol li::marker {
+                color: var(--primary);
+                font-weight: 600;
+            }
+            
+            .article-content strong, .article-content b {
                 font-weight: 600;
                 color: var(--text-primary);
+            }
+            
+            .article-content em, .article-content i {
+                font-style: italic;
+                color: var(--text-secondary);
+            }
+            
+            .article-content a {
+                color: var(--primary);
+                text-decoration: underline;
+                text-decoration-thickness: 2px;
+                text-underline-offset: 3px;
+                transition: all 0.3s ease;
+            }
+            
+            .article-content a:hover {
+                color: var(--accent-color);
+                text-decoration-thickness: 3px;
+            }
+            
+            .article-content blockquote {
+                margin: 2rem 0;
+                padding: 1.5rem 2rem;
+                border-left: 4px solid var(--primary);
+                background: var(--bg-secondary);
+                border-radius: 0 8px 8px 0;
+                font-style: italic;
+                font-size: 1.1rem;
+                color: var(--text-secondary);
             }
             
             .article-tags {
