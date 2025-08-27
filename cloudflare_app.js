@@ -106,89 +106,1446 @@ import { API_CONFIG, getRegionsByPriority, calculateRetryDelay } from './api-con
  * @param {string} currentPage - Current page for active states
  * @returns {string} - Standardized navigation HTML
  */
-function generateStandardNavigation(lang = 'nl', theme = 'light', currentPage = '') {
-  const menuItems = [
-    { href: '/', key: 'home', labelNl: 'Home', labelEn: 'Home' },
-    { href: '/dashboard', key: 'dashboard', labelNl: 'Dashboard', labelEn: 'Dashboard' },
-    { href: '/newsroom', key: 'newsroom', labelNl: 'Newsroom', labelEn: 'Newsroom' },
-    { href: '/service', key: 'service', labelNl: 'Service', labelEn: 'Service' },
-  ];
-  
-  // Add additional pages if they are the current page (so they show in their own navigation)
-  if (currentPage === 'privacy') {
-    menuItems.push({ href: '/privacy', key: 'privacy', labelNl: 'Privacy', labelEn: 'Privacy' });
-  }
-  if (currentPage === 'terms') {
-    menuItems.push({ href: '/terms', key: 'terms', labelNl: 'Voorwaarden', labelEn: 'Terms' });
-  }
-  
-  // Removed "Beginnen" button for homepage to match other pages' navigation
 
-  const menuHtml = menuItems.map(item => {
-    const isActive = currentPage === item.key;
-    const label = lang === 'nl' ? item.labelNl : item.labelEn;
-    const activeClass = isActive ? 'nav-link--active' : '';
-    
-    if (item.isButton) {
-      return `<a href="${item.href}" 
-                class="nav-cta-button" 
-                onclick="scrollToSubscription(); return false;"
-                aria-label="${lang === 'nl' ? 'Scroll naar aanmeldformulier' : 'Scroll to signup form'}">${label}</a>`;
+// ============================================================================
+// NAVIGATION CONFIGURATION SYSTEM
+// ============================================================================
+
+/**
+ * Navigation configuration following UX specification
+ * Prepared for future Prepr CMS integration with adapter layer
+ */
+const NAVIGATION_CONFIG = {
+  // Primary navigation items (max 5-6 items)
+  primaryNav: [
+    {
+      label: { nl: 'Home', en: 'Home' },
+      href: '/',
+      key: 'home'
+    },
+    {
+      label: { nl: 'Dashboard', en: 'Dashboard' }, 
+      href: '/dashboard',
+      key: 'dashboard'
+    },
+    {
+      label: { nl: 'Newsroom', en: 'Newsroom' },
+      href: '/newsroom', 
+      key: 'newsroom'
+    },
+    {
+      label: { nl: 'Contact', en: 'Contact' },
+      href: '/contact',
+      key: 'contact'
     }
-    
-    return `<a href="${item.href}?lang=${lang}&theme=${theme}" 
-              class="nav-link ${activeClass}" 
-              aria-current="${isActive ? 'page' : 'false'}">${label}</a>`;
-  }).join('');
+  ],
+  
+  // Utility navigation (language, theme)
+  utilityNav: {
+    languages: [
+      { code: 'nl', label: 'Nederlands', flag: 'NL' },
+      { code: 'en', label: 'English', flag: 'EN' }
+    ],
+    themes: [
+      { key: 'light', label: { nl: 'Licht', en: 'Light' }, icon: '☀️' },
+      { key: 'dark', label: { nl: 'Donker', en: 'Dark' }, icon: '🌙' }
+    ]
+  },
 
+  // Brand configuration
+  brand: {
+    name: 'DHgate Monitor',
+    tagline: { nl: 'E-commerce Intelligence', en: 'E-commerce Intelligence' },
+    logo: '/assets/DHGateVector.png',
+    href: '/'
+  }
+};
+
+/**
+ * Navigation adapter layer for future CMS integration
+ * Transforms CMS data to consistent shape
+ */
+class NavigationAdapter {
+  static fromStatic(config = NAVIGATION_CONFIG) {
+    return config;
+  }
+  
+  static fromPrepr(cmsData) {
+    // Future implementation for Prepr CMS
+    // Transform CMS structure to NAVIGATION_CONFIG shape
+    return cmsData;
+  }
+}
+
+// ============================================================================
+// MODERN NAVBAR COMPONENT SYSTEM
+// ============================================================================
+
+/**
+ * Generates complete accessible navbar following UX specification
+ * WCAG 2.2 AA compliant with WAI-ARIA patterns
+ */
+function generateModernNavbar(lang = 'nl', theme = 'light', currentPath = '/') {
+  const config = NavigationAdapter.fromStatic();
+  
   return `
-    <nav class="site-navbar" role="navigation" aria-label="${lang === 'nl' ? 'Hoofdnavigatie' : 'Main navigation'}">
-        <div class="navbar-container">
-            ${generateStandardLogo(lang, theme)}
-            
-            <!-- Desktop Navigation -->
-            <div class="navbar-menu desktop-menu" role="menubar">
-                ${menuHtml}
-            </div>
-            
-            <!-- Mobile Hamburger -->
-            <button class="hamburger" 
-                    onclick="toggleMobileMenu()"
-                    aria-label="${lang === 'nl' ? 'Menu openen' : 'Open menu'}"
-                    aria-expanded="false"
-                    aria-controls="mobile-menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            
-            <!-- Controls (Theme & Language) -->
-            <div class="navbar-controls">
-                ${generateThemeToggle(theme, lang)}
-                ${generateLanguageSwitcher(lang, theme, currentPage === 'home' ? '/' : `/${currentPage}`)}
-            </div>
+    ${generateSkipLinks(lang)}
+    ${generateHeader(config, lang, theme, currentPath)}
+    ${generateMobileDrawer(config, lang, theme, currentPath)}
+    ${generateNavbarStyles()}
+    ${generateNavbarScript(lang, theme)}
+  `;
+}
+
+/**
+ * Skip links for accessibility
+ */
+function generateSkipLinks(lang) {
+  const skipText = lang === 'nl' ? 'Ga naar hoofdinhoud' : 'Skip to main content';
+  
+  return `
+    <a href="#main-content" class="skip-link">
+      ${skipText}
+    </a>
+  `;
+}
+
+/**
+ * Main header with desktop navigation
+ */
+function generateHeader(config, lang, theme, currentPath) {
+  return `
+    <header class="site-header" role="banner">
+      <div class="header-container">
+        ${generateBrandLogo(config.brand, lang, theme)}
+        ${generateDesktopNav(config.primaryNav, lang, theme, currentPath)}
+        ${generateDesktopUtilities(config.utilityNav, lang, theme)}
+        ${generateMobileToggle(lang)}
+      </div>
+    </header>
+  `;
+}
+
+/**
+ * Brand logo component
+ */
+function generateBrandLogo(brandConfig, lang, theme) {
+  return `
+    <a href="${brandConfig.href}?lang=${lang}&theme=${theme}" 
+       class="brand-logo" 
+       aria-label="${brandConfig.name} ${lang === 'nl' ? 'startpagina' : 'homepage'}">
+      <img src="${brandConfig.logo}" 
+           alt="${brandConfig.name}" 
+           class="brand-image"
+           width="32" 
+           height="32">
+      <div class="brand-text">
+        <span class="brand-name">${brandConfig.name}</span>
+        <span class="brand-tagline">${brandConfig.tagline[lang]}</span>
+      </div>
+    </a>
+  `;
+}
+
+/**
+ * Desktop navigation with menubar pattern
+ */
+function generateDesktopNav(navItems, lang, theme, currentPath) {
+  const navHtml = navItems.map(item => {
+    const isActive = currentPath === item.href || currentPath.startsWith(item.href + '/');
+    const hasChildren = item.children && item.children.length > 0;
+    
+    if (hasChildren) {
+      return `
+        <div class="nav-item-wrapper">
+          <button class="nav-trigger" 
+                  role="menuitem"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  aria-controls="submenu-${item.key}"
+                  data-nav-key="${item.key}">
+            ${item.label[lang]}
+            <svg class="nav-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6,9 12,15 18,9"></polyline>
+            </svg>
+          </button>
+          <ul class="submenu" 
+              role="menu"
+              id="submenu-${item.key}"
+              aria-labelledby="nav-trigger-${item.key}">
+            ${item.children.map(child => `
+              <li role="none">
+                <a href="${child.href}?lang=${lang}&theme=${theme}"
+                   class="submenu-link"
+                   role="menuitem">${child.label[lang]}</a>
+              </li>
+            `).join('')}
+          </ul>
         </div>
+      `;
+    } else {
+      return `
+        <a href="${item.href}?lang=${lang}&theme=${theme}"
+           class="nav-link ${isActive ? 'nav-link-active' : ''}"
+           role="menuitem"
+           ${isActive ? 'aria-current="page"' : ''}>${item.label[lang]}</a>
+      `;
+    }
+  }).join('');
+  
+  return `
+    <nav class="desktop-nav" role="navigation" aria-label="${lang === 'nl' ? 'Hoofdnavigatie' : 'Main navigation'}">
+      <div class="nav-menubar" role="menubar">
+        ${navHtml}
+      </div>
+    </nav>
+  `;
+}
+
+/**
+ * Desktop utilities (language + theme)
+ */
+function generateDesktopUtilities(utilityConfig, lang, theme) {
+  return `
+    <div class="desktop-utilities">
+      ${generateLanguageSwitcher(utilityConfig.languages, lang, theme, false)}
+      ${generateThemeToggle(utilityConfig.themes, lang, theme, false)}
+    </div>
+  `;
+}
+
+/**
+ * Mobile hamburger toggle
+ */
+function generateMobileToggle(lang) {
+  const label = lang === 'nl' ? 'Menu openen' : 'Open menu';
+  
+  return `
+    <button class="mobile-toggle" 
+            aria-label="${label}"
+            aria-expanded="false"
+            aria-controls="mobile-drawer">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+  `;
+}
+
+/**
+ * Mobile drawer menu
+ */
+function generateMobileDrawer(config, lang, theme, currentPath) {
+  const navItems = config.primaryNav.map(item => {
+    const isActive = currentPath === item.href || currentPath.startsWith(item.href + '/');
+    
+    if (item.children && item.children.length > 0) {
+      return `
+        <div class="mobile-nav-section">
+          <div class="mobile-nav-header">
+            <span class="mobile-nav-title">${item.label[lang]}</span>
+          </div>
+          ${item.children.map(child => `
+            <a href="${child.href}?lang=${lang}&theme=${theme}"
+               class="mobile-nav-link mobile-nav-sublink">${child.label[lang]}</a>
+          `).join('')}
+        </div>
+      `;
+    } else {
+      return `
+        <a href="${item.href}?lang=${lang}&theme=${theme}"
+           class="mobile-nav-link ${isActive ? 'mobile-nav-link-active' : ''}"
+           ${isActive ? 'aria-current="page"' : ''}>${item.label[lang]}</a>
+      `;
+    }
+  }).join('');
+  
+  return `
+    <div class="mobile-overlay" aria-hidden="true"></div>
+    <aside class="mobile-drawer" 
+           role="dialog" 
+           aria-modal="true"
+           aria-label="${lang === 'nl' ? 'Mobiel hoofdmenu' : 'Mobile main menu'}"
+           id="mobile-drawer">
+      <div class="mobile-drawer-header">
+        <span class="mobile-drawer-title">${lang === 'nl' ? 'Menu' : 'Menu'}</span>
+        <button class="mobile-close" aria-label="${lang === 'nl' ? 'Menu sluiten' : 'Close menu'}">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <nav class="mobile-nav" role="navigation" aria-label="${lang === 'nl' ? 'Mobiele navigatie' : 'Mobile navigation'}">
+        ${navItems}
+      </nav>
+      
+      <div class="mobile-utilities">
+        <div class="mobile-utility-section">
+          <h3 class="mobile-utility-title">${lang === 'nl' ? 'Instellingen' : 'Settings'}</h3>
+          ${generateLanguageSwitcher(config.utilityNav.languages, lang, theme, true)}
+          ${generateThemeToggle(config.utilityNav.themes, lang, theme, true)}
+        </div>
+      </div>
+    </aside>
+  `;
+}
+
+/**
+ * Language switcher component
+ */
+function generateLanguageSwitcher(languages, currentLang, theme, isMobile) {
+  const switcherClass = isMobile ? 'language-switcher-mobile' : 'language-switcher-desktop';
+  const role = isMobile ? 'radiogroup' : 'menu';
+  const label = currentLang === 'nl' ? 'Taal selecteren' : 'Select language';
+  
+  const languageOptions = languages.map(lang => {
+    const isActive = currentLang === lang.code;
+    const itemRole = isMobile ? 'radio' : 'menuitemradio';
+    
+    return `
+      <button class="language-option ${isActive ? 'language-option-active' : ''}"
+              role="${itemRole}"
+              aria-checked="${isActive}"
+              data-lang="${lang.code}"
+              data-theme="${theme}"
+              title="${lang.label}">
+        ${lang.flag}
+      </button>
+    `;
+  }).join('');
+  
+  return `
+    <div class="${switcherClass}" 
+         role="${role}"
+         aria-label="${label}">
+      ${languageOptions}
+    </div>
+  `;
+}
+
+/**
+ * Theme toggle component
+ */
+function generateThemeToggle(themes, lang, currentTheme, isMobile) {
+  const toggleClass = isMobile ? 'theme-toggle-mobile' : 'theme-toggle-desktop';
+  const isDark = currentTheme === 'dark';
+  const label = lang === 'nl' ? 'Thema wijzigen' : 'Toggle theme';
+  
+  return `
+    <button class="${toggleClass}"
+            role="switch"
+            aria-checked="${isDark}"
+            aria-label="${label}"
+            data-current-theme="${currentTheme}">
+      <span class="theme-toggle-track">
+        <span class="theme-toggle-thumb">
+          ${isDark ? '🌙' : '☀️'}
+        </span>
+      </span>
+      <span class="theme-toggle-label">${themes.find(t => t.key === currentTheme).label[lang]}</span>
+    </button>
+  `;
+}
+
+/**
+ * Generates modern navbar CSS following design system
+ */
+function generateNavbarStyles() {
+  return `
+    <style>
+      /* Skip Links */
+      .skip-link {
+        position: absolute;
+        left: -9999px;
+        top: 8px;
+        z-index: 9999;
+        padding: 8px 16px;
+        background: var(--primary-blue);
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+      }
+      
+      .skip-link:focus {
+        left: 8px;
+      }
+      
+      /* Header */
+      .site-header {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 1000 !important;
+        background: transparent !important;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        transition: all 0.2s ease;
+      }
+      
+      .site-header.scrolled {
+        background: var(--card-bg-alpha);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+      
+      .header-container {
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 1rem 2rem !important;
+        gap: 2rem !important;
+        margin: 0 !important;
+        max-width: none !important;
+        box-sizing: border-box !important;
+      }
+      
+      /* Brand Logo */
+      .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        transition: opacity 0.2s ease;
+      }
+      
+      .brand-logo:hover {
+        opacity: 0.8;
+      }
+      
+      .brand-logo:focus {
+        outline: 3px solid var(--primary-blue);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+      
+      .brand-image {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+      }
+      
+      .brand-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+      }
+      
+      .brand-name {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+      }
+      
+      .brand-tagline {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 400;
+        margin: 0;
+      }
+      
+      /* Desktop Navigation */
+      .desktop-nav {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+      }
+      
+      .nav-menubar {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        role: menubar;
+      }
+      
+      .nav-item-wrapper {
+        position: relative;
+      }
+      
+      .nav-link,
+      .nav-trigger {
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        padding: 0.5rem 0;
+        border: none;
+        background: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        transition: color 0.2s ease;
+        position: relative;
+      }
+      
+      .nav-link:hover,
+      .nav-trigger:hover,
+      .nav-link:focus,
+      .nav-trigger:focus {
+        color: var(--text-primary);
+        outline: none;
+      }
+      
+      .nav-link:focus-visible,
+      .nav-trigger:focus-visible {
+        outline: 3px solid var(--primary-blue);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+      
+      .nav-link-active {
+        color: var(--primary-blue);
+        font-weight: 600;
+      }
+      
+      .nav-link-active::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--primary-blue);
+        border-radius: 1px;
+      }
+      
+      .nav-caret {
+        transition: transform 0.2s ease;
+      }
+      
+      .nav-trigger[aria-expanded="true"] .nav-caret {
+        transform: rotate(180deg);
+      }
+      
+      /* Submenu */
+      .submenu {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--card-bg);
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 0.5rem 0;
+        margin: 0.5rem 0 0 0;
+        min-width: 200px;
+        z-index: 1001;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(-50%) translateY(-8px);
+        transition: all 0.15s ease;
+        list-style: none;
+      }
+      
+      .submenu.open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+      }
+      
+      .submenu-link {
+        display: block;
+        padding: 0.75rem 1rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+      }
+      
+      .submenu-link:hover,
+      .submenu-link:focus {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        outline: none;
+      }
+      
+      .submenu-link:focus-visible {
+        outline: 3px solid var(--primary-blue);
+        outline-offset: -3px;
+      }
+      
+      /* Desktop Utilities */
+      .desktop-utilities {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      
+      .language-switcher-desktop {
+        display: flex;
+        align-items: center;
+        gap: 0;
+      }
+      
+      .language-option {
+        border: none;
+        background: none;
+        font-size: 0.8rem;
+        font-weight: 400;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: color 0.2s ease;
+        padding: 0;
+        margin: 0 0.25rem;
+      }
+      
+      .language-option:hover {
+        color: var(--text-primary);
+      }
+      
+      .language-option:focus-visible {
+        outline: 1px solid var(--primary-blue);
+        outline-offset: 2px;
+      }
+      
+      .language-option-active {
+        color: var(--primary-blue);
+        font-weight: 500;
+      }
+      
+      
+      /* Theme Toggle */
+      .theme-toggle-desktop {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border: none;
+        background: none;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+        min-width: 44px;
+        min-height: 44px;
+      }
+      
+      .theme-toggle-desktop:hover {
+        background: var(--bg-secondary);
+      }
+      
+      .theme-toggle-desktop:focus-visible {
+        outline: 3px solid var(--primary-blue);
+        outline-offset: 2px;
+      }
+      
+      .theme-toggle-track {
+        width: 36px;
+        height: 20px;
+        background: var(--border-medium);
+        border-radius: 10px;
+        position: relative;
+        transition: background-color 0.2s ease;
+      }
+      
+      .theme-toggle-desktop[aria-checked="true"] .theme-toggle-track {
+        background: var(--primary-blue);
+      }
+      
+      .theme-toggle-thumb {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s ease;
+      }
+      
+      .theme-toggle-desktop[aria-checked="true"] .theme-toggle-thumb {
+        transform: translateX(16px);
+      }
+      
+      .theme-toggle-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        display: none;
+      }
+      
+      /* Mobile Toggle */
+      .mobile-toggle {
+        display: none;
+        flex-direction: column;
+        gap: 3px;
+        padding: 0.5rem;
+        border: none;
+        background: none;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+        min-width: 44px;
+        min-height: 44px;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      .mobile-toggle:hover {
+        background: var(--bg-secondary);
+      }
+      
+      .mobile-toggle:focus-visible {
+        outline: 3px solid var(--primary-blue);
+        outline-offset: 2px;
+      }
+      
+      .hamburger-line {
+        width: 20px;
+        height: 2px;
+        background: var(--text-primary);
+        border-radius: 1px;
+        transition: all 0.2s ease;
+        transform-origin: center;
+      }
+      
+      .mobile-toggle[aria-expanded="true"] .hamburger-line:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      
+      .mobile-toggle[aria-expanded="true"] .hamburger-line:nth-child(2) {
+        opacity: 0;
+      }
+      
+      .mobile-toggle[aria-expanded="true"] .hamburger-line:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+      }
+      
+      /* Mobile Drawer */
+      .mobile-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s ease;
+      }
+      
+      .mobile-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      .mobile-drawer {
+        position: fixed;
+        top: 0;
+        right: -400px;
+        width: 320px;
+        height: 100%;
+        background: var(--card-bg);
+        z-index: 1000;
+        padding: 0;
+        transition: right 0.2s ease;
+        box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+        overflow-y: auto;
+        max-width: 85vw;
+      }
+      
+      .mobile-drawer.open {
+        right: 0;
+      }
+      
+      .mobile-drawer-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-light);
+      }
+      
+      .mobile-drawer-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      
+      .mobile-close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border: none;
+        background: none;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+      }
+      
+      .mobile-close:hover {
+        background: var(--bg-secondary);
+      }
+      
+      .mobile-close:focus-visible {
+        outline: 3px solid var(--primary-blue);
+        outline-offset: 2px;
+      }
+      
+      .mobile-nav {
+        padding: 1rem 0;
+      }
+      
+      .mobile-nav-link {
+        display: block;
+        padding: 1rem 1.5rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-weight: 500;
+        border-bottom: 1px solid var(--border-light);
+        transition: all 0.2s ease;
+      }
+      
+      .mobile-nav-link:hover {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        padding-left: 2rem;
+      }
+      
+      .mobile-nav-link:focus-visible {
+        outline: 3px solid var(--primary-blue);
+        outline-offset: -3px;
+      }
+      
+      .mobile-nav-link-active {
+        color: var(--primary-blue);
+        font-weight: 600;
+      }
+      
+      .mobile-nav-section {
+        border-bottom: 1px solid var(--border-light);
+      }
+      
+      .mobile-nav-header {
+        padding: 1rem 1.5rem;
+        background: var(--bg-secondary);
+      }
+      
+      .mobile-nav-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      
+      .mobile-nav-sublink {
+        padding-left: 2rem;
+        font-size: 0.875rem;
+        border-bottom: none;
+      }
+      
+      .mobile-nav-sublink:hover {
+        padding-left: 2.5rem;
+      }
+      
+      /* Mobile Utilities */
+      .mobile-utilities {
+        padding: 1.5rem;
+        border-top: 1px solid var(--border-light);
+        background: var(--bg-secondary);
+      }
+      
+      .mobile-utility-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .mobile-utility-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 0.5rem 0;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      
+      .language-switcher-mobile {
+        display: flex;
+        gap: 0.5rem;
+      }
+      
+      .language-switcher-mobile .language-option {
+        flex: 1;
+        justify-content: center;
+        padding: 0.75rem;
+        border-radius: 6px;
+        border: 1px solid var(--border-light);
+        background: var(--card-bg);
+        min-height: 44px;
+      }
+      
+      .language-switcher-mobile .language-label {
+        display: block;
+      }
+      
+      .theme-toggle-mobile {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem;
+        border: 1px solid var(--border-light);
+        background: var(--card-bg);
+        border-radius: 6px;
+        cursor: pointer;
+        min-height: 44px;
+      }
+      
+      .theme-toggle-mobile .theme-toggle-label {
+        display: block;
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+      
+      /* Responsive Design */
+      @media (min-width: 1024px) {
+        .desktop-nav {
+          display: flex !important;
+        }
         
-        <!-- Mobile Menu Overlay -->
-        <div class="mobile-menu-overlay" aria-hidden="true"></div>
-        <div class="mobile-menu" id="mobile-menu" role="menu" aria-hidden="true">
-            ${menuItems.map(item => {
-              const label = lang === 'nl' ? item.labelNl : item.labelEn;
-              const isActive = currentPage === item.key;
+        .desktop-utilities {
+          display: flex !important;
+        }
+        
+        .mobile-toggle {
+          display: none;
+        }
+      }
+      
+      @media (max-width: 1023px) {
+        .desktop-nav {
+          display: none;
+        }
+        
+        .desktop-utilities {
+          display: none;
+        }
+        
+        .mobile-toggle {
+          display: flex;
+        }
+        
+        .brand-tagline {
+          display: none;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        .header-container {
+          padding: 1rem 2rem !important;
+        }
+        
+        .brand-name {
+          font-size: 1rem;
+        }
+        
+        .mobile-drawer {
+          width: 280px;
+        }
+      }
+      
+      /* Reduced Motion */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+        }
+      }
+      
+      /* Focus Management */
+      .focus-trap {
+        position: fixed;
+        top: -1px;
+        left: -1px;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      /* High Contrast Mode Support */
+      @media (prefers-contrast: high) {
+        .site-header {
+          border-bottom-width: 2px;
+        }
+        
+        .nav-link:focus,
+        .nav-trigger:focus,
+        .language-option:focus,
+        .theme-toggle-desktop:focus,
+        .mobile-toggle:focus {
+          outline-width: 4px;
+        }
+      }
+    </style>
+  `;
+}
+
+/**
+ * Generates complete navbar JavaScript with accessibility features
+ */
+function generateNavbarScript(lang, theme) {
+  return `
+    <script>
+      // Focus trap elements for mobile drawer
+      const focusTrapStart = document.createElement('div');
+      const focusTrapEnd = document.createElement('div');
+      focusTrapStart.className = 'focus-trap';
+      focusTrapEnd.className = 'focus-trap';
+      focusTrapStart.tabIndex = 0;
+      focusTrapEnd.tabIndex = 0;
+      
+      // Navbar state management
+      class NavbarManager {
+        constructor() {
+          this.isDesktop = window.innerWidth >= 1024;
+          this.currentFocus = null;
+          this.openSubmenu = null;
+          this.mobileDrawerOpen = false;
+          
+          this.init();
+          this.bindEvents();
+        }
+        
+        init() {
+          // Add scroll shadow effect
+          this.setupScrollShadow();
+          
+          // Setup focus traps
+          document.body.appendChild(focusTrapStart);
+          document.body.appendChild(focusTrapEnd);
+          
+          // Handle resize
+          window.addEventListener('resize', this.handleResize.bind(this));
+          
+          // FOUC prevention for theme
+          this.applyThemeFromStorage();
+        }
+        
+        bindEvents() {
+          // Desktop navigation
+          this.bindDesktopEvents();
+          
+          // Mobile navigation
+          this.bindMobileEvents();
+          
+          // Utility controls
+          this.bindUtilityEvents();
+          
+          // Keyboard events
+          this.bindKeyboardEvents();
+        }
+        
+        setupScrollShadow() {
+          // Temporarily disabled to test navbar positioning issue
+          // The sentinel element placement may be causing layout shifts
+          return;
+        }
+        
+        bindDesktopEvents() {
+          // Submenu triggers
+          document.querySelectorAll('.nav-trigger').forEach(trigger => {
+            trigger.addEventListener('click', this.handleSubmenuClick.bind(this));
+            trigger.addEventListener('mouseenter', this.handleSubmenuHover.bind(this));
+          });
+          
+          // Close submenu on outside click
+          document.addEventListener('click', this.handleOutsideClick.bind(this));
+        }
+        
+        bindMobileEvents() {
+          const mobileToggle = document.querySelector('.mobile-toggle');
+          const mobileClose = document.querySelector('.mobile-close');
+          const mobileOverlay = document.querySelector('.mobile-overlay');
+          
+          if (mobileToggle) {
+            mobileToggle.addEventListener('click', this.toggleMobileDrawer.bind(this));
+          }
+          
+          if (mobileClose) {
+            mobileClose.addEventListener('click', this.closeMobileDrawer.bind(this));
+          }
+          
+          if (mobileOverlay) {
+            mobileOverlay.addEventListener('click', this.closeMobileDrawer.bind(this));
+          }
+        }
+        
+        bindUtilityEvents() {
+          // Language switcher
+          document.querySelectorAll('.language-option').forEach(option => {
+            option.addEventListener('click', this.handleLanguageChange.bind(this));
+          });
+          
+          // Theme toggle
+          document.querySelectorAll('.theme-toggle-desktop, .theme-toggle-mobile').forEach(toggle => {
+            toggle.addEventListener('click', this.handleThemeToggle.bind(this));
+          });
+        }
+        
+        bindKeyboardEvents() {
+          document.addEventListener('keydown', this.handleKeyDown.bind(this));
+        }
+        
+        handleSubmenuClick(event) {
+          event.preventDefault();
+          const trigger = event.currentTarget;
+          const submenu = trigger.nextElementSibling;
+          const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+          
+          // Close any other open submenus
+          this.closeAllSubmenus();
+          
+          if (!isOpen) {
+            this.openSubmenu(trigger, submenu);
+          }
+        }
+        
+        handleSubmenuHover(event) {
+          if (!this.isDesktop) return;
+          
+          const trigger = event.currentTarget;
+          const submenu = trigger.nextElementSibling;
+          
+          // Close other submenus
+          this.closeAllSubmenus();
+          
+          // Open this submenu
+          this.openSubmenu(trigger, submenu);
+        }
+        
+        openSubmenu(trigger, submenu) {
+          trigger.setAttribute('aria-expanded', 'true');
+          submenu.classList.add('open');
+          this.openSubmenu = { trigger, submenu };
+          
+          // Focus first item in submenu
+          setTimeout(() => {
+            const firstLink = submenu.querySelector('.submenu-link');
+            if (firstLink) firstLink.focus();
+          }, 150);
+        }
+        
+        closeAllSubmenus() {
+          document.querySelectorAll('.nav-trigger[aria-expanded="true"]').forEach(trigger => {
+            trigger.setAttribute('aria-expanded', 'false');
+            const submenu = trigger.nextElementSibling;
+            if (submenu) submenu.classList.remove('open');
+          });
+          this.openSubmenu = null;
+        }
+        
+        handleOutsideClick(event) {
+          if (!this.openSubmenu) return;
+          
+          const { trigger, submenu } = this.openSubmenu;
+          if (!trigger.contains(event.target) && !submenu.contains(event.target)) {
+            this.closeAllSubmenus();
+          }
+        }
+        
+        toggleMobileDrawer() {
+          if (this.mobileDrawerOpen) {
+            this.closeMobileDrawer();
+          } else {
+            this.openMobileDrawer();
+          }
+        }
+        
+        openMobileDrawer() {
+          const toggle = document.querySelector('.mobile-toggle');
+          const drawer = document.querySelector('.mobile-drawer');
+          const overlay = document.querySelector('.mobile-overlay');
+          
+          if (!drawer || !overlay) return;
+          
+          // Update states
+          this.mobileDrawerOpen = true;
+          toggle.setAttribute('aria-expanded', 'true');
+          drawer.classList.add('open');
+          overlay.classList.add('open');
+          
+          // Lock scroll
+          document.body.style.overflow = 'hidden';
+          
+          // Set focus trap
+          this.setFocusTrap(drawer);
+          
+          // Focus first focusable element
+          setTimeout(() => {
+            const firstFocusable = drawer.querySelector('button, a, [tabindex]:not([tabindex="-1"])');
+            if (firstFocusable) firstFocusable.focus();
+          }, 200);
+          
+          // Announce to screen readers
+          this.announceToScreenReader('${lang === "nl" ? "Mobiel menu geopend" : "Mobile menu opened"}');
+        }
+        
+        closeMobileDrawer() {
+          const toggle = document.querySelector('.mobile-toggle');
+          const drawer = document.querySelector('.mobile-drawer');
+          const overlay = document.querySelector('.mobile-overlay');
+          
+          if (!drawer || !overlay) return;
+          
+          // Update states
+          this.mobileDrawerOpen = false;
+          toggle.setAttribute('aria-expanded', 'false');
+          drawer.classList.remove('open');
+          overlay.classList.remove('open');
+          
+          // Unlock scroll
+          document.body.style.overflow = '';
+          
+          // Remove focus trap
+          this.removeFocusTrap();
+          
+          // Return focus to toggle
+          toggle.focus();
+          
+          // Announce to screen readers
+          this.announceToScreenReader('${lang === "nl" ? "Mobiel menu gesloten" : "Mobile menu closed"}');
+        }
+        
+        setFocusTrap(container) {
+          // Insert focus traps at start and end of drawer
+          container.insertBefore(focusTrapStart, container.firstChild);
+          container.appendChild(focusTrapEnd);
+          
+          // Handle focus trap
+          focusTrapStart.addEventListener('focus', () => {
+            const lastFocusable = this.getLastFocusable(container);
+            if (lastFocusable) lastFocusable.focus();
+          });
+          
+          focusTrapEnd.addEventListener('focus', () => {
+            const firstFocusable = this.getFirstFocusable(container);
+            if (firstFocusable) firstFocusable.focus();
+          });
+        }
+        
+        removeFocusTrap() {
+          focusTrapStart.removeEventListener('focus', () => {});
+          focusTrapEnd.removeEventListener('focus', () => {});
+          
+          if (focusTrapStart.parentNode) {
+            focusTrapStart.parentNode.removeChild(focusTrapStart);
+          }
+          if (focusTrapEnd.parentNode) {
+            focusTrapEnd.parentNode.removeChild(focusTrapEnd);
+          }
+        }
+        
+        getFirstFocusable(container) {
+          return container.querySelector('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])');
+        }
+        
+        getLastFocusable(container) {
+          const focusables = container.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])');
+          return focusables[focusables.length - 1];
+        }
+        
+        handleLanguageChange(event) {
+          const newLang = event.currentTarget.dataset.lang;
+          const currentTheme = event.currentTarget.dataset.theme;
+          
+          // Update URL
+          const url = new URL(window.location);
+          url.searchParams.set('lang', newLang);
+          url.searchParams.set('theme', currentTheme);
+          
+          // Store preference
+          localStorage.setItem('preferredLanguage', newLang);
+          
+          // Navigate
+          window.location.href = url.toString();
+        }
+        
+        handleThemeToggle(event) {
+          const currentTheme = event.currentTarget.dataset.currentTheme;
+          const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+          
+          // Update URL
+          const url = new URL(window.location);
+          url.searchParams.set('theme', newTheme);
+          
+          // Store preference
+          localStorage.setItem('preferredTheme', newTheme);
+          
+          // Apply theme immediately
+          document.documentElement.setAttribute('data-theme', newTheme);
+          
+          // Navigate
+          window.location.href = url.toString();
+        }
+        
+        applyThemeFromStorage() {
+          const storedTheme = localStorage.getItem('preferredTheme');
+          const urlTheme = new URLSearchParams(window.location.search).get('theme');
+          const theme = urlTheme || storedTheme || 'light';
+          
+          document.documentElement.setAttribute('data-theme', theme);
+        }
+        
+        handleKeyDown(event) {
+          // Handle escape key
+          if (event.key === 'Escape') {
+            if (this.mobileDrawerOpen) {
+              this.closeMobileDrawer();
+              return;
+            }
+            
+            if (this.openSubmenu) {
+              this.closeAllSubmenus();
+              this.openSubmenu.trigger.focus();
+              return;
+            }
+          }
+          
+          // Handle arrow navigation in menubar
+          if (event.target.closest('.nav-menubar')) {
+            this.handleMenubarNavigation(event);
+          }
+          
+          // Handle arrow navigation in submenu
+          if (event.target.closest('.submenu')) {
+            this.handleSubmenuNavigation(event);
+          }
+        }
+        
+        handleMenubarNavigation(event) {
+          const menubar = event.target.closest('.nav-menubar');
+          const items = menubar.querySelectorAll('.nav-link, .nav-trigger');
+          const currentIndex = Array.from(items).indexOf(event.target);
+          
+          let targetIndex;
+          
+          switch (event.key) {
+            case 'ArrowLeft':
+              event.preventDefault();
+              targetIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+              items[targetIndex].focus();
+              break;
               
-              if (item.isButton) {
-                return `<a href="${item.href}" 
-                          class="mobile-nav-cta" 
-                          role="menuitem"
-                          onclick="scrollToSubscription(); toggleMobileMenu(); return false;">${label}</a>`;
-              }
+            case 'ArrowRight':
+              event.preventDefault();
+              targetIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
+              items[targetIndex].focus();
+              break;
               
-              return `<a href="${item.href}?lang=${lang}&theme=${theme}" 
-                        class="mobile-nav-link ${isActive ? 'mobile-nav-link--active' : ''}" 
-                        role="menuitem">${label}</a>`;
-            }).join('')}
-        </div>
-    </nav>`;
+            case 'Home':
+              event.preventDefault();
+              items[0].focus();
+              break;
+              
+            case 'End':
+              event.preventDefault();
+              items[items.length - 1].focus();
+              break;
+          }
+        }
+        
+        handleSubmenuNavigation(event) {
+          const submenu = event.target.closest('.submenu');
+          const items = submenu.querySelectorAll('.submenu-link');
+          const currentIndex = Array.from(items).indexOf(event.target);
+          
+          let targetIndex;
+          
+          switch (event.key) {
+            case 'ArrowUp':
+              event.preventDefault();
+              targetIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+              items[targetIndex].focus();
+              break;
+              
+            case 'ArrowDown':
+              event.preventDefault();
+              targetIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
+              items[targetIndex].focus();
+              break;
+              
+            case 'Home':
+              event.preventDefault();
+              items[0].focus();
+              break;
+              
+            case 'End':
+              event.preventDefault();
+              items[items.length - 1].focus();
+              break;
+          }
+        }
+        
+        handleResize() {
+          const wasDesktop = this.isDesktop;
+          this.isDesktop = window.innerWidth >= 1024;
+          
+          // Close mobile drawer if switching to desktop
+          if (!wasDesktop && this.isDesktop && this.mobileDrawerOpen) {
+            this.closeMobileDrawer();
+          }
+          
+          // Close submenus on resize
+          this.closeAllSubmenus();
+        }
+        
+        announceToScreenReader(message) {
+          // Create live region for announcements
+          let liveRegion = document.getElementById('navbar-announcements');
+          if (!liveRegion) {
+            liveRegion = document.createElement('div');
+            liveRegion.id = 'navbar-announcements';
+            liveRegion.setAttribute('aria-live', 'polite');
+            liveRegion.setAttribute('aria-atomic', 'true');
+            liveRegion.style.position = 'absolute';
+            liveRegion.style.left = '-9999px';
+            liveRegion.style.width = '1px';
+            liveRegion.style.height = '1px';
+            liveRegion.style.overflow = 'hidden';
+            document.body.appendChild(liveRegion);
+          }
+          
+          liveRegion.textContent = message;
+          
+          // Clear after announcement
+          setTimeout(() => {
+            liveRegion.textContent = '';
+          }, 1000);
+        }
+      }
+      
+      // Initialize navbar when DOM is ready
+      document.addEventListener('DOMContentLoaded', () => {
+        new NavbarManager();
+      });
+      
+      // Prevent FOUC by applying theme immediately
+      (function() {
+        const storedTheme = localStorage.getItem('preferredTheme');
+        const urlTheme = new URLSearchParams(window.location.search).get('theme');
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const theme = urlTheme || storedTheme || systemTheme;
+        
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+  `;
 }
 
 /**
@@ -197,22 +1554,6 @@ function generateStandardNavigation(lang = 'nl', theme = 'light', currentPage = 
  * @param {string} theme - Theme
  * @returns {string} - Logo HTML
  */
-function generateStandardLogo(lang = 'nl', theme = 'light') {
-  return `
-    <a href="/?lang=${lang}&theme=${theme}" class="navbar-brand" role="banner">
-        <div class="brand-icon">
-            <img src="/assets/DHGateVector.png" 
-                 alt="DHgate Monitor Logo" 
-                 width="32" 
-                 height="32"
-                 style="object-fit: contain;">
-        </div>
-        <div class="brand-text">
-            <span class="brand-name">DHgate Monitor</span>
-            <span class="brand-tagline">${lang === 'nl' ? 'E-commerce Intelligence' : 'E-commerce Intelligence'}</span>
-        </div>
-    </a>`;
-}
 
 /**
  * Generates theme toggle component
@@ -220,22 +1561,6 @@ function generateStandardLogo(lang = 'nl', theme = 'light') {
  * @param {string} lang - Language code
  * @returns {string} - Theme toggle HTML
  */
-function generateThemeToggle(theme = 'light', lang = 'nl') {
-  const isDark = theme === 'dark';
-  const toggleLabel = lang === 'nl' ? 'Thema wisselen' : 'Toggle theme';
-  
-  return `
-    <button class="theme-toggle" 
-            onclick="toggleTheme()" 
-            aria-label="${toggleLabel}"
-            role="switch" 
-            aria-checked="${isDark}">
-        <span class="theme-toggle-track">
-            <span class="theme-toggle-thumb"></span>
-        </span>
-        <span class="theme-toggle-label">${isDark ? '🌙' : '☀️'}</span>
-    </button>`;
-}
 
 /**
  * Generates language switcher component
@@ -243,19 +1568,6 @@ function generateThemeToggle(theme = 'light', lang = 'nl') {
  * @param {string} theme - Current theme
  * @returns {string} - Language switcher HTML
  */
-function generateLanguageSwitcher(lang = 'nl', theme = 'light', currentPage = '/') {
-  return `
-    <div class="language-switcher" role="group" aria-label="${lang === 'nl' ? 'Taal selectie' : 'Language selection'}">
-        <a href="${currentPage}?lang=nl&theme=${theme}" 
-           class="lang-btn ${lang === 'nl' ? 'lang-btn--active' : ''}" 
-           aria-pressed="${lang === 'nl'}"
-           style="text-decoration: none;">NL</a>
-        <a href="${currentPage}?lang=en&theme=${theme}" 
-           class="lang-btn ${lang === 'en' ? 'lang-btn--active' : ''}" 
-           aria-pressed="${lang === 'en'}"
-           style="text-decoration: none;">EN</a>
-    </div>`;
-}
 
 /**
  * Generates common JavaScript functionality for navbar
@@ -263,104 +1575,6 @@ function generateLanguageSwitcher(lang = 'nl', theme = 'light', currentPage = '/
  * @param {string} theme - Current theme
  * @returns {string} - JavaScript code
  */
-function generateCommonNavbarJS(lang = 'nl', theme = 'light') {
-  return `
-    <script>
-        // Theme toggle functionality
-        function toggleTheme() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const currentTheme = urlParams.get('theme') || 'light';
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('selectedTheme', newTheme);
-            const url = new URL(window.location);
-            url.searchParams.set('theme', newTheme);
-            // Preserve language parameter
-            const currentLang = url.searchParams.get('lang') || '${lang}';
-            url.searchParams.set('lang', currentLang);
-            window.location.href = url.toString();
-        }
-        
-        // Language switcher functionality
-        function switchLanguage(newLang) {
-            const currentUrl = new URL(window.location);
-            currentUrl.searchParams.set('lang', newLang);
-            
-            // Track language change
-            if (typeof window.trackPreferenceChange === 'function') {
-                window.trackPreferenceChange('language', newLang);
-            }
-            
-            window.location.href = currentUrl.toString();
-        }
-        
-        // Mobile menu toggle functionality
-        function toggleMobileMenu() {
-            const hamburger = document.querySelector('.hamburger');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const overlay = document.querySelector('.mobile-menu-overlay');
-            
-            console.log('toggleMobileMenu called');
-            console.log('hamburger:', hamburger);
-            console.log('mobileMenu:', mobileMenu);
-            console.log('overlay:', overlay);
-            
-            if (hamburger && mobileMenu && overlay) {
-                const isOpen = hamburger.getAttribute('aria-expanded') === 'true';
-                console.log('isOpen:', isOpen);
-                
-                hamburger.setAttribute('aria-expanded', !isOpen);
-                hamburger.classList.toggle('active');
-                mobileMenu.setAttribute('aria-hidden', isOpen);
-                mobileMenu.classList.toggle('active');
-                overlay.classList.toggle('active');
-                
-                // Prevent body scrolling when menu is open
-                document.body.style.overflow = !isOpen ? 'hidden' : '';
-                
-                console.log('Mobile menu toggled successfully');
-            } else {
-                console.error('Missing elements for mobile menu toggle');
-            }
-        }
-        
-        // Scroll to subscription form (for homepage)
-        function scrollToSubscription() {
-            const subscriptionForm = document.querySelector('#subscription-form');
-            const navbar = document.querySelector('.site-navbar');
-            
-            if (subscriptionForm) {
-                const navbarHeight = navbar ? navbar.offsetHeight : 80;
-                const targetPosition = subscriptionForm.getBoundingClientRect().top + window.pageYOffset - navbarHeight - 20;
-                
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
-            } else {
-                // If not on homepage, go to homepage with scroll
-                window.location.href = '/?lang=${lang}&theme=${theme}#subscription-form';
-            }
-        }
-        
-        // Close mobile menu when clicking overlay
-        document.addEventListener('DOMContentLoaded', function() {
-            const overlay = document.querySelector('.mobile-menu-overlay');
-            if (overlay) {
-                overlay.addEventListener('click', toggleMobileMenu);
-            }
-            
-            // Close mobile menu when pressing Escape
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    const mobileMenu = document.querySelector('.mobile-menu');
-                    if (mobileMenu && mobileMenu.classList.contains('active')) {
-                        toggleMobileMenu();
-                    }
-                }
-            });
-        });
-    </script>`;
-}
 
 // ============================================================================
 // SECURITY & VALIDATION UTILITIES
@@ -1381,16 +2595,6 @@ ${cssVars}
         overflow-x: hidden;
       }
       
-      /* Page-specific padding for fixed navbar */
-      body[data-page-type="landing"] {
-        padding-top: 70px;
-      }
-      
-      body[data-page-type="dashboard"],
-      body[data-page-type="service"],
-      body[data-page-type="contact"] {
-        padding-top: 80px;
-      }
       
       /* Premium Typography System */
       h1, h2, h3, h4, h5, h6 {
@@ -1689,402 +2893,6 @@ ${cssVars}
         100% { transform: rotate(360deg); }
       }
       
-      /* ========================================
-         STANDARDIZED NAVIGATION SYSTEM
-         ======================================== */
-      
-      .site-navbar {
-        background: var(--card-bg);
-        border-bottom: 1px solid var(--border-light);
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
-        z-index: 1002;
-        backdrop-filter: blur(10px);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      
-      .navbar-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 1.5rem;
-        gap: 1rem;
-      }
-      
-      /* Brand/Logo Component */
-      .navbar-brand {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        text-decoration: none;
-        transition: transform 0.2s ease;
-      }
-      
-      .navbar-brand:hover {
-        transform: translateY(-1px);
-      }
-      
-      .brand-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: transform 0.3s ease;
-        overflow: hidden;
-      }
-      
-      .brand-icon img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        transition: transform 0.3s ease;
-      }
-      
-      .navbar-brand:hover .brand-icon img {
-        transform: scale(1.1);
-      }
-      
-      .brand-text {
-        display: flex;
-        flex-direction: column;
-        line-height: 1.1;
-      }
-      
-      .brand-name {
-        font-size: 1.125rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin: 0;
-      }
-      
-      .brand-tagline {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        font-weight: 400;
-        margin: 0;
-      }
-      
-      /* Desktop Navigation Menu */
-      .navbar-menu {
-        display: flex;
-        gap: 2rem;
-        align-items: center;
-      }
-      
-      .nav-link {
-        color: var(--text-secondary);
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 0.9rem;
-        padding: 0.5rem 0;
-        position: relative;
-        transition: all 0.3s ease;
-      }
-      
-      .nav-link::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background: var(--primary-blue);
-        transition: width 0.3s ease;
-      }
-      
-      .nav-link:hover {
-        color: var(--text-primary);
-      }
-      
-      .nav-link:hover::after {
-        width: 100%;
-      }
-      
-      .nav-link--active {
-        color: var(--primary-blue);
-        font-weight: 600;
-      }
-      
-      .nav-link--active::after {
-        width: 100%;
-      }
-      
-      /* CTA Button in Navigation */
-      .nav-cta-button {
-        background: var(--primary-blue);
-        color: white;
-        text-decoration: none;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-        margin-left: 0.5rem;
-      }
-      
-      .nav-cta-button:hover {
-        background: var(--primary-dark);
-        color: white;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-      }
-      
-      /* Mobile Navigation */
-      .hamburger {
-        display: none;
-        flex-direction: column;
-        gap: 3px;
-        padding: 0.5rem;
-        background: none;
-        border: none;
-        cursor: pointer;
-        transition: transform 0.3s ease;
-      }
-      
-      .hamburger span {
-        width: 20px;
-        height: 2px;
-        background: var(--text-primary);
-        transition: all 0.3s ease;
-        border-radius: 1px;
-      }
-      
-      .hamburger.active {
-        transform: rotate(90deg);
-      }
-      
-      .hamburger.active span:nth-child(1) {
-        transform: rotate(45deg) translate(6px, 6px);
-      }
-      
-      .hamburger.active span:nth-child(2) {
-        opacity: 0;
-      }
-      
-      .hamburger.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(6px, -6px);
-      }
-      
-      .mobile-menu-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-      }
-      
-      .mobile-menu-overlay.active {
-        opacity: 1;
-        visibility: visible;
-      }
-      
-      .mobile-menu {
-        position: fixed;
-        top: 0;
-        right: -300px;
-        width: 280px;
-        height: 100%;
-        background: var(--card-bg);
-        z-index: 1001;
-        padding: 2rem 1.5rem;
-        transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
-        overflow-y: auto;
-      }
-      
-      .mobile-menu.active {
-        right: 0;
-      }
-      
-      .mobile-nav-link {
-        display: block;
-        color: var(--text-secondary);
-        text-decoration: none;
-        font-weight: 500;
-        padding: 1rem 0;
-        border-bottom: 1px solid var(--border-light);
-        transition: all 0.3s ease;
-      }
-      
-      .mobile-nav-link:hover {
-        color: var(--primary-blue);
-        padding-left: 0.5rem;
-      }
-      
-      .mobile-nav-link--active {
-        color: var(--primary-blue);
-        font-weight: 600;
-      }
-      
-      .mobile-nav-cta {
-        display: block;
-        background: var(--primary-blue);
-        color: white;
-        text-decoration: none;
-        padding: 1rem;
-        margin: 1rem 0;
-        border-radius: 8px;
-        font-weight: 600;
-        text-align: center;
-        transition: all 0.3s ease;
-      }
-      
-      .mobile-nav-cta:hover {
-        background: var(--primary-dark);
-        color: white;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-      }
-      
-      /* Controls (Theme & Language) */
-      .navbar-controls {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-      }
-      
-      /* Theme Toggle */
-      .theme-toggle {
-        background: none;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem;
-        border-radius: 6px;
-        transition: background-color 0.3s ease;
-      }
-      
-      .theme-toggle:hover {
-        background: var(--hover-bg);
-      }
-      
-      .theme-toggle-track {
-        width: 36px;
-        height: 20px;
-        background: var(--border-medium);
-        border-radius: 10px;
-        position: relative;
-        transition: background-color 0.3s ease;
-      }
-      
-      .theme-toggle[aria-checked="true"] .theme-toggle-track {
-        background: var(--primary-blue);
-      }
-      
-      .theme-toggle-thumb {
-        width: 16px;
-        height: 16px;
-        background: white;
-        border-radius: 50%;
-        position: absolute;
-        top: 2px;
-        left: 2px;
-        transition: transform 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      }
-      
-      .theme-toggle[aria-checked="true"] .theme-toggle-thumb {
-        transform: translateX(16px);
-      }
-      
-      .theme-toggle-label {
-        font-size: 1rem;
-      }
-      
-      /* Language Switcher */
-      .language-switcher {
-        display: flex;
-        background: var(--hover-bg);
-        border-radius: 6px;
-        padding: 2px;
-      }
-      
-      .lang-btn {
-        background: none;
-        border: none;
-        padding: 0.25rem 0.5rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--text-muted);
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        min-width: 28px;
-        text-decoration: none;
-        display: inline-block;
-        text-align: center;
-      }
-      
-      .lang-btn--active {
-        background: var(--card-bg);
-        color: var(--primary-blue);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      }
-      
-      .lang-btn:hover:not(.lang-btn--active) {
-        color: var(--text-secondary);
-      }
-      
-      /* Responsive Design */
-      @media (max-width: 768px) {
-        .desktop-menu {
-          display: none;
-        }
-        
-        .hamburger {
-          display: flex;
-        }
-        
-        .navbar-container {
-          padding: 1rem;
-        }
-        
-        .brand-tagline {
-          display: none;
-        }
-        
-        .navbar-controls {
-          gap: 0.5rem;
-        }
-        
-        .theme-toggle-label {
-          display: none;
-        }
-        
-        .nav-cta-button {
-          display: none;
-        }
-      }
-      
-      @media (max-width: 480px) {
-        .navbar-controls .theme-toggle {
-          padding: 0.25rem;
-        }
-        
-        .language-switcher {
-          padding: 1px;
-        }
-        
-        .lang-btn {
-          padding: 0.2rem 0.4rem;
-          font-size: 0.7rem;
-          min-width: 24px;
-        }
-      }
       
       /* Premium Micro-Interactions */
       .hover-lift {
@@ -2537,7 +3345,7 @@ ${cssVars}
       
       /* Mobile Optimizations */
       @media (max-width: 767px) {
-        .container {
+        .container:not(.header-container) {
           padding: 20px 15px !important;
           max-width: 100%;
           overflow-x: hidden;
@@ -2561,7 +3369,6 @@ ${cssVars}
         
         .main-header {
           padding: 30px 20px !important;
-          margin-top: 80px !important; /* More space for mobile toggles */
         }
         
         .theme-switcher {
@@ -3102,241 +3909,6 @@ function generateCookieConsentBanner(lang = 'en') {
   `;
 }
 
-// Reusable Navigation Component for all pages
-function generateResponsiveNavigation(lang = 'en', theme = 'light', currentPage = '') {
-  return `
-    <!-- Responsive Navigation Bar -->
-    <nav class="site-navbar" style="background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1002;">
-        <div class="container">
-            <div class="navbar-container" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;">
-                <a href="/?lang=${lang}&theme=${theme}" class="navbar-brand" style="text-decoration: none; display: flex; align-items: center; gap: 0.75rem;">
-                    <div class="brand-icon" style="width: 32px; height: 32px; background: linear-gradient(135deg, #2563EB, #1E40AF); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                        </svg>
-                    </div>
-                    <div class="brand-text" style="display: flex; flex-direction: column; line-height: 1.1;">
-                        <span style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">DHgate Monitor</span>
-                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 400;">${lang === 'nl' ? 'E-commerce Intelligence' : 'E-commerce Intelligence'}</span>
-                    </div>
-                </a>
-                
-                <div class="navbar-controls" style="display: flex; align-items: center; gap: 1rem;">
-                    <!-- Desktop Menu -->
-                    <div class="desktop-menu" style="display: flex; gap: 1.5rem; align-items: center;">
-                        <a href="/?lang=${lang}&theme=${theme}" style="color: var(--text-secondary); text-decoration: none; font-weight: 500;">${lang === 'nl' ? 'Home' : 'Home'}</a>
-                        <a href="/dashboard?lang=${lang}&theme=${theme}" style="color: var(--text-secondary); text-decoration: none; font-weight: 500;">${lang === 'nl' ? 'Dashboard' : 'Dashboard'}</a>
-                        <a href="/service?lang=${lang}&theme=${theme}" style="color: var(--text-secondary); text-decoration: none; font-weight: 500;">${lang === 'nl' ? 'Service' : 'Service'}</a>
-                    </div>
-                    
-                    <!-- Desktop Language Switcher -->
-                    <div class="desktop-lang-switcher" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
-                        <a href="${currentPage}?lang=en&theme=${theme}" style="color: ${lang === 'en' ? 'var(--accent-color)' : 'var(--text-muted)'}; text-decoration: none; font-weight: 500;">EN</a>
-                        <span style="color: var(--text-muted);">|</span>
-                        <a href="${currentPage}?lang=nl&theme=${theme}" style="color: ${lang === 'nl' ? 'var(--accent-color)' : 'var(--text-muted)'}; text-decoration: none; font-weight: 500;">NL</a>
-                    </div>
-                    
-                    <!-- Desktop Theme Toggle -->
-                    <div class="desktop-theme-toggle" style="width: 50px; height: 25px; background: var(--border-color); border-radius: 12px; position: relative; cursor: pointer; transition: all 0.3s ease;" onclick="toggleTheme()">
-                        <div class="theme-toggle-slider" style="position: absolute; top: 2px; left: ${theme === 'dark' ? '23px' : '2px'}; width: 21px; height: 21px; background: white; border-radius: 50%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; font-size: 12px;">
-                            ${theme === 'dark' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'}
-                        </div>
-                    </div>
-                    
-                    
-                    <!-- Mobile Hamburger Menu -->
-                    <button class="hamburger" onclick="toggleMobileMenu()" 
-                            aria-label="${lang === 'nl' ? 'Menu in-/uitklappen' : 'Toggle menu'}" 
-                            aria-expanded="false" 
-                            aria-controls="mobileMenu">
-                        <span aria-hidden="true"></span>
-                        <span aria-hidden="true"></span>
-                        <span aria-hidden="true"></span>
-                        <span class="sr-only">${lang === 'nl' ? 'Menu' : 'Menu'}</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </nav>
-    
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay" onclick="closeMobileMenu()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: transparent; z-index: 9998;"></div>
-    
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu" style="position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: var(--card-bg); z-index: 9999; transition: right 0.3s ease; padding: 2rem 1.5rem; box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);">
-        <div class="mobile-menu-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <div class="brand-icon" style="width: 28px; height: 28px; background: linear-gradient(135deg, #2563EB, #1E40AF); border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                </div>
-                <span style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">DHgate Monitor</span>
-            </div>
-            <button class="mobile-menu-close" onclick="closeMobileMenu()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-primary);">✕</button>
-        </div>
-        
-        <div class="mobile-menu-items" style="display: flex; flex-direction: column; gap: 1.5rem;">
-            <a href="/?lang=${lang}&theme=${theme}" style="color: var(--text-primary); text-decoration: none; font-weight: 500; font-size: 1.1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light);">${lang === 'nl' ? 'Home' : 'Home'}</a>
-            <a href="/dashboard?lang=${lang}&theme=${theme}" style="color: var(--text-primary); text-decoration: none; font-weight: 500; font-size: 1.1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light);">${lang === 'nl' ? 'Dashboard' : 'Dashboard'}</a>
-            <a href="/service?lang=${lang}&theme=${theme}" style="color: var(--text-primary); text-decoration: none; font-weight: 500; font-size: 1.1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light);">${lang === 'nl' ? 'Service' : 'Service'}</a>
-            <a href="/privacy?lang=${lang}&theme=${theme}" style="color: var(--text-primary); text-decoration: none; font-weight: 500; font-size: 1.1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light);">${lang === 'nl' ? 'Privacy' : 'Privacy'}</a>
-        </div>
-        
-        <div class="mobile-controls" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 1.5rem;">
-            <!-- Language Switcher in Mobile Menu -->
-            <div class="mobile-lang-switcher" style="display: flex; justify-content: center; gap: 1rem;">
-                <a href="${currentPage}?lang=en&theme=${theme}" style="color: ${lang === 'en' ? 'var(--accent-color)' : 'var(--text-muted)'}; text-decoration: none; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 10px; background: ${lang === 'en' ? 'rgba(37, 99, 235, 0.1)' : 'transparent'}; border: 1px solid ${lang === 'en' ? '#2563EB' : 'var(--border-color)'};  transition: all 0.3s ease;">English</a>
-                <a href="${currentPage}?lang=nl&theme=${theme}" style="color: ${lang === 'nl' ? 'var(--accent-color)' : 'var(--text-muted)'}; text-decoration: none; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 10px; background: ${lang === 'nl' ? 'rgba(37, 99, 235, 0.1)' : 'transparent'}; border: 1px solid ${lang === 'nl' ? '#2563EB' : 'var(--border-color)'};  transition: all 0.3s ease;">Nederlands</a>
-            </div>
-            
-            <!-- Theme Toggle in Mobile Menu -->
-            <div class="mobile-theme-toggle" style="display: flex; justify-content: center; align-items: center; gap: 1rem; padding: 1rem; background: var(--bg-light); border-radius: 10px;">
-                <span style="color: var(--text-primary); font-size: 1rem; font-weight: 500;">${lang === 'nl' ? 'Donkere modus' : 'Dark mode'}</span>
-                <div class="theme-toggle-switch" onclick="toggleTheme()" style="width: 60px; height: 30px; background: var(--border-color); border-radius: 15px; position: relative; cursor: pointer; transition: all 0.3s ease;">
-                    <div class="theme-toggle-slider" style="position: absolute; top: 3px; left: ${theme === 'dark' ? '33px' : '3px'}; width: 24px; height: 24px; background: white; border-radius: 50%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                        ${theme === 'dark' ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>' : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <style>
-        @media (max-width: 768px) {
-            .desktop-menu {
-                display: none !important;
-            }
-            
-            .desktop-lang-switcher {
-                display: none !important;
-            }
-            
-            .desktop-theme-toggle {
-                display: none !important;
-            }
-            
-            .mobile-cta-button {
-                display: inline-block !important;
-            }
-            
-            .hamburger {
-                display: flex !important;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                width: 40px;
-                height: 40px;
-                background: none;
-                border: 2px solid var(--card-border);
-                border-radius: 8px;
-                cursor: pointer;
-                padding: 8px;
-                transition: all 0.3s ease;
-            }
-            
-            .hamburger:hover {
-                border-color: var(--primary-blue);
-                background: rgba(37, 99, 235, 0.05);
-            }
-            
-            .hamburger span {
-                display: block;
-                width: 20px;
-                height: 2px;
-                background: var(--text-primary);
-                margin: 2px 0;
-                transition: all 0.3s ease;
-                transform-origin: center;
-            }
-            
-            .navbar-controls {
-                gap: 0.75rem !important;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .navbar-brand span {
-                display: none;
-            }
-        }
-        
-        .mobile-menu.active {
-            right: 0 !important;
-        }
-        
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg);
-        }
-        
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-            transform: translateX(20px);
-        }
-        
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg);
-        }
-        
-        /* Screen reader only class */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-    </style>
-    
-    <script>
-        function toggleTheme() {
-            const currentTheme = new URLSearchParams(window.location.search).get('theme') || 'light';
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            const currentLang = new URLSearchParams(window.location.search).get('lang') || '${lang}';
-            const url = new URL(window.location);
-            url.searchParams.set('theme', newTheme);
-            url.searchParams.set('lang', currentLang);
-            window.location.href = url.toString();
-        }
-        
-        // Mobile menu functionality consolidated
-        function closeMobileMenu() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            const hamburger = document.querySelector('.hamburger');
-            const overlay = document.querySelector('.mobile-menu-overlay');
-            
-            if (!mobileMenu || !hamburger || !overlay) return;
-            
-            hamburger.setAttribute('aria-expanded', 'false');
-            hamburger.classList.remove('active');
-            mobileMenu.setAttribute('aria-hidden', 'true');
-            mobileMenu.classList.remove('active');
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-            
-            hamburger.focus();
-        }
-        
-        // Close mobile menu when pressing Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeMobileMenu();
-            }
-        });
-        
-        // Close mobile menu on window resize
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
-                closeMobileMenu();
-            }
-        });
-    </script>
-  `;
-}
 
 // DHgate Sitemap Scraper Functions
 async function scrapeDHgateSitemaps() {
@@ -3991,7 +4563,6 @@ function generateAffiliateDashboardHTML(analytics, lang = 'nl', theme = 'light')
     </style>
 </head>
 <body>
-    ${generateStandardNavigation(lang, theme, 'affiliate')}
     
     <div class="affiliate-dashboard">
         <div class="dashboard-header">
@@ -4735,7 +5306,7 @@ export default {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DHgate Monitor Daily Report</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; background-color: #f4f4f4;">
+<body style="margin: 0; padding: 0; font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f4f4f4;">
     <table role="presentation" style="width: 100%; border-collapse: collapse;">
         <tr>
             <td align="center" style="padding: 20px 0;">
@@ -4980,7 +5551,7 @@ export default {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DHgate Monitor Daily Report</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; background-color: #f4f4f4;">
+<body style="margin: 0; padding: 0; font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f4f4f4;">
     <table role="presentation" style="width: 100%; border-collapse: collapse;">
         <tr>
             <td align="center" style="padding: 20px 0;">
@@ -5483,7 +6054,7 @@ async function handleTestEmails(request, env) {
 <!DOCTYPE html>
 <html>
 <head><title>Test Email</title></head>
-<body style="font-family: Arial, sans-serif; padding: 20px;">
+<body style="font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px;">
   <h2>🧪 DHgate Monitor Email Test</h2>
   <p>${lang === 'nl' ? 
     'Deze email is verzonden om de email functionaliteit te testen.' :
@@ -6160,7 +6731,6 @@ async function handleNewsroomPage(request, env) {
             body {
                 margin: 0;
                 padding: 0;
-                padding-top: 80px;
                 overflow-x: hidden;
             }
             
@@ -6796,7 +7366,7 @@ async function handleNewsroomPage(request, env) {
             }
             
             @media (max-width: 768px) {
-                .container {
+                .container:not(.header-container) {
                     padding: 0 1rem !important;
                 }
                 
@@ -6936,10 +7506,14 @@ async function handleNewsroomPage(request, env) {
                     margin-top: 0.5rem;
                 }
             }
+            
+            ${generateMinimalBreadcrumbStyles()}
         </style>
     </head>
     <body data-page-type="newsroom">
-        ${generateStandardNavigation(lang, theme, 'newsroom')}
+        ${generateModernNavbar(lang, theme, '/newsroom')}
+        
+        ${generateMinimalBreadcrumb('/newsroom', lang, theme)}
         
         <!-- Newsroom Header -->
         <header class="service-header">
@@ -6952,8 +7526,6 @@ async function handleNewsroomPage(request, env) {
                 </p>
             </div>
         </header>
-        
-        ${generateBreadcrumb('/newsroom', lang, theme)}
         
         <main>
             <div class="newsroom-container">
@@ -7328,23 +7900,7 @@ async function handleNewsroomArticle(request, env) {
         
         <style>
             /* Clean Article Styles */
-            .article-breadcrumb {
-                background: var(--bg-secondary);
-                border-bottom: 1px solid var(--border-light);
-                padding: 1rem 0;
-            }
-            
-            .breadcrumb-link {
-                color: var(--text-secondary);
-                text-decoration: none;
-                font-size: 0.875rem;
-                font-weight: 500;
-                transition: color 0.2s ease;
-            }
-            
-            .breadcrumb-link:hover {
-                color: var(--primary);
-            }
+            ${generateMinimalBreadcrumbStyles()}
             
             .article-header {
                 background: var(--bg-hero);
@@ -8205,7 +8761,9 @@ async function handleNewsroomArticle(request, env) {
         </style>
     </head>
     <body data-page-type="newsroom">
-        ${generateStandardNavigation(lang, theme, 'newsroom')}
+        ${generateModernNavbar(lang, theme, `/newsroom/${article.slug}`)}
+        
+        ${generateMinimalBreadcrumb('/newsroom', lang, theme)}
         
         <!-- Article Language Switcher Override -->
         <script>
@@ -8224,14 +8782,6 @@ async function handleNewsroomArticle(request, env) {
           });
         </script>
         
-        <!-- Article Breadcrumb -->
-        <nav class="article-breadcrumb">
-            <div class="container">
-                <a href="/newsroom?lang=${lang}&theme=${theme}" class="breadcrumb-link">
-                    ← ${t.backToNewsroom}
-                </a>
-            </div>
-        </nav>
         
         <!-- Article Header -->
         <header class="article-header">
@@ -8519,7 +9069,7 @@ function generateDashboardHTML(subscription, t, lang, theme = 'light') {
     ${generateGA4Script()}
     
     <style>
-        ${generateBreadcrumbStyles()}
+        ${generateMinimalBreadcrumbStyles()}
         .dashboard-container {
             min-height: 100vh;
             background: var(--bg-gradient);
@@ -8755,12 +9305,9 @@ function generateDashboardHTML(subscription, t, lang, theme = 'light') {
     </style>
 </head>
 <body data-page-type="dashboard">
-    <!-- Skip to content for accessibility -->
-    <a href="#main-content" class="skip-to-content" tabindex="1">
-        ${lang === 'nl' ? 'Ga naar inhoud' : 'Skip to content'}
-    </a>
+    ${generateModernNavbar(lang, theme, '/dashboard')}
     
-    ${generateStandardNavigation(lang, theme, 'dashboard')}
+    ${generateMinimalBreadcrumb('/dashboard', lang, theme)}
     
     <!-- Dashboard Header -->
     <header class="service-header">
@@ -8776,7 +9323,6 @@ function generateDashboardHTML(subscription, t, lang, theme = 'light') {
     
     <div class="dashboard-container">
         <div class="container">
-            ${generateBreadcrumb('/dashboard', lang, theme)}
             
             <!-- Dashboard Content -->
             <main id="main-content" class="dashboard-content" role="main">
@@ -8978,7 +9524,6 @@ function generateAddShopHTML(t, lang, theme = 'light') {
         // Show consent banner on page load
     </script>
     
-    ${generateCommonNavbarJS(lang, theme)}
     
 </body>
 </html>
@@ -9192,7 +9737,6 @@ function generatePrivacyHTML(t, lang) {
     </style>
 </head>
 <body>
-    ${generateStandardNavigation(lang, theme, 'privacy')}
     
     <div class="container py-5">
         <div class="row justify-content-center">
@@ -9216,7 +9760,6 @@ function generatePrivacyHTML(t, lang) {
     
     ${generateCookieConsentBanner(lang)}
     
-    ${generateCommonNavbarJS(lang, 'light')}
     
 </body>
 </html>
@@ -9250,7 +9793,6 @@ function generateTermsHTML(t, lang) {
     </style>
 </head>
 <body>
-    ${generateStandardNavigation(lang, theme, 'terms')}
     
     <div class="container py-5">
         <div class="row justify-content-center">
@@ -9274,7 +9816,6 @@ function generateTermsHTML(t, lang) {
     
     ${generateCookieConsentBanner(lang)}
     
-    ${generateCommonNavbarJS(lang, 'light')}
     
 </body>
 </html>
@@ -9384,200 +9925,91 @@ function generateServiceHeaderStyles() {
  * @param {Object} customItems - Optional custom breadcrumb items
  * @returns {string} - Enhanced breadcrumb HTML
  */
-function generateBreadcrumb(currentPath, lang = 'nl', theme = 'light', customItems = null) {
-  const breadcrumbTranslations = {
+// Modern Minimalistic Breadcrumb System
+function generateMinimalBreadcrumb(currentPath, lang = 'nl', theme = 'light') {
+  // Only show breadcrumbs for non-home pages
+  if (currentPath === '/') return '';
+  
+  const labels = {
     nl: {
       home: 'Home',
-      service: 'Service & Contact',
-      dashboard: 'Dashboard',
-      unsubscribe: 'Uitschrijven',
-      test: 'Test Centrum',
-      login: 'Inloggen',
-      settings: 'Instellingen',
-      profile: 'Profiel',
-      shops: 'Winkels',
-      tags: 'Tags'
+      contact: 'Contact',
+      service: 'Service & Contact', 
+      newsroom: 'Newsroom',
+      dashboard: 'Dashboard'
     },
     en: {
       home: 'Home',
-      service: 'Service & Contact', 
-      dashboard: 'Dashboard',
-      unsubscribe: 'Unsubscribe',
-      test: 'Test Center',
-      login: 'Login',
-      settings: 'Settings',
-      profile: 'Profile',
-      shops: 'Shops',
-      tags: 'Tags'
+      contact: 'Contact',
+      service: 'Service & Contact',
+      newsroom: 'Newsroom', 
+      dashboard: 'Dashboard'
     }
   };
-
-  const t = breadcrumbTranslations[lang] || breadcrumbTranslations.en;
   
-  // Enhanced path mapping with hierarchy
-  const pathMapping = {
-    '/': { label: t.home, path: '/', parent: null },
-    '/service': { label: t.service, path: '/service', parent: '/' },
-    '/dashboard': { label: t.dashboard, path: '/dashboard', parent: '/' },
-    '/dashboard/settings': { label: t.settings, path: '/dashboard/settings', parent: '/dashboard' },
-    '/dashboard/shops': { label: t.shops, path: '/dashboard/shops', parent: '/dashboard' },
-    '/dashboard/tags': { label: t.tags, path: '/dashboard/tags', parent: '/dashboard' },
-    '/unsubscribe': { label: t.unsubscribe, path: '/unsubscribe', parent: '/' },
-    '/test': { label: t.test, path: '/test', parent: '/' },
-    '/login': { label: t.login, path: '/login', parent: '/' }
+  const t = labels[lang] || labels.en;
+  const pathMap = {
+    '/contact': t.contact,
+    '/service': t.service,
+    '/newsroom': t.newsroom,
+    '/dashboard': t.dashboard
   };
-
-  // Build breadcrumb trail
-  function buildBreadcrumbTrail(path) {
-    const trail = [];
-    let current = pathMapping[path];
-    
-    while (current) {
-      trail.unshift(current);
-      current = current.parent ? pathMapping[current.parent] : null;
-    }
-    
-    return trail;
-  }
-
-  // Use custom items or build from path
-  let crumbs = [];
-  if (customItems) {
-    crumbs = customItems;
-  } else {
-    crumbs = buildBreadcrumbTrail(currentPath);
-  }
-
-  if (crumbs.length === 0) return ''; // No breadcrumbs needed
-
+  
+  const currentLabel = pathMap[currentPath];
+  if (!currentLabel) return '';
+  
   return `
-    <nav class="breadcrumb-nav" role="navigation" aria-label="${lang === 'nl' ? 'Je bent hier' : 'You are here'}">
-      <div class="container">
-        <ol class="breadcrumb-list" role="list">
-          ${crumbs.map((crumb, index) => {
-            const isLast = index === crumbs.length - 1;
-            const isFirst = index === 0;
-            
-            return `
-              <li class="breadcrumb-item ${isLast ? 'breadcrumb-item--current' : ''}" role="listitem">
-                ${!isFirst ? `
-                  <svg class="breadcrumb-separator" width="12" height="12" viewBox="0 0 24 24" fill="none" 
-                       stroke="currentColor" stroke-width="2" role="presentation" aria-hidden="true">
-                    <path d="M9 18l6-6-6-6"/>
-                  </svg>
-                ` : ''}
-                
-                ${isLast ? `
-                  <span class="breadcrumb-current" aria-current="page">
-                    ${crumb.label}
-                  </span>
-                ` : `
-                  <a href="${crumb.path}?lang=${lang}&theme=${theme}" 
-                     class="breadcrumb-link"
-                     aria-label="${lang === 'nl' ? `Ga naar ${crumb.label}` : `Go to ${crumb.label}`}">
-                    ${crumb.label}
-                  </a>
-                `}
-              </li>
-            `;
-          }).join('')}
-        </ol>
+    <nav class="minimal-breadcrumb" role="navigation" aria-label="${lang === 'nl' ? 'Navigatie' : 'Navigation'}">
+      <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
+        <a href="/?lang=${lang}&theme=${theme}" class="breadcrumb-home">${t.home}</a>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current">${currentLabel}</span>
       </div>
     </nav>
   `;
 }
 
-// Enhanced Breadcrumb Styles
-function generateBreadcrumbStyles() {
+// Minimal Breadcrumb Styles
+function generateMinimalBreadcrumbStyles() {
   return `
-    /* Enhanced Breadcrumb System */
-    .breadcrumb-nav {
-      background: var(--card-bg);
-      border-bottom: 1px solid var(--border-light);
-      padding: 1rem 0;
-      margin-bottom: 1.5rem;
-      transition: all 0.3s ease;
-    }
-    
-    .breadcrumb-list {
-      display: flex;
-      align-items: center;
-      gap: 0;
+    .minimal-breadcrumb {
+      padding: 0.75rem 0;
       font-size: 0.875rem;
-      color: var(--text-muted);
-      list-style: none;
-      margin: 0;
-      padding: 0;
+      color: var(--text-secondary);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     }
     
-    .breadcrumb-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .breadcrumb-link {
+    .breadcrumb-home {
       color: var(--text-secondary);
       text-decoration: none;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      transition: all 0.3s ease;
-      position: relative;
+      transition: color 0.2s ease;
+      font-weight: 400;
     }
     
-    .breadcrumb-link:hover {
+    .breadcrumb-home:hover {
       color: var(--primary-blue);
-      background: var(--hover-bg);
-      text-decoration: none;
+      text-decoration: underline;
     }
     
-    .breadcrumb-link:focus {
-      outline: 2px solid var(--primary-blue);
-      outline-offset: 2px;
-    }
-    
-    .breadcrumb-separator {
+    .breadcrumb-sep {
+      margin: 0 0.5rem;
       color: var(--text-muted);
-      margin: 0 0.25rem;
-      opacity: 0.6;
+      font-weight: 300;
     }
     
     .breadcrumb-current {
       color: var(--text-primary);
-      font-weight: 600;
-      padding: 0.25rem 0.5rem;
+      font-weight: 500;
     }
     
-    .breadcrumb-item--current {
-      color: var(--text-primary);
-    }
-    
-    /* Responsive breadcrumbs */
     @media (max-width: 768px) {
-      .breadcrumb-nav {
-        padding: 0.75rem 0;
-        margin-bottom: 1rem;
-      }
-      
-      .breadcrumb-list {
+      .minimal-breadcrumb {
         font-size: 0.8rem;
+        padding: 0.6rem 0;
       }
       
-      .breadcrumb-link,
-      .breadcrumb-current {
-        padding: 0.2rem 0.4rem;
-      }
-      
-      /* Hide long labels on mobile */
-      .breadcrumb-item:not(:first-child):not(:last-child) {
-        display: none;
-      }
-      
-      /* Add ellipsis indicator when items are hidden */
-      .breadcrumb-item:first-child:not(:last-child)::after {
-        content: '...';
-        margin: 0 0.5rem;
-        color: var(--text-muted);
+      .breadcrumb-sep {
+        margin: 0 0.4rem;
       }
     }
   `;
@@ -9605,7 +10037,7 @@ function generateServiceHTML(t, lang, theme = 'light') {
     ${generateGlobalCSS(theme)}
     
     <style>
-        ${generateBreadcrumbStyles()}
+        ${generateMinimalBreadcrumbStyles()}
         
         /* Mobile Menu Fix */
         .mobile-menu.active {
@@ -9935,14 +10367,9 @@ function generateServiceHTML(t, lang, theme = 'light') {
     </style>
 </head>
 <body>
-    ${generateStandardNavigation(lang, theme, 'service')}
+    ${generateModernNavbar(lang, theme, '/service')}
     
-    ${generateBreadcrumb('/service', lang, theme)}
-    
-    <!-- Skip to content for accessibility -->
-    <a href="#main-content" class="skip-to-content" tabindex="1">
-        ${lang === 'nl' ? 'Ga naar inhoud' : 'Skip to content'}
-    </a>
+    ${generateMinimalBreadcrumb('/service', lang, theme)}
     
     <!-- Service Header -->
     <header class="service-header">
@@ -10164,7 +10591,6 @@ function generateServiceHTML(t, lang, theme = 'light') {
         }
     </script>
     
-    ${generateCommonNavbarJS(lang, theme)}
     
 </body>
 </html>
@@ -10663,13 +11089,14 @@ function generateContactHTML(t, lang, theme = 'light') {
                 padding: 0 0.75rem 1rem;
             }
         }
+        
+        ${generateMinimalBreadcrumbStyles()}
     </style>
 </head>
 <body>
-    ${generateStandardNavigation(lang, theme, 'contact')}
+    ${generateModernNavbar(lang, theme, '/contact')}
     
-    <!-- Skip to content for accessibility -->
-    <a href="#main-content" class="skip-to-content" tabindex="1">${lang === 'nl' ? 'Ga naar inhoud' : 'Skip to content'}</a>
+    ${generateMinimalBreadcrumb('/contact', lang, theme)}
     
     <!-- Contact Header -->
     <header class="service-header">
@@ -10682,6 +11109,7 @@ function generateContactHTML(t, lang, theme = 'light') {
             </p>
         </div>
     </header>
+    
     
     <main id="main-content" role="main">
         <div class="container py-5">
@@ -11499,7 +11927,6 @@ function generateContactHTML(t, lang, theme = 'light') {
     });
     </script>
     
-    ${generateCommonNavbarJS(lang, theme)}
     
 </body>
 </html>
@@ -12161,7 +12588,7 @@ async function handleTestPlanExecution(request, env) {
 // Send test plan results email
 async function sendTestPlanResultsEmail(results, env) {
   const emailContent = `
-    <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+    <div style="font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
       <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
         <h1 style="color: white; margin: 0; font-size: 28px;">DHgate Monitor</h1>
         <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 18px;">Test Plan Results</p>
@@ -13109,7 +13536,7 @@ function generateDashboardErrorHTML(lang, theme, errorType) {
         
         ${generateServiceHeaderStyles()}
         
-        ${generateBreadcrumbStyles()}
+        ${generateMinimalBreadcrumbStyles()}
         
         .error-container {
             min-height: calc(100vh - 200px);
@@ -13143,9 +13570,9 @@ function generateDashboardErrorHTML(lang, theme, errorType) {
     </style>
 </head>
 <body>
-    ${generateStandardNavigation(lang, theme, 'dashboard')}
+    ${generateModernNavbar(lang, theme, '/dashboard')}
     
-    ${generateBreadcrumb('/dashboard', lang, theme)}
+    ${generateMinimalBreadcrumb('/dashboard', lang, theme)}
     
     <!-- Dashboard Error Header -->
     <header class="service-header">
@@ -13214,7 +13641,6 @@ function generateDashboardErrorHTML(lang, theme, errorType) {
         </div>
     </div>
     
-    ${generateCommonNavbarJS(lang, theme)}
     
 </body>
 </html>
@@ -13824,133 +14250,9 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
             color: var(--text-primary);
             line-height: 1.7;
             overflow-x: hidden;
-            padding-top: 70px;
             margin: 0;
         }
         
-        /* Professional Navigation */
-        .professional-navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: var(--card-bg-alpha);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-color);
-            padding: 0;
-        }
-        
-        .navbar-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0.75rem 1.5rem;
-        }
-        
-
-        
-        .navbar-menu {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-        
-        .nav-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: color 0.3s ease;
-            padding: 0.5rem 0;
-        }
-        
-        .nav-link:hover {
-            color: var(--accent-color);
-        }
-        
-        .navbar-controls {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-        
-        .nav-lang-switcher {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
-        
-        .nav-lang-option {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        
-        .nav-lang-option.active {
-            color: var(--accent-color);
-        }
-        
-        .nav-lang-separator {
-            color: var(--text-muted);
-        }
-        
-        .nav-theme-toggle .theme-toggle-switch {
-            width: 44px;
-            height: 24px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-theme-toggle .theme-toggle-slider {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 18px;
-            height: 18px;
-            background: var(--accent-color);
-            border-radius: 50%;
-            transition: transform 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-        }
-        
-        .nav-theme-toggle .theme-toggle-switch.dark {
-            background: var(--accent-color);
-        }
-        
-        .nav-theme-toggle .theme-toggle-switch.dark .theme-toggle-slider {
-            transform: translateX(16px);
-            background: #334155;
-            color: white;
-        }
-        
-        .nav-cta-button {
-            background: var(--btn-primary-bg);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-            color: white;
-        }
         
         /* Simplified Hero */
         .hero-section {
@@ -13990,6 +14292,29 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 1.5rem;
+        }
+        
+        /* Ensure navbar header-container is never affected by hero-container */
+        .site-header .header-container {
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 1rem 2rem !important;
+        }
+        
+        /* Force navbar to stick to top on landing page */
+        body[data-page-type="landing"] {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        /* Ensure all pages use Raleway font */
+        body, * {
+            font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        }
+        
+        body[data-page-type="landing"] .site-header {
+            top: 0 !important;
+            margin-top: 0 !important;
         }
         
         .hero-content-wrapper {
@@ -16125,15 +16450,6 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
                 min-width: fit-content;
             }
             
-            .navbar-brand {
-                flex: 1;
-                text-align: left;
-            }
-            
-            .navbar-brand img {
-                height: 32px !important;
-                max-width: 32px !important;
-            }
             
             .navbar-container {
                 padding: 1rem 1rem !important;
@@ -16165,15 +16481,6 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
         }
         
         @media (max-width: 480px) {
-            .navbar-brand {
-                flex: 1;
-                text-align: left;
-            }
-            
-            .navbar-brand img {
-                height: 32px !important;
-                max-width: 32px !important;
-            }
             
             .nav-lang-switcher {
                 font-size: 0.75rem;
@@ -16476,10 +16783,8 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
     </style>
 </head>
 <body data-page-type="landing">
-    <!-- Skip to content link for screen readers -->
-    <a href="#main-content" class="skip-to-content" tabindex="1">${lang === 'nl' ? 'Ga naar inhoud' : 'Skip to content'}</a>
-    
-    ${generateStandardNavigation(lang, theme, 'home')}
+    ${generateModernNavbar(lang, theme, '/')}
+    ${generateMinimalBreadcrumb('/', lang, theme)}
     
     <!-- Main Content Starts Here -->
     
@@ -17382,7 +17687,7 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
         function updateProgressIndicator(step) {
             // Update progress fill
             const progressFill = document.getElementById('progressFill');
-            const progressPercentage = (step / totalSteps) * 100;
+            const progressPercentage = (step / landingTotalSteps) * 100;
             if (progressFill) {
                 progressFill.style.width = progressPercentage + '%';
             }
@@ -17418,7 +17723,8 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
                     return;
                 }
             } else if (landingCurrentStep === 2) {
-                const storeUrl = document.getElementById('selected_store_url').value;
+                const storeUrlElement = document.getElementById('selected_store_url');
+                const storeUrl = storeUrlElement ? storeUrlElement.value : '';
                 
                 if (!storeUrl) {
                     alert('${lang === 'nl' ? 'Selecteer eerst een winkel' : 'Please select a store first'}');
@@ -17551,9 +17857,9 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && e.target.matches('.form-control')) {
                 e.preventDefault();
-                if (currentStep < totalSteps) {
+                if (currentStep < landingTotalSteps) {
                     nextStep();
-                } else if (currentStep === totalSteps && e.target.id !== 'tags') {
+                } else if (currentStep === landingTotalSteps && e.target.id !== 'tags') {
                     // Track form submission
                     if (typeof window.trackFormSubmission === 'function') {
                         window.trackFormSubmission('subscription', true);
@@ -17761,7 +18067,6 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
     <!-- Performance Optimization Scripts -->
     ${PerformanceUtils.generateLazyLoadScript()}
     
-    ${generateCommonNavbarJS(lang, theme)}
     
     </main>
 </body>
