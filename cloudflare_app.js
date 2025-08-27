@@ -13850,24 +13850,7 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
             padding: 0.75rem 1.5rem;
         }
         
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            transition: opacity 0.3s ease;
-        }
-        
-        .navbar-brand:hover {
-            opacity: 0.8;
-        }
-        
-        .brand-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            letter-spacing: -0.5px;
-        }
+
         
         .navbar-menu {
             display: flex;
