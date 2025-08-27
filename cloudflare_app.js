@@ -17376,8 +17376,8 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
         }
         
         // Progressive Form Functionality
-        let currentStep = 1;
-        const totalSteps = 4;
+        let landingCurrentStep = 1;
+        const landingTotalSteps = 4;
         
         function updateProgressIndicator(step) {
             // Update progress fill
@@ -17406,18 +17406,18 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
         });
         
         function nextStep() {
-            const currentStepElement = document.querySelector('.form-step[data-step="' + currentStep + '"]');
+            const currentStepElement = document.querySelector('.form-step[data-step="' + landingCurrentStep + '"]');
             const emailInput = document.getElementById('email');
             const tagsInput = document.getElementById('tags');
             
             // Validate current step
-            if (currentStep === 1) {
+            if (landingCurrentStep === 1) {
                 if (!emailInput.value || !emailInput.checkValidity()) {
                     emailInput.focus();
                     emailInput.reportValidity();
                     return;
                 }
-            } else if (currentStep === 2) {
+            } else if (landingCurrentStep === 2) {
                 const storeUrl = document.getElementById('selected_store_url').value;
                 
                 if (!storeUrl) {
@@ -17431,7 +17431,7 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
                     tagsInput.reportValidity();
                     return;
                 }
-            } else if (currentStep === 3) {
+            } else if (landingCurrentStep === 3) {
                 const frequencySelect = document.getElementById('frequency');
                 
                 if (!frequencySelect.value) {
@@ -17441,15 +17441,15 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
                 }
             }
             
-            if (currentStep < totalSteps) {
+            if (landingCurrentStep < landingTotalSteps) {
                 // Hide current step
                 currentStepElement.classList.remove('active');
                 
                 // Show next step
-                currentStep++;
-                updateProgressIndicator(currentStep);
+                landingCurrentStep++;
+                updateProgressIndicator(landingCurrentStep);
                 
-                const nextStepElement = document.querySelector('.form-step[data-step="' + currentStep + '"]');
+                const nextStepElement = document.querySelector('.form-step[data-step="' + landingCurrentStep + '"]');
                 
                 setTimeout(() => {
                     nextStepElement.classList.add('active');
@@ -17458,15 +17458,15 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
                     if (typeof window.trackDHgateEvent === 'function') {
                         const stepNames = { 1: 'email', 2: 'store_search', 3: 'monitoring_settings', 4: 'confirmation' };
                         window.trackDHgateEvent('form_step_viewed', {
-                            step_number: currentStep,
-                            step_name: stepNames[currentStep] || 'unknown',
+                            step_number: landingCurrentStep,
+                            step_name: stepNames[landingCurrentStep] || 'unknown',
                             form_type: 'subscription'
                         });
                     }
                 }, 150);
                 
                 // Update summary on step 4
-                if (currentStep === 4) {
+                if (landingCurrentStep === 4) {
                     updateSummary();
                 }
             }
