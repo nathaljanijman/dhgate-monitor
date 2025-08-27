@@ -7143,6 +7143,50 @@ async function handleNewsroomPage(request, env) {
         </footer>
         
         <script>
+            // Theme toggle functionality
+            function toggleTheme() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const currentTheme = urlParams.get('theme') || 'light';
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                localStorage.setItem('selectedTheme', newTheme);
+                const url = new URL(window.location);
+                url.searchParams.set('theme', newTheme);
+                // Preserve language parameter
+                const currentLang = url.searchParams.get('lang') || '${lang}';
+                url.searchParams.set('lang', currentLang);
+                window.location.href = url.toString();
+            }
+            
+            // Mobile menu toggle functionality
+            function toggleMobileMenu() {
+                const hamburger = document.querySelector('.hamburger');
+                const mobileMenu = document.getElementById('mobile-menu');
+                const overlay = document.querySelector('.mobile-menu-overlay');
+                
+                console.log('toggleMobileMenu called');
+                console.log('hamburger:', hamburger);
+                console.log('mobileMenu:', mobileMenu);
+                console.log('overlay:', overlay);
+                
+                if (hamburger && mobileMenu && overlay) {
+                    const isOpen = hamburger.getAttribute('aria-expanded') === 'true';
+                    console.log('isOpen:', isOpen);
+                    
+                    hamburger.setAttribute('aria-expanded', !isOpen);
+                    hamburger.classList.toggle('active');
+                    mobileMenu.setAttribute('aria-hidden', isOpen);
+                    mobileMenu.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                    
+                    // Prevent body scrolling when menu is open
+                    document.body.style.overflow = !isOpen ? 'hidden' : '';
+                    
+                    console.log('Mobile menu toggled successfully');
+                } else {
+                    console.error('Missing elements for mobile menu toggle');
+                }
+            }
+            
             // Toggle filter functionality
             function toggleFilters() {
                 const grid = document.getElementById('filter-tags-grid');
@@ -7192,6 +7236,22 @@ async function handleNewsroomPage(request, env) {
                     grid.classList.add('expanded');
                     button.setAttribute('aria-expanded', 'true');
                 }
+                
+                // Mobile menu event listeners
+                const overlay = document.querySelector('.mobile-menu-overlay');
+                if (overlay) {
+                    overlay.addEventListener('click', toggleMobileMenu);
+                }
+                
+                // Close mobile menu when pressing Escape
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        const mobileMenu = document.querySelector('.mobile-menu');
+                        if (mobileMenu && mobileMenu.classList.contains('active')) {
+                            toggleMobileMenu();
+                        }
+                    }
+                });
             });
             
             // Function to remove filters
