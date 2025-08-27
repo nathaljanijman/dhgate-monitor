@@ -164,7 +164,7 @@ function generateStandardNavigation(lang = 'nl', theme = 'light', currentPage = 
             <!-- Controls (Theme & Language) -->
             <div class="navbar-controls">
                 ${generateThemeToggle(theme, lang)}
-                ${generateLanguageSwitcher(lang, theme)}
+                ${generateLanguageSwitcher(lang, theme, currentPage === 'home' ? '/' : `/${currentPage}`)}
             </div>
         </div>
         
@@ -242,15 +242,17 @@ function generateThemeToggle(theme = 'light', lang = 'nl') {
  * @param {string} theme - Current theme
  * @returns {string} - Language switcher HTML
  */
-function generateLanguageSwitcher(lang = 'nl', theme = 'light') {
+function generateLanguageSwitcher(lang = 'nl', theme = 'light', currentPage = '/') {
   return `
     <div class="language-switcher" role="group" aria-label="${lang === 'nl' ? 'Taal selectie' : 'Language selection'}">
-        <button class="lang-btn ${lang === 'nl' ? 'lang-btn--active' : ''}" 
-                onclick="switchLanguage('nl')"
-                aria-pressed="${lang === 'nl'}">NL</button>
-        <button class="lang-btn ${lang === 'en' ? 'lang-btn--active' : ''}" 
-                onclick="switchLanguage('en')"
-                aria-pressed="${lang === 'en'}">EN</button>
+        <a href="${currentPage}?lang=nl&theme=${theme}" 
+           class="lang-btn ${lang === 'nl' ? 'lang-btn--active' : ''}" 
+           aria-pressed="${lang === 'nl'}"
+           style="text-decoration: none;">NL</a>
+        <a href="${currentPage}?lang=en&theme=${theme}" 
+           class="lang-btn ${lang === 'en' ? 'lang-btn--active' : ''}" 
+           aria-pressed="${lang === 'en'}"
+           style="text-decoration: none;">EN</a>
     </div>`;
 }
 
@@ -2011,6 +2013,9 @@ ${cssVars}
         cursor: pointer;
         transition: all 0.3s ease;
         min-width: 28px;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
       }
       
       .lang-btn--active {
@@ -5802,7 +5807,7 @@ async function handleServicePage(request, env) {
  * Fetch articles from Prepr CMS
  */
 async function fetchPreprArticles(options = {}) {
-  const { limit = 10, offset = 0, search = '', category = '', sort = 'newest' } = options;
+  const { limit = 10, offset = 0, search = '', category = '', sort = 'newest', lang = 'nl' } = options;
   
   let orderBy = '_created_on_DESC';
   switch (sort) {
@@ -5818,7 +5823,7 @@ async function fetchPreprArticles(options = {}) {
   
   const query = `
     query GetArticles {
-      Articles {
+      Articles(locale: "nl-NL") {
         total
         items {
           _id
@@ -5833,6 +5838,7 @@ async function fetchPreprArticles(options = {}) {
             url
           }
           intro
+          _locales
         }
       }
     }
@@ -5899,29 +5905,60 @@ function formatArticleContent(bodyBlocks) {
     
     if (!text.trim()) continue;
     
-    // Check if this looks like a heading (short text, often followed by longer text, ends with ?)
-    const isHeading = text.length < 100 && (text.endsWith('?') || text.endsWith(':') || 
-                     (i < bodyBlocks.length - 1 && bodyBlocks[i + 1]?.text?.length > text.length));
+    const trimmedText = text.trim();
+    
+    // Check if this block is a heading (questions or short titles)
+    const isHeading = trimmedText.endsWith('?') || 
+      (trimmedText.length < 50 && !trimmedText.includes('.') && 
+       (trimmedText.includes('DHgate Monitor') || trimmedText.includes('verwachten') || 
+        trimmedText.includes('bedoeld') || trimmedText.includes('komt er')));
     
     if (isHeading) {
-      formattedContent += `<h2>${text.replace(/[?:]$/, '')}</h2>\n`;
+      formattedContent += `<h2>${trimmedText.replace(/\?$/, '')}</h2>\n`;
     } else {
-      // Process text for lists and paragraphs
-      const lines = text.split(/(?=[A-Z][a-z])/g).filter(line => line.trim());
+      // Check if this block contains colon-separated list items (like "Title: Description")
+      const hasColonItems = (trimmedText.match(/[A-Za-z\s]+:/g) || []).length >= 2;
       
-      if (lines.length > 1 && lines.some(line => line.includes(':') && line.length < 80)) {
-        // This looks like a list
-        formattedContent += '<ul>\n';
-        lines.forEach(line => {
-          const cleanLine = line.trim().replace(/^[•\-\*]\s*/, '');
-          if (cleanLine.length > 10) {
-            formattedContent += `<li>${cleanLine}</li>\n`;
+      // Check if this is the merged list items block (no spaces between items)
+      const isMergedListItems = trimmedText.includes('e-mail') && 
+        trimmedText.includes('newsroom') && 
+        trimmedText.includes('analyses') && 
+        !trimmedText.includes(' Een '); // No space means items are merged
+      
+      if (hasColonItems) {
+        // Split by items that start with capital letter followed by words and a colon
+        // This catches patterns like "Realtime monitoring:", "Shop spotlight:", etc.
+        const items = trimmedText.split(/(?=[A-Z][a-z]+\s*[a-z]*:)/).filter(item => item.trim());
+        
+        formattedContent += '<ul class="feature-list">\n';
+        items.forEach(item => {
+          const trimmedItem = item.trim();
+          if (trimmedItem.includes(':')) {
+            const colonIndex = trimmedItem.indexOf(':');
+            const title = trimmedItem.substring(0, colonIndex).trim();
+            const description = trimmedItem.substring(colonIndex + 1).trim();
+            if (title && description) {
+              formattedContent += `<li><strong>${title}:</strong> ${description}</li>\n`;
+            }
           }
+        });
+        formattedContent += '</ul>\n';
+      } else if (isMergedListItems) {
+        // Handle the merged future features list
+        const items = [
+          'Automatische rapportages per e-mail',
+          'Een newsroom met actuele artikelen en tips',
+          'Uitgebreide analyses per productcategorie'
+        ];
+        
+        formattedContent += '<ul class="feature-list">\n';
+        items.forEach(item => {
+          formattedContent += `<li>${item}</li>\n`;
         });
         formattedContent += '</ul>\n';
       } else {
         // Regular paragraph
-        formattedContent += `<p>${text}</p>\n`;
+        formattedContent += `<p>${trimmedText}</p>\n`;
       }
     }
   }
@@ -5932,10 +5969,10 @@ function formatArticleContent(bodyBlocks) {
 /**
  * Fetch a single article from Prepr CMS by slug
  */
-async function fetchPreprArticle(slug) {
+async function fetchPreprArticle(slug, lang = 'nl') {
   const query = `
     query GetArticle($slug: String!) {
-      Article(slug: $slug) {
+      Article(slug: $slug, locale: "nl-NL") {
         _id
         title
         _slug
@@ -5955,6 +5992,7 @@ async function fetchPreprArticle(slug) {
         afbeeldingen {
           url
         }
+        _locales
       }
     }
   `;
@@ -6030,7 +6068,8 @@ async function handleNewsroomPage(request, env) {
     offset: 0,
     search,
     category,
-    sort
+    sort,
+    lang
   });
   
   // Local filtering (could be moved to GraphQL query for better performance)
@@ -6224,6 +6263,147 @@ async function handleNewsroomPage(request, env) {
                 margin: 2rem 0;
                 box-shadow: var(--shadow);
             }
+            
+            
+            /* Filter Tags Section */
+            .filter-tags-section {
+                padding-top: 0;
+            }
+            
+            .filter-tags-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1.5rem;
+            }
+            
+            .filter-toggle {
+                background: none;
+                border: none;
+                padding: 0.75rem 0;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            
+            .filter-toggle:hover {
+                background: var(--bg-secondary);
+                border-radius: 8px;
+                padding: 0.75rem 1rem;
+            }
+            
+            .filter-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: var(--text-primary);
+                margin: 0;
+                flex-grow: 1;
+                text-align: left;
+            }
+            
+            .filter-toggle-icon {
+                color: var(--text-secondary);
+                transition: transform 0.3s ease;
+                margin-left: 1rem;
+            }
+            
+            .filter-toggle[aria-expanded="true"] .filter-toggle-icon {
+                transform: rotate(180deg);
+            }
+            
+            .clear-filters {
+                color: var(--text-secondary);
+                text-decoration: none;
+                font-size: 0.875rem;
+                transition: color 0.3s ease;
+            }
+            
+            .clear-filters:hover {
+                color: var(--primary);
+            }
+            
+            .filter-tags-grid {
+                flex-direction: column;
+                gap: 2rem;
+                margin-bottom: 2rem;
+                overflow: hidden;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                opacity: 0;
+                max-height: 0;
+            }
+            
+            .filter-tags-grid.expanded {
+                display: flex;
+                opacity: 1;
+                max-height: 1000px;
+                margin-top: 1.5rem;
+            }
+            
+            .filter-group {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .filter-group-label {
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                margin-bottom: 0.5rem;
+            }
+            
+            .filter-group-tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                align-items: center;
+            }
+            
+            .filter-tag-all {
+                background: var(--primary) !important;
+                color: white !important;
+                font-weight: 600;
+                font-size: 0.9rem;
+                padding: 0.6rem 1.2rem;
+            }
+            
+            .filter-tag-all.active {
+                background: var(--accent-color) !important;
+            }
+            
+            .filter-tag {
+                display: inline-block;
+                background: var(--bg-secondary);
+                color: var(--text-primary);
+                padding: 0.5rem 1rem;
+                border-radius: 25px;
+                text-decoration: none;
+                font-size: 0.875rem;
+                font-weight: 500;
+                border: 1px solid var(--border-light);
+                transition: all 0.3s ease;
+            }
+            
+            .filter-tag:hover {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+            }
+            
+            .filter-tag.active {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+                box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+            }
+            
             
             .articles-grid {
                 display: grid;
@@ -6609,16 +6789,27 @@ async function handleNewsroomPage(request, env) {
                 }
             }
             
+            @media (max-width: 1024px) {
+                .filter-group-tags {
+                    justify-content: center;
+                    gap: 0.6rem;
+                }
+                
+                .filter-tag {
+                    font-size: 0.8rem;
+                    padding: 0.5rem 0.8rem;
+                }
+                
+                .filter-group-label {
+                    text-align: center;
+                }
+                
+                .filter-tag-all {
+                    align-self: center;
+                }
+            }
+            
             @media (max-width: 768px) {
-                .filter-row {
-                    grid-template-columns: 1fr;
-                    gap: 1rem;
-                }
-                
-                .search-input {
-                    min-width: auto;
-                }
-                
                 .articles-grid {
                     grid-template-columns: 1fr;
                     gap: 1.5rem;
@@ -6628,6 +6819,51 @@ async function handleNewsroomPage(request, env) {
                 .newsroom-filters {
                     padding: 1.5rem;
                 }
+                
+                .filter-tags-header {
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: 0.5rem;
+                    margin-bottom: 0;
+                }
+                
+                .filter-toggle {
+                    padding: 1rem;
+                    border: 1px solid var(--border-light);
+                    border-radius: 8px;
+                    background: var(--bg-primary);
+                }
+                
+                .filter-toggle:hover {
+                    background: var(--bg-secondary);
+                    border-color: var(--primary);
+                }
+                
+                .filter-tags-grid {
+                    gap: 1.5rem;
+                }
+                
+                .filter-group-tags {
+                    gap: 0.5rem;
+                    justify-content: flex-start;
+                }
+                
+                .filter-tag {
+                    font-size: 0.8rem;
+                    padding: 0.6rem 0.9rem;
+                    min-height: 44px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                    white-space: nowrap;
+                    flex-shrink: 0;
+                }
+                
+                .filter-tag-all {
+                    align-self: center;
+                }
+                
                 
                 .article-title {
                     font-size: 1.375rem;
@@ -6658,6 +6894,55 @@ async function handleNewsroomPage(request, env) {
                 .article-meta {
                     gap: 0.75rem;
                 }
+                
+                .newsroom-filters {
+                    padding: 1rem;
+                    margin: 1rem 0;
+                }
+                
+                .filter-tags-grid {
+                    gap: 1.2rem;
+                }
+                
+                .filter-group-tags {
+                    gap: 0.4rem;
+                    justify-content: center;
+                }
+                
+                .filter-group-label {
+                    text-align: center;
+                    font-size: 0.8rem;
+                }
+                
+                .filter-tag {
+                    font-size: 0.75rem;
+                    padding: 0.5rem 0.75rem;
+                    border-radius: 20px;
+                    line-height: 1.2;
+                }
+                
+                .filter-title {
+                    font-size: 1.1rem;
+                    text-align: center;
+                }
+                
+                .filter-tags-header {
+                    text-align: center;
+                    margin-bottom: 0;
+                }
+                
+                .filter-toggle {
+                    padding: 0.75rem;
+                    text-align: left;
+                }
+                
+                .filter-title {
+                    font-size: 1.1rem;
+                }
+                
+                .clear-filters {
+                    margin-top: 0.5rem;
+                }
             }
         </style>
     </head>
@@ -6683,38 +6968,60 @@ async function handleNewsroomPage(request, env) {
                 <div class="container">
                     <!-- Filters Section -->
                     <section class="newsroom-filters">
-                    <form method="GET" action="/newsroom" id="newsroom-filters">
-                        <div class="filter-row">
-                            <div class="filter-group">
-                                <label class="filter-label" for="search">${t.searchPlaceholder}</label>
-                                <input type="text" 
-                                       id="search" 
-                                       name="search" 
-                                       class="search-input" 
-                                       value="${search}"
-                                       placeholder="${t.searchPlaceholder}">
+                        
+                        <!-- Filter Tags -->
+                        <div class="filter-tags-section">
+                            <div class="filter-tags-header">
+                                <button class="filter-toggle" onclick="toggleFilters()" aria-expanded="false">
+                                    <h3 class="filter-title">${lang === 'nl' ? 'Filter op onderwerp' : 'Filter by topic'}</h3>
+                                    <svg class="filter-toggle-icon" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M7.41 8.84L12 13.42l4.59-4.58L18 10.25l-6 6-6-6z"/>
+                                    </svg>
+                                </button>
+                                ${category || tag ? `<a href="/newsroom?lang=${lang}&theme=${theme}" class="clear-filters">${lang === 'nl' ? 'Wis filters' : 'Clear filters'}</a>` : ''}
+                            </div>
+                            <div class="filter-tags-grid" id="filter-tags-grid" style="display: none;">
+                                <!-- All Articles -->
+                                <div class="filter-group">
+                                    <a href="/newsroom?lang=${lang}&theme=${theme}" 
+                                       class="filter-tag filter-tag-all ${!category && !tag ? 'active' : ''}">${lang === 'nl' ? 'Alle artikelen' : 'All articles'}</a>
+                                </div>
+                                
+                                <!-- Category Tags -->
+                                <div class="filter-group">
+                                    <span class="filter-group-label">${lang === 'nl' ? 'Categorieën' : 'Categories'}</span>
+                                    <div class="filter-group-tags">
+                                        <a href="/newsroom?category=product-updates&lang=${lang}&theme=${theme}" 
+                                           class="filter-tag ${category === 'product-updates' ? 'active' : ''}">${t.filterProductUpdates}</a>
+                                        <a href="/newsroom?category=monitoring-tips&lang=${lang}&theme=${theme}" 
+                                           class="filter-tag ${category === 'monitoring-tips' ? 'active' : ''}">${t.filterMonitoringTips}</a>
+                                        <a href="/newsroom?category=market-insights&lang=${lang}&theme=${theme}" 
+                                           class="filter-tag ${category === 'market-insights' ? 'active' : ''}">${t.filterMarketInsights}</a>
+                                        <a href="/newsroom?category=company-news&lang=${lang}&theme=${theme}" 
+                                           class="filter-tag ${category === 'company-news' ? 'active' : ''}">${t.filterCompanyNews}</a>
+                                        <a href="/newsroom?category=help-support&lang=${lang}&theme=${theme}" 
+                                           class="filter-tag ${category === 'help-support' ? 'active' : ''}">${t.filterHelpSupport}</a>
+                                    </div>
+                                </div>
+                                   
+                                <!-- Topic Tags -->
+                                <div class="filter-group">
+                                    <span class="filter-group-label">${lang === 'nl' ? 'Onderwerpen' : 'Topics'}</span>
+                                    <div class="filter-group-tags">
+                                        <a href="/newsroom?tag=dhgate&lang=${lang}&theme=${theme}" 
+                                           class="filter-tag ${tag === 'dhgate' ? 'active' : ''}">DHgate Monitor</a>
+                                        <a href="/newsroom?tag=platform&lang=${lang}&theme=${theme}" 
+                                           class="filter-tag ${tag === 'platform' ? 'active' : ''}">${lang === 'nl' ? 'Platform' : 'Platform'}</a>
+                                        <a href="/newsroom?tag=lancering&lang=${lang}&theme=${theme}" 
+                                           class="filter-tag ${tag === 'lancering' ? 'active' : ''}">${lang === 'nl' ? 'Lancering' : 'Launch'}</a>
+                                        <a href="/newsroom?tag=monitoring&lang=${lang}&theme=${theme}" 
+                                           class="filter-tag ${tag === 'monitoring' ? 'active' : ''}">${lang === 'nl' ? 'Monitoring' : 'Monitoring'}</a>
+                                        <a href="/newsroom?tag=ecommerce&lang=${lang}&theme=${theme}" 
+                                           class="filter-tag ${tag === 'ecommerce' ? 'active' : ''}">${lang === 'nl' ? 'E-commerce' : 'E-commerce'}</a>
+                                    </div>
+                                </div>
                             </div>
                             
-                            <div class="filter-group">
-                                <label class="filter-label" for="category">${t.categories}</label>
-                                <select id="category" name="category" class="filter-select">
-                                    <option value="">${t.filterAll}</option>
-                                    <option value="product-updates" ${category === 'product-updates' ? 'selected' : ''}>${t.filterProductUpdates}</option>
-                                    <option value="monitoring-tips" ${category === 'monitoring-tips' ? 'selected' : ''}>${t.filterMonitoringTips}</option>
-                                    <option value="market-insights" ${category === 'market-insights' ? 'selected' : ''}>${t.filterMarketInsights}</option>
-                                    <option value="company-news" ${category === 'company-news' ? 'selected' : ''}>${t.filterCompanyNews}</option>
-                                    <option value="help-support" ${category === 'help-support' ? 'selected' : ''}>${t.filterHelpSupport}</option>
-                                </select>
-                            </div>
-                            
-                            <div class="filter-group">
-                                <label class="filter-label" for="sort">${t.sortBy}</label>
-                                <select id="sort" name="sort" class="filter-select">
-                                    <option value="newest" ${sort === 'newest' ? 'selected' : ''}>${t.sortNewest}</option>
-                                    <option value="oldest" ${sort === 'oldest' ? 'selected' : ''}>${t.sortOldest}</option>
-                                    <option value="popular" ${sort === 'popular' ? 'selected' : ''}>${t.sortPopular}</option>
-                                </select>
-                            </div>
                         </div>
                         
                         ${(search || category || tag) ? `
@@ -6845,29 +7152,39 @@ async function handleNewsroomPage(request, env) {
         </footer>
         
         <script>
-            // Auto-submit form on filter change
-            document.getElementById('category').addEventListener('change', function() {
-                document.getElementById('newsroom-filters').submit();
-            });
-            
-            document.getElementById('sort').addEventListener('change', function() {
-                document.getElementById('newsroom-filters').submit();
-            });
-            
-            // Remove filter function
-            function removeFilter(filterName) {
-                const url = new URL(window.location);
-                url.searchParams.delete(filterName);
-                window.location.href = url.toString();
+            // Toggle filter functionality
+            function toggleFilters() {
+                const grid = document.getElementById('filter-tags-grid');
+                const button = document.querySelector('.filter-toggle');
+                const isExpanded = button.getAttribute('aria-expanded') === 'true';
+                
+                if (isExpanded) {
+                    // Collapse
+                    grid.classList.remove('expanded');
+                    button.setAttribute('aria-expanded', 'false');
+                } else {
+                    // Expand
+                    grid.classList.add('expanded');
+                    button.setAttribute('aria-expanded', 'true');
+                }
             }
             
-            // Search with debounce
-            let searchTimeout;
-            document.getElementById('search').addEventListener('input', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    document.getElementById('newsroom-filters').submit();
-                }, 500);
+            // Add smooth transitions to filter tags
+            document.addEventListener('DOMContentLoaded', function() {
+                const filterTags = document.querySelectorAll('.filter-tag');
+                filterTags.forEach(tag => {
+                    tag.addEventListener('click', function(e) {
+                        // Add loading state
+                        this.style.opacity = '0.7';
+                        this.innerHTML = '${lang === 'nl' ? 'Laden...' : 'Loading...'}';
+                    });
+                });
+                
+                // Auto-expand if filters are active
+                const hasActiveFilters = ${category || tag ? 'true' : 'false'};
+                if (hasActiveFilters) {
+                    toggleFilters();
+                }
             });
         </script>
     </body>
@@ -6896,7 +7213,7 @@ async function handleNewsroomArticle(request, env) {
   const slug = url.pathname.replace('/newsroom/', '');
   
   // Fetch article from Prepr CMS
-  let article = await fetchPreprArticle(slug);
+  let article = await fetchPreprArticle(slug, lang);
   
   // If article not found in Prepr, redirect to newsroom
   if (!article) {
@@ -6932,125 +7249,114 @@ async function handleNewsroomArticle(request, env) {
         <title>${article.title} - DHgate Monitor</title>
         <meta name="description" content="${article.excerpt}">
         
-        <!-- Open Graph -->
-        <meta property="og:title" content="${article.title}">
-        <meta property="og:description" content="${article.excerpt}">
-        <meta property="og:type" content="article">
-        <meta property="og:url" content="${url.origin}/newsroom/${article.slug}">
-        <meta property="og:image" content="${article.image}">
-        <meta property="article:published_time" content="${article.publishedAt}">
-        <meta property="article:author" content="${article.author}">
-        <meta property="article:section" content="${article.category}">
-        ${article.tags.map(tag => `<meta property="article:tag" content="${tag}">`).join('')}
-        
-        <!-- Twitter Card -->
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="${article.title}">
-        <meta name="twitter:description" content="${article.excerpt}">
-        <meta name="twitter:image" content="${article.image}">
-        
-        <!-- Structured Data -->
-        <script type="application/ld+json">
-        {
-          "@context": "https://schema.org",
-          "@type": "Article",
-          "headline": "${article.title}",
-          "description": "${article.excerpt}",
-          "image": "${article.image}",
-          "author": {
-            "@type": "Person",
-            "name": "${article.author}"
-          },
-          "publisher": {
-            "@type": "Organization",
-            "name": "DHgate Monitor",
-            "logo": {
-              "@type": "ImageObject",
-              "url": "${url.origin}/assets/DHGateVector.png"
-            }
-          },
-          "datePublished": "${article.publishedAt}",
-          "dateModified": "${article.publishedAt}",
-          "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "${url.origin}/newsroom/${article.slug}"
-          }
-        }
-        </script>
-        
         ${generateGlobalCSS(theme)}
-        ${generateServiceHeaderStyles()}
         
         <style>
-            /* Article Specific Styles */
-            .article-container {
-                max-width: 800px;
-                margin: 0 auto;
-                padding: 2rem 0;
+            /* Clean Article Styles */
+            .article-breadcrumb {
+                background: var(--bg-secondary);
+                border-bottom: 1px solid var(--border-light);
+                padding: 1rem 0;
             }
             
-            .article-container {
+            .breadcrumb-link {
+                color: var(--text-secondary);
+                text-decoration: none;
+                font-size: 0.875rem;
+                font-weight: 500;
+                transition: color 0.2s ease;
+            }
+            
+            .breadcrumb-link:hover {
+                color: var(--primary);
+            }
+            
+            .article-header {
+                background: var(--bg-hero);
+                color: white;
+                text-align: center;
+                padding: 3rem 0;
+                margin-bottom: 0;
+            }
+            
+            .article-title {
+                font-size: 2.5rem;
+                font-weight: 700;
+                line-height: 1.2;
+                margin-bottom: 1rem;
                 max-width: 800px;
-                margin: 0 auto;
-                padding: 2rem 0;
+                margin-left: auto;
+                margin-right: auto;
             }
             
             .article-meta {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                margin-bottom: 2rem;
-                font-size: 0.875rem;
-                color: var(--text-secondary);
-                flex-wrap: wrap;
+                font-size: 1rem;
+                opacity: 0.9;
+                margin-top: 1rem;
             }
             
-            .article-category {
-                background: var(--primary);
-                color: white;
-                padding: 0.25rem 0.75rem;
-                border-radius: 12px;
-                font-size: 0.75rem;
-                font-weight: 500;
-                text-transform: uppercase;
+            .article-image-section {
+                padding: 0;
+                background: var(--bg-primary);
+                margin-bottom: 1.5rem;
             }
             
             .article-image {
                 width: 100%;
-                height: 400px;
+                height: 60vh;
+                min-height: 400px;
+                max-height: 600px;
                 object-fit: cover;
-                border-radius: 16px;
-                margin-bottom: 2rem;
+                display: block;
+                border-radius: 0;
+                box-shadow: none;
+                transition: none;
             }
             
-            .article-content {
-                font-size: 1.125rem;
-                line-height: 1.8;
-                color: var(--text-primary);
-                max-width: none;
-                font-family: 'Raleway', -apple-system, BlinkMacSystemFont, sans-serif;
+            .article-image:hover {
+                transform: none;
             }
             
-            /* Typography System - h1 is reserved for page header */
-            .article-content h1 {
-                font-size: 2rem;
-                font-weight: 600;
-                margin: 2.5rem 0 1.25rem 0;
-                color: var(--text-primary);
-                line-height: 1.3;
-                letter-spacing: -0.02em;
-                position: relative;
-                padding-bottom: 0.5rem;
+            .article-intro {
+                background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(var(--primary-rgb), 0.05) 100%);
+                padding: 2rem 0;
+                text-align: center;
                 border-bottom: 3px solid var(--primary);
             }
             
-            .article-content h2 {
-                font-size: 1.75rem;
-                font-weight: 600;
-                margin: 2rem 0 1rem 0;
+            .intro-text {
+                font-size: 1.25rem;
+                font-style: italic;
+                line-height: 1.6;
                 color: var(--text-primary);
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 0 1rem;
+            }
+            
+            .article-content {
+                max-width: 700px;
+                margin: 0 auto;
+                padding: 3rem 1rem;
+            }
+            
+            /* Typography System According to Style Guide */
+            .article-content h1 {
+                font-size: 2.5rem;
+                font-weight: 700;
+                line-height: 1.2;
+                margin: 2.5rem 0 1.5rem 0;
+                color: var(--text-primary);
+                letter-spacing: -0.025em;
+            }
+            
+            .article-content h2 {
+                font-size: 2rem;
+                font-weight: 600;
                 line-height: 1.3;
-                letter-spacing: -0.015em;
+                margin: 2.5rem 0 1.25rem 0;
+                color: var(--text-primary);
+                letter-spacing: -0.02em;
                 position: relative;
                 padding-bottom: 0.5rem;
             }
@@ -7069,25 +7375,177 @@ async function handleNewsroomArticle(request, env) {
             .article-content h3 {
                 font-size: 1.5rem;
                 font-weight: 600;
+                line-height: 1.4;
                 margin: 1.75rem 0 0.875rem 0;
                 color: var(--text-primary);
-                line-height: 1.4;
             }
             
             .article-content h4 {
                 font-size: 1.25rem;
                 font-weight: 600;
+                line-height: 1.4;
                 margin: 1.5rem 0 0.75rem 0;
                 color: var(--text-primary);
-                line-height: 1.4;
             }
             
             .article-content h5 {
                 font-size: 1.125rem;
                 font-weight: 600;
+                line-height: 1.5;
                 margin: 1.25rem 0 0.5rem 0;
                 color: var(--text-primary);
+            }
+            
+            .article-content h6 {
+                font-size: 1rem;
+                font-weight: 600;
                 line-height: 1.5;
+                margin: 1rem 0 0.5rem 0;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+            
+            .article-content p {
+                font-size: 1.125rem;
+                line-height: 1.8;
+                margin-bottom: 1.5rem;
+                color: var(--text-primary);
+                font-weight: 400;
+            }
+            
+            .article-content ul {
+                margin: 1.5rem 0;
+                padding-left: 2rem;
+            }
+            
+            .article-content ol {
+                margin: 1.5rem 0;
+                padding-left: 2rem;
+            }
+            
+            .article-content li {
+                margin-bottom: 0.75rem;
+                line-height: 1.7;
+                color: var(--text-primary);
+            }
+            
+            .article-content ul li::marker {
+                color: var(--primary);
+                font-weight: 600;
+            }
+            
+            .article-content ol li::marker {
+                color: var(--primary);
+                font-weight: 600;
+            }
+            
+            .feature-list {
+                background: var(--bg-secondary);
+                border-radius: 12px;
+                padding: 1.5rem;
+                margin: 2rem 0;
+                border-left: 4px solid var(--primary);
+                list-style: none; /* Remove default list styling for container */
+                padding-left: 2rem; /* Add padding for custom bullets */
+            }
+            
+            .feature-list li {
+                margin-bottom: 1rem;
+                padding-left: 0;
+                position: relative;
+                list-style: none; /* Remove default bullets */
+            }
+            
+            /* Custom bullet points */
+            .feature-list li::before {
+                content: '•';
+                color: var(--primary);
+                font-size: 1.5rem;
+                font-weight: bold;
+                position: absolute;
+                left: -1.5rem;
+                top: -0.1rem;
+            }
+            
+            .feature-list li:last-child {
+                margin-bottom: 0;
+            }
+            
+            .feature-list li strong {
+                color: var(--primary);
+                font-weight: 600;
+            }
+            
+            .article-content strong, .article-content b {
+                font-weight: 600;
+                color: var(--text-primary);
+            }
+            
+            .article-content em, .article-content i {
+                font-style: italic;
+                color: var(--text-secondary);
+            }
+            
+            .article-content a {
+                color: var(--primary);
+                text-decoration: underline;
+                text-decoration-thickness: 2px;
+                text-underline-offset: 3px;
+                transition: all 0.3s ease;
+            }
+            
+            .article-content a:hover {
+                color: var(--accent-color);
+                text-decoration-thickness: 3px;
+            }
+            
+            @media (max-width: 768px) {
+                .article-title {
+                    font-size: 2rem;
+                }
+                
+                .article-image {
+                    height: 40vh;
+                    min-height: 250px;
+                    border-radius: 0;
+                }
+                
+                .intro-text {
+                    font-size: 1.125rem;
+                }
+                
+                .article-content {
+                    padding: 2rem 1rem;
+                }
+                
+                .article-content h1 {
+                    font-size: 2rem;
+                }
+                
+                .article-content h2 {
+                    font-size: 1.625rem;
+                    margin: 2rem 0 1rem 0;
+                }
+                
+                .article-content h3 {
+                    font-size: 1.375rem;
+                }
+                
+                .article-content p {
+                    font-size: 1rem;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .article-content h2 {
+                    font-size: 1.5rem;
+                }
+                
+                .article-content h3 {
+                    font-size: 1.25rem;
+                }
+            }
             }
             
             .article-content h6 {
@@ -7179,19 +7637,167 @@ async function handleNewsroomArticle(request, env) {
             }
             
             .article-tag {
-                background: var(--bg-secondary);
-                color: var(--text-secondary);
+                display: inline-block;
+                background: var(--bg-primary);
+                color: var(--text-primary);
                 padding: 0.5rem 1rem;
-                border-radius: 20px;
+                border-radius: 25px;
+                text-decoration: none;
                 font-size: 0.875rem;
                 font-weight: 500;
-                text-decoration: none;
+                border: 1px solid var(--border-light);
                 transition: all 0.3s ease;
             }
             
             .article-tag:hover {
                 background: var(--primary);
                 color: white;
+                border-color: var(--primary);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+            }
+            
+            .article-tags-section {
+                background: var(--bg-secondary);
+                border-top: 1px solid var(--border-light);
+                padding: 2rem 0;
+                margin-top: 2rem;
+            }
+            
+            .tags-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: var(--text-primary);
+                margin-bottom: 1.5rem;
+                text-align: center;
+            }
+            
+            .tags-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                justify-content: center;
+                margin-bottom: 2rem;
+            }
+            
+            
+            .article-navigation {
+                text-align: center;
+                padding-top: 2rem;
+                border-top: 1px solid var(--border-light);
+                margin-top: 2rem;
+            }
+            
+            .back-to-newsroom {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: var(--primary);
+                text-decoration: none;
+                font-weight: 500;
+                padding: 0.75rem 1.5rem;
+                border: 2px solid var(--primary);
+                border-radius: 8px;
+                transition: all 0.3s ease;
+            }
+            
+            .back-to-newsroom:hover {
+                background: var(--primary);
+                color: white;
+                gap: 0.75rem;
+            }
+            
+            /* CTA Sections */
+            .cta-section {
+                padding: 2rem 0;
+                text-align: center;
+            }
+            
+            .cta-top {
+                background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(var(--primary-rgb), 0.05) 100%);
+                border-bottom: 1px solid var(--border-light);
+            }
+            
+            
+            .cta {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 1rem 2rem;
+                border-radius: 12px;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 1rem;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                min-height: 44px;
+                min-width: 44px;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .cta-primary {
+                background: var(--primary);
+                color: white;
+                border: 2px solid var(--primary);
+                box-shadow: 0 4px 16px rgba(var(--primary-rgb), 0.3);
+            }
+            
+            .cta-primary:hover {
+                background: var(--accent-color);
+                border-color: var(--accent-color);
+                transform: translateY(-3px);
+                box-shadow: 0 8px 24px rgba(var(--primary-rgb), 0.4);
+            }
+            
+            .cta-secondary {
+                background: transparent;
+                color: var(--primary);
+                border: 2px solid var(--primary);
+            }
+            
+            .cta-secondary:hover {
+                background: var(--primary);
+                color: white;
+                transform: translateY(-3px);
+                box-shadow: 0 8px 24px rgba(var(--primary-rgb), 0.3);
+            }
+            
+            
+            
+            /* Enhanced Content Structure */
+            .content-section {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 0 1rem;
+            }
+            
+            .content-section h2 {
+                font-size: 2rem;
+                font-weight: 600;
+                line-height: 1.3;
+                margin: 2rem 0 1rem 0;
+                color: var(--text-primary);
+                letter-spacing: -0.02em;
+                position: relative;
+                padding-bottom: 0.75rem;
+            }
+            
+            .content-section h2::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 60px;
+                height: 3px;
+                background: linear-gradient(90deg, var(--primary), var(--accent-color));
+                border-radius: 2px;
+            }
+            
+            .content-section h3 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 1.5rem 0 0.75rem 0;
+                color: var(--text-primary);
             }
             
             .article-actions {
@@ -7316,6 +7922,26 @@ async function handleNewsroomArticle(request, env) {
                     align-items: stretch;
                 }
                 
+                .tags-container {
+                    justify-content: flex-start;
+                    gap: 0.5rem;
+                }
+                
+                .back-to-newsroom {
+                    padding: 0.5rem 1rem;
+                    font-size: 0.875rem;
+                }
+                
+                
+                .content-section {
+                    padding: 0;
+                }
+                
+                .content-section h2 {
+                    font-size: 1.75rem;
+                    margin: 2rem 0 1rem 0;
+                }
+                
 
                 
                 .related-grid {
@@ -7323,77 +7949,6 @@ async function handleNewsroomArticle(request, env) {
                 }
             }
             
-            /* ===== MINIMALIST ARTICLE STYLES ===== */
-            
-            .article-main {
-                background: var(--bg-primary);
-                min-height: 100vh;
-            }
-            
-            .article-header {
-                background: var(--bg-secondary);
-                border-bottom: 1px solid var(--border-light);
-                padding: 2rem 0;
-            }
-            
-            .article-header-content {
-                max-width: 42rem;
-                margin: 0 auto;
-                padding: 0 1rem;
-            }
-            
-            .back-nav {
-                display: inline-flex;
-                align-items: center;
-                color: var(--text-secondary);
-                text-decoration: none;
-                font-size: 0.875rem;
-                font-weight: 500;
-                margin-bottom: 1rem;
-                transition: color 0.2s ease;
-            }
-            
-            .back-nav:hover {
-                color: var(--primary);
-            }
-            
-            .article-title {
-                font-size: 2.5rem;
-                font-weight: 700;
-                line-height: 1.2;
-                color: var(--text-primary);
-                margin: 0 0 1rem 0;
-                letter-spacing: -0.025em;
-            }
-            
-            .article-meta {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                color: var(--text-secondary);
-                font-size: 0.875rem;
-                font-weight: 500;
-            }
-            
-            .meta-separator {
-                opacity: 0.5;
-            }
-            
-            .article-body {
-                max-width: 42rem;
-                margin: 0 auto;
-                padding: 3rem 1rem;
-            }
-            
-            .article-lead {
-                font-size: 1.25rem;
-                font-weight: 400;
-                line-height: 1.6;
-                color: var(--text-secondary);
-                margin: 0 0 2.5rem 0;
-                border-left: 4px solid var(--primary);
-                padding-left: 1.5rem;
-            }
             
             .article-content {
                 font-size: 1.125rem;
@@ -7439,15 +7994,50 @@ async function handleNewsroomArticle(request, env) {
                 color: var(--primary);
             }
             
+            /* Feature list styling for Prepr CMS lists */
+            .article-content .feature-list {
+                background: var(--bg-secondary);
+                border-radius: 12px;
+                padding: 1.5rem;
+                margin: 2rem 0;
+                border-left: 4px solid var(--primary);
+            }
+            
+            .article-content .feature-list li {
+                margin-bottom: 1rem;
+                padding: 0;
+                list-style: none;
+                position: relative;
+            }
+            
+            .article-content .feature-list li:last-child {
+                margin-bottom: 0;
+            }
+            
+            .article-content .feature-list li strong {
+                color: var(--primary);
+                font-weight: 600;
+            }
+            
             .article-content strong {
                 font-weight: 600;
                 color: var(--text-primary);
             }
             
-            .article-footer {
-                margin-top: 3rem;
-                padding-top: 2rem;
+            /* Article Footer Section */
+            .article-footer-section {
+                background: var(--bg-secondary);
                 border-top: 1px solid var(--border-light);
+                padding: 2rem 0;
+            }
+            
+            .article-footer-section .container {
+                max-width: 42rem;
+            }
+            
+            .article-footer {
+                margin: 0;
+                padding: 0;
             }
             
             .share-section {
@@ -7490,22 +8080,17 @@ async function handleNewsroomArticle(request, env) {
             
             /* Mobile optimizations */
             @media (max-width: 768px) {
-                .article-title {
-                    font-size: 2rem;
+                .article-intro-section {
+                    padding: 2rem 0;
                 }
                 
-                .article-meta {
-                    flex-wrap: wrap;
-                    gap: 0.25rem;
+                .article-intro {
+                    font-size: 1.25rem;
+                    padding: 0 1.5rem;
                 }
                 
-                .article-body {
-                    padding: 2rem 1rem;
-                }
-                
-                .article-lead {
-                    font-size: 1.125rem;
-                    margin-bottom: 2rem;
+                .article-content-section {
+                    padding: 2rem 0;
                 }
                 
                 .article-content {
@@ -7517,6 +8102,10 @@ async function handleNewsroomArticle(request, env) {
                     margin: 2rem 0 1rem 0;
                 }
                 
+                .article-footer-section {
+                    padding: 1.5rem 0;
+                }
+                
                 .share-section {
                     flex-direction: column;
                     align-items: flex-start;
@@ -7525,16 +8114,17 @@ async function handleNewsroomArticle(request, env) {
             }
             
             @media (max-width: 480px) {
-                .article-header {
+                .article-intro-section {
                     padding: 1.5rem 0;
                 }
                 
-                .article-title {
-                    font-size: 1.75rem;
+                .article-intro {
+                    font-size: 1.125rem;
+                    padding: 0 1rem;
                 }
                 
-                .article-body {
-                    padding: 1.5rem 1rem;
+                .article-content-section {
+                    padding: 1.5rem 0;
                 }
             }
         </style>
@@ -7542,58 +8132,100 @@ async function handleNewsroomArticle(request, env) {
     <body>
         ${generateStandardNavigation(lang, theme, 'newsroom')}
         
-        <!-- Minimalist Article Layout -->
-        <main class="article-main">
-            <!-- Article Header -->
-            <header class="article-header">
-                <div class="article-header-content">
-                    <a href="/newsroom?lang=${lang}&theme=${theme}" class="back-nav">
-                        ← ${t.backToNewsroom}
-                    </a>
-                    <h1 class="article-title">${article.title}</h1>
-                    <div class="article-meta">
-                        <span class="meta-item">${t.by} ${article.author}</span>
-                        <span class="meta-separator">•</span>
-                        <span class="meta-item">${new Date(article.publishedAt).toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-US')}</span>
-                        <span class="meta-separator">•</span>
-                        <span class="meta-item">${article.readTime} ${t.readTime}</span>
-                    </div>
+        <!-- Article Language Switcher Override -->
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            const langSwitcher = document.querySelector('.language-switcher');
+            if (langSwitcher) {
+              const links = langSwitcher.querySelectorAll('a');
+              links.forEach(link => {
+                if (link.href.includes('lang=nl')) {
+                  link.href = '/newsroom/${article.slug}?lang=nl&theme=${theme}';
+                } else if (link.href.includes('lang=en')) {
+                  link.href = '/newsroom/${article.slug}?lang=en&theme=${theme}';
+                }
+              });
+            }
+          });
+        </script>
+        
+        <!-- Article Breadcrumb -->
+        <nav class="article-breadcrumb">
+            <div class="container">
+                <a href="/newsroom?lang=${lang}&theme=${theme}" class="breadcrumb-link">
+                    ← ${t.backToNewsroom}
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Article Header -->
+        <header class="article-header">
+            <div class="container">
+                <h1 class="article-title">${article.title}</h1>
+                <div class="article-meta">
+                    ${t.by} ${article.author} • ${new Date(article.publishedAt).toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-US')} • ${article.readTime} ${t.readTime}
                 </div>
-            </header>
+            </div>
+        </header>
+        
+        <!-- Article Image -->
+        <section class="article-image-section">
+            <div class="container">
+                <img src="${article.image}" 
+                     alt="${article.title}" 
+                     class="article-image"
+                     loading="lazy">
+            </div>
+        </section>
+        
+        <!-- Article Intro -->
+        <section class="article-intro">
+            <div class="container">
+                <p class="intro-text">${article.excerpt}</p>
+            </div>
+        </section>
+        
+        <!-- Top CTA Section -->
+        <section class="cta-section cta-top">
+            <div class="container">
+                <a href="/service?lang=${lang}&theme=${theme}" class="cta cta-primary" aria-label="${lang === 'nl' ? 'Ontdek het DHgate Monitor platform' : 'Discover the DHgate Monitor platform'}">
+                    ${lang === 'nl' ? 'Ontdek het Platform' : 'Discover the Platform'}
+                </a>
+            </div>
+        </section>
 
-            <!-- Article Body -->
-            <article class="article-body">
-                <!-- Lead paragraph -->
-                <p class="article-lead">${article.excerpt}</p>
-                
-                <!-- Article content -->
-                <div class="article-content">
+        <!-- Article Content -->
+        <main class="article-content" role="main">
+            <div class="container">
+                <section class="content-section">
                     ${article.content}
-                </div>
-
-                <!-- Article footer -->
-                <footer class="article-footer">
-                    <div class="share-section">
-                        <span class="share-label">${t.share}:</span>
-                        <div class="share-buttons">
-                            <button class="share-btn" onclick="shareArticle('twitter')" aria-label="Share on Twitter">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                                </svg>
-                            </button>
-                            <button class="share-btn" onclick="shareArticle('linkedin')" aria-label="Share on LinkedIn">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </footer>
-            </article>
+                </section>
+                
+            </div>
         </main>
         
+        
+        <!-- Article Tags -->
+        <section class="article-tags-section">
+            <div class="container">
+                <h3 class="tags-title">${lang === 'nl' ? 'Gerelateerde onderwerpen' : 'Related Topics'}</h3>
+                <div class="tags-container">
+                    <a href="/newsroom?tag=dhgate&lang=${lang}" class="article-tag">DHgate Monitor</a>
+                    <a href="/newsroom?tag=platform&lang=${lang}" class="article-tag">${lang === 'nl' ? 'Platform' : 'Platform'}</a>
+                    <a href="/newsroom?tag=lancering&lang=${lang}" class="article-tag">${lang === 'nl' ? 'Lancering' : 'Launch'}</a>
+                    <a href="/newsroom?tag=monitoring&lang=${lang}" class="article-tag">${lang === 'nl' ? 'Monitoring' : 'Monitoring'}</a>
+                    <a href="/newsroom?tag=ecommerce&lang=${lang}" class="article-tag">${lang === 'nl' ? 'E-commerce' : 'E-commerce'}</a>
+                </div>
+                <div class="article-navigation">
+                    <a href="/newsroom?lang=${lang}" class="back-to-newsroom">
+                        ← ${lang === 'nl' ? 'Terug naar Newsroom' : 'Back to Newsroom'}
+                    </a>
+                </div>
+            </div>
+        </section>
+        
         <!-- Footer -->
-        <footer style="background: var(--card-bg); border-top: 1px solid var(--card-border); margin-top: 4rem; padding: 2rem 0;">
+        <footer style="background: var(--card-bg); border-top: 1px solid var(--card-border); margin-top: 1rem; padding: 2rem 0;">
             <div class="container">
                 <div style="text-align: center;">
                     <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem; flex-wrap: wrap;">
@@ -7639,6 +8271,34 @@ async function handleNewsroomArticle(request, env) {
                 window.open(shareUrl, '_blank', 'width=600,height=400');
             }
             
+            
+            // Smooth scrolling for internal links
+            document.addEventListener('DOMContentLoaded', function() {
+                const links = document.querySelectorAll('a[href^="#"]');
+                links.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const target = document.querySelector(this.getAttribute('href'));
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    });
+                });
+                
+                // Add loading states to CTAs
+                const ctaButtons = document.querySelectorAll('.cta');
+                ctaButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        if (!this.href.includes('#')) {
+                            this.style.opacity = '0.7';
+                            this.innerHTML = '${lang === 'nl' ? 'Laden...' : 'Loading...'}';
+                        }
+                    });
+                });
+            });
 
         </script>
     </body>

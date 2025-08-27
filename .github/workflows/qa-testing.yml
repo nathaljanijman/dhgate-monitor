@@ -70,7 +70,7 @@ jobs:
       - name: 🧪 Run QA tests (${{ matrix.browser }})
         run: |
           npx playwright test --project=${{ matrix.browser }} \
-            --reporter=html \
+            --reporter=html,junit \
             --output-dir=test-results/${{ matrix.browser }}
         env:
           PLAYWRIGHT_BROWSER: ${{ matrix.browser }}
@@ -91,8 +91,8 @@ jobs:
         uses: dorny/test-reporter@v1
         with:
           name: QA Test Results (${{ matrix.browser }})
-          path: playwright-report/index.html
-          reporter: html
+          path: test-results/${{ matrix.browser }}/results.xml
+          reporter: java-junit
           
   accessibility-audit:
     name: ♿ Accessibility Audit
@@ -116,7 +116,7 @@ jobs:
       - name: ♿ Run accessibility audit
         run: |
           npx playwright test tests/e2e/compliance/accessibility.test.js \
-            --reporter=html \
+            --reporter=html,junit \
             --output-dir=accessibility-results
             
       - name: 📊 Upload accessibility results
@@ -149,7 +149,7 @@ jobs:
       - name: ⚡ Run performance audit
         run: |
           npx playwright test tests/e2e/performance/seo.test.js \
-            --reporter=html \
+            --reporter=html,junit \
             --output-dir=performance-results
             
       - name: 🏃‍♂️ Lighthouse CI
@@ -258,7 +258,7 @@ jobs:
     
     steps:
       - name: 📢 Notify on failure
-        if: needs.generate-report.result == 'failure'
+        if: needs.generate-report.result == 'failure' && secrets.SLACK_WEBHOOK_URL != ''
         uses: 8398a7/action-slack@v3
         with:
           status: failure
@@ -275,7 +275,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           
       - name: 📢 Daily status update
-        if: github.event_name == 'schedule'
+        if: github.event_name == 'schedule' && secrets.SLACK_WEBHOOK_URL != ''
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ needs.generate-report.result }}
