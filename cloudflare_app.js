@@ -6256,12 +6256,11 @@ async function handleNewsroomPage(request, env) {
             }
             
             .newsroom-filters {
-                background: var(--card-bg);
-                border: 1px solid var(--border-light);
-                border-radius: 16px;
-                padding: 2rem;
+                background: transparent;
+                border: none;
+                padding: 1rem 0;
                 margin: 2rem 0;
-                box-shadow: var(--shadow);
+                box-shadow: none;
             }
             
             
@@ -6280,28 +6279,29 @@ async function handleNewsroomPage(request, env) {
             .filter-toggle {
                 background: none;
                 border: none;
-                padding: 0.75rem 0;
+                padding: 0.5rem 0;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 width: 100%;
                 cursor: pointer;
-                transition: all 0.3s ease;
+                transition: all 0.2s ease;
+                color: var(--text-secondary);
             }
             
             .filter-toggle:hover {
-                background: var(--bg-secondary);
-                border-radius: 8px;
-                padding: 0.75rem 1rem;
+                color: var(--text-primary);
             }
             
             .filter-title {
-                font-size: 1.25rem;
-                font-weight: 600;
-                color: var(--text-primary);
+                font-size: 0.9rem;
+                font-weight: 500;
+                color: inherit;
                 margin: 0;
                 flex-grow: 1;
                 text-align: left;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
             }
             
             .filter-toggle-icon {
@@ -6315,22 +6315,24 @@ async function handleNewsroomPage(request, env) {
             }
             
             .clear-filters {
-                color: var(--text-secondary);
+                color: var(--text-muted);
                 text-decoration: none;
-                font-size: 0.875rem;
-                transition: color 0.3s ease;
+                font-size: 0.75rem;
+                transition: color 0.2s ease;
             }
             
             .clear-filters:hover {
-                color: var(--primary);
+                color: var(--text-secondary);
             }
             
             .filter-tags-grid {
                 display: none;
                 flex-direction: column;
-                gap: 2rem;
-                margin-bottom: 2rem;
-                margin-top: 1.5rem;
+                gap: 1.5rem;
+                margin-bottom: 1rem;
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid var(--border-light);
             }
             
             .filter-tags-grid.expanded {
@@ -6344,12 +6346,12 @@ async function handleNewsroomPage(request, env) {
             }
             
             .filter-group-label {
-                font-size: 0.9rem;
-                font-weight: 600;
-                color: var(--text-secondary);
+                font-size: 0.75rem;
+                font-weight: 500;
+                color: var(--text-muted);
                 text-transform: uppercase;
-                letter-spacing: 0.05em;
-                margin-bottom: 0.5rem;
+                letter-spacing: 0.1em;
+                margin-bottom: 0.75rem;
             }
             
             .filter-group-tags {
@@ -6360,43 +6362,41 @@ async function handleNewsroomPage(request, env) {
             }
             
             .filter-tag-all {
-                background: var(--primary) !important;
-                color: white !important;
-                font-weight: 600;
-                font-size: 0.9rem;
-                padding: 0.6rem 1.2rem;
+                background: transparent !important;
+                color: var(--text-secondary) !important;
+                font-weight: 500;
+                font-size: 0.8rem;
+                padding: 0.375rem 0.75rem;
             }
             
             .filter-tag-all.active {
-                background: var(--accent-color) !important;
+                background: var(--primary) !important;
+                color: white !important;
             }
             
             .filter-tag {
                 display: inline-block;
-                background: var(--bg-secondary);
-                color: var(--text-primary);
-                padding: 0.5rem 1rem;
-                border-radius: 25px;
+                background: transparent;
+                color: var(--text-secondary);
+                padding: 0.375rem 0.75rem;
+                border-radius: 4px;
                 text-decoration: none;
-                font-size: 0.875rem;
-                font-weight: 500;
+                font-size: 0.8rem;
+                font-weight: 400;
                 border: 1px solid var(--border-light);
-                transition: all 0.3s ease;
+                transition: all 0.2s ease;
             }
             
             .filter-tag:hover {
-                background: var(--primary);
-                color: white;
-                border-color: var(--primary);
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+                background: var(--bg-secondary);
+                color: var(--text-primary);
+                border-color: var(--border-medium);
             }
             
             .filter-tag.active {
                 background: var(--primary);
                 color: white;
                 border-color: var(--primary);
-                box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
             }
             
             
@@ -6823,15 +6823,15 @@ async function handleNewsroomPage(request, env) {
                 }
                 
                 .filter-toggle {
-                    padding: 1rem;
-                    border: 1px solid var(--border-light);
-                    border-radius: 8px;
-                    background: var(--bg-primary);
+                    padding: 0.75rem 0;
+                    border: none;
+                    border-radius: 0;
+                    background: transparent;
                 }
                 
                 .filter-toggle:hover {
-                    background: var(--bg-secondary);
-                    border-color: var(--primary);
+                    background: transparent;
+                    border-color: transparent;
                 }
                 
                 .filter-tags-grid {
