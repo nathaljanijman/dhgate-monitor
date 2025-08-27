@@ -1732,7 +1732,7 @@ ${cssVars}
       .brand-icon {
         width: 32px;
         height: 32px;
-        border-radius: 8px;
+        border-radius: 0;
         display: flex;
         align-items: center;
         justify-content: center;
