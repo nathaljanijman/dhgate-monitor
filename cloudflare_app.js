@@ -6259,7 +6259,8 @@ async function handleNewsroomPage(request, env) {
                 background: transparent;
                 border: none;
                 padding: 1rem 0;
-                margin: 2rem 0;
+                margin: 2rem auto;
+                max-width: 1200px;
                 box-shadow: none;
             }
             
@@ -6300,8 +6301,7 @@ async function handleNewsroomPage(request, env) {
                 margin: 0;
                 flex-grow: 1;
                 text-align: left;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
+                letter-spacing: 0.025em;
             }
             
             .filter-toggle-icon {
@@ -6349,8 +6349,7 @@ async function handleNewsroomPage(request, env) {
                 font-size: 0.75rem;
                 font-weight: 500;
                 color: var(--text-muted);
-                text-transform: uppercase;
-                letter-spacing: 0.1em;
+                letter-spacing: 0.05em;
                 margin-bottom: 0.75rem;
             }
             
@@ -6551,7 +6550,8 @@ async function handleNewsroomPage(request, env) {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
                 gap: 2rem;
-                margin: 2rem 0;
+                margin: 2rem auto;
+                max-width: 1200px;
             }
             
             .article-card {
@@ -6805,14 +6805,20 @@ async function handleNewsroomPage(request, env) {
             }
             
             @media (max-width: 768px) {
+                .container {
+                    padding: 0 1rem !important;
+                }
+                
                 .articles-grid {
                     grid-template-columns: 1fr;
                     gap: 1.5rem;
-                    margin: 2rem 0;
+                    margin: 2rem auto;
+                    max-width: 100%;
                 }
                 
                 .newsroom-filters {
-                    padding: 1.5rem;
+                    padding: 1.5rem 0;
+                    max-width: 100%;
                 }
                 
                 .filter-tags-header {
@@ -6960,7 +6966,7 @@ async function handleNewsroomPage(request, env) {
         
         <main>
             <div class="newsroom-container">
-                <div class="container">
+                <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
                     <!-- Filters Section -->
                     <section class="newsroom-filters">
                         
