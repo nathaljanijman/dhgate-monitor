@@ -153,6 +153,7 @@ function generateStandardNavigation(lang = 'nl', theme = 'light', currentPage = 
             
             <!-- Mobile Hamburger -->
             <button class="hamburger" 
+                    onclick="toggleMobileMenu()"
                     aria-label="${lang === 'nl' ? 'Menu openen' : 'Open menu'}"
                     aria-expanded="false"
                     aria-controls="mobile-menu">
