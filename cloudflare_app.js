@@ -6938,7 +6938,7 @@ async function handleNewsroomPage(request, env) {
             }
         </style>
     </head>
-    <body>
+    <body data-page-type="newsroom">
         ${generateStandardNavigation(lang, theme, 'newsroom')}
         
         <!-- Newsroom Header -->
@@ -8204,7 +8204,7 @@ async function handleNewsroomArticle(request, env) {
             }
         </style>
     </head>
-    <body>
+    <body data-page-type="newsroom">
         ${generateStandardNavigation(lang, theme, 'newsroom')}
         
         <!-- Article Language Switcher Override -->
