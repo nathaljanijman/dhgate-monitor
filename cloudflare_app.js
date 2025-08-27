@@ -6336,7 +6336,7 @@ async function handleNewsroomPage(request, env) {
             }
             
             .filter-tags-grid.expanded {
-                display: flex;
+                display: flex !important;
                 opacity: 1;
                 max-height: 1000px;
                 margin-top: 1.5rem;
@@ -7160,10 +7160,12 @@ async function handleNewsroomPage(request, env) {
                 
                 if (isExpanded) {
                     // Collapse
+                    grid.style.display = 'none';
                     grid.classList.remove('expanded');
                     button.setAttribute('aria-expanded', 'false');
                 } else {
                     // Expand
+                    grid.style.display = 'flex';
                     grid.classList.add('expanded');
                     button.setAttribute('aria-expanded', 'true');
                 }
@@ -7177,15 +7179,31 @@ async function handleNewsroomPage(request, env) {
                         // Add loading state
                         this.style.opacity = '0.7';
                         this.innerHTML = '${lang === 'nl' ? 'Laden...' : 'Loading...'}';
+                        
+                        // Add a small delay to show loading state
+                        setTimeout(() => {
+                            // The page will navigate, so no need to restore
+                        }, 100);
                     });
                 });
                 
                 // Auto-expand if filters are active
                 const hasActiveFilters = ${category || tag ? 'true' : 'false'};
                 if (hasActiveFilters) {
-                    toggleFilters();
+                    const grid = document.getElementById('filter-tags-grid');
+                    const button = document.querySelector('.filter-toggle');
+                    grid.style.display = 'flex';
+                    grid.classList.add('expanded');
+                    button.setAttribute('aria-expanded', 'true');
                 }
             });
+            
+            // Function to remove filters
+            function removeFilter(type) {
+                const url = new URL(window.location);
+                url.searchParams.delete(type);
+                window.location.href = url.toString();
+            }
         </script>
     </body>
     </html>`;
