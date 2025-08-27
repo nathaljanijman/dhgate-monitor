@@ -6326,6 +6326,7 @@ async function handleNewsroomPage(request, env) {
             }
             
             .filter-tags-grid {
+                display: none;
                 flex-direction: column;
                 gap: 2rem;
                 margin-bottom: 2rem;
@@ -6980,7 +6981,7 @@ async function handleNewsroomPage(request, env) {
                                 </button>
                                 ${category || tag ? `<a href="/newsroom?lang=${lang}&theme=${theme}" class="clear-filters">${lang === 'nl' ? 'Wis filters' : 'Clear filters'}</a>` : ''}
                             </div>
-                            <div class="filter-tags-grid" id="filter-tags-grid" style="display: none;">
+                            <div class="filter-tags-grid" id="filter-tags-grid">
                                 <!-- All Articles -->
                                 <div class="filter-group">
                                     <a href="/newsroom?lang=${lang}&theme=${theme}" 
@@ -7160,12 +7161,18 @@ async function handleNewsroomPage(request, env) {
                 
                 if (isExpanded) {
                     // Collapse
-                    grid.style.display = 'none';
                     grid.classList.remove('expanded');
+                    setTimeout(() => {
+                        if (!grid.classList.contains('expanded')) {
+                            grid.style.display = 'none';
+                        }
+                    }, 400); // Match transition duration
                     button.setAttribute('aria-expanded', 'false');
                 } else {
                     // Expand
                     grid.style.display = 'flex';
+                    // Force reflow
+                    grid.offsetHeight;
                     grid.classList.add('expanded');
                     button.setAttribute('aria-expanded', 'true');
                 }
@@ -7193,6 +7200,8 @@ async function handleNewsroomPage(request, env) {
                     const grid = document.getElementById('filter-tags-grid');
                     const button = document.querySelector('.filter-toggle');
                     grid.style.display = 'flex';
+                    // Force reflow
+                    grid.offsetHeight;
                     grid.classList.add('expanded');
                     button.setAttribute('aria-expanded', 'true');
                 }
