@@ -6330,17 +6330,11 @@ async function handleNewsroomPage(request, env) {
                 flex-direction: column;
                 gap: 2rem;
                 margin-bottom: 2rem;
-                overflow: hidden;
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                opacity: 0;
-                max-height: 0;
+                margin-top: 1.5rem;
             }
             
             .filter-tags-grid.expanded {
                 display: flex !important;
-                opacity: 1;
-                max-height: 1000px;
-                margin-top: 1.5rem;
             }
             
             .filter-group {
@@ -7159,20 +7153,19 @@ async function handleNewsroomPage(request, env) {
                 const button = document.querySelector('.filter-toggle');
                 const isExpanded = button.getAttribute('aria-expanded') === 'true';
                 
+                console.log('Toggle filters called, isExpanded:', isExpanded);
+                console.log('Grid element:', grid);
+                
                 if (isExpanded) {
                     // Collapse
+                    console.log('Collapsing filter grid');
                     grid.classList.remove('expanded');
-                    setTimeout(() => {
-                        if (!grid.classList.contains('expanded')) {
-                            grid.style.display = 'none';
-                        }
-                    }, 400); // Match transition duration
+                    grid.style.display = 'none';
                     button.setAttribute('aria-expanded', 'false');
                 } else {
                     // Expand
+                    console.log('Expanding filter grid');
                     grid.style.display = 'flex';
-                    // Force reflow
-                    grid.offsetHeight;
                     grid.classList.add('expanded');
                     button.setAttribute('aria-expanded', 'true');
                 }
@@ -7200,8 +7193,6 @@ async function handleNewsroomPage(request, env) {
                     const grid = document.getElementById('filter-tags-grid');
                     const button = document.querySelector('.filter-toggle');
                     grid.style.display = 'flex';
-                    // Force reflow
-                    grid.offsetHeight;
                     grid.classList.add('expanded');
                     button.setAttribute('aria-expanded', 'true');
                 }
