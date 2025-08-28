@@ -5286,6 +5286,9 @@ export default {
         
         case '/test-scheduled':
         
+        case '/debug-articles':
+          return await handleDebugArticles(request, env);
+        
 
         
 
@@ -6387,6 +6390,41 @@ async function handleServicePage(request, env) {
 
 
 
+
+/**
+ * Debug articles function
+ */
+async function handleDebugArticles(request, env) {
+  const url = new URL(request.url);
+  const lang = url.searchParams.get('lang') || 'nl';
+  
+  try {
+    const { articles, total } = await fetchPreprArticles({ lang });
+    
+    const debugInfo = {
+      requestedLang: lang,
+      total: total,
+      count: articles.length,
+      firstArticle: articles[0] ? {
+        id: articles[0].id,
+        title: articles[0].title,
+        slug: articles[0].slug,
+        excerpt: articles[0].excerpt?.substring(0, 100)
+      } : null,
+      graphqlVariables: {
+        locale: lang === 'nl' ? 'nl-NL' : 'en-US'
+      }
+    };
+    
+    return new Response(JSON.stringify(debugInfo, null, 2), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+}
 
 /**
  * Fetch articles from Prepr CMS
