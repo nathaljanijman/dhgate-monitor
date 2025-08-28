@@ -12385,12 +12385,20 @@ async function handleWidgetSignup(request, env) {
     
     const sanitizedEmail = emailValidation.sanitized;
     
+    // Generate unique tokens for this subscription
+    const unsubscribeToken = generateUnsubscribeToken(sanitizedEmail);
+    const dashboardToken = generateDashboardToken(sanitizedEmail);
+    
     // Create subscription data
     const subscriptionData = {
       email: sanitizedEmail,
       stores: stores,
       tags: tags,
       lang: lang,
+      unsubscribe_token: unsubscribeToken,
+      dashboard_token: dashboardToken,
+      dashboard_access: true,
+      subscribed: true,
       created_at: new Date().toISOString(),
       last_updated: new Date().toISOString(),
       source: 'widget_signup'
