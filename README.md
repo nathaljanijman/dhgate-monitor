@@ -17,11 +17,14 @@ DHgate Monitor provides a subscription system for monitoring DHgate stores. User
 
 ### Technical architecture
 
-- **Cloudflare Workers**: Serverless edge computing platform
-- **D1 Database**: SQLite storage for subscriptions and analytics
-- **KV Storage**: High-speed caching and session management
-- **Prepr CMS**: Headless content management system
-- **Multi-provider email**: Fallback email delivery system
+- **Runtime**: Cloudflare Workers (V8 JavaScript engine)
+- **Database**: Cloudflare D1 (SQLite) for relational data
+- **Storage**: Cloudflare KV (key-value) for caching and sessions
+- **Frontend**: Vanilla JavaScript, HTML5, CSS3 (no framework)
+- **Email**: Multi-provider fallback (Resend API, SMTP, FormSubmit)
+- **CMS**: Prepr headless CMS with GraphQL API
+- **Deployment**: Wrangler CLI, GitHub Actions compatible
+- **Analytics**: Google Analytics 4 integration
 
 ### Security and compliance
 
@@ -39,23 +42,25 @@ The platform uses a dual storage approach:
 
 ### Platform components
 
-**Main application** (`cloudflare_app.js`)
-- Landing page with embedded subscription widget
-- Multi-language routing and content delivery
-- Admin authentication and dashboard
-- Email notification system
-- Affiliate program functionality
+**Main application** (`cloudflare_app.js` - 20,000+ lines)
+- ES6 modules with async/await patterns
+- RESTful API endpoints with CORS handling
+- Server-side rendering with template literals
+- JWT-like token authentication for admin
+- Scheduled events (cron: 0 9 * * *)
+- Circuit breaker pattern for external APIs
 
-**Subscription widget** (`signup-widget.js`)
-- Advanced multi-step form with validation
-- Store selection interface with preview cards
-- Real-time form validation and error handling
-- Responsive design for all devices
+**Subscription widget** (`signup-widget.js`)  
+- Vanilla JavaScript with modern DOM APIs
+- Progressive form enhancement
+- Client-side validation with regex patterns
+- Fetch API for async form submissions
+- CSS Grid and Flexbox layouts
 
-**Admin dashboard** (`enhanced_admin_dashboard.js`)
-- Complete administrative interface
-- Subscription analytics and user management
-- System health monitoring
+**Enhanced modules**
+- `enhanced_admin_dashboard.js`: Administrative interface
+- `enhanced_store_browser_clean.js`: Store management UI  
+- `api-config.js`: API configuration with retry logic
 
 ### Accessibility features
 
@@ -73,12 +78,14 @@ Required environment variables:
 - `RESEND_API_KEY`: Email service
 - `GA4_MEASUREMENT_ID`: Analytics tracking
 
-### Performance
+### Performance and patterns
 
-- Sub-100ms response times globally via edge computing
-- Multi-layer caching strategy for optimal performance
-- Resource preloading and lazy loading implementation
-- Comprehensive error handling with retry mechanisms
+- **Edge computing**: Global CDN with sub-100ms response times
+- **Caching strategy**: KV TTL, browser cache headers, CDN caching
+- **Error handling**: Exponential backoff, circuit breaker patterns  
+- **Resource optimization**: Lazy loading, preload hints, minification
+- **API design**: RESTful endpoints, proper HTTP status codes
+- **Database**: Prepared statements, connection pooling via D1
 
 ### License
 
