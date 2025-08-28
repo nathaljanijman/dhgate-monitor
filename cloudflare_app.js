@@ -7237,7 +7237,7 @@ async function handleNewsroomPage(request, env) {
             }
             
             .article-author {
-                background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+                background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-hover) 100%);
                 color: white;
                 padding: 0.5rem 1rem;
                 border-radius: 20px;
@@ -7251,6 +7251,7 @@ async function handleNewsroomPage(request, env) {
                 white-space: nowrap;
                 max-width: 200px;
                 text-overflow: ellipsis;
+                display: inline-block;
             }
             
             .article-author::before {
