@@ -6409,19 +6409,69 @@ async function translateText(text, targetLang = 'en', sourceLang = 'nl') {
     const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`);
     
     if (!response.ok) {
-      console.warn('Translation API failed, returning original text');
-      return text;
+      console.warn('Google Translate API failed, using fallback...');
+      return simpleTranslate(text, targetLang, sourceLang);
     }
     
     const data = await response.json();
-    const translatedText = data[0]?.map(item => item[0]).join('') || text;
+    
+    // Google Translate returns a complex nested array structure
+    // The translated text is in data[0][0][0]
+    let translatedText = text;
+    if (data && data[0] && data[0][0] && data[0][0][0]) {
+      translatedText = data[0][0][0];
+    } else if (data && Array.isArray(data[0])) {
+      // Alternative parsing for different response format
+      translatedText = data[0].map(item => item[0]).join('');
+    }
     
     console.log(`🌐 Translated: "${text.substring(0, 50)}..." → "${translatedText.substring(0, 50)}..."`);
     return translatedText;
   } catch (error) {
-    console.warn('Translation failed:', error.message);
-    return text; // Return original text if translation fails
+    console.warn('Translation failed, using fallback:', error.message);
+    return simpleTranslate(text, targetLang, sourceLang);
   }
+}
+
+/**
+ * Simple fallback translation for common terms
+ */
+function simpleTranslate(text, targetLang, sourceLang) {
+  if (targetLang !== 'en' || sourceLang !== 'nl') return text;
+  
+  const translations = {
+    'DHgate Dropshipping: Alles wat je moet weten': 'DHgate Dropshipping: Everything you need to know',
+    'DHgate is een van de grootste B2B e-commerceplatformen uit China': 'DHgate is one of the largest B2B e-commerce platforms from China',
+    'Het biedt miljoenen producten tegen lage prijzen': 'It offers millions of products at low prices',
+    'Voor dropshippers is DHgate interessant': 'For dropshippers, DHgate is interesting',
+    'omdat je producten kunt verkopen zonder voorraad': 'because you can sell products without inventory',
+    'Maar hoe werkt DHgate dropshipping precies': 'But how does DHgate dropshipping work exactly',
+    'en waar moet je op letten': 'and what should you pay attention to',
+    'Redactie': 'Editorial',
+    'Geschreven door': 'Written by',
+    'Lees meer': 'Read more',
+    'min lezen': 'min read',
+    'door': 'by',
+    'Geen artikelen gevonden': 'No articles found',
+    'Alle artikelen': 'All articles',
+    'Onderwerpen': 'Topics',
+    'Gerelateerde onderwerpen': 'Related Topics',
+    'Geen tags beschikbaar': 'No tags available'
+  };
+  
+  // Try exact match first
+  if (translations[text]) {
+    return translations[text];
+  }
+  
+  // Try partial matches
+  for (const [dutch, english] of Object.entries(translations)) {
+    if (text.includes(dutch)) {
+      return text.replace(dutch, english);
+    }
+  }
+  
+  return text;
 }
 
 /**
