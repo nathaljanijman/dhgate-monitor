@@ -6417,8 +6417,8 @@ async function fetchPreprArticles(options = {}) {
   }
   
   const query = `
-    query GetArticles {
-      Articles {
+    query GetArticles($locale: Locale!) {
+      Articles(locale: $locale) {
         total
         items {
           _id
@@ -6479,7 +6479,9 @@ async function fetchPreprArticles(options = {}) {
     }
   `;
   
-  const variables = {};
+  const variables = {
+    locale: lang === 'nl' ? 'nl-NL' : 'en-GB'
+  };
   
   try {
     const response = await fetch('https://graphql.prepr.io/ac_503514911c91f7c0ead966ff1e8c20ee1e0f26c2de6914ab1abaa50b4fd9b5f9', {
