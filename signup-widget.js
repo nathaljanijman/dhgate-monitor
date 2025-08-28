@@ -882,39 +882,54 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
         }
         
         function updateStep() {
+            console.log('updateStep called with currentStep:', currentStep);
+            
             // Update progress bar
             const progressFill = document.getElementById('progress-fill');
             const progressText = document.getElementById('progress-text');
             const progressBar = document.querySelector('.progress-bar');
             
-            progressFill.style.width = ((currentStep - 1) / 4) * 100 + '%';
-            progressText.textContent = '${t.accessibility.stepLabel} ' + currentStep + ' ${t.accessibility.ofLabel} 5';
-            progressBar.setAttribute('aria-valuenow', currentStep);
+            if (progressFill) {
+                progressFill.style.width = ((currentStep - 1) / 4) * 100 + '%';
+            }
+            if (progressText) {
+                progressText.textContent = '${t.accessibility.stepLabel} ' + currentStep + ' ${t.accessibility.ofLabel} 5';
+            }
+            if (progressBar) {
+                progressBar.setAttribute('aria-valuenow', currentStep);
+            }
             
             // Update step indicators
             for (let i = 1; i <= 5; i++) {
                 const stepIndicator = document.getElementById('step-' + i);
-                const stepLabel = stepIndicator.nextElementSibling;
+                const stepLabel = stepIndicator ? stepIndicator.nextElementSibling : null;
                 
-                if (i < currentStep) {
-                    stepIndicator.className = 'step-indicator completed';
-                    stepLabel.className = 'step-label completed';
-                } else if (i === currentStep) {
-                    stepIndicator.className = 'step-indicator active';
-                    stepLabel.className = 'step-label active';
-                } else {
-                    stepIndicator.className = 'step-indicator';
-                    stepLabel.className = 'step-label';
+                if (stepIndicator) {
+                    if (i < currentStep) {
+                        stepIndicator.className = 'step-indicator completed';
+                        if (stepLabel) stepLabel.className = 'step-label completed';
+                    } else if (i === currentStep) {
+                        stepIndicator.className = 'step-indicator active';
+                        if (stepLabel) stepLabel.className = 'step-label active';
+                    } else {
+                        stepIndicator.className = 'step-indicator';
+                        if (stepLabel) stepLabel.className = 'step-label';
+                    }
                 }
             }
             
             // Update step content
             for (let i = 1; i <= 5; i++) {
                 const stepContent = document.getElementById('step-' + i + '-content');
-                if (i === currentStep) {
-                    stepContent.className = 'step-content active';
+                if (stepContent) {
+                    if (i === currentStep) {
+                        stepContent.className = 'step-content active';
+                        console.log('Activated step content:', i);
+                    } else {
+                        stepContent.className = 'step-content';
+                    }
                 } else {
-                    stepContent.className = 'step-content';
+                    console.error('Step content not found for step:', i);
                 }
             }
             
@@ -1085,13 +1100,16 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                 })
             })
             .then(response => {
+                console.log('Response status:', response.status);
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('Network response was not ok: ' + response.status);
                 }
                 return response.json();
             })
             .then(data => {
+                console.log('Response data:', data);
                 if (data.success) {
+                    console.log('Success! Moving to step 5');
                     currentStep = 5;
                     updateStep();
                     submitBtn.textContent = '${t.submitButton}';
@@ -1106,7 +1124,11 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                         successMessage.innerHTML = data.message || '${lang === 'nl' ? 'Aanmelding succesvol opgeslagen!' : 'Signup successfully saved!'}';
                     }
                     const targetContainer = document.querySelector('.subscription-card') || document.querySelector('.widget-container');
-                    targetContainer.appendChild(successMessage);
+                    if (targetContainer) {
+                        targetContainer.appendChild(successMessage);
+                    } else {
+                        console.error('Target container not found for success message');
+                    }
                 } else {
                     throw new Error(data.message || 'Signup failed');
                 }
@@ -1121,7 +1143,11 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                 errorMessage.className = 'alert alert-error';
                 errorMessage.innerHTML = '${lang === 'nl' ? 'Er is een fout opgetreden. Probeer het opnieuw.' : 'An error occurred. Please try again.'}';
                 const targetContainer = document.querySelector('.subscription-card') || document.querySelector('.widget-container');
-                targetContainer.appendChild(errorMessage);
+                if (targetContainer) {
+                    targetContainer.appendChild(errorMessage);
+                } else {
+                    console.error('Target container not found for error message');
+                }
             });
         }
         
