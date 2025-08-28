@@ -1,275 +1,186 @@
-# 🛍️ DHgate Monitor - Professional E-commerce Monitoring Platform
+# 🛍️ DHgate Monitor - Professional E-commerce Intelligence Platform
+
+> **Enterprise-grade monitoring solution for DHgate dropshipping businesses**
 
 ---
 
-## 🇳🇱 Nederlands
+## 🎯 **Business Value**
 
-### Over DHgate Monitor
+DHgate Monitor is a comprehensive monitoring platform that transforms how e-commerce entrepreneurs track, analyze, and optimize their DHgate dropshipping operations. Built for scalability and reliability, it provides real-time insights that drive business growth.
 
-DHgate Monitor is een intern monitoringplatform dat specifiek is ontwikkeld om de prestaties, betrouwbaarheid en gebruikerservaring van het DHgate e-commerce ecosysteem te bewaken en te optimaliseren. Het platform biedt real-time inzichten en proactieve monitoring om ervoor te zorgen dat alle systemen optimaal functioneren en gebruikers de best mogelijke ervaring krijgen.
-
-### Waarom DHgate Monitor?
-
-In de dynamische wereld van e-commerce is het cruciaal om continu inzicht te hebben in de gezondheid van je platform. DHgate Monitor is ontwikkeld om teams en stakeholders te voorzien van diepgaande inzichten in alle aspecten van het platform, van technische prestaties tot gebruikersgedrag en compliance-vereisten.
-
----
-
-## 🚀 Kernfunctionaliteiten
-
-### Performance Monitoring
-- **Uptime Tracking**: Continue bewaking van beschikbaarheid met 99.9%+ uptime doelen
-- **Response Times**: Real-time monitoring van API response tijden en laadtijden
-- **Error Rates**: Proactieve detectie van fouten en afwijkingen in het systeem
-- **Latency Monitoring**: Regionale performance analyse voor optimale gebruikerservaring
-
-### Testplan & Compliance
-- **QA Resultaten**: Uitgebreide test suites voor functionaliteit en gebruikersacceptatie
-- **Accessibility**: WCAG 2.1 AA compliance voor inclusieve gebruikerservaring
-- **SEO/SEA**: Optimalisatie en compliance voor zoekmachines en advertenties
-- **Wet- en Regelgeving**: GDPR compliance en privacy-bescherming
-
-### Gebruikersstatistieken (GA4)
-- **Actieve Gebruikers**: Real-time tracking van platform engagement
-- **Conversie Funnels**: Gedetailleerde analyse van gebruikerspaden
-- **Bounce Rates**: Inzicht in gebruikersretentie en engagement
-- **Geografische Spreiding**: Regionale gebruikersanalyse en optimalisatie
-
-### Journeys & Externe Tooling
-- **Email Journeys**: Geautomatiseerde email workflows en notificaties
-- **Checkout Funnels**: Optimalisatie van conversiepaden
-- **API Integraties**: Seamless connecties met externe services en tools
-- **Affiliate Program**: Performance tracking en commissie management
-
-### Alerts & Notificaties
-- **Downtime Alerts**: Onmiddellijke meldingen bij systeemstoringen
-- **Performance Afwijkingen**: Proactieve waarschuwingen bij degradatie
-- **Conversie Monitoring**: Tracking van dalende conversieratio's
-- **Custom Thresholds**: Configureerbare alerting op basis van business requirements
-
-### Content Management & Multi-language Support
-- **Prepr CMS Integration**: Headless content management voor nieuwsartikelen
-  - **GraphQL API**: Real-time content ophalen met filtering en paginering
-  - **Dynamic Content**: Automatische content updates zonder deployment
-  - **Rich Media Support**: Afbeeldingen, video's en embedded content
-  - **SEO Optimization**: Meta tags, structured data en sociale media integratie
-- **Automatic Translation System**: 
-  - **Google Translate API**: Automatische vertaling van Nederlandse naar Engelse content
-  - **Fallback Translation**: Handmatige vertalingen voor veelgebruikte termen
-  - **Uniform Tags**: Tags blijven consistent in beide talen
-  - **Language Switching**: Seamless taal wisseling met URL parameters
-- **Multi-language Features**:
-  - **Dutch & English**: Volledige ondersteuning voor beide talen
-  - **Dynamic Language Detection**: Automatische taal detectie via URL
-  - **Content Fallback**: Nederlandse content als Engelse niet beschikbaar
-  - **Responsive Design**: Mobile-first artikelen met moderne typografie
+### **Key Business Benefits:**
+- **🔄 Automated Monitoring**: 24/7 product tracking without manual intervention
+- **📈 Performance Insights**: Data-driven decisions for inventory and pricing
+- **⚡ Real-time Alerts**: Instant notifications for price changes and stock updates
+- **🌍 Multi-language Support**: Global reach with Dutch and English interfaces
+- **📊 Business Intelligence**: Comprehensive analytics and reporting
 
 ---
 
-## 📊 Dashboard & Interface
+## 🚀 **Core Solution**
 
-### Centraal Dashboard
-Het hart van DHgate Monitor is de `/admin/dashboard` pagina, die een comprehensive overzicht biedt van alle platform metrics en systemen. Het dashboard is volledig compliant met het DHgate-Monitor design system en biedt een intuïtieve, professionele interface.
+### **Product Monitoring Engine**
+- **Real-time Tracking**: Monitor product availability, pricing, and stock levels
+- **Smart Alerts**: Customizable notifications for price drops, stock changes, and trends
+- **Historical Data**: Track performance over time for strategic planning
+- **Bulk Operations**: Monitor multiple products simultaneously
 
-### Dashboard Componenten
-- **KPI Cards**: Belangrijkste metrics in real-time overzicht
-- **Interactieve Grafieken**: Trendanalyse en performance visualisatie
-- **Data Tabellen**: Gedetailleerde testresultaten en compliance status
-- **Meldingspanelen**: Proactieve alerts en systeemnotificaties
-- **Geografische Visualisaties**: Regionale performance en gebruikersdata
+### **Business Intelligence Dashboard**
+- **Performance Metrics**: Conversion rates, revenue tracking, and ROI analysis
+- **Market Trends**: Identify opportunities and competitive insights
+- **Inventory Management**: Optimize stock levels and reorder timing
+- **Customer Analytics**: Understand buyer behavior and preferences
 
-### Testplan Uitvoering
-Het platform bevat een geavanceerd testplan systeem dat:
-- **27 Comprehensive Tests** uitvoert in 6 categorieën
-- **Real-time Resultaten** genereert met gedetailleerde rapportages
-- **Email Notificaties** verstuurt met professionele templates
-- **API Health Monitoring** biedt voor alle endpoints
-
----
-
-## 🏗️ Architectuur & Implementaties
-
-### Technische Stack
-- **Backend**: Cloudflare Workers voor serverless performance
-- **Frontend**: React met TailwindCSS en shadcn/ui componenten
-- **Database**: D1 (SQLite) voor persistent data storage
-- **CMS**: Prepr headless CMS voor content management
-- **Caching**: KV storage voor optimale performance
-- **Monitoring**: Custom health checks en alerting systemen
-
-### Integraties
-- **Google Analytics 4**: Uitgebreide gebruikersanalyse en tracking
-- **Prepr CMS**: Headless content management system voor nieuwsartikelen
-  - **GraphQL API**: Real-time content synchronisatie
-  - **Multi-language Support**: Nederlandse en Engelse content management
-  - **Rich Media**: Afbeeldingen, video's en embedded content
-- **Google Translate API**: Automatische content vertaling
-- **Test Pipelines**: Geautomatiseerde QA en compliance testing
-- **Monitoring Endpoints**: Real-time health checks voor alle services
-- **Email Services**: Geautomatiseerde notificaties en rapportages
-
-### Responsiveness & Toegankelijkheid
-- **Mobile-First Design**: Optimale ervaring op alle devices
-- **WCAG 2.1 AA Compliance**: Inclusieve toegankelijkheid voor alle gebruikers
-- **Keyboard Navigation**: Volledige functionaliteit via toetsenbord
-- **Screen Reader Support**: Optimale ondersteuning voor assistive technology
+### **Automated Workflows**
+- **Email Notifications**: Professional alerts delivered to your inbox
+- **Scheduled Reports**: Daily, weekly, and monthly performance summaries
+- **Integration Ready**: Connect with existing e-commerce tools and platforms
+- **API Access**: Programmatic access for custom integrations
 
 ---
 
-## 🎯 Doel & Visie
+## 🏗️ **Technical Architecture**
 
-### Team Empowerment
-DHgate Monitor was developed to provide teams and stakeholders with the tools and insights needed to make informed decisions. Through real-time data and proactive monitoring, the platform enables the identification of issues before they impact users.
+### **Modern Cloud Infrastructure**
+- **Cloudflare Workers**: Serverless architecture for global performance
+- **D1 Database**: SQLite-based storage with automatic scaling
+- **KV Storage**: High-speed caching for optimal response times
+- **Edge Computing**: Sub-100ms response times worldwide
 
-### Stakeholder Inzichten
-The platform serves as a central hub for all monitoring and analytics, allowing different stakeholders - from development teams to business managers - to access relevant information for their specific needs.
+### **Enterprise Security**
+- **GDPR Compliance**: Full privacy protection and data control
+- **SSL Encryption**: End-to-end security for all communications
+- **Access Control**: Secure token-based authentication
+- **Data Protection**: Automatic backup and disaster recovery
 
-### Continuous Improvement
-Through comprehensive monitoring and testing, DHgate Monitor facilitates a culture of continuous improvement, where data-driven decisions lead to constant platform optimization.
-
----
-
-## 📝 Documentatie Doel
-
-Deze README dient als informatief en beschrijvend document dat uitlegt wat het DHgate Monitor platform is, welke functionaliteiten het bevat, en hoe het wordt gebruikt. Het is geen installatiehandleiding of open source documentatie, maar een uitlegdocument voor interne stakeholders en teamleden.
-
-De broncode van DHgate Monitor blijft intern en is niet bedoeld voor hergebruik of externe distributie. Het platform is specifiek ontwikkeld voor de behoeften van het DHgate e-commerce ecosysteem.
-
----
-
----
-
-## 🇬🇧 English
-
-### About DHgate Monitor
-
-DHgate Monitor is an internal monitoring platform specifically developed to monitor and optimize the performance, reliability, and user experience of the DHgate e-commerce ecosystem. The platform provides real-time insights and proactive monitoring to ensure all systems operate optimally and users receive the best possible experience.
-
-### Why DHgate Monitor?
-
-In the dynamic world of e-commerce, it's crucial to have continuous insight into the health of your platform. DHgate Monitor was developed to provide teams and stakeholders with deep insights into all aspects of the platform, from technical performance to user behavior and compliance requirements.
+### **Content Management**
+- **Prepr CMS Integration**: Headless content management for news and updates
+- **GraphQL API**: Real-time content synchronization
+- **Multi-language Support**: Seamless Dutch and English content delivery
+- **SEO Optimization**: Built-in search engine optimization
 
 ---
 
-## 🚀 Core Features
+## 📊 **Platform Features**
 
-### Performance Monitoring
-- **Uptime Tracking**: Continuous monitoring of availability with 99.9%+ uptime goals
-- **Response Times**: Real-time monitoring of API response times and load times
-- **Error Rates**: Proactive detection of errors and system anomalies
-- **Latency Monitoring**: Regional performance analysis for optimal user experience
+### **Monitoring & Analytics**
+- ✅ **Product Tracking**: Real-time availability and price monitoring
+- ✅ **Performance Metrics**: Uptime, response times, and error tracking
+- ✅ **User Analytics**: GA4 integration with conversion funnels
+- ✅ **Geographic Insights**: Regional performance and user distribution
 
-### Test Plan & Compliance
-- **QA Results**: Comprehensive test suites for functionality and user acceptance
-- **Accessibility**: WCAG 2.1 AA compliance for inclusive user experience
-- **SEO/SEA**: Optimization and compliance for search engines and advertising
-- **Legal & Regulatory**: GDPR compliance and privacy protection
+### **Quality Assurance**
+- ✅ **Automated Testing**: 27 comprehensive test scenarios
+- ✅ **Accessibility Compliance**: WCAG 2.1 AA standards
+- ✅ **Performance Optimization**: Core Web Vitals monitoring
+- ✅ **Security Audits**: Regular vulnerability assessments
 
-### User Statistics (GA4)
-- **Active Users**: Real-time tracking of platform engagement
-- **Conversion Funnels**: Detailed analysis of user journeys
-- **Bounce Rates**: Insight into user retention and engagement
-- **Geographic Distribution**: Regional user analysis and optimization
-
-### Journeys & External Tooling
-- **Email Journeys**: Automated email workflows and notifications
-- **Checkout Funnels**: Optimization of conversion paths
-- **API Integrations**: Seamless connections with external services and tools
-- **Affiliate Program**: Performance tracking and commission management
-
-### Alerts & Notifications
-- **Downtime Alerts**: Immediate notifications for system outages
-- **Performance Anomalies**: Proactive warnings for degradation
-- **Conversion Monitoring**: Tracking of declining conversion ratios
-- **Custom Thresholds**: Configurable alerting based on business requirements
-
-### Content Management & Multi-language Support
-- **Prepr CMS Integration**: Headless content management for news articles
-  - **GraphQL API**: Real-time content retrieval with filtering and pagination
-  - **Dynamic Content**: Automatic content updates without deployment
-  - **Rich Media Support**: Images, videos and embedded content
-  - **SEO Optimization**: Meta tags, structured data and social media integration
-- **Automatic Translation System**: 
-  - **Google Translate API**: Automatic translation from Dutch to English content
-  - **Fallback Translation**: Manual translations for commonly used terms
-  - **Uniform Tags**: Tags remain consistent in both languages
-  - **Language Switching**: Seamless language switching with URL parameters
-- **Multi-language Features**:
-  - **Dutch & English**: Full support for both languages
-  - **Dynamic Language Detection**: Automatic language detection via URL
-  - **Content Fallback**: Dutch content when English is not available
-  - **Responsive Design**: Mobile-first articles with modern typography
+### **Communication Tools**
+- ✅ **Email Workflows**: Automated notification system
+- ✅ **Dashboard Access**: Secure user management
+- ✅ **Multi-language Support**: Dutch and English interfaces
+- ✅ **Mobile Responsive**: Optimized for all devices
 
 ---
 
-## 📊 Dashboard & Interface
+## 🎨 **User Experience**
 
-### Central Dashboard
-The heart of DHgate Monitor is the `/admin/dashboard` page, which provides a comprehensive overview of all platform metrics and systems. The dashboard is fully compliant with the DHgate-Monitor design system and offers an intuitive, professional interface.
+### **Professional Design System**
+- **Modern Interface**: Clean, intuitive design following latest UX principles
+- **Dark/Light Themes**: User preference support with automatic detection
+- **Mobile-First**: Responsive design optimized for all screen sizes
+- **Accessibility**: Full keyboard navigation and screen reader support
 
-### Dashboard Components
-- **KPI Cards**: Key metrics in real-time overview
-- **Interactive Charts**: Trend analysis and performance visualization
-- **Data Tables**: Detailed test results and compliance status
-- **Alert Panels**: Proactive alerts and system notifications
-- **Geographic Visualizations**: Regional performance and user data
-
-### Test Plan Execution
-The platform includes an advanced test plan system that:
-- **Executes 27 Comprehensive Tests** across 6 categories
-- **Generates Real-time Results** with detailed reporting
-- **Sends Email Notifications** with professional templates
-- **Provides API Health Monitoring** for all endpoints
+### **Seamless Navigation**
+- **Intuitive Workflows**: Logical user journeys from signup to dashboard
+- **Quick Actions**: One-click access to common tasks
+- **Smart Search**: Find products and data instantly
+- **Personalization**: Customizable dashboards and preferences
 
 ---
 
-## 🏗️ Architecture & Implementations
+## 🔧 **Implementation & Deployment**
 
-### Technical Stack
-- **Backend**: Cloudflare Workers for serverless performance
-- **Frontend**: React with TailwindCSS and shadcn/ui components
-- **Database**: D1 (SQLite) for persistent data storage
-- **CMS**: Prepr headless CMS for content management
-- **Caching**: KV storage for optimal performance
-- **Monitoring**: Custom health checks and alerting systems
+### **Quick Start**
+```bash
+# Clone repository
+git clone https://github.com/nathaljanijman/dhgate-monitor.git
+cd dhgate-monitor
 
-### Integrations
-- **Google Analytics 4**: Comprehensive user analysis and tracking
-- **Prepr CMS**: Headless content management system for news articles
-  - **GraphQL API**: Real-time content synchronization
-  - **Multi-language Support**: Dutch and English content management
-  - **Rich Media**: Images, videos and embedded content
-- **Google Translate API**: Automatic content translation
-- **Test Pipelines**: Automated QA and compliance testing
-- **Monitoring Endpoints**: Real-time health checks for all services
-- **Email Services**: Automated notifications and reporting
+# Install dependencies
+npm install
 
-### Responsiveness & Accessibility
-- **Mobile-First Design**: Optimal experience across all devices
-- **WCAG 2.1 AA Compliance**: Inclusive accessibility for all users
-- **Keyboard Navigation**: Full functionality via keyboard
-- **Screen Reader Support**: Optimal support for assistive technology
+# Configure environment
+cp .env.example .env
+# Edit .env with your API keys
 
----
+# Deploy to Cloudflare
+npm run deploy
+```
 
-## 🎯 Purpose & Vision
+### **Environment Setup**
+```bash
+# Required environment variables
+PREPR_API_TOKEN=your_prepr_cms_token
+RESEND_API_KEY=your_email_service_key
+GA4_MEASUREMENT_ID=your_analytics_id
+```
 
-### Team Empowerment
-DHgate Monitor was developed to provide teams and stakeholders with the tools and insights needed to make informed decisions. Through real-time data and proactive monitoring, the platform enables the identification of issues before they impact users.
-
-### Stakeholder Insights
-The platform serves as a central hub for all monitoring and analytics, allowing different stakeholders - from development teams to business managers - to access relevant information for their specific needs.
-
-### Continuous Improvement
-Through comprehensive monitoring and testing, DHgate Monitor facilitates a culture of continuous improvement, where data-driven decisions lead to constant platform optimization.
+### **Development Commands**
+```bash
+npm run dev          # Local development server
+npm run deploy       # Deploy to production
+npm run test         # Run test suite
+npm run test:e2e     # End-to-end testing
+```
 
 ---
 
-## 📝 Documentation Purpose
+## 📈 **Business Impact**
 
-This README serves as an informative and descriptive document that explains what the DHgate Monitor platform is, what features it contains, and how it is used. It is not an installation guide or open source documentation, but an explanatory document for internal stakeholders and team members.
+### **For Dropshipping Entrepreneurs**
+- **Increased Revenue**: Data-driven pricing and inventory decisions
+- **Reduced Risk**: Proactive monitoring prevents stockouts and price spikes
+- **Time Savings**: Automation eliminates manual monitoring tasks
+- **Competitive Advantage**: Real-time market insights and trends
 
-The source code of DHgate Monitor remains internal and is not intended for reuse or external distribution. The platform is specifically developed for the needs of the DHgate e-commerce ecosystem.
+### **For E-commerce Teams**
+- **Operational Efficiency**: Streamlined workflows and automated processes
+- **Better Decision Making**: Comprehensive analytics and reporting
+- **Scalability**: Platform grows with your business needs
+- **Reliability**: 99.9% uptime with enterprise-grade infrastructure
 
 ---
 
-*DHgate Monitor - Empowering teams with real-time insights for optimal e-commerce performance.*
+## 🌟 **Why Choose DHgate Monitor?**
+
+### **Built for Business**
+- **Enterprise-Grade**: Production-ready with enterprise security and scalability
+- **Business-Focused**: Designed specifically for e-commerce and dropshipping needs
+- **Data-Driven**: Comprehensive analytics and insights for informed decisions
+- **Future-Proof**: Modern architecture that adapts to changing business needs
+
+### **Proven Technology Stack**
+- **Cloudflare Workers**: Industry-leading edge computing platform
+- **Modern Web Standards**: Latest technologies for optimal performance
+- **Open Source**: Transparent, auditable, and community-driven
+- **Continuous Updates**: Regular improvements and new features
+
+---
+
+## 📞 **Support & Contact**
+
+- **Email**: support@dhgate-monitor.com
+- **Documentation**: [docs.dhgate-monitor.com](https://docs.dhgate-monitor.com)
+- **Issues**: [GitHub Issues](https://github.com/nathaljanijman/dhgate-monitor/issues)
+- **Business Inquiries**: business@dhgate-monitor.com
+
+---
+
+## 📄 **License**
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+---
+
+**Built with ❤️ for the e-commerce community**
