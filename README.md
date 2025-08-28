@@ -13,9 +13,9 @@
 DHgate Monitor is a comprehensive, production-ready platform that provides automated monitoring, intelligent analytics, and business insights for DHgate-based e-commerce operations. Built with modern serverless architecture and designed for global scalability.
 
 ### **What This Platform Delivers:**
-- 🔄 **Automated Product Monitoring** - 24/7 tracking of products, prices, and availability
-- 📊 **Business Intelligence Dashboard** - Real-time analytics and performance insights
-- 📧 **Smart Notification System** - Email alerts when products match your criteria
+- 🏪 **Store Monitoring Setup** - Register and track DHgate stores  
+- 📊 **Admin Dashboard** - Store management and subscription analytics
+- 📧 **Email Notification System** - Daily monitoring reports and updates
 - 🌍 **Multi-language Platform** - Full Dutch and English support
 - 📱 **Responsive Design** - Works perfectly on all devices
 - 🔒 **Enterprise Security** - GDPR compliant with advanced data protection
@@ -30,13 +30,13 @@ DHgate Monitor is a comprehensive, production-ready platform that provides autom
 - **Flexible Integration** - Embeddable widget for any website
 - **Smart Store Selection** - Curated DHgate stores with ratings and stats
 
-### **2. Monitoring Engine**
+### **2. Monitoring System**
 ```javascript
-// Automated monitoring triggers daily at 09:00 UTC
-- Product availability tracking
-- Price change detection
-- Stock level monitoring  
-- Email notifications on matches
+// Current capabilities:
+- Store monitoring and tracking setup
+- Daily scheduled monitoring at 09:00 UTC
+- Email notifications for registered stores
+- Store database updates and maintenance
 ```
 
 ### **3. Content Management System**
@@ -192,10 +192,10 @@ ADMIN_PASSWORD=your_admin_pass
 ## 📈 **Business Value & ROI**
 
 ### **For E-commerce Entrepreneurs**
-- **Revenue Growth** - Data-driven product and pricing decisions
-- **Risk Reduction** - Proactive monitoring prevents stockouts
-- **Time Savings** - 90% reduction in manual monitoring tasks
-- **Market Intelligence** - Real-time competitor and trend analysis
+- **Store Organization** - Centralized management of DHgate stores
+- **Automated Notifications** - Stay informed with daily monitoring reports  
+- **Time Savings** - Automated store tracking instead of manual checks
+- **Business Foundation** - Platform ready for enhanced monitoring features
 
 ### **For Development Teams**
 - **Rapid Deployment** - Production-ready in under 10 minutes
@@ -217,17 +217,17 @@ ADMIN_PASSWORD=your_admin_pass
 
 ## 🌟 **Advanced Features**
 
-### **Intelligent Monitoring**
-- **Smart Matching** - AI-powered product matching algorithms
-- **Trend Detection** - Market trend analysis and predictions
-- **Bulk Operations** - Monitor hundreds of products simultaneously
-- **Historical Analytics** - Long-term data trends and insights
+### **Store Management**
+- **Store Registration** - Add and manage DHgate stores for monitoring
+- **Daily Monitoring** - Scheduled store health checks and updates
+- **Store Database** - Maintain current DHgate store information
+- **Email Reports** - Daily system status and monitoring updates
 
-### **Business Intelligence**
-- **Conversion Funnels** - Track user journey and optimization opportunities  
-- **Revenue Attribution** - Link monitoring to business outcomes
-- **Competitive Analysis** - Market positioning and competitor insights
-- **Automated Reporting** - Schedule and deliver insights automatically
+### **Platform Analytics**  
+- **Subscription Tracking** - Monitor user signups and engagement
+- **Admin Dashboard** - Real-time platform statistics and metrics
+- **Store Analytics** - Track registered stores and monitoring status
+- **System Health** - Platform uptime and performance monitoring
 
 ### **Integration Capabilities**
 ```javascript
