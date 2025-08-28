@@ -6298,7 +6298,14 @@ async function fetchPreprArticles(options = {}) {
               slug
             }
           }
-          leestijd
+          leestijd {
+            __typename
+            ... on Text {
+              _id
+              body
+              format
+            }
+          }
           _read_time
           _locales
         }
@@ -6530,6 +6537,14 @@ async function fetchPreprArticle(slug, lang = 'nl') {
             _id
             body
             slug
+          }
+        }
+        leestijd {
+          __typename
+          ... on Text {
+            _id
+            body
+            format
           }
         }
         _read_time
