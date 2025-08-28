@@ -6031,11 +6031,6 @@ async function handleDebugGraphQL(request, env) {
               body
               format
             }
-            ... on RichText {
-              _id
-              body
-              format
-            }
           }
           auteur {
             __typename
@@ -6567,11 +6562,6 @@ async function fetchPreprArticles(options = {}) {
               body
               format
             }
-            ... on RichText {
-              _id
-              body
-              format
-            }
           }
           publicatiedatum
           tags {
@@ -6778,11 +6768,6 @@ async function fetchPreprArticle(slug, lang = 'nl') {
         body {
           __typename
           ... on Text {
-            _id
-            body
-            format
-          }
-          ... on RichText {
             _id
             body
             format
