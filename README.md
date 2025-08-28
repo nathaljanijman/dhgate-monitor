@@ -2,20 +2,57 @@
 
 Professional monitoring platform for DHgate stores and products. Built with Cloudflare Workers for global performance and reliability.
 
-## What it does
+## Business value
+
+### What it does
 
 DHgate Monitor provides a subscription system for monitoring DHgate stores. Users can register stores through a multi-step widget, and the platform sends daily monitoring reports.
 
-### Current features
+### Current capabilities
 
-- **Subscription widget**: Multi-step form for email, store selection, and monitoring preferences
-- **Store management**: Admin dashboard for managing registered stores and subscriptions  
-- **Daily monitoring**: Scheduled monitoring at 09:00 UTC with email reports
-- **Multi-language**: Dutch and English interface support
-- **Admin dashboard**: User management, analytics, and system monitoring
-- **Content management**: Dynamic newsroom via Prepr CMS integration
+- **Store monitoring setup**: Users can register DHgate stores for tracking
+- **Daily monitoring reports**: Scheduled monitoring at 09:00 UTC with email notifications
+- **Store management**: Admin dashboard for managing registered stores and subscriptions
+- **Multi-language support**: Dutch and English interface support
+- **Content management**: Dynamic newsroom via CMS integration
+- **Analytics tracking**: User subscription metrics and platform usage data
 
-### Technical architecture
+### Business benefits
+
+- **Centralized store management**: Organize multiple DHgate stores in one dashboard
+- **Automated notifications**: Daily reports eliminate manual store checking
+- **Foundation for growth**: Platform ready for enhanced monitoring features
+- **Professional presentation**: Clean, accessible interface builds user trust
+
+## User experience
+
+### Subscription widget
+
+- **Multi-step form**: Progressive disclosure reduces form abandonment
+- **Store selection**: Visual store cards with preview information
+- **Real-time validation**: Immediate feedback prevents submission errors
+- **Responsive design**: Works seamlessly on desktop, tablet, and mobile
+- **Accessibility compliance**: Full keyboard navigation and screen reader support
+
+### Interface design
+
+- **Progressive enhancement**: Works without JavaScript, enhanced with it
+- **Theme support**: Light and dark mode with automatic detection
+- **Multi-language routing**: Seamless Dutch/English switching
+- **Professional layout**: Clean typography and consistent spacing
+- **Focus management**: Logical tab order and visual focus indicators
+
+### Accessibility features
+
+- **WCAG 2.1 AA compliance**: Meets international accessibility standards
+- **Keyboard navigation**: Complete functionality without mouse
+- **Screen reader support**: ARIA labels and semantic HTML structure
+- **High contrast support**: Visual accessibility for all users
+- **Focus indicators**: Clear visual feedback for interactive elements
+
+## Technical implementation
+
+### Architecture
 
 - **Runtime**: Cloudflare Workers (V8 JavaScript engine)
 - **Database**: Cloudflare D1 (SQLite) for relational data
@@ -26,19 +63,11 @@ DHgate Monitor provides a subscription system for monitoring DHgate stores. User
 - **Deployment**: Wrangler CLI, GitHub Actions compatible
 - **Analytics**: Google Analytics 4 integration
 
-### Security and compliance
-
-- GDPR compliant data handling with right to erasure
-- XSS protection and input sanitization
-- CSRF token validation for forms
-- SSL/TLS encryption for all communications
-- Accessibility support with WCAG 2.1 AA compliance
-
-### Data storage
+### Data storage strategy
 
 The platform uses a dual storage approach:
-- **KV**: Fast access for subscription data and caching
-- **D1**: Relational storage for analytics and admin dashboard
+- **KV storage**: Fast access for subscription data and caching
+- **D1 database**: Relational storage for analytics and admin dashboard
 
 ### Platform components
 
@@ -50,7 +79,7 @@ The platform uses a dual storage approach:
 - Scheduled events (cron: 0 9 * * *)
 - Circuit breaker pattern for external APIs
 
-**Subscription widget** (`signup-widget.js`)  
+**Subscription widget** (`signup-widget.js`)
 - Vanilla JavaScript with modern DOM APIs
 - Progressive form enhancement
 - Client-side validation with regex patterns
@@ -59,17 +88,25 @@ The platform uses a dual storage approach:
 
 **Enhanced modules**
 - `enhanced_admin_dashboard.js`: Administrative interface
-- `enhanced_store_browser_clean.js`: Store management UI  
+- `enhanced_store_browser_clean.js`: Store management UI
 - `api-config.js`: API configuration with retry logic
 
-### Accessibility features
+### Security and compliance
 
-- Full keyboard navigation support
-- Screen reader compatibility with ARIA labels
-- Semantic HTML structure
-- Focus management and logical tab order
-- High contrast support for visual accessibility
+- **GDPR compliance**: Data handling with right to erasure implementation
+- **XSS protection**: Comprehensive input sanitization
+- **CSRF protection**: Token validation for all forms
+- **SSL/TLS encryption**: End-to-end secure communications
+- **Input validation**: Regex patterns and type checking
 
+### Performance and patterns
+
+- **Edge computing**: Global CDN with sub-100ms response times
+- **Caching strategy**: KV TTL, browser cache headers, CDN caching
+- **Error handling**: Exponential backoff, circuit breaker patterns
+- **Resource optimization**: Lazy loading, preload hints, minification
+- **API design**: RESTful endpoints, proper HTTP status codes
+- **Database**: Prepared statements, connection pooling via D1
 
 ### Environment configuration
 
@@ -77,15 +114,6 @@ Required environment variables:
 - `PREPR_API_TOKEN`: CMS integration
 - `RESEND_API_KEY`: Email service
 - `GA4_MEASUREMENT_ID`: Analytics tracking
-
-### Performance and patterns
-
-- **Edge computing**: Global CDN with sub-100ms response times
-- **Caching strategy**: KV TTL, browser cache headers, CDN caching
-- **Error handling**: Exponential backoff, circuit breaker patterns  
-- **Resource optimization**: Lazy loading, preload hints, minification
-- **API design**: RESTful endpoints, proper HTTP status codes
-- **Database**: Prepared statements, connection pooling via D1
 
 ### License
 
