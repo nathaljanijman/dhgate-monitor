@@ -6501,7 +6501,7 @@ async function fetchPreprArticles(options = {}) {
   
   const query = `
     query GetArticles {
-      Articles(locale: "${lang === 'nl' ? 'nl-NL' : 'en-US'}", fallback_locale: "nl-NL") {
+      Articles(locale: "nl-NL") {
         total
         items {
           _id
@@ -6571,16 +6571,14 @@ async function fetchPreprArticles(options = {}) {
       return { articles: [], total: 0 };
     }
     
-    // Transform Prepr data to our expected format
+    // Transform Prepr data to our expected format (always fetch Dutch articles)
     let articles = data.data?.Articles?.items?.map(item => ({
       id: item._id,
       slug: item._slug,
       title: item.title,
-      title_en: item.title_en,
       intro: item.intro,
-      intro_en: item.intro_en,
       body: item.body,
-      author: item.auteur?.[0]?.name || (lang === 'nl' ? 'Redactie' : 'Editorial'),
+      author: item.auteur?.[0]?.name || 'Redactie',
       publishedAt: item.publicatiedatum || item._created_on,
       updatedAt: item._changed_on,
       image: item.image_for_overviewpage?.url || item.afbeeldingen?.[0]?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
@@ -6588,22 +6586,22 @@ async function fetchPreprArticles(options = {}) {
       readTime: item._read_time || Math.max(1, Math.ceil((item.intro?.length || 100) / 200)),
       views: 0,
       featured: false,
-      category: 'general' // Could be added to CMS later
+      category: 'general'
     })) || [];
     
-    // Auto-translate articles if needed
+    // Auto-translate articles for English display
     if (lang === 'en') {
       articles = await Promise.all(articles.map(article => autoTranslateArticle(article, lang)));
     }
     
-    // Transform to final format
+    // Transform to final format with language-specific content
     articles = articles.map(item => ({
       id: item.id,
       slug: item.slug,
-      title: item.title || (lang === 'en' ? item.title_en : item.title),
-      excerpt: (lang === 'en' ? item.intro_en : item.intro) || '',
+      title: lang === 'en' ? (item.title_en || item.title) : item.title,
+      excerpt: lang === 'en' ? (item.intro_en || item.intro) : item.intro,
       content: formatArticleContent(item.body || [], lang),
-      author: item.author,
+      author: lang === 'en' ? 'Editorial' : item.author,
       publishedAt: item.publishedAt,
       updatedAt: item.updatedAt,
       image: item.image,
@@ -6712,7 +6710,7 @@ async function generateTagFiltersHTML(articles, activeTag, lang, theme) {
 async function fetchPreprArticle(slug, lang = 'nl') {
   const query = `
     query GetArticle($slug: String!) {
-      Article(slug: $slug, locale: "${lang === 'nl' ? 'nl-NL' : 'en-US'}", fallback_locale: "nl-NL") {
+      Article(slug: $slug, locale: "nl-NL") {
         _id
         title
         _slug
@@ -6787,22 +6785,45 @@ async function fetchPreprArticle(slug, lang = 'nl') {
       return null;
     }
     
-    // Transform Prepr data to our expected format
-    return {
+    // Transform Prepr data to our expected format (always fetch Dutch articles)
+    let article = {
       id: item._id,
       slug: item._slug,
-      title: item.title || (lang === 'en' ? item.title_en : item.title),
-      excerpt: (lang === 'en' ? item.intro_en : item.intro) || (lang === 'nl' ? 'Geen samenvatting beschikbaar' : 'No summary available'),
-      content: formatArticleContent(item.body || [], lang) || (lang === 'nl' ? `<p>Geen content beschikbaar.</p>` : `<p>No content available.</p>`),
-      author: item.auteur?.[0]?.name || (lang === 'nl' ? 'Redactie' : 'Editorial'),
+      title: item.title,
+      intro: item.intro,
+      body: item.body,
+      author: item.auteur?.[0]?.name || 'Redactie',
       publishedAt: item.publicatiedatum || item._created_on,
       updatedAt: item._changed_on,
       image: item.afbeeldingen?.[0]?.url || item.image_for_overviewpage?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
       tags: item.tags || [],
-      readTime: item._read_time || Math.max(1, Math.ceil(((lang === 'en' ? item.intro_en : item.intro)?.length || 100) / 200)),
+      readTime: item._read_time || Math.max(1, Math.ceil((item.intro?.length || 100) / 200)),
       views: 0,
       featured: false,
       category: 'general'
+    };
+    
+    // Auto-translate article for English display
+    if (lang === 'en') {
+      article = await autoTranslateArticle(article, lang);
+    }
+    
+    // Return with language-specific content
+    return {
+      id: article.id,
+      slug: article.slug,
+      title: lang === 'en' ? (article.title_en || article.title) : article.title,
+      excerpt: lang === 'en' ? (article.intro_en || article.intro) : article.intro,
+      content: formatArticleContent(article.body || [], lang),
+      author: lang === 'en' ? 'Editorial' : article.author,
+      publishedAt: article.publishedAt,
+      updatedAt: article.updatedAt,
+      image: article.image,
+      tags: article.tags,
+      readTime: article.readTime,
+      views: article.views,
+      featured: article.featured,
+      category: article.category
     };
   } catch (error) {
     console.error('Failed to fetch article from Prepr:', error);
