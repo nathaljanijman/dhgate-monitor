@@ -6480,34 +6480,34 @@ function simpleTranslate(text, targetLang, sourceLang) {
 async function autoTranslateArticle(article, lang) {
   if (lang !== 'en') return article;
   
-  // Only translate if we don't have English content
-  const needsTranslation = !article.title_en && !article.intro_en;
-  
-  if (!needsTranslation) return article;
+  console.log(`🔄 Starting auto-translation for article: ${article.title}`);
   
   try {
-    // Translate title if missing
-    if (!article.title_en && article.title) {
+    // Always translate title for English
+    if (article.title) {
       article.title_en = await translateText(article.title, 'en', 'nl');
+      console.log(`📝 Translated title: "${article.title}" → "${article.title_en}"`);
     }
     
-    // Translate intro if missing
-    if (!article.intro_en && article.intro) {
+    // Always translate intro for English
+    if (article.intro) {
       article.intro_en = await translateText(article.intro, 'en', 'nl');
+      console.log(`📝 Translated intro: "${article.intro.substring(0, 50)}..." → "${article.intro_en.substring(0, 50)}..."`);
     }
     
-    // Translate body content if missing
+    // Translate body content if available
     if (article.body && Array.isArray(article.body)) {
       for (const block of article.body) {
-        if (block.body && !block.body_en) {
+        if (block.body) {
           block.body_en = await translateText(block.body, 'en', 'nl');
+          console.log(`📝 Translated body block: "${block.body.substring(0, 50)}..." → "${block.body_en.substring(0, 50)}..."`);
         }
       }
     }
     
     // Tags are uniform across languages, no translation needed
     
-    console.log(`✅ Auto-translated article: ${article.title}`);
+    console.log(`✅ Auto-translation completed for article: ${article.title}`);
   } catch (error) {
     console.warn('Auto-translation failed:', error.message);
   }
@@ -6680,7 +6680,8 @@ function formatArticleContent(bodyBlocks, lang = 'nl') {
   
   for (let i = 0; i < bodyBlocks.length; i++) {
     const block = bodyBlocks[i];
-    const content = block.body || '';
+    // Use translated content for English, fallback to original
+    const content = lang === 'en' ? (block.body_en || block.body) : block.body;
     const format = block.format;
     
     if (!content || !content.trim()) continue;
