@@ -5286,6 +5286,9 @@ export default {
         
         case '/test-scheduled':
         
+        case '/debug-translation':
+          return await handleDebugTranslation(request, env);
+        
 
           if (method === 'GET') {
             console.log('🧪 Manual test trigger for scheduled function');
@@ -6367,6 +6370,32 @@ async function handleServicePage(request, env) {
   return new Response(html, {
     headers: { 'Content-Type': 'text/html' }
   });
+}
+
+/**
+ * Debug translation function
+ */
+async function handleDebugTranslation(request, env) {
+  const url = new URL(request.url);
+  const text = url.searchParams.get('text') || 'DHgate Dropshipping: Alles wat je moet weten';
+  
+  try {
+    const translated = await translateText(text, 'en', 'nl');
+    
+    const debugInfo = {
+      original: text,
+      translated: translated,
+      success: translated !== text
+    };
+    
+    return new Response(JSON.stringify(debugInfo, null, 2), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 }
 
 /**
