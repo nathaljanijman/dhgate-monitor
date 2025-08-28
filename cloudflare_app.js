@@ -7243,11 +7243,14 @@ async function handleNewsroomPage(request, env) {
                 border-radius: 20px;
                 font-size: 0.75rem;
                 font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 0.75px;
+                text-transform: none;
+                letter-spacing: 0.5px;
                 box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
                 position: relative;
                 overflow: hidden;
+                white-space: nowrap;
+                max-width: 200px;
+                text-overflow: ellipsis;
             }
             
             .article-author::before {
@@ -7682,7 +7685,7 @@ async function handleNewsroomPage(request, env) {
                                  loading="lazy">
                             <div class="article-content">
                                 <div class="article-meta">
-                                    <span class="article-author">${article.author}</span>
+                                    <span class="article-author">${article.author.includes('Redactie') ? 'Redactie' : article.author}</span>
                                     <span>${new Date(article.publishedAt).toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-US')}</span>
                                     <span>${article.readTime} ${t.readTime}</span>
                                 </div>
