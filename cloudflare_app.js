@@ -6298,6 +6298,7 @@ async function fetchPreprArticles(options = {}) {
               slug
             }
           }
+          leestijd
           _read_time
           _locales
         }
@@ -6362,7 +6363,7 @@ async function fetchPreprArticles(options = {}) {
       updatedAt: item._changed_on,
       image: item.image_for_overviewpage?.url || item.afbeeldingen?.[0]?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
       tags: item.tags || [],
-      readTime: item._read_time || Math.max(1, Math.ceil((item.intro?.length || 100) / 200)),
+      readTime: item.leestijd?.body || item._read_time || Math.max(1, Math.ceil((item.intro?.length || 100) / 200)),
       views: 0,
       featured: false,
       category: 'general'
@@ -6578,7 +6579,7 @@ async function fetchPreprArticle(slug, lang = 'nl') {
       updatedAt: item._changed_on,
       image: item.afbeeldingen?.[0]?.url || item.image_for_overviewpage?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
       tags: item.tags || [],
-      readTime: item._read_time || Math.max(1, Math.ceil((item.intro?.length || 100) / 200)),
+      readTime: item.leestijd?.body || item._read_time || Math.max(1, Math.ceil((item.intro?.length || 100) / 200)),
       views: 0,
       featured: false,
       category: 'general'
