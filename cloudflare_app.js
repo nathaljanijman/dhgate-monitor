@@ -5286,8 +5286,7 @@ export default {
         
         case '/test-scheduled':
         
-        case '/debug-articles':
-          return await handleDebugArticles(request, env);
+
         
 
         
@@ -6391,40 +6390,7 @@ async function handleServicePage(request, env) {
 
 
 
-/**
- * Debug articles function
- */
-async function handleDebugArticles(request, env) {
-  const url = new URL(request.url);
-  const lang = url.searchParams.get('lang') || 'nl';
-  
-  try {
-    const { articles, total } = await fetchPreprArticles({ lang });
-    
-    const debugInfo = {
-      requestedLang: lang,
-      total: total,
-      count: articles.length,
-      firstArticle: articles[0] ? {
-        id: articles[0].id,
-        title: articles[0].title,
-        slug: articles[0].slug,
-        excerpt: articles[0].excerpt?.substring(0, 100)
-      } : null,
-      graphqlVariables: {
-        locale: lang === 'nl' ? 'nl-NL' : 'en-GB'
-      }
-    };
-    
-    return new Response(JSON.stringify(debugInfo, null, 2), {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-}
+
 
 /**
  * Fetch articles from Prepr CMS
@@ -6445,8 +6411,8 @@ async function fetchPreprArticles(options = {}) {
   }
   
   const query = `
-    query GetArticles {
-      Articles {
+    query GetArticles($locale: Locale!) {
+      Articles(locale: $locale) {
         total
         items {
           _id
@@ -6498,7 +6464,9 @@ async function fetchPreprArticles(options = {}) {
     }
   `;
   
-  const variables = {};
+  const variables = {
+    locale: lang === 'nl' ? 'nl-NL' : 'en-GB'
+  };
   
   try {
     const response = await fetch('https://graphql.prepr.io/ac_503514911c91f7c0ead966ff1e8c20ee1e0f26c2de6914ab1abaa50b4fd9b5f9', {
@@ -6514,6 +6482,31 @@ async function fetchPreprArticles(options = {}) {
     if (data.errors) {
       console.error('Prepr GraphQL errors:', data.errors);
       return { articles: [], total: 0 };
+    }
+    
+    // If no articles found in requested locale, try default locale (nl-NL)
+    if (!data.data?.Articles?.items || data.data.Articles.items.length === 0) {
+      console.log(`No articles found in locale ${variables.locale}, trying default locale nl-NL`);
+      
+      const fallbackResponse = await fetch('https://graphql.prepr.io/ac_503514911c91f7c0ead966ff1e8c20ee1e0f26c2de6914ab1abaa50b4fd9b5f9', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          query, 
+          variables: { locale: 'nl-NL' }
+        })
+      });
+      
+      const fallbackData = await fallbackResponse.json();
+      
+      if (fallbackData.errors) {
+        console.error('Prepr GraphQL fallback errors:', fallbackData.errors);
+        return { articles: [], total: 0 };
+      }
+      
+      data.data = fallbackData.data;
     }
     
     // Transform Prepr data to our expected format (always fetch Dutch articles)
