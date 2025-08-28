@@ -339,6 +339,26 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             color: var(--text-muted);
         }
         
+        /* Alert Messages */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            color: #065f46;
+        }
+        
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #991b1b;
+        }
+        
         /* Store Grid */
         .store-grid {
             display: grid;
@@ -1023,18 +1043,38 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                     lang: '${lang}'
                 })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
-                currentStep = 5;
-                updateStep();
-                submitBtn.textContent = '${t.submitButton}';
-                submitBtn.disabled = false;
+                if (data.success) {
+                    currentStep = 5;
+                    updateStep();
+                    submitBtn.textContent = '${t.submitButton}';
+                    submitBtn.disabled = false;
+                    
+                    // Show success message
+                    const successMessage = document.createElement('div');
+                    successMessage.className = 'alert alert-success';
+                    successMessage.innerHTML = '${lang === 'nl' ? 'Aanmelding succesvol! Check je email voor bevestiging.' : 'Signup successful! Check your email for confirmation.'}';
+                    document.querySelector('.subscription-card').appendChild(successMessage);
+                } else {
+                    throw new Error(data.message || 'Signup failed');
+                }
             })
             .catch(error => {
-                currentStep = 5;
-                updateStep();
+                console.error('Signup error:', error);
                 submitBtn.textContent = '${t.submitButton}';
                 submitBtn.disabled = false;
+                
+                // Show error message
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'alert alert-error';
+                errorMessage.innerHTML = '${lang === 'nl' ? 'Er is een fout opgetreden. Probeer het opnieuw.' : 'An error occurred. Please try again.'}';
+                document.querySelector('.subscription-card').appendChild(errorMessage);
             });
         }
         
