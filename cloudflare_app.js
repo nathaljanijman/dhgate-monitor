@@ -6371,6 +6371,73 @@ async function handleServicePage(request, env) {
 }
 
 /**
+ * Translate text using Google Translate API (free tier)
+ */
+async function translateText(text, targetLang = 'en', sourceLang = 'nl') {
+  if (!text || text.trim() === '') return text;
+  
+  try {
+    // Use Google Translate API (free tier)
+    const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`);
+    
+    if (!response.ok) {
+      console.warn('Translation API failed, returning original text');
+      return text;
+    }
+    
+    const data = await response.json();
+    const translatedText = data[0]?.map(item => item[0]).join('') || text;
+    
+    console.log(`🌐 Translated: "${text.substring(0, 50)}..." → "${translatedText.substring(0, 50)}..."`);
+    return translatedText;
+  } catch (error) {
+    console.warn('Translation failed:', error.message);
+    return text; // Return original text if translation fails
+  }
+}
+
+/**
+ * Auto-translate article content for missing English versions
+ */
+async function autoTranslateArticle(article, lang) {
+  if (lang !== 'en') return article;
+  
+  // Only translate if we don't have English content
+  const needsTranslation = !article.title_en && !article.intro_en;
+  
+  if (!needsTranslation) return article;
+  
+  try {
+    // Translate title if missing
+    if (!article.title_en && article.title) {
+      article.title_en = await translateText(article.title, 'en', 'nl');
+    }
+    
+    // Translate intro if missing
+    if (!article.intro_en && article.intro) {
+      article.intro_en = await translateText(article.intro, 'en', 'nl');
+    }
+    
+    // Translate body content if missing
+    if (article.body && Array.isArray(article.body)) {
+      for (const block of article.body) {
+        if (block.body && !block.body_en) {
+          block.body_en = await translateText(block.body, 'en', 'nl');
+        }
+      }
+    }
+    
+    // Tags are uniform across languages, no translation needed
+    
+    console.log(`✅ Auto-translated article: ${article.title}`);
+  } catch (error) {
+    console.warn('Auto-translation failed:', error.message);
+  }
+  
+  return article;
+}
+
+/**
  * Debug function to test article fetching
  */
 async function handleDebugArticles(request, env) {
@@ -6434,7 +6501,7 @@ async function fetchPreprArticles(options = {}) {
   
   const query = `
     query GetArticles {
-      Articles(locale: "${lang === 'nl' ? 'nl-NL' : 'en-US'}") {
+      Articles(locale: "${lang === 'nl' ? 'nl-NL' : 'en-US'}", fallback_locale: "nl-NL") {
         total
         items {
           _id
@@ -6505,31 +6572,55 @@ async function fetchPreprArticles(options = {}) {
     }
     
     // Transform Prepr data to our expected format
-    const articles = data.data?.Articles?.items?.map(item => ({
+    let articles = data.data?.Articles?.items?.map(item => ({
       id: item._id,
       slug: item._slug,
-      title: item.title || (lang === 'en' ? item.title_en : item.title),
-      excerpt: (lang === 'en' ? item.intro_en : item.intro) || '',
-      content: formatArticleContent(item.body || [], lang),
+      title: item.title,
+      title_en: item.title_en,
+      intro: item.intro,
+      intro_en: item.intro_en,
+      body: item.body,
       author: item.auteur?.[0]?.name || (lang === 'nl' ? 'Redactie' : 'Editorial'),
       publishedAt: item.publicatiedatum || item._created_on,
       updatedAt: item._changed_on,
       image: item.image_for_overviewpage?.url || item.afbeeldingen?.[0]?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
       tags: item.tags || [],
-      readTime: item._read_time || Math.max(1, Math.ceil(((lang === 'en' ? item.intro_en : item.intro)?.length || 100) / 200)),
+      readTime: item._read_time || Math.max(1, Math.ceil((item.intro?.length || 100) / 200)),
       views: 0,
       featured: false,
       category: 'general' // Could be added to CMS later
     })) || [];
     
-    // Filter by tag if provided
+    // Auto-translate articles if needed
+    if (lang === 'en') {
+      articles = await Promise.all(articles.map(article => autoTranslateArticle(article, lang)));
+    }
+    
+    // Transform to final format
+    articles = articles.map(item => ({
+      id: item.id,
+      slug: item.slug,
+      title: item.title || (lang === 'en' ? item.title_en : item.title),
+      excerpt: (lang === 'en' ? item.intro_en : item.intro) || '',
+      content: formatArticleContent(item.body || [], lang),
+      author: item.author,
+      publishedAt: item.publishedAt,
+      updatedAt: item.updatedAt,
+      image: item.image,
+      tags: item.tags,
+      readTime: item.readTime,
+      views: item.views,
+      featured: item.featured,
+      category: item.category
+    }));
+    
+    // Filter by tag if provided (tags are uniform, only filter by slug)
     let filteredArticles = articles;
     if (tag) {
       filteredArticles = articles.filter(article => 
-        article.tags && article.tags.some(articleTag => {
-          const tagBody = lang === 'en' ? (articleTag.body_en || articleTag.body) : articleTag.body;
-          return articleTag.slug === tag || tagBody.toLowerCase().includes(tag.toLowerCase());
-        })
+        article.tags && article.tags.some(articleTag => 
+          articleTag.slug === tag
+        )
       );
     }
     
@@ -6580,14 +6671,14 @@ function formatArticleContent(bodyBlocks, lang = 'nl') {
  * Generate dynamic tag filter HTML from article tags
  */
 async function generateTagFiltersHTML(articles, activeTag, lang, theme) {
-  // Collect all unique tags from articles
+  // Collect all unique tags from articles (tags are uniform across languages)
   const tagSet = new Set();
   articles.forEach(article => {
     if (article.tags && Array.isArray(article.tags)) {
       article.tags.forEach(tag => {
         if (tag.body && tag.slug) {
-          const tagName = lang === 'en' ? (tag.body_en || tag.body) : tag.body;
-          tagSet.add(JSON.stringify({ name: tagName, slug: tag.slug }));
+          // Always use the Dutch tag name for consistency
+          tagSet.add(JSON.stringify({ name: tag.body, slug: tag.slug }));
         }
       });
     }
@@ -6621,7 +6712,7 @@ async function generateTagFiltersHTML(articles, activeTag, lang, theme) {
 async function fetchPreprArticle(slug, lang = 'nl') {
   const query = `
     query GetArticle($slug: String!) {
-      Article(slug: $slug, locale: "${lang === 'nl' ? 'nl-NL' : 'en-US'}") {
+      Article(slug: $slug, locale: "${lang === 'nl' ? 'nl-NL' : 'en-US'}", fallback_locale: "nl-NL") {
         _id
         title
         _slug
