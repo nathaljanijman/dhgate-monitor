@@ -6443,6 +6443,7 @@ function simpleTranslate(text, targetLang, sourceLang) {
     'DHgate Dropshipping: Alles wat je moet weten': 'DHgate Dropshipping: Everything you need to know',
     'DHgate is een van de grootste B2B e-commerceplatformen uit China': 'DHgate is one of the largest B2B e-commerce platforms from China',
     'Het biedt miljoenen producten tegen lage prijzen': 'It offers millions of products at low prices',
+    'en snelle levermogelijkheden naar bijna elk land': 'and fast delivery options to almost every country',
     'Voor dropshippers is DHgate interessant': 'For dropshippers, DHgate is interesting',
     'omdat je producten kunt verkopen zonder voorraad': 'because you can sell products without inventory',
     'Maar hoe werkt DHgate dropshipping precies': 'But how does DHgate dropshipping work exactly',
@@ -6464,12 +6465,15 @@ function simpleTranslate(text, targetLang, sourceLang) {
     return translations[text];
   }
   
-  // Try partial matches
+  // Try partial matches for longer texts
+  let translatedText = text;
   for (const [dutch, english] of Object.entries(translations)) {
-    if (text.includes(dutch)) {
-      return text.replace(dutch, english);
+    if (translatedText.includes(dutch)) {
+      translatedText = translatedText.replace(dutch, english);
     }
   }
+  
+  return translatedText;
   
   return text;
 }
