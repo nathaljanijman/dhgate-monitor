@@ -2107,17 +2107,19 @@ function generateConsistentFooter(lang, theme) {
   const borderColor = theme === 'dark' ? 'rgba(37, 99, 235, 0.15)' : '#E5E7EB';
   
   return `
-    <div class="container py-5" style="background: ${bgColor}; border-top: 1px solid ${borderColor}; margin-top: 4rem;">
-        <!-- Legal Footer -->
-        <div class="row mt-4 mt-md-5">
-            <div class="col text-center">
-                <div class="text-muted small d-flex flex-column flex-md-row justify-content-center gap-2 gap-md-3" style="color: ${textColor};">
-                    <a href="/privacy?lang=${lang}&theme=${theme}" class="text-muted" style="color: ${textColor}; text-decoration: none;">${lang === 'nl' ? 'Privacybeleid' : 'Privacy Policy'}</a>
-                    <a href="/terms?lang=${lang}&theme=${theme}" class="text-muted" style="color: ${textColor}; text-decoration: none;">${lang === 'nl' ? 'Algemene voorwaarden' : 'Terms of Service'}</a>
-                    <a href="/service?lang=${lang}&theme=${theme}" class="text-muted" style="color: ${textColor}; text-decoration: none;">${lang === 'nl' ? 'Service' : 'Service'}</a>
-                    <a href="/delete-data?lang=${lang}&theme=${theme}" class="text-muted" style="color: ${textColor}; text-decoration: none;">${lang === 'nl' ? 'Verwijder mijn data' : 'Delete my data'}</a>
+    <div style="background: ${bgColor}; border-top: 1px solid ${borderColor}; margin-top: 4rem; padding: 2rem 0;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
+            <!-- Legal Footer -->
+            <div style="text-align: center;">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;">
+                        <a href="/privacy?lang=${lang}&theme=${theme}" style="color: ${textColor}; text-decoration: none; font-size: 0.875rem;">${lang === 'nl' ? 'Privacybeleid' : 'Privacy Policy'}</a>
+                        <a href="/terms?lang=${lang}&theme=${theme}" style="color: ${textColor}; text-decoration: none; font-size: 0.875rem;">${lang === 'nl' ? 'Algemene voorwaarden' : 'Terms of Service'}</a>
+                        <a href="/service?lang=${lang}&theme=${theme}" style="color: ${textColor}; text-decoration: none; font-size: 0.875rem;">${lang === 'nl' ? 'Service' : 'Service'}</a>
+                        <a href="/delete-data?lang=${lang}&theme=${theme}" style="color: ${textColor}; text-decoration: none; font-size: 0.875rem;">${lang === 'nl' ? 'Verwijder mijn data' : 'Delete my data'}</a>
+                    </div>
                 </div>
-                <div class="text-muted small mt-2" style="color: ${textColor};">
+                <div style="color: ${textColor}; font-size: 0.875rem; margin-top: 0.5rem;">
                     © ${new Date().getFullYear()} DHgate Monitor - ${lang === 'nl' ? 'Juridische informatie' : 'Legal information'}
                 </div>
             </div>
