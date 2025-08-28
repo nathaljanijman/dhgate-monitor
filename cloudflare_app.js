@@ -5286,6 +5286,9 @@ export default {
         
         case '/test-scheduled':
         
+        case '/debug-body':
+          return await handleDebugBody(request, env);
+        
 
         
 
@@ -6469,6 +6472,41 @@ function simpleTranslate(text, targetLang, sourceLang) {
   return translatedText;
   
   return text;
+}
+
+/**
+ * Debug body translation function
+ */
+async function handleDebugBody(request, env) {
+  const url = new URL(request.url);
+  const lang = url.searchParams.get('lang') || 'en';
+  
+  try {
+    const { articles } = await fetchPreprArticles({ lang });
+    const firstArticle = articles[0];
+    
+    const debugInfo = {
+      lang,
+      articleTitle: firstArticle?.title,
+      articleTitleEn: firstArticle?.title_en,
+      articleIntro: firstArticle?.intro,
+      articleIntroEn: firstArticle?.intro_en,
+      bodyBlocks: firstArticle?.body?.map(block => ({
+        original: block.body,
+        translated: block.body_en,
+        hasTranslation: !!block.body_en
+      })),
+      finalContent: firstArticle?.content
+    };
+    
+    return new Response(JSON.stringify(debugInfo, null, 2), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 }
 
 /**
