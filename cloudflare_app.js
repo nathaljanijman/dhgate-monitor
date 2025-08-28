@@ -5286,8 +5286,7 @@ export default {
         
         case '/test-scheduled':
         
-        case '/debug-body':
-          return await handleDebugBody(request, env);
+
         
 
         
@@ -6376,163 +6375,16 @@ async function handleServicePage(request, env) {
 
 
 
-/**
- * Translate text using Google Translate API (free tier)
- */
-async function translateText(text, targetLang = 'en', sourceLang = 'nl') {
-  if (!text || text.trim() === '') return text;
-  
-  try {
-    // Use Google Translate API (free tier)
-    const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`);
-    
-    if (!response.ok) {
-      console.warn('Google Translate API failed, using fallback...');
-      return simpleTranslate(text, targetLang, sourceLang);
-    }
-    
-    const data = await response.json();
-    
-    // Google Translate returns a complex nested array structure
-    // The translated text is in data[0][0][0]
-    let translatedText = text;
-    if (data && data[0] && data[0][0] && data[0][0][0]) {
-      translatedText = data[0][0][0];
-    } else if (data && Array.isArray(data[0])) {
-      // Alternative parsing for different response format
-      translatedText = data[0].map(item => item[0]).join('');
-    }
-    
-    console.log(`🌐 Translated: "${text.substring(0, 50)}..." → "${translatedText.substring(0, 50)}..."`);
-    return translatedText;
-  } catch (error) {
-    console.warn('Translation failed, using fallback:', error.message);
-    return simpleTranslate(text, targetLang, sourceLang);
-  }
-}
 
-/**
- * Simple fallback translation for common terms
- */
-function simpleTranslate(text, targetLang, sourceLang) {
-  if (targetLang !== 'en' || sourceLang !== 'nl') return text;
-  
-  const translations = {
-    // Article titles
-    'DHgate Dropshipping: Alles wat je moet weten': 'DHgate Dropshipping: Everything you need to know',
-    'Lancering van het DHgate Monitor Platform': 'Launch of the DHgate Monitor Platform',
-    
-    // Common phrases
-    'DHgate is een van de grootste B2B e-commerceplatformen uit China': 'DHgate is one of the largest B2B e-commerce platforms from China',
-    'Het biedt miljoenen producten tegen lage prijzen': 'It offers millions of products at low prices',
-    'en snelle levermogelijkheden naar bijna elk land': 'and fast delivery options to almost every country',
-    'Voor dropshippers is DHgate interessant': 'For dropshippers, DHgate is interesting',
-    'omdat je producten kunt verkopen zonder voorraad': 'because you can sell products without inventory',
-    'Maar hoe werkt DHgate dropshipping precies': 'But how does DHgate dropshipping work exactly',
-    'en waar moet je op letten': 'and what should you pay attention to',
-    
-    // Platform launch content
-    'Vandaag lanceren we officieel het DHgate Monitor Platform': 'Today we officially launch the DHgate Monitor Platform',
-    'een nieuw hulpmiddel dat webshops en': 'a new tool that webshops and',
-    'e-commerce ondernemers helpt om': 'e-commerce entrepreneurs helps to',
-    'hun producten en concurrenten te monitoren': 'monitor their products and competitors',
-    'en hun business te optimaliseren': 'and optimize their business',
-    'ondernemers helpt om': 'entrepreneurs helps to',
-    'hun prestaties beter te begrijpen': 'their performance better to understand',
-    'slimmer te sturen en': 'smarter to manage and',
-    'te groeien in een competitieve markt': 'to grow in a competitive market',
-    'Inzicht en controle voor e-commerce ondernemers': 'Insight and control for e-commerce entrepreneurs',
-    
-    // UI elements
-    'Redactie': 'Editorial',
-    'Geschreven door': 'Written by',
-    'Lees meer': 'Read more',
-    'min lezen': 'min read',
-    'door': 'by',
-    'Geen artikelen gevonden': 'No articles found',
-    'Alle artikelen': 'All articles',
-    'Onderwerpen': 'Topics',
-    'Gerelateerde onderwerpen': 'Related Topics',
-    'Geen tags beschikbaar': 'No tags available'
-  };
-  
-  // Try exact match first
-  if (translations[text]) {
-    return translations[text];
-  }
-  
-  // Try partial matches for longer texts
-  let translatedText = text;
-  for (const [dutch, english] of Object.entries(translations)) {
-    if (translatedText.includes(dutch)) {
-      translatedText = translatedText.replace(dutch, english);
-    }
-  }
-  
-  return translatedText;
-  
-  return text;
-}
 
-/**
- * Debug body translation function
- */
-async function handleDebugBody(request, env) {
-  const url = new URL(request.url);
-  const lang = url.searchParams.get('lang') || 'en';
-  
-  try {
-    const { articles } = await fetchPreprArticles({ lang });
-    const firstArticle = articles[0];
-    
-    const debugInfo = {
-      lang,
-      articleTitle: firstArticle?.title,
-      articleTitleEn: firstArticle?.title_en,
-      articleIntro: firstArticle?.intro,
-      articleIntroEn: firstArticle?.intro_en,
-      bodyBlocks: firstArticle?.body?.map(block => ({
-        original: block.body,
-        translated: block.body_en,
-        hasTranslation: !!block.body_en
-      })),
-      finalContent: firstArticle?.content
-    };
-    
-    return new Response(JSON.stringify(debugInfo, null, 2), {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-}
 
-/**
- * Apply fallback translations for English display (no API calls for better performance)
- */
-function applyFallbackTranslations(article) {
-  // Apply fallback translations for common terms
-  if (article.title) {
-    article.title_en = simpleTranslate(article.title, 'en', 'nl');
-  }
-  
-  if (article.intro) {
-    article.intro_en = simpleTranslate(article.intro, 'en', 'nl');
-  }
-  
-  // Apply translations to body content
-  if (article.body && Array.isArray(article.body)) {
-    for (const block of article.body) {
-      if (block.body) {
-        block.body_en = simpleTranslate(block.body, 'en', 'nl');
-      }
-    }
-  }
-  
-  return article;
-}
+
+
+
+
+
+
+
 
 
 
@@ -6555,8 +6407,8 @@ async function fetchPreprArticles(options = {}) {
   }
   
   const query = `
-    query GetArticles {
-      Articles(locale: "nl-NL") {
+    query GetArticles($locale: Locale!) {
+      Articles(locale: $locale) {
         total
         items {
           _id
@@ -6608,7 +6460,9 @@ async function fetchPreprArticles(options = {}) {
     }
   `;
   
-  const variables = {};
+  const variables = {
+    locale: lang === 'nl' ? 'nl-NL' : 'en-US'
+  };
   
   try {
     const response = await fetch('https://graphql.prepr.io/ac_503514911c91f7c0ead966ff1e8c20ee1e0f26c2de6914ab1abaa50b4fd9b5f9', {
@@ -6644,17 +6498,12 @@ async function fetchPreprArticles(options = {}) {
       category: 'general'
     })) || [];
     
-    // For English, use fallback translations instead of real-time translation for better performance
-    if (lang === 'en') {
-      articles = articles.map(article => applyFallbackTranslations(article));
-    }
-    
-    // Transform to final format with language-specific content
+    // Transform to final format (content is already in correct language from Prepr CMS)
     articles = articles.map(item => ({
       id: item.id,
       slug: item.slug,
-      title: lang === 'en' ? (item.title_en || item.title) : item.title,
-      excerpt: lang === 'en' ? (item.intro_en || item.intro) : item.intro,
+      title: item.title,
+      excerpt: item.intro,
       content: formatArticleContent(item.body || [], lang),
       author: lang === 'en' ? 'Editorial' : item.author,
       publishedAt: item.publishedAt,
@@ -6699,8 +6548,7 @@ function formatArticleContent(bodyBlocks, lang = 'nl') {
   
   for (let i = 0; i < bodyBlocks.length; i++) {
     const block = bodyBlocks[i];
-    // Use translated content for English, fallback to original
-    const content = lang === 'en' ? (block.body_en || block.body) : block.body;
+    const content = block.body;
     const format = block.format;
     
     if (!content || !content.trim()) continue;
@@ -6766,7 +6614,7 @@ async function generateTagFiltersHTML(articles, activeTag, lang, theme) {
 async function fetchPreprArticle(slug, lang = 'nl') {
   const query = `
     query GetArticle($slug: String!) {
-      Article(slug: $slug, locale: "nl-NL") {
+      Article(slug: $slug, locale: $locale) {
         _id
         title
         _slug
@@ -6815,7 +6663,10 @@ async function fetchPreprArticle(slug, lang = 'nl') {
     }
   `;
   
-  const variables = { slug };
+  const variables = { 
+    slug,
+    locale: lang === 'nl' ? 'nl-NL' : 'en-US'
+  };
   
   try {
     const response = await fetch('https://graphql.prepr.io/ac_503514911c91f7c0ead966ff1e8c20ee1e0f26c2de6914ab1abaa50b4fd9b5f9', {
@@ -6859,17 +6710,12 @@ async function fetchPreprArticle(slug, lang = 'nl') {
       category: 'general'
     };
     
-    // Apply fallback translations for English display (no API calls for better performance)
-    if (lang === 'en') {
-      article = applyFallbackTranslations(article);
-    }
-    
-    // Return with language-specific content
+    // Return article (content is already in correct language from Prepr CMS)
     return {
       id: article.id,
       slug: article.slug,
-      title: lang === 'en' ? (article.title_en || article.title) : article.title,
-      excerpt: lang === 'en' ? (article.intro_en || article.intro) : article.intro,
+      title: article.title,
+      excerpt: article.intro,
       content: formatArticleContent(article.body || [], lang),
       author: lang === 'en' ? 'Editorial' : article.author,
       publishedAt: article.publishedAt,
