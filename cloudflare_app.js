@@ -12429,6 +12429,19 @@ async function handleWidgetSignup(request, env) {
     // Store subscription in KV
     await env.DHGATE_MONITOR_KV.put(`subscription:${sanitizedEmail}`, JSON.stringify(subscriptionData));
     
+    // Also store in D1 database for analytics and admin dashboard
+    try {
+      await env.DB.prepare(`
+        INSERT OR REPLACE INTO subscriptions 
+        (email, status, created_at) 
+        VALUES (?, 'active', ?)
+      `).bind(sanitizedEmail, new Date().toISOString()).run();
+      
+      console.log('✅ [WIDGET] Subscription stored in both KV and D1 for:', sanitizedEmail);
+    } catch (dbError) {
+      console.error('⚠️ [WIDGET] Failed to store in D1, but KV storage successful:', dbError);
+    }
+    
     console.log('✅ [WIDGET] DHgate monitoring activated for:', sanitizedEmail);
     
     const message = lang === 'nl' ? 
