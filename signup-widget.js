@@ -856,11 +856,21 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
         
         // Navigation functions
         function nextStep() {
-            if (validateCurrentStep()) {
-                if (currentStep < 5) {
-                    currentStep++;
-                    updateStep();
+            console.log('nextStep called, currentStep:', currentStep);
+            try {
+                if (validateCurrentStep()) {
+                    if (currentStep < 5) {
+                        currentStep++;
+                        updateStep();
+                    }
                 }
+            } catch (error) {
+                console.error('Error in nextStep:', error);
+                console.log('Available elements:', {
+                    emailInput: document.getElementById('email-input'),
+                    tagsInput: document.getElementById('tags-input'),
+                    currentStep: currentStep
+                });
             }
         }
         
@@ -916,7 +926,12 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
         
         function validateCurrentStep() {
             if (currentStep === 1) {
-                const email = document.getElementById('email-input').value;
+                const emailInput = document.getElementById('email-input');
+                if (!emailInput) {
+                    console.error('Email input not found');
+                    return false;
+                }
+                const email = emailInput.value;
                 if (!email || !email.includes('@')) {
                     alert('${lang === 'nl' ? 'Voer een geldig email adres in' : 'Please enter a valid email address'}');
                     return false;
@@ -927,7 +942,12 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                     return false;
                 }
             } else if (currentStep === 3) {
-                const tags = document.getElementById('tags-input').value.trim();
+                const tagsInput = document.getElementById('tags-input');
+                if (!tagsInput) {
+                    console.error('Tags input not found');
+                    return false;
+                }
+                const tags = tagsInput.value.trim();
                 if (!tags) {
                     alert('${lang === 'nl' ? 'Voer minimaal één zoekterm in' : 'Please enter at least one search term'}');
                     return false;
@@ -1010,21 +1030,42 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
         }
         
         function updateSummary() {
-            const email = document.getElementById('email-input').value;
-            const tags = document.getElementById('tags-input').value;
+            const emailInput = document.getElementById('email-input');
+            const tagsInput = document.getElementById('tags-input');
+            const summaryEmail = document.getElementById('summary-email');
+            const summaryStores = document.getElementById('summary-stores');
+            const summaryTags = document.getElementById('summary-tags');
             
-            document.getElementById('summary-email').textContent = email;
-            document.getElementById('summary-stores').textContent = selectedStores.map(s => s.name).join(', ');
-            document.getElementById('summary-tags').textContent = tags || '${lang === 'nl' ? 'Geen' : 'None'}';
+            if (emailInput && summaryEmail) {
+                summaryEmail.textContent = emailInput.value;
+            }
+            
+            if (summaryStores) {
+                summaryStores.textContent = selectedStores.map(s => s.name).join(', ');
+            }
+            
+            if (tagsInput && summaryTags) {
+                summaryTags.textContent = tagsInput.value || '${lang === 'nl' ? 'Geen' : 'None'}';
+            }
         }
         
         function submitForm() {
             const submitBtn = document.getElementById('submit-btn');
-            submitBtn.textContent = '${t.loadingText}';
-            submitBtn.disabled = true;
+            const emailInput = document.getElementById('email-input');
+            const tagsInput = document.getElementById('tags-input');
             
-            const email = document.getElementById('email-input').value;
-            const tags = document.getElementById('tags-input').value;
+            if (!emailInput || !tagsInput) {
+                console.error('Required form elements not found');
+                return;
+            }
+            
+            if (submitBtn) {
+                submitBtn.textContent = '${t.loadingText}';
+                submitBtn.disabled = true;
+            }
+            
+            const email = emailInput.value;
+            const tags = tagsInput.value;
             const selectedStoresData = selectedStores.map(store => ({
                 name: store.name,
                 url: store.url,
@@ -1082,13 +1123,21 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             currentStep = 1;
             selectedStores = [];
             customStoreAdded = false;
-            document.getElementById('email-input').value = '';
-            document.getElementById('tags-input').value = '';
-            document.getElementById('custom-store-url').value = '';
-            document.getElementById('custom-store-section').classList.remove('custom-store-selected');
+            
+            const emailInput = document.getElementById('email-input');
+            const tagsInput = document.getElementById('tags-input');
+            const customStoreInput = document.getElementById('custom-store-url');
+            const customStoreSection = document.getElementById('custom-store-section');
+            
+            if (emailInput) emailInput.value = '';
+            if (tagsInput) tagsInput.value = '';
+            if (customStoreInput) customStoreInput.value = '';
+            if (customStoreSection) customStoreSection.classList.remove('custom-store-selected');
+            
             document.querySelectorAll('.store-tile').forEach(tile => {
-          tile.classList.remove('selected');
-        });
+                tile.classList.remove('selected');
+            });
+            
             updateStep();
             updateCounter();
         }

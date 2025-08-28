@@ -2399,66 +2399,66 @@ const THEMES = {
     }
   },
   dark: {
-    name: 'Dark Mode - Chrome What\'s New Inspired',
+    name: 'Dark Mode - DHgate Monitor Consistent',
     css: {
-      // Chrome What's New Dark Theme
-      '--bg-primary': '#1f1f1f',
-      '--bg-secondary': '#2d2d2d',
-      '--bg-gradient': 'linear-gradient(135deg, #1f1f1f 0%, #2d2d2d 50%, #3c4043 100%)',
-      '--bg-hero': 'linear-gradient(135deg, #8ab4f8 0%, #f28b82 100%)',
+      // Consistent Dark Theme - DHgate Monitor Branding
+      '--bg-primary': '#0F172A',        // Rich dark slate
+      '--bg-secondary': '#1E293B',      // Medium slate
+      '--bg-gradient': 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%)',
+      '--bg-hero': 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
       
-      // Chrome Typography & Text - WCAG 2.1 AA Enhanced Contrast
-      '--text-primary': '#f8f9fa',      // 19.5:1 contrast ratio
-      '--text-secondary': '#c8ccd0',    // 9.8:1 contrast ratio
-      '--text-muted': '#9aa0a6',        // 4.9:1 contrast ratio
-      '--text-white': '#ffffff',
+      // Enhanced Typography - WCAG 2.1 AAA Compliant
+      '--text-primary': '#F8FAFC',      // Pure white for maximum contrast
+      '--text-secondary': '#CBD5E1',    // Light slate for secondary text  
+      '--text-muted': '#94A3B8',        // Muted slate for less important text
+      '--text-white': '#FFFFFF',
       
-      // Chrome Brand Colors
-      '--primary-blue': '#8ab4f8',
-      '--primary-blue-hover': '#aecbfa',
-      '--primary-blue-light': '#c8e6c9',
-      '--accent-orange': '#f28b82',
-      '--accent-orange-hover': '#f6aea9',
-      '--accent-orange-light': '#ffccbc',
+      // Consistent Brand Colors (DHgate Monitor branding)
+      '--primary-blue': '#2563EB',      // DHgate brand blue
+      '--primary-blue-hover': '#1D4ED8', // Darker on hover  
+      '--primary-blue-light': '#3B82F6', // Light variant
+      '--accent-orange': '#EA580C',     // DHgate brand orange
+      '--accent-orange-hover': '#C2410C', // Darker on hover
+      '--accent-orange-light': '#FB923C', // Light variant
       
-      // Chrome Card System
-      '--card-bg': '#2d2d2d',
-      '--card-bg-alpha': 'rgba(45, 45, 45, 0.95)',
-      '--card-shadow': '0 4px 20px rgba(0, 0, 0, 0.3)',
-      '--card-shadow-hover': '0 8px 32px rgba(0, 0, 0, 0.4)',
-      '--card-border': 'rgba(138, 180, 248, 0.2)',
+      // Dark Theme Card System
+      '--card-bg': '#1E293B',
+      '--card-bg-alpha': 'rgba(30, 41, 59, 0.95)',
+      '--card-shadow': '0 4px 20px rgba(0, 0, 0, 0.4)',
+      '--card-shadow-hover': '0 8px 32px rgba(0, 0, 0, 0.5)',
+      '--card-border': 'rgba(37, 99, 235, 0.15)',
       
-      // Chrome Glassmorphism
-      '--glass-bg': 'rgba(45, 45, 45, 0.9)',
-      '--glass-border': 'rgba(232, 234, 237, 0.1)',
+      // Dark Theme Glassmorphism
+      '--glass-bg': 'rgba(30, 41, 59, 0.85)',
+      '--glass-border': 'rgba(37, 99, 235, 0.1)',
       '--glass-shadow': '0 8px 32px rgba(0, 0, 0, 0.4)',
       '--backdrop-blur': 'blur(16px)',
       
-      // Chrome Interactive Elements
-      '--btn-primary-bg': 'linear-gradient(135deg, #8ab4f8, #5f9ea0)',
-      '--btn-primary-hover': 'linear-gradient(135deg, #aecbfa, #8ab4f8)',
-      '--btn-secondary-bg': 'linear-gradient(135deg, #f28b82, #e57373)',
-      '--btn-secondary-hover': 'linear-gradient(135deg, #f6aea9, #f28b82)',
-      '--btn-ghost': 'rgba(138, 180, 248, 0.2)',
-      '--btn-ghost-hover': 'rgba(138, 180, 248, 0.3)',
+      // Consistent Interactive Elements
+      '--btn-primary-bg': 'linear-gradient(135deg, #2563EB, #1D4ED8)',
+      '--btn-primary-hover': 'linear-gradient(135deg, #1D4ED8, #1E3A8A)',
+      '--btn-secondary-bg': 'linear-gradient(135deg, #EA580C, #C2410C)',
+      '--btn-secondary-hover': 'linear-gradient(135deg, #C2410C, #9A3412)',
+      '--btn-ghost': 'rgba(37, 99, 235, 0.2)',
+      '--btn-ghost-hover': 'rgba(37, 99, 235, 0.3)',
       
-      // Chrome Status & Feedback
-      '--success': '#81c995',
-      '--warning': '#fdd663',
-      '--error': '#f28b82',
-      '--info': '#8ab4f8',
+      // Status & Feedback
+      '--success': '#10B981',
+      '--warning': '#F59E0B',
+      '--error': '#EF4444',
+      '--info': '#3B82F6',
       
-      // Chrome Borders & Lines
-      '--border-light': '#404040',
-      '--border-medium': '#5f6368',
-      '--border-focus': '#8ab4f8',
+      // Borders & Lines
+      '--border-light': '#334155',
+      '--border-medium': '#475569',
+      '--border-focus': '#2563EB',
       
       // Legacy compatibility
-      '--accent-color': '#8ab4f8',
-      '--accent-secondary': '#f28b82',
-      '--border-color': '#404040',
-      '--cookie-bg': 'linear-gradient(135deg, #1f1f1f 0%, #2d2d2d 100%)',
-      '--legal-section-heading': '#8ab4f8'
+      '--accent-color': '#2563EB',
+      '--accent-secondary': '#EA580C',
+      '--border-color': '#334155',
+      '--cookie-bg': 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+      '--legal-section-heading': '#2563EB'
     }
   },
 };
@@ -17851,6 +17851,10 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
             
             // Validate current step
             if (landingCurrentStep === 1) {
+                if (!emailInput) {
+                    console.error('Email input not found on landing page');
+                    return;
+                }
                 if (!emailInput.value || !emailInput.checkValidity()) {
                     emailInput.focus();
                     emailInput.reportValidity();
@@ -17862,10 +17866,15 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
                 
                 if (!storeUrl) {
                     alert('${lang === 'nl' ? 'Selecteer eerst een winkel' : 'Please select a store first'}');
-                    document.getElementById('store_search').focus();
+                    const storeSearchElement = document.getElementById('store_search');
+                    if (storeSearchElement) storeSearchElement.focus();
                     return;
                 }
                 
+                if (!tagsInput) {
+                    console.error('Tags input not found on landing page');
+                    return;
+                }
                 if (!tagsInput.value || !tagsInput.checkValidity()) {
                     tagsInput.focus();
                     tagsInput.reportValidity();
@@ -17874,6 +17883,10 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
             } else if (landingCurrentStep === 3) {
                 const frequencySelect = document.getElementById('frequency');
                 
+                if (!frequencySelect) {
+                    console.error('Frequency select not found on landing page');
+                    return;
+                }
                 if (!frequencySelect.value) {
                     alert('${lang === 'nl' ? 'Selecteer een controle frequentie' : 'Please select a check frequency'}');
                     frequencySelect.focus();
@@ -17931,12 +17944,19 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
         }
         
         function updateSummary() {
-            const email = document.getElementById('email').value;
-            const storeUrl = document.getElementById('selected_store_url').value;
-            const storeName = document.getElementById('store_search').value;
-            const tags = document.getElementById('tags').value;
-            const frequency = document.getElementById('frequency').value;
-            const preferredTime = document.getElementById('preferred_time').value;
+            const emailElement = document.getElementById('email');
+            const storeUrlElement = document.getElementById('selected_store_url');
+            const storeNameElement = document.getElementById('store_search');
+            const tagsElement = document.getElementById('tags');
+            const frequencyElement = document.getElementById('frequency');
+            const preferredTimeElement = document.getElementById('preferred_time');
+            
+            const email = emailElement ? emailElement.value : '';
+            const storeUrl = storeUrlElement ? storeUrlElement.value : '';
+            const storeName = storeNameElement ? storeNameElement.value : '';
+            const tags = tagsElement ? tagsElement.value : '';
+            const frequency = frequencyElement ? frequencyElement.value : '';
+            const preferredTime = preferredTimeElement ? preferredTimeElement.value : '';
             
             // Frequency translation map
             const frequencyMap = {
@@ -17970,13 +17990,19 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
                 }
             };
             
-            document.getElementById('summaryEmail').textContent = email;
-            document.getElementById('summaryStore').textContent = storeName || 
+            const summaryEmailElement = document.getElementById('summaryEmail');
+            const summaryStoreElement = document.getElementById('summaryStore');
+            const summaryTagsElement = document.getElementById('summaryTags');
+            const summaryFrequencyElement = document.getElementById('summaryFrequency');
+            
+            if (summaryEmailElement) summaryEmailElement.textContent = email;
+            if (summaryStoreElement) summaryStoreElement.textContent = storeName || 
                 ('${lang === 'nl' ? 'Alle winkels' : 'All stores'}');
-            document.getElementById('summaryTags').textContent = tags;
-            document.getElementById('summaryFrequency').textContent = 
+            if (summaryTagsElement) summaryTagsElement.textContent = tags;
+            if (summaryFrequencyElement) summaryFrequencyElement.textContent = 
                 frequencyMap['${lang}'][frequency] || frequency;
-            document.getElementById('summaryTime').textContent = 
+            const summaryTimeElement = document.getElementById('summaryTime');
+            if (summaryTimeElement) summaryTimeElement.textContent = 
                 timeMap['${lang}'][preferredTime] || preferredTime;
         }
         
@@ -18790,9 +18816,11 @@ function generateWidgetConfirmationEmailHTML(email, stores, tags, lang) {
     </div>
   `).join('');
   
-  const tagsList = tags ? tags.split(',').map(tag => `
-    <span style="display: inline-block; background: #e0e7ff; color: #3730a3; padding: 4px 8px; border-radius: 12px; font-size: 12px; margin: 2px;">${tag.trim()}</span>
-  `).join('') : '';
+  const tagsList = tags && tags.length > 0 ? 
+    (Array.isArray(tags) ? tags : tags.split(','))
+    .map(tag => `
+      <span style="display: inline-block; background: #e0e7ff; color: #3730a3; padding: 4px 8px; border-radius: 12px; font-size: 12px; margin: 2px;">${typeof tag === 'string' ? tag.trim() : tag}</span>
+    `).join('') : '';
   
   return `
 <!DOCTYPE html>
