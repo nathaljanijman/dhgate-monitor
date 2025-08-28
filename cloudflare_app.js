@@ -12393,6 +12393,9 @@ async function handleWidgetSignup(request, env) {
     // Store subscription in KV
     await env.DHGATE_MONITOR_KV.put(`subscription:${sanitizedEmail}`, JSON.stringify(subscriptionData));
     
+    // Store dashboard token for lookup
+    await env.DHGATE_MONITOR_KV.put(`dashboard:${dashboardToken}`, sanitizedEmail);
+    
     // Also store in D1 database for analytics and admin dashboard
     try {
       await env.DB.prepare(`
