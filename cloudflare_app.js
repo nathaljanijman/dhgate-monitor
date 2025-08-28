@@ -6708,9 +6708,7 @@ async function handleNewsroomPage(request, env) {
         !article.excerpt.toLowerCase().includes(search.toLowerCase())) {
       return false;
     }
-    if (category && article.category !== category) {
-      return false;
-    }
+
     if (tag && !article.tags.includes(tag)) {
       return false;
     }
@@ -7614,31 +7612,16 @@ async function handleNewsroomPage(request, env) {
                                         <path d="M7.41 8.84L12 13.42l4.59-4.58L18 10.25l-6 6-6-6z"/>
                                     </svg>
                                 </button>
-                                ${category || tag ? `<a href="/newsroom?lang=${lang}&theme=${theme}" class="clear-filters">${lang === 'nl' ? 'Wis filters' : 'Clear filters'}</a>` : ''}
+                                ${tag ? `<a href="/newsroom?lang=${lang}&theme=${theme}" class="clear-filters">${lang === 'nl' ? 'Wis filters' : 'Clear filters'}</a>` : ''}
                             </div>
                             <div class="filter-tags-grid" id="filter-tags-grid">
                                 <!-- All Articles -->
                                 <div class="filter-group">
-                                    <a href="/newsroom?lang=${lang}&theme=${theme}" 
-                                       class="filter-tag filter-tag-all ${!category && !tag ? 'active' : ''}">${lang === 'nl' ? 'Alle artikelen' : 'All articles'}</a>
+                                                                    <a href="/newsroom?lang=${lang}&theme=${theme}" 
+                                   class="filter-tag filter-tag-all ${!tag ? 'active' : ''}">${lang === 'nl' ? 'Alle artikelen' : 'All articles'}</a>
                                 </div>
                                 
-                                <!-- Category Tags -->
-                                <div class="filter-group">
-                                    <span class="filter-group-label">${lang === 'nl' ? 'Categorieën' : 'Categories'}</span>
-                                    <div class="filter-group-tags">
-                                        <a href="/newsroom?category=product-updates&lang=${lang}&theme=${theme}" 
-                                           class="filter-tag ${category === 'product-updates' ? 'active' : ''}">${t.filterProductUpdates}</a>
-                                        <a href="/newsroom?category=monitoring-tips&lang=${lang}&theme=${theme}" 
-                                           class="filter-tag ${category === 'monitoring-tips' ? 'active' : ''}">${t.filterMonitoringTips}</a>
-                                        <a href="/newsroom?category=market-insights&lang=${lang}&theme=${theme}" 
-                                           class="filter-tag ${category === 'market-insights' ? 'active' : ''}">${t.filterMarketInsights}</a>
-                                        <a href="/newsroom?category=company-news&lang=${lang}&theme=${theme}" 
-                                           class="filter-tag ${category === 'company-news' ? 'active' : ''}">${t.filterCompanyNews}</a>
-                                        <a href="/newsroom?category=help-support&lang=${lang}&theme=${theme}" 
-                                           class="filter-tag ${category === 'help-support' ? 'active' : ''}">${t.filterHelpSupport}</a>
-                                    </div>
-                                </div>
+
                                    
                                 <!-- Dynamic Topic Tags from CMS -->
                                 ${await generateTagFiltersHTML(allArticles, tag, lang, theme)}
@@ -7646,7 +7629,7 @@ async function handleNewsroomPage(request, env) {
                             
                         </div>
                         
-                        ${(search || category || tag) ? `
+                        ${(search || tag) ? `
                         <div class="active-filters">
                             ${search ? `
                             <span class="active-filter">
@@ -7654,12 +7637,7 @@ async function handleNewsroomPage(request, env) {
                                 <button type="button" class="active-filter-remove" onclick="removeFilter('search')">×</button>
                             </span>
                             ` : ''}
-                            ${category ? `
-                            <span class="active-filter">
-                                ${t.categories}: ${category}
-                                <button type="button" class="active-filter-remove" onclick="removeFilter('category')">×</button>
-                            </span>
-                            ` : ''}
+
                             ${tag ? `
                             <span class="active-filter">
                                 ${t.tags}: ${tag}
@@ -7861,7 +7839,7 @@ async function handleNewsroomPage(request, env) {
                 });
                 
                 // Auto-expand if filters are active
-                const hasActiveFilters = ${category || tag ? 'true' : 'false'};
+                const hasActiveFilters = ${tag ? 'true' : 'false'};
                 if (hasActiveFilters) {
                     const grid = document.getElementById('filter-tags-grid');
                     const button = document.querySelector('.filter-toggle');
