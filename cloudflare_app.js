@@ -5219,11 +5219,6 @@ export default {
           }
           break;
         
-        case '/subscribe':
-          if (method === 'POST') {
-            return await handleSubscription(request, env);
-          }
-          break;
         
         case '/api/shops':
           if (method === 'GET') {
@@ -5870,59 +5865,6 @@ async function handleUpdateTags(request, env) {
   }
 }
 
-async function handleSubscription(request, env) {
-  try {
-    const formData = await request.formData();
-    const lang = getLanguage(request);
-    const t = getTranslations(lang);
-    
-    // Extract and validate form data
-    const rawEmail = formData.get('email');
-    const rawStoreUrl = formData.get('store_url');
-    
-    // Validate email using SecurityUtils
-    const emailValidation = SecurityUtils.validateEmail(rawEmail);
-    if (!emailValidation.isValid) {
-      return new Response(emailValidation.error, { status: 400 });
-    }
-    
-    // Validate store URL using SecurityUtils
-    const urlValidation = SecurityUtils.validateShopUrl(rawStoreUrl);
-    if (!urlValidation.isValid) {
-      return new Response(urlValidation.error, { status: 400 });
-    }
-    
-    const subscription = {
-      email: emailValidation.sanitized,
-      store_url: urlValidation.sanitized,
-      tags: SecurityUtils.sanitizeHtml(formData.get('tags') || ''),
-      frequency: formData.get('frequency'),
-      preferred_time: formData.get('preferred_time'),
-      min_price: formData.get('min_price') ? parseFloat(formData.get('min_price')) : null,
-      max_price: formData.get('max_price') ? parseFloat(formData.get('max_price')) : null,
-      status: 'active'
-    };
-    
-    // Validate required fields
-    if (!subscription.email || !subscription.tags) {
-      return new Response(generateErrorResponse(lang, 'Missing required fields'), { 
-        status: 400,
-        headers: { 'Content-Type': 'text/html' }
-      });
-    }
-    
-    // Store subscription with tokens
-    const { unsubscribeToken, dashboardToken } = await storeSubscription(env, subscription);
-    
-    // Generate success page with both tokens
-    return new Response(generateSuccessResponse(lang, subscription, unsubscribeToken, dashboardToken), {
-      headers: { 'Content-Type': 'text/html' }
-    });
-    
-  } catch (error) {
-    return new Response('Error processing subscription: ' + error.message, { status: 500 });
-  }
-}
 
 async function handleRequestDashboardAccess(request, env) {
   try {
@@ -6015,7 +5957,7 @@ async function handleDebugGraphQL(request, env) {
   const locale = lang === 'nl' ? 'nl-NL' : 'en-GB';
   
   const query = `
-    query GetArticles($locale: Locale!) {
+    query GetArticles($locale: String!) {
       Articles(locale: $locale) {
         total
         items {
@@ -6302,116 +6244,7 @@ async function handleDebugEmail(request, env) {
   }
 }
 
-function generateSuccessResponse(lang, subscription, unsubscribeToken, dashboardToken) {
-  return `
-<!DOCTYPE html>
-<html lang="${lang}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${lang === 'nl' ? 'Monitoring gestart!' : 'Monitoring Started!'}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    ${generateGlobalCSS()}
-</head>
-<body>
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="card shadow-lg border-0" style="border-radius: 20px;">
-                    <div class="card-body p-5 text-center">
-                        <div class="mb-4">
-                            <div style="font-size: 4rem; color: var(--accent-color); margin-bottom: 1rem;">✓</div>
-                            <h1 style="color: var(--text-primary); margin-bottom: 1rem;">
-                                ${lang === 'nl' ? 'Monitoring gestart!' : 'Monitoring Started!'}
-                            </h1>
-                            <p style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2rem;">
-                                ${lang === 'nl' ? 
-                                    'Je DHgate monitoring is succesvol ingesteld. Je ontvangt binnenkort de eerste update!' :
-                                    'Your DHgate monitoring has been successfully set up. You will receive the first update soon!'
-                                }
-                            </p>
-                        </div>
-                        
-                        <div class="row text-start">
-                            <div class="col-md-6 mb-3">
-                                <strong>${lang === 'nl' ? 'Email' : 'Email'}:</strong><br>
-                                <span class="text-muted">${maskEmail(subscription.email)}</span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <strong>${lang === 'nl' ? 'Frequentie' : 'Frequency'}:</strong><br>
-                                <span class="text-muted">${subscription.frequency}</span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <strong>${lang === 'nl' ? 'Tags' : 'Tags'}:</strong><br>
-                                <span class="text-muted">${subscription.tags}</span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <strong>${lang === 'nl' ? 'Tijd' : 'Time'}:</strong><br>
-                                <span class="text-muted">${subscription.preferred_time || 'Direct'}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-4">
-                            <a href="/dashboard?key=${dashboardToken}&lang=${lang}" class="btn btn-primary btn-lg me-3" style="border-radius: 12px;">
-                                ${lang === 'nl' ? 'Open dashboard' : 'Open Dashboard'}
-                            </a>
-                            <a href="/?lang=${lang}" class="btn btn-outline-primary btn-lg" style="border-radius: 12px;">
-                                ${lang === 'nl' ? 'Terug naar Home' : 'Back to Home'}
-                            </a>
-                        </div>
-                        
-                        <div class="mt-4 pt-3 border-top">
-                            <small class="text-muted">
-                                ${lang === 'nl' ? 'Wil je niet meer op de hoogte blijven?' : 'Don\'t want to stay updated anymore?'} 
-                                <a href="/unsubscribe?token=${unsubscribeToken}&lang=${lang}" class="text-decoration-none">
-                                    ${lang === 'nl' ? 'Uitschrijven' : 'Unsubscribe'}
-                                </a>
-                            </small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
-  `;
-}
 
-function generateErrorResponse(lang, message) {
-  return `
-<!DOCTYPE html>
-<html lang="${lang}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${lang === 'nl' ? 'Fout' : 'Error'}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    ${generateGlobalCSS()}
-</head>
-<body>
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-6">
-                <div class="card shadow-lg border-0" style="border-radius: 20px;">
-                    <div class="card-body p-5 text-center">
-                        <div style="font-size: 4rem; color: #dc3545; margin-bottom: 1rem;">⚠</div>
-                        <h1 style="color: var(--text-primary);">${lang === 'nl' ? 'Oops!' : 'Oops!'}</h1>
-                        <p style="color: var(--text-muted); margin-bottom: 2rem;">${message}</p>
-                        <a href="/?lang=${lang}" class="btn btn-primary btn-lg" style="border-radius: 12px;">
-                            ${lang === 'nl' ? 'Probeer opnieuw' : 'Try Again'}
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
-  `;
-}
 
 async function handleGetShops(request, env) {
   const shops = await getShops(env);
@@ -6522,7 +6355,7 @@ async function fetchPreprArticles(options = {}) {
   }
   
   const query = `
-    query GetArticles($locale: Locale!) {
+    query GetArticles($locale: String!) {
       Articles(locale: $locale) {
         total
         items {
@@ -6757,7 +6590,7 @@ async function generateTagFiltersHTML(articles, activeTag, lang, theme) {
  */
 async function fetchPreprArticle(slug, lang = 'nl') {
   const query = `
-    query GetArticle($slug: String!) {
+    query GetArticle($slug: String!, $locale: String!) {
       Article(slug: $slug, locale: $locale) {
         _id
         title
@@ -12703,19 +12536,16 @@ async function handleWidgetSignup(request, env) {
     // Store subscription in KV
     await env.DHGATE_MONITOR_KV.put(`subscription:${sanitizedEmail}`, JSON.stringify(subscriptionData));
     
-    // Send confirmation email
-    const emailSent = await sendWidgetConfirmationEmail(env, sanitizedEmail, stores, tags, lang);
+    console.log('✅ [WIDGET] DHgate monitoring activated for:', sanitizedEmail);
     
-    if (emailSent) {
-      console.log('✅ [WIDGET] Signup successful and confirmation email sent to:', sanitizedEmail);
-    } else {
-      console.log('⚠️ [WIDGET] Signup successful but confirmation email failed for:', sanitizedEmail);
-    }
+    const message = lang === 'nl' ? 
+      `Monitoring geactiveerd! Je ontvangt emails wanneer er nieuwe producten met "${tags}" gevonden worden in de geselecteerde winkels.` :
+      `Monitoring activated! You'll receive emails when new products matching "${tags}" are found in your selected stores.`;
     
     return new Response(JSON.stringify({
       success: true,
-      message: 'Signup successful',
-      emailSent: emailSent
+      message: message,
+      emailSent: false // No confirmation email, but monitoring emails will be sent
     }), {
       headers: { 'Content-Type': 'application/json' }
     });
@@ -13485,62 +13315,6 @@ function generateDashboardToken(email) {
   return btoa(data).replace(/[+/=]/g, '').substring(0, 40);
 }
 
-async function storeSubscription(env, subscription) {
-  const unsubscribeToken = generateUnsubscribeToken(subscription.email);
-  const dashboardToken = generateDashboardToken(subscription.email);
-  
-  const subscriptionData = {
-    ...subscription,
-    unsubscribe_token: unsubscribeToken,
-    dashboard_token: dashboardToken,
-    subscribed: true,
-    created_at: new Date().toISOString(),
-    last_updated: new Date().toISOString()
-  };
-  
-  try {
-    // Store in D1 Database (primary storage)
-    await env.DB.prepare(`
-      INSERT OR REPLACE INTO subscriptions 
-      (email, store_url, tags, frequency, preferred_time, min_price, max_price, status, unsubscribe_token, dashboard_token, subscribed, email_marketing_consent, dashboard_access, created_at, last_updated)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(
-      subscription.email,
-      subscription.store_url || null,
-      subscription.tags || null,
-      subscription.frequency || null,
-      subscription.preferred_time || null,
-      subscription.min_price || null,
-      subscription.max_price || null,
-      subscription.status || 'active',
-      unsubscribeToken,
-      dashboardToken,
-      1, // subscribed = true
-      1, // email_marketing_consent = true
-      1, // dashboard_access = true
-      new Date().toISOString(),
-      new Date().toISOString()
-    ).run();
-    
-    console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Subscription stored in D1 database for: ${subscription.email}`);
-    
-    // Also store in KV for backward compatibility and token lookups
-    await env.DHGATE_MONITOR_KV.put(`subscription:${subscription.email}`, JSON.stringify(subscriptionData));
-    await env.DHGATE_MONITOR_KV.put(`token:${unsubscribeToken}`, subscription.email);
-    await env.DHGATE_MONITOR_KV.put(`dashboard:${dashboardToken}`, subscription.email);
-    
-  } catch (error) {
-    // Enhanced error handling with retry mechanism
-    await ErrorHandler.safeExecute(async () => {
-      await env.DHGATE_MONITOR_KV.put(`subscription:${subscription.email}`, JSON.stringify(subscriptionData));
-      await env.DHGATE_MONITOR_KV.put(`token:${unsubscribeToken}`, subscription.email);
-      await env.DHGATE_MONITOR_KV.put(`dashboard:${dashboardToken}`, subscription.email);
-      console.log(`🔄 Fallback: Subscription stored in KV only for: ${subscription.email}`);
-    }, 'KV fallback storage', null);
-  }
-  
-  return { unsubscribeToken, dashboardToken };
-}
 
 async function getSubscriptionByToken(env, token) {
   try {
@@ -13779,18 +13553,26 @@ async function handleTestUnsubscribe(request, env) {
     const url = new URL(request.url);
     const lang = url.searchParams.get('lang') || 'nl';
     
-    // Create a demo subscription for testing
+    // Create a demo subscription using modern widget format
+    const testEmail = 'test@example.com';
     const testSubscription = {
-      email: 'test@example.com',
-      store_url: 'https://www.dhgate.com/store/test-store',
+      email: testEmail,
+      stores: [
+        { name: 'Test Store', url: 'https://www.dhgate.com/store/test-store', category: 'Sports' }
+      ],
       tags: 'jersey, shirt, soccer',
-      frequency: 'daily',
-      preferred_time: 'immediate',
-      status: 'active'
+      lang: lang,
+      created_at: new Date().toISOString(),
+      last_updated: new Date().toISOString(),
+      source: 'test_unsubscribe'
     };
     
-    // Generate tokens and store
-    const { unsubscribeToken } = await storeSubscription(env, testSubscription);
+    // Store in KV using modern format
+    await env.DHGATE_MONITOR_KV.put(`subscription:${testEmail}`, JSON.stringify(testSubscription));
+    
+    // Generate unsubscribe token
+    const unsubscribeToken = generateUnsubscribeToken(testEmail);
+    await env.DHGATE_MONITOR_KV.put(`unsubscribe:${unsubscribeToken}`, testEmail);
     
     // Redirect to unsubscribe page with test token
     const baseUrl = new URL(request.url).origin;
@@ -17886,9 +17668,16 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <div class="subscription-card modern-signup">
-                        <div class="widget-container">
-                            ${generateSignupWidget(env, lang, theme)}
-                                        </div>
+                        <iframe 
+                            src="/widget?lang=${lang}&theme=${theme}"
+                            width="100%" 
+                            height="800"
+                            frameborder="0"
+                            title="DHgate Monitor Subscription Widget"
+                            allow="clipboard-write"
+                            style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: none;"
+                            referrerpolicy="strict-origin-when-cross-origin">
+                        </iframe>
                     </div>
                 </div>
             </div>
@@ -20709,4 +20498,5 @@ function generateDeleteDataErrorHTML(lang, theme, errorType) {
 </body>
 </html>
   `;
+
 }

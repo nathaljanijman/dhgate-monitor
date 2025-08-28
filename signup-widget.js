@@ -84,8 +84,8 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
     tagsDescription: 'Voeg zoektermen toe om specifieke producten te vinden',
     confirmTitle: 'Bevestig je aanmelding',
     confirmDescription: 'Controleer je gegevens voordat je start',
-    successTitle: 'Aanmelding voltooid',
-    successDescription: 'Je ontvangt binnenkort een bevestigingsemail',
+    successTitle: 'Monitoring geactiveerd!',
+    successDescription: 'Je ontvangt emails wanneer er nieuwe producten gevonden worden',
     nextButton: 'Volgende',
     backButton: 'Terug',
     submitButton: 'Start monitoring',
@@ -119,8 +119,8 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
     tagsDescription: 'Add search terms to find specific products',
     confirmTitle: 'Confirm your registration',
     confirmDescription: 'Check your details before starting',
-    successTitle: 'Registration complete',
-    successDescription: 'You will receive a confirmation email shortly',
+    successTitle: 'Monitoring activated!',
+    successDescription: 'You will receive emails when new products are found',
     nextButton: 'Next',
     backButton: 'Back',
     submitButton: 'Start monitoring',
@@ -1097,11 +1097,16 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                     submitBtn.textContent = '${t.submitButton}';
                     submitBtn.disabled = false;
                     
-                    // Show success message
+                    // Show success message based on actual email status
                     const successMessage = document.createElement('div');
                     successMessage.className = 'alert alert-success';
-                    successMessage.innerHTML = '${lang === 'nl' ? 'Aanmelding succesvol! Check je email voor bevestiging.' : 'Signup successful! Check your email for confirmation.'}';
-                    document.querySelector('.subscription-card').appendChild(successMessage);
+                    if (data.emailSent) {
+                        successMessage.innerHTML = '${lang === 'nl' ? 'Aanmelding succesvol! Check je email voor bevestiging.' : 'Signup successful! Check your email for confirmation.'}';
+                    } else {
+                        successMessage.innerHTML = data.message || '${lang === 'nl' ? 'Aanmelding succesvol opgeslagen!' : 'Signup successfully saved!'}';
+                    }
+                    const targetContainer = document.querySelector('.subscription-card') || document.querySelector('.widget-container');
+                    targetContainer.appendChild(successMessage);
                 } else {
                     throw new Error(data.message || 'Signup failed');
                 }
@@ -1115,7 +1120,8 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                 const errorMessage = document.createElement('div');
                 errorMessage.className = 'alert alert-error';
                 errorMessage.innerHTML = '${lang === 'nl' ? 'Er is een fout opgetreden. Probeer het opnieuw.' : 'An error occurred. Please try again.'}';
-                document.querySelector('.subscription-card').appendChild(errorMessage);
+                const targetContainer = document.querySelector('.subscription-card') || document.querySelector('.widget-container');
+                targetContainer.appendChild(errorMessage);
             });
         }
         
