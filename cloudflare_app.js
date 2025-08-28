@@ -6412,7 +6412,7 @@ async function handleDebugArticles(request, env) {
         excerpt: articles[0].excerpt?.substring(0, 100)
       } : null,
       graphqlVariables: {
-        locale: lang === 'nl' ? 'nl-NL' : 'en-US'
+        locale: lang === 'nl' ? 'nl' : 'en'
       }
     };
     
@@ -6499,7 +6499,7 @@ async function fetchPreprArticles(options = {}) {
   `;
   
   const variables = {
-    locale: lang === 'nl' ? 'nl-NL' : 'en-US'
+    locale: lang === 'nl' ? 'nl' : 'en'
   };
   
   try {
@@ -6703,7 +6703,7 @@ async function fetchPreprArticle(slug, lang = 'nl') {
   
   const variables = { 
     slug,
-    locale: lang === 'nl' ? 'nl-NL' : 'en-US'
+    locale: lang === 'nl' ? 'nl' : 'en'
   };
   
   try {
