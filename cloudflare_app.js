@@ -5286,6 +5286,12 @@ export default {
         
         case '/test-scheduled':
         
+        case '/debug-newsroom':
+          return await handleDebugNewsroom(request, env);
+        
+        case '/debug-newsroom':
+          return await handleDebugNewsroom(request, env);
+        
 
         
 
@@ -6411,8 +6417,8 @@ async function fetchPreprArticles(options = {}) {
   }
   
   const query = `
-    query GetArticles($locale: Locale!) {
-      Articles(locale: $locale) {
+    query GetArticles {
+      Articles {
         total
         items {
           _id
@@ -6422,8 +6428,10 @@ async function fetchPreprArticles(options = {}) {
           _changed_on
           auteur {
             __typename
-            _id
-            name
+            ... on Author {
+              _id
+              name
+            }
           }
           afbeeldingen {
             __typename
@@ -6449,13 +6457,20 @@ async function fetchPreprArticles(options = {}) {
               body
               format
             }
+            ... on RichText {
+              _id
+              body
+              format
+            }
           }
           publicatiedatum
           tags {
             __typename
-            _id
-            body
-            slug
+            ... on Tag {
+              _id
+              body
+              slug
+            }
           }
           _read_time
           _locales
@@ -6464,9 +6479,7 @@ async function fetchPreprArticles(options = {}) {
     }
   `;
   
-  const variables = {
-    locale: lang === 'nl' ? 'nl-NL' : 'en-GB'
-  };
+  const variables = {};
   
   try {
     const response = await fetch('https://graphql.prepr.io/ac_503514911c91f7c0ead966ff1e8c20ee1e0f26c2de6914ab1abaa50b4fd9b5f9', {
@@ -6657,11 +6670,18 @@ async function fetchPreprArticle(slug, lang = 'nl') {
             body
             format
           }
+          ... on RichText {
+            _id
+            body
+            format
+          }
         }
         auteur {
           __typename
-          _id
-          name
+          ... on Author {
+            _id
+            name
+          }
         }
         publicatiedatum
         afbeeldingen {
@@ -6682,9 +6702,11 @@ async function fetchPreprArticle(slug, lang = 'nl') {
         }
         tags {
           __typename
-          _id
-          body
-          slug
+          ... on Tag {
+            _id
+            body
+            slug
+          }
         }
         _read_time
         _locales
