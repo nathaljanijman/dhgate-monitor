@@ -5471,6 +5471,8 @@ export default {
           });
         
         default:
+
+          
           // Handle individual newsroom articles
           if (url.pathname.startsWith('/newsroom/') && url.pathname !== '/newsroom/') {
             return await handleNewsroomArticle(request, env);
@@ -6369,7 +6371,7 @@ async function handleServicePage(request, env) {
  * Fetch articles from Prepr CMS
  */
 async function fetchPreprArticles(options = {}) {
-  const { limit = 10, offset = 0, search = '', category = '', sort = 'newest', lang = 'nl' } = options;
+  const { limit = 10, offset = 0, search = '', category = '', tag = '', sort = 'newest', lang = 'nl' } = options;
   
   let orderBy = '_created_on_DESC';
   switch (sort) {
@@ -6394,12 +6396,43 @@ async function fetchPreprArticles(options = {}) {
           _created_on
           _changed_on
           auteur {
+            __typename
+            _id
             name
           }
           afbeeldingen {
+            __typename
+            _id
+            name
             url
+            width
+            height
+          }
+          image_for_overviewpage {
+            __typename
+            _id
+            name
+            url
+            width
+            height
           }
           intro
+          body {
+            __typename
+            ... on Text {
+              _id
+              body
+              format
+            }
+          }
+          publicatiedatum
+          tags {
+            __typename
+            _id
+            body
+            slug
+          }
+          _read_time
           _locales
         }
       }
@@ -6430,20 +6463,31 @@ async function fetchPreprArticles(options = {}) {
       slug: item._slug,
       title: item.title,
       excerpt: item.intro || '',
+      content: formatArticleContent(item.body || []),
       author: item.auteur?.[0]?.name || 'Redactie',
-      publishedAt: item._created_on,
+      publishedAt: item.publicatiedatum || item._created_on,
       updatedAt: item._changed_on,
-      image: item.afbeeldingen?.[0]?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
-      category: item.categorie || 'general',
-      tags: Array.isArray(item.tags) ? item.tags : [],
-      readTime: Math.max(1, Math.ceil((item.intro?.length || 100) / 200)), // Estimate reading time
-      views: 0, // Could be stored separately
-      featured: false // Could be a field in Prepr
+      image: item.image_for_overviewpage?.url || item.afbeeldingen?.[0]?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
+      tags: item.tags || [],
+      readTime: item._read_time || Math.max(1, Math.ceil((item.intro?.length || 100) / 200)),
+      views: 0,
+      featured: false,
+      category: 'general' // Could be added to CMS later
     })) || [];
     
+    // Filter by tag if provided
+    let filteredArticles = articles;
+    if (tag) {
+      filteredArticles = articles.filter(article => 
+        article.tags && article.tags.some(articleTag => 
+          articleTag.slug === tag || articleTag.body.toLowerCase().includes(tag.toLowerCase())
+        )
+      );
+    }
+    
     return {
-      articles,
-      total: data.data?.Articles?.total || 0
+      articles: filteredArticles,
+      total: filteredArticles.length
     };
   } catch (error) {
     console.error('Failed to fetch articles from Prepr:', error);
@@ -6463,69 +6507,63 @@ function formatArticleContent(bodyBlocks) {
   
   for (let i = 0; i < bodyBlocks.length; i++) {
     const block = bodyBlocks[i];
-    const text = block.text || '';
+    const content = block.body || '';
+    const format = block.format;
     
-    if (!text.trim()) continue;
+    if (!content || !content.trim()) continue;
     
-    const trimmedText = text.trim();
-    
-    // Check if this block is a heading (questions or short titles)
-    const isHeading = trimmedText.endsWith('?') || 
-      (trimmedText.length < 50 && !trimmedText.includes('.') && 
-       (trimmedText.includes('DHgate Monitor') || trimmedText.includes('verwachten') || 
-        trimmedText.includes('bedoeld') || trimmedText.includes('komt er')));
-    
-    if (isHeading) {
-      formattedContent += `<h2>${trimmedText.replace(/\?$/, '')}</h2>\n`;
+    // Since the CMS already provides HTML content, we can use it directly
+    // The format field can be used for additional styling if needed
+    if (content.includes('<') && content.includes('>')) {
+      // HTML content - use as-is, CMS already formatted it properly
+      formattedContent += `${content}\n`;
     } else {
-      // Check if this block contains colon-separated list items (like "Title: Description")
-      const hasColonItems = (trimmedText.match(/[A-Za-z\s]+:/g) || []).length >= 2;
-      
-      // Check if this is the merged list items block (no spaces between items)
-      const isMergedListItems = trimmedText.includes('e-mail') && 
-        trimmedText.includes('newsroom') && 
-        trimmedText.includes('analyses') && 
-        !trimmedText.includes(' Een '); // No space means items are merged
-      
-      if (hasColonItems) {
-        // Split by items that start with capital letter followed by words and a colon
-        // This catches patterns like "Realtime monitoring:", "Shop spotlight:", etc.
-        const items = trimmedText.split(/(?=[A-Z][a-z]+\s*[a-z]*:)/).filter(item => item.trim());
-        
-        formattedContent += '<ul class="feature-list">\n';
-        items.forEach(item => {
-          const trimmedItem = item.trim();
-          if (trimmedItem.includes(':')) {
-            const colonIndex = trimmedItem.indexOf(':');
-            const title = trimmedItem.substring(0, colonIndex).trim();
-            const description = trimmedItem.substring(colonIndex + 1).trim();
-            if (title && description) {
-              formattedContent += `<li><strong>${title}:</strong> ${description}</li>\n`;
-            }
-          }
-        });
-        formattedContent += '</ul>\n';
-      } else if (isMergedListItems) {
-        // Handle the merged future features list
-        const items = [
-          'Automatische rapportages per e-mail',
-          'Een newsroom met actuele artikelen en tips',
-          'Uitgebreide analyses per productcategorie'
-        ];
-        
-        formattedContent += '<ul class="feature-list">\n';
-        items.forEach(item => {
-          formattedContent += `<li>${item}</li>\n`;
-        });
-        formattedContent += '</ul>\n';
-      } else {
-        // Regular paragraph
-        formattedContent += `<p>${trimmedText}</p>\n`;
-      }
+      // Plain text - wrap in paragraph
+      formattedContent += `<p>${content}</p>\n`;
     }
   }
   
   return formattedContent;
+}
+
+// convertToLists function removed - CMS now provides properly formatted HTML
+
+/**
+ * Generate dynamic tag filter HTML from article tags
+ */
+async function generateTagFiltersHTML(articles, activeTag, lang, theme) {
+  // Collect all unique tags from articles
+  const tagSet = new Set();
+  articles.forEach(article => {
+    if (article.tags && Array.isArray(article.tags)) {
+      article.tags.forEach(tag => {
+        if (tag.body && tag.slug) {
+          tagSet.add(JSON.stringify({ name: tag.body, slug: tag.slug }));
+        }
+      });
+    }
+  });
+  
+  // Convert back to objects and sort
+  const uniqueTags = Array.from(tagSet)
+    .map(tagStr => JSON.parse(tagStr))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  
+  if (uniqueTags.length === 0) {
+    return ''; // No tags to display
+  }
+  
+  return `
+    <div class="filter-group">
+      <span class="filter-group-label">${lang === 'nl' ? 'Onderwerpen' : 'Topics'}</span>
+      <div class="filter-group-tags">
+        ${uniqueTags.map(tag => `
+          <a href="/newsroom?tag=${encodeURIComponent(tag.slug)}&lang=${lang}&theme=${theme}" 
+             class="filter-tag ${activeTag === tag.slug ? 'active' : ''}">${tag.name}</a>
+        `).join('')}
+      </div>
+    </div>
+  `;
 }
 
 /**
@@ -6544,16 +6582,40 @@ async function fetchPreprArticle(slug, lang = 'nl') {
         body {
           __typename
           ... on Text {
-            text
+            _id
+            body
+            format
           }
         }
         auteur {
+          __typename
+          _id
           name
         }
         publicatiedatum
         afbeeldingen {
+          __typename
+          _id
+          name
           url
+          width
+          height
         }
+        image_for_overviewpage {
+          __typename
+          _id
+          name
+          url
+          width
+          height
+        }
+        tags {
+          __typename
+          _id
+          body
+          slug
+        }
+        _read_time
         _locales
       }
     }
@@ -6572,13 +6634,18 @@ async function fetchPreprArticle(slug, lang = 'nl') {
     
     const data = await response.json();
     
+    // console.log('Prepr GraphQL response:', JSON.stringify(data, null, 2));
+    
     if (data.errors) {
       console.error('Prepr GraphQL errors:', data.errors);
       return null;
     }
     
     const item = data.data?.Article;
-    if (!item) return null;
+    if (!item) {
+      console.log('No article found for slug:', slug);
+      return null;
+    }
     
     // Transform Prepr data to our expected format
     return {
@@ -6586,16 +6653,16 @@ async function fetchPreprArticle(slug, lang = 'nl') {
       slug: item._slug,
       title: item.title,
       excerpt: item.intro || 'Geen samenvatting beschikbaar',
-      content: formatArticleContent(item.body) || `<p>Geen content beschikbaar.</p>`,
+      content: formatArticleContent(item.body || []) || `<p>Geen content beschikbaar.</p>`,
       author: item.auteur?.[0]?.name || 'Redactie',
       publishedAt: item.publicatiedatum || item._created_on,
       updatedAt: item._changed_on,
-      image: item.afbeeldingen?.[0]?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
-      category: 'general',
-      tags: [],
-      readTime: Math.max(1, Math.ceil((item.intro?.length || 100) / 200)),
+      image: item.afbeeldingen?.[0]?.url || item.image_for_overviewpage?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
+      tags: item.tags || [],
+      readTime: item._read_time || Math.max(1, Math.ceil((item.intro?.length || 100) / 200)),
       views: 0,
-      featured: false
+      featured: false,
+      category: 'general'
     };
   } catch (error) {
     console.error('Failed to fetch article from Prepr:', error);
@@ -6630,6 +6697,7 @@ async function handleNewsroomPage(request, env) {
     offset: 0,
     search,
     category,
+    tag,
     sort,
     lang
   });
@@ -7568,22 +7636,8 @@ async function handleNewsroomPage(request, env) {
                                     </div>
                                 </div>
                                    
-                                <!-- Topic Tags -->
-                                <div class="filter-group">
-                                    <span class="filter-group-label">${lang === 'nl' ? 'Onderwerpen' : 'Topics'}</span>
-                                    <div class="filter-group-tags">
-                                        <a href="/newsroom?tag=dhgate&lang=${lang}&theme=${theme}" 
-                                           class="filter-tag ${tag === 'dhgate' ? 'active' : ''}">DHgate Monitor</a>
-                                        <a href="/newsroom?tag=platform&lang=${lang}&theme=${theme}" 
-                                           class="filter-tag ${tag === 'platform' ? 'active' : ''}">${lang === 'nl' ? 'Platform' : 'Platform'}</a>
-                                        <a href="/newsroom?tag=lancering&lang=${lang}&theme=${theme}" 
-                                           class="filter-tag ${tag === 'lancering' ? 'active' : ''}">${lang === 'nl' ? 'Lancering' : 'Launch'}</a>
-                                        <a href="/newsroom?tag=monitoring&lang=${lang}&theme=${theme}" 
-                                           class="filter-tag ${tag === 'monitoring' ? 'active' : ''}">${lang === 'nl' ? 'Monitoring' : 'Monitoring'}</a>
-                                        <a href="/newsroom?tag=ecommerce&lang=${lang}&theme=${theme}" 
-                                           class="filter-tag ${tag === 'ecommerce' ? 'active' : ''}">${lang === 'nl' ? 'E-commerce' : 'E-commerce'}</a>
-                                    </div>
-                                </div>
+                                <!-- Dynamic Topic Tags from CMS -->
+                                ${await generateTagFiltersHTML(allArticles, tag, lang, theme)}
                             </div>
                             
                         </div>
@@ -7640,9 +7694,11 @@ async function handleNewsroomPage(request, env) {
                                 <p class="article-excerpt" itemprop="description">${article.excerpt}</p>
                                 
                                 <div class="article-tags">
-                                    ${article.tags.map(tag => `
-                                    <span class="article-tag">${tag}</span>
-                                    `).join('')}
+                                    ${article.tags && article.tags.length > 0 ? 
+                                        article.tags.map(tag => `
+                                        <a href="/newsroom?tag=${encodeURIComponent(tag.slug)}&lang=${lang}&theme=${theme}" class="article-tag">${tag.body}</a>
+                                        `).join('') : ''
+                                    }
                                 </div>
                                 
                                 <span class="article-link">
@@ -7845,6 +7901,8 @@ async function handleNewsroomPage(request, env) {
   });
 }
 
+
+
 /**
  * Handles individual newsroom article pages
  * @param {Request} request - The incoming request
@@ -7896,6 +7954,25 @@ async function handleNewsroomArticle(request, env) {
         <title>${article.title} - DHgate Monitor</title>
         <meta name="description" content="${article.excerpt}">
         
+        <!-- Open Graph Meta Tags -->
+        <meta property="og:type" content="article">
+        <meta property="og:title" content="${article.title}">
+        <meta property="og:description" content="${article.excerpt}">
+        <meta property="og:image" content="${article.image}">
+        <meta property="og:url" content="${url.origin}/newsroom/${article.slug}">
+        <meta property="og:site_name" content="DHgate Monitor">
+        
+        <!-- Twitter Meta Tags -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="${article.title}">
+        <meta name="twitter:description" content="${article.excerpt}">
+        <meta name="twitter:image" content="${article.image}">
+        
+        <!-- Article Meta Tags -->
+        <meta property="article:published_time" content="${new Date(article.publishedAt).toISOString()}">
+        <meta property="article:modified_time" content="${new Date(article.updatedAt).toISOString()}">
+        <meta property="article:author" content="${article.author}">
+        
         ${generateGlobalCSS(theme)}
         
         <style>
@@ -7906,24 +7983,93 @@ async function handleNewsroomArticle(request, env) {
                 background: var(--bg-hero);
                 color: white;
                 text-align: center;
-                padding: 3rem 0;
+                padding: 2rem 0 1.5rem 0;
                 margin-bottom: 0;
             }
             
             .article-title {
-                font-size: 2.5rem;
+                font-size: 2.25rem;
                 font-weight: 700;
                 line-height: 1.2;
-                margin-bottom: 1rem;
+                margin-bottom: 0.75rem;
                 max-width: 800px;
                 margin-left: auto;
                 margin-right: auto;
             }
             
             .article-meta {
-                font-size: 1rem;
-                opacity: 0.9;
-                margin-top: 1rem;
+                font-size: 0.9rem;
+                color: rgba(255, 255, 255, 0.8);
+                max-width: 800px;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 0.5rem;
+            }
+            
+            .author-info {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+            
+            .author-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid var(--border-light);
+            }
+            
+            .author-details {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+            
+            .author-name {
+                font-weight: 600;
+                color: var(--text-primary);
+            }
+            
+            .author-bio {
+                font-size: 0.85rem;
+                color: var(--text-secondary);
+                font-style: italic;
+            }
+            
+            .publish-info {
+                font-size: 0.9rem;
+            }
+            
+            .author-section {
+                background: var(--bg-secondary);
+                border-top: 1px solid var(--border-light);
+                padding: 1.5rem 0;
+                margin-top: 2rem;
+            }
+            
+            .author-byline {
+                max-width: 800px;
+                margin: 0 auto;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.95rem;
+            }
+            
+            .author-label {
+                color: var(--text-secondary);
+            }
+            
+            .author-name {
+                color: var(--text-primary);
+                font-weight: 600;
+            }
+            
+            .no-tags {
+                color: var(--text-secondary);
+                font-style: italic;
+                margin: 1rem 0;
             }
             
             .article-image-section {
@@ -7966,69 +8112,59 @@ async function handleNewsroomArticle(request, env) {
             }
             
             .article-content {
-                max-width: 700px;
+                max-width: 800px;
                 margin: 0 auto;
-                padding: 3rem 1rem;
+                padding: 2rem 1rem 1rem 1rem;
+                line-height: 1.7;
             }
             
-            /* Typography System According to Style Guide */
+            /* Minimalistic Typography */
             .article-content h1 {
-                font-size: 2.5rem;
+                font-size: 2rem;
                 font-weight: 700;
                 line-height: 1.2;
-                margin: 2.5rem 0 1.5rem 0;
+                margin: 2rem 0 1rem 0;
                 color: var(--text-primary);
-                letter-spacing: -0.025em;
             }
             
             .article-content h2 {
-                font-size: 2rem;
+                font-size: 1.5rem;
                 font-weight: 600;
                 line-height: 1.3;
-                margin: 2.5rem 0 1.25rem 0;
+                margin: 1.75rem 0 0.75rem 0;
                 color: var(--text-primary);
-                letter-spacing: -0.02em;
-                position: relative;
-                padding-bottom: 0.5rem;
             }
             
-            .article-content h2::after {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 60px;
-                height: 3px;
-                background: linear-gradient(90deg, var(--primary), var(--accent-color));
-                border-radius: 2px;
+            .article-content h2:first-child {
+                margin-top: 0;
             }
             
             .article-content h3 {
-                font-size: 1.5rem;
+                font-size: 1.25rem;
                 font-weight: 600;
                 line-height: 1.4;
-                margin: 1.75rem 0 0.875rem 0;
+                margin: 1.5rem 0 0.625rem 0;
                 color: var(--text-primary);
             }
             
             .article-content h4 {
-                font-size: 1.25rem;
-                font-weight: 600;
-                line-height: 1.4;
-                margin: 1.5rem 0 0.75rem 0;
-                color: var(--text-primary);
-            }
-            
-            .article-content h5 {
                 font-size: 1.125rem;
                 font-weight: 600;
-                line-height: 1.5;
+                line-height: 1.4;
                 margin: 1.25rem 0 0.5rem 0;
                 color: var(--text-primary);
             }
             
-            .article-content h6 {
+            .article-content h5 {
                 font-size: 1rem;
+                font-weight: 600;
+                line-height: 1.5;
+                margin: 1rem 0 0.5rem 0;
+                color: var(--text-primary);
+            }
+            
+            .article-content h6 {
+                font-size: 0.875rem;
                 font-weight: 600;
                 line-height: 1.5;
                 margin: 1rem 0 0.5rem 0;
@@ -8038,27 +8174,57 @@ async function handleNewsroomArticle(request, env) {
             }
             
             .article-content p {
-                font-size: 1.125rem;
-                line-height: 1.8;
-                margin-bottom: 1.5rem;
+                font-size: 1rem;
+                line-height: 1.6;
+                margin-bottom: 1rem;
                 color: var(--text-primary);
                 font-weight: 400;
             }
             
+            /* Remove conflicting p rules below - consolidated here */
+            
+            .article-content strong {
+                font-weight: 600;
+                color: var(--text-primary);
+            }
+            
+            .article-content em {
+                font-style: italic;
+            }
+            
             .article-content ul {
-                margin: 1.5rem 0;
+                margin: 1rem 0;
                 padding-left: 2rem;
+                list-style-type: disc;
             }
             
             .article-content ol {
-                margin: 1.5rem 0;
+                margin: 1rem 0;
                 padding-left: 2rem;
+                list-style-type: decimal;
+                counter-reset: list-counter;
             }
             
             .article-content li {
-                margin-bottom: 0.75rem;
-                line-height: 1.7;
+                margin-bottom: 0.5rem;
+                line-height: 1.6;
                 color: var(--text-primary);
+                display: list-item;
+            }
+            
+            .article-content ul li {
+                list-style: disc outside;
+            }
+            
+            .article-content ol li {
+                list-style: decimal outside;
+            }
+            
+            /* Enhanced ordered list styling - consolidated with above */
+            
+            /* Remove any extra bullets that cause duplicates */
+            .article-content ul li:before {
+                display: none !important;
             }
             
             .article-content ul li::marker {
@@ -8189,39 +8355,15 @@ async function handleNewsroomArticle(request, env) {
                 letter-spacing: 0.05em;
             }
             
-            .article-content p {
-                margin-bottom: 1.5rem;
-                line-height: 1.8;
-                color: var(--text-primary);
-            }
-            
+            /* First paragraph can be larger for intro effect */
             .article-content p:first-of-type {
-                font-size: 1.25rem;
+                font-size: 1.125rem;
                 font-weight: 400;
-                color: var(--text-secondary);
-                margin-bottom: 2rem;
-            }
-            
-            .article-content ul, .article-content ol {
-                margin-bottom: 1.5rem;
-                padding-left: 2rem;
-            }
-            
-            .article-content li {
-                margin-bottom: 0.75rem;
-                line-height: 1.7;
                 color: var(--text-primary);
+                margin-bottom: 1.5rem;
             }
             
-            .article-content ul li::marker {
-                color: var(--primary);
-                font-weight: 600;
-            }
-            
-            .article-content ol li::marker {
-                color: var(--primary);
-                font-weight: 600;
-            }
+            /* List styling consolidated above - removing duplicate */
             
             .article-content strong, .article-content b {
                 font-weight: 600;
@@ -8610,20 +8752,7 @@ async function handleNewsroomArticle(request, env) {
                 line-height: 1.7;
             }
             
-            .article-content ul,
-            .article-content ol {
-                margin: 1.5rem 0;
-                padding-left: 1.5rem;
-            }
-            
-            .article-content li {
-                margin-bottom: 0.5rem;
-                line-height: 1.6;
-            }
-            
-            .article-content ul li::marker {
-                color: var(--primary);
-            }
+            /* List styling already defined above - removing duplicate */
             
             /* Feature list styling for Prepr CMS lists */
             .article-content .feature-list {
@@ -8788,7 +8917,7 @@ async function handleNewsroomArticle(request, env) {
             <div class="container">
                 <h1 class="article-title">${article.title}</h1>
                 <div class="article-meta">
-                    ${t.by} ${article.author} • ${new Date(article.publishedAt).toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-US')} • ${article.readTime} ${t.readTime}
+                    ${new Date(article.publishedAt).toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-US')} • ${article.readTime} ${t.readTime}
                 </div>
             </div>
         </header>
@@ -8810,15 +8939,6 @@ async function handleNewsroomArticle(request, env) {
             </div>
         </section>
         
-        <!-- Top CTA Section -->
-        <section class="cta-section cta-top">
-            <div class="container">
-                <a href="/service?lang=${lang}&theme=${theme}" class="cta cta-primary" aria-label="${lang === 'nl' ? 'Ontdek het DHgate Monitor platform' : 'Discover the DHgate Monitor platform'}">
-                    ${lang === 'nl' ? 'Ontdek het Platform' : 'Discover the Platform'}
-                </a>
-            </div>
-        </section>
-
         <!-- Article Content -->
         <main class="article-content" role="main">
             <div class="container">
@@ -8829,17 +8949,27 @@ async function handleNewsroomArticle(request, env) {
             </div>
         </main>
         
+        <!-- Minimalistic Author Section -->
+        <section class="author-section">
+            <div class="container">
+                <div class="author-byline">
+                    <span class="author-label">${lang === 'nl' ? 'Geschreven door' : 'Written by'}</span>
+                    <strong class="author-name">${article.author}</strong>
+                </div>
+            </div>
+        </section>
         
         <!-- Article Tags -->
         <section class="article-tags-section">
             <div class="container">
                 <h3 class="tags-title">${lang === 'nl' ? 'Gerelateerde onderwerpen' : 'Related Topics'}</h3>
                 <div class="tags-container">
-                    <a href="/newsroom?tag=dhgate&lang=${lang}" class="article-tag">DHgate Monitor</a>
-                    <a href="/newsroom?tag=platform&lang=${lang}" class="article-tag">${lang === 'nl' ? 'Platform' : 'Platform'}</a>
-                    <a href="/newsroom?tag=lancering&lang=${lang}" class="article-tag">${lang === 'nl' ? 'Lancering' : 'Launch'}</a>
-                    <a href="/newsroom?tag=monitoring&lang=${lang}" class="article-tag">${lang === 'nl' ? 'Monitoring' : 'Monitoring'}</a>
-                    <a href="/newsroom?tag=ecommerce&lang=${lang}" class="article-tag">${lang === 'nl' ? 'E-commerce' : 'E-commerce'}</a>
+                    ${article.tags && article.tags.length > 0 ? 
+                        article.tags.map(tag => 
+                            `<a href="/newsroom?tag=${encodeURIComponent(tag.slug)}&lang=${lang}" class="article-tag">${tag.body}</a>`
+                        ).join('') : 
+                        `<p class="no-tags">${lang === 'nl' ? 'Geen tags beschikbaar' : 'No tags available'}</p>`
+                    }
                 </div>
                 <div class="article-navigation">
                     <a href="/newsroom?lang=${lang}" class="back-to-newsroom">
