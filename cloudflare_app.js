@@ -2103,29 +2103,22 @@ function generateSEOFooter(lang, currentPage = 'home') {
 // Generate consistent footer for all pages
 function generateConsistentFooter(lang, theme) {
   return `
-    <footer style="background: var(--card-bg); border-top: 1px solid var(--card-border); margin-top: 4rem; padding: 2rem 0;">
-        <div class="container">
-            <div style="text-align: center;">
-                <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem; flex-wrap: wrap;">
-                    <a href="/privacy?lang=${lang}&theme=${theme}" style="color: var(--text-muted); text-decoration: none;">
-                        ${lang === 'nl' ? 'Privacybeleid' : 'Privacy Policy'}
-                    </a>
-                    <a href="/terms?lang=${lang}&theme=${theme}" style="color: var(--text-muted); text-decoration: none;">
-                        ${lang === 'nl' ? 'Algemene voorwaarden' : 'Terms of Service'}
-                    </a>
-                    <a href="/service?lang=${lang}&theme=${theme}" style="color: var(--text-muted); text-decoration: none;">
-                        ${lang === 'nl' ? 'Service' : 'Service'}
-                    </a>
-                    <a href="/delete-data?lang=${lang}&theme=${theme}" style="color: var(--text-muted); text-decoration: none;">
-                        ${lang === 'nl' ? 'Verwijder mijn data' : 'Delete my data'}
-                    </a>
+    <div class="container py-5">
+        <!-- Legal Footer -->
+        <div class="row mt-4 mt-md-5">
+            <div class="col text-center">
+                <div class="text-muted small d-flex flex-column flex-md-row justify-content-center gap-2 gap-md-3">
+                    <a href="/privacy?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Privacybeleid' : 'Privacy Policy'}</a>
+                    <a href="/terms?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Algemene voorwaarden' : 'Terms of Service'}</a>
+                    <a href="/service?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Service' : 'Service'}</a>
+                    <a href="/delete-data?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Verwijder mijn data' : 'Delete my data'}</a>
                 </div>
-                <div style="color: var(--text-muted); font-size: 0.875rem;">
+                <div class="text-muted small mt-2">
                     © ${new Date().getFullYear()} DHgate Monitor - ${lang === 'nl' ? 'Juridische informatie' : 'Legal information'}
                 </div>
             </div>
         </div>
-    </footer>
+    </div>
   `;
 }
 
