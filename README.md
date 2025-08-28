@@ -65,20 +65,6 @@ The platform uses a dual storage approach:
 - Focus management and logical tab order
 - High contrast support for visual accessibility
 
-### Development
-
-Local development:
-```bash
-git clone https://github.com/nathaljanijman/dhgate-monitor.git
-cd dhgate-monitor
-npm install
-npm run dev
-```
-
-Production deployment:
-```bash
-npx wrangler deploy
-```
 
 ### Environment configuration
 
