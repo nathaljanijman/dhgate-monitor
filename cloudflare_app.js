@@ -6434,6 +6434,11 @@ function simpleTranslate(text, targetLang, sourceLang) {
     'e-commerce ondernemers helpt om': 'e-commerce entrepreneurs helps to',
     'hun producten en concurrenten te monitoren': 'monitor their products and competitors',
     'en hun business te optimaliseren': 'and optimize their business',
+    'ondernemers helpt om': 'entrepreneurs helps to',
+    'hun prestaties beter te begrijpen': 'their performance better to understand',
+    'slimmer te sturen en': 'smarter to manage and',
+    'te groeien in een competitieve markt': 'to grow in a competitive market',
+    'Inzicht en controle voor e-commerce ondernemers': 'Insight and control for e-commerce entrepreneurs',
     
     // UI elements
     'Redactie': 'Editorial',
