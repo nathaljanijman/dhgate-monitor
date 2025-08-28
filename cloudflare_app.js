@@ -6415,7 +6415,11 @@ function simpleTranslate(text, targetLang, sourceLang) {
   if (targetLang !== 'en' || sourceLang !== 'nl') return text;
   
   const translations = {
+    // Article titles
     'DHgate Dropshipping: Alles wat je moet weten': 'DHgate Dropshipping: Everything you need to know',
+    'Lancering van het DHgate Monitor Platform': 'Launch of the DHgate Monitor Platform',
+    
+    // Common phrases
     'DHgate is een van de grootste B2B e-commerceplatformen uit China': 'DHgate is one of the largest B2B e-commerce platforms from China',
     'Het biedt miljoenen producten tegen lage prijzen': 'It offers millions of products at low prices',
     'en snelle levermogelijkheden naar bijna elk land': 'and fast delivery options to almost every country',
@@ -6423,6 +6427,15 @@ function simpleTranslate(text, targetLang, sourceLang) {
     'omdat je producten kunt verkopen zonder voorraad': 'because you can sell products without inventory',
     'Maar hoe werkt DHgate dropshipping precies': 'But how does DHgate dropshipping work exactly',
     'en waar moet je op letten': 'and what should you pay attention to',
+    
+    // Platform launch content
+    'Vandaag lanceren we officieel het DHgate Monitor Platform': 'Today we officially launch the DHgate Monitor Platform',
+    'een nieuw hulpmiddel dat webshops en': 'a new tool that webshops and',
+    'e-commerce ondernemers helpt om': 'e-commerce entrepreneurs helps to',
+    'hun producten en concurrenten te monitoren': 'monitor their products and competitors',
+    'en hun business te optimaliseren': 'and optimize their business',
+    
+    // UI elements
     'Redactie': 'Editorial',
     'Geschreven door': 'Written by',
     'Lees meer': 'Read more',
@@ -6454,41 +6467,25 @@ function simpleTranslate(text, targetLang, sourceLang) {
 }
 
 /**
- * Auto-translate article content for missing English versions
+ * Apply fallback translations for English display (no API calls for better performance)
  */
-async function autoTranslateArticle(article, lang) {
-  if (lang !== 'en') return article;
+function applyFallbackTranslations(article) {
+  // Apply fallback translations for common terms
+  if (article.title) {
+    article.title_en = simpleTranslate(article.title, 'en', 'nl');
+  }
   
-  console.log(`🔄 Starting auto-translation for article: ${article.title}`);
+  if (article.intro) {
+    article.intro_en = simpleTranslate(article.intro, 'en', 'nl');
+  }
   
-  try {
-    // Always translate title for English
-    if (article.title) {
-      article.title_en = await translateText(article.title, 'en', 'nl');
-      console.log(`📝 Translated title: "${article.title}" → "${article.title_en}"`);
-    }
-    
-    // Always translate intro for English
-    if (article.intro) {
-      article.intro_en = await translateText(article.intro, 'en', 'nl');
-      console.log(`📝 Translated intro: "${article.intro.substring(0, 50)}..." → "${article.intro_en.substring(0, 50)}..."`);
-    }
-    
-    // Translate body content if available
-    if (article.body && Array.isArray(article.body)) {
-      for (const block of article.body) {
-        if (block.body) {
-          block.body_en = await translateText(block.body, 'en', 'nl');
-          console.log(`📝 Translated body block: "${block.body.substring(0, 50)}..." → "${block.body_en.substring(0, 50)}..."`);
-        }
+  // Apply translations to body content
+  if (article.body && Array.isArray(article.body)) {
+    for (const block of article.body) {
+      if (block.body) {
+        block.body_en = simpleTranslate(block.body, 'en', 'nl');
       }
     }
-    
-    // Tags are uniform across languages, no translation needed
-    
-    console.log(`✅ Auto-translation completed for article: ${article.title}`);
-  } catch (error) {
-    console.warn('Auto-translation failed:', error.message);
   }
   
   return article;
@@ -6604,9 +6601,9 @@ async function fetchPreprArticles(options = {}) {
       category: 'general'
     })) || [];
     
-    // Auto-translate articles for English display
+    // For English, use fallback translations instead of real-time translation for better performance
     if (lang === 'en') {
-      articles = await Promise.all(articles.map(article => autoTranslateArticle(article, lang)));
+      articles = articles.map(article => applyFallbackTranslations(article));
     }
     
     // Transform to final format with language-specific content
@@ -6819,9 +6816,9 @@ async function fetchPreprArticle(slug, lang = 'nl') {
       category: 'general'
     };
     
-    // Auto-translate article for English display
+    // Apply fallback translations for English display (no API calls for better performance)
     if (lang === 'en') {
-      article = await autoTranslateArticle(article, lang);
+      article = applyFallbackTranslations(article);
     }
     
     // Return with language-specific content
