@@ -5281,11 +5281,7 @@ export default {
         
         case '/test-scheduled':
         
-        case '/debug-newsroom':
-          return await handleDebugNewsroom(request, env);
-        
-        case '/debug-graphql':
-          return await handleDebugGraphQL(request, env);
+
         
 
         
@@ -5925,110 +5921,7 @@ async function handleRequestDashboardAccess(request, env) {
   }
 }
 
-async function handleDebugNewsroom(request, env) {
-  const url = new URL(request.url);
-  const lang = url.searchParams.get('lang') || 'nl';
-  
-  try {
-    const articles = await fetchPreprArticles({ lang });
-    
-    return new Response(JSON.stringify({
-      success: true,
-      lang,
-      articlesCount: articles.length,
-      articles: articles.slice(0, 2) // Show first 2 articles
-    }, null, 2), {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: error.message,
-      stack: error.stack
-    }, null, 2), {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-}
 
-async function handleDebugGraphQL(request, env) {
-  const url = new URL(request.url);
-  const lang = url.searchParams.get('lang') || 'nl';
-  const locale = lang === 'nl' ? 'nl-NL' : 'en-GB';
-  
-  const query = `
-    query GetArticles($locale: String!) {
-      Articles(locale: $locale) {
-        total
-        items {
-          _id
-          title
-          _slug
-          intro
-          publicatiedatum
-          body {
-            __typename
-            ... on Text {
-              _id
-              body
-              format
-            }
-          }
-          auteur {
-            __typename
-            ... on Author {
-              _id
-              name
-            }
-          }
-          tags {
-            __typename
-            ... on Tag {
-              _id
-              body
-              slug
-            }
-          }
-        }
-      }
-    }
-  `;
-  
-  const variables = { locale };
-  
-  try {
-    const response = await fetch('https://graphql.prepr.io/graphql', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${env.PREPR_API_TOKEN}`
-      },
-      body: JSON.stringify({ query, variables })
-    });
-    
-    const data = await response.json();
-    
-    return new Response(JSON.stringify({
-      success: true,
-      lang,
-      locale,
-      query,
-      variables,
-      response: data,
-      articlesCount: data.data?.Articles?.items?.length || 0
-    }, null, 2), {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: error.message,
-      stack: error.stack
-    }, null, 2), {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-}
 
 async function handleTestEmails(request, env) {
   try {
