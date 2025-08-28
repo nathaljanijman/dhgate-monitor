@@ -5286,8 +5286,7 @@ export default {
         
         case '/test-scheduled':
         
-        case '/debug-articles':
-          return await handleDebugArticles(request, env);
+
           if (method === 'GET') {
             console.log('🧪 Manual test trigger for scheduled function');
             try {
@@ -6437,49 +6436,7 @@ async function autoTranslateArticle(article, lang) {
   return article;
 }
 
-/**
- * Debug function to test article fetching
- */
-async function handleDebugArticles(request, env) {
-  const url = new URL(request.url);
-  const lang = url.searchParams.get('lang') || 'nl';
-  
-  try {
-    // Test both locales
-    const nlArticles = await fetchPreprArticles({ lang: 'nl' });
-    const enArticles = await fetchPreprArticles({ lang: 'en' });
-    
-    const debugInfo = {
-      requestedLang: lang,
-      nlArticles: {
-        total: nlArticles.total,
-        count: nlArticles.articles.length,
-        firstArticle: nlArticles.articles[0] ? {
-          id: nlArticles.articles[0].id,
-          title: nlArticles.articles[0].title,
-          slug: nlArticles.articles[0].slug
-        } : null
-      },
-      enArticles: {
-        total: enArticles.total,
-        count: enArticles.articles.length,
-        firstArticle: enArticles.articles[0] ? {
-          id: enArticles.articles[0].id,
-          title: enArticles.articles[0].title,
-          slug: enArticles.articles[0].slug
-        } : null
-      }
-    };
-    
-    return new Response(JSON.stringify(debugInfo, null, 2), {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-}
+
 
 /**
  * Fetch articles from Prepr CMS
