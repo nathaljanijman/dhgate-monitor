@@ -6387,7 +6387,7 @@ async function fetchPreprArticles(options = {}) {
   
   const query = `
     query GetArticles {
-      Articles(locale: "nl-NL") {
+      Articles(locale: "${lang === 'nl' ? 'nl-NL' : 'en-US'}") {
         total
         items {
           _id
@@ -6461,15 +6461,15 @@ async function fetchPreprArticles(options = {}) {
     const articles = data.data?.Articles?.items?.map(item => ({
       id: item._id,
       slug: item._slug,
-      title: item.title,
-      excerpt: item.intro || '',
-      content: formatArticleContent(item.body || []),
-      author: item.auteur?.[0]?.name || 'Redactie',
+      title: item.title || (lang === 'en' ? item.title_en : item.title),
+      excerpt: (lang === 'en' ? item.intro_en : item.intro) || '',
+      content: formatArticleContent(item.body || [], lang),
+      author: item.auteur?.[0]?.name || (lang === 'nl' ? 'Redactie' : 'Editorial'),
       publishedAt: item.publicatiedatum || item._created_on,
       updatedAt: item._changed_on,
       image: item.image_for_overviewpage?.url || item.afbeeldingen?.[0]?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
       tags: item.tags || [],
-      readTime: item._read_time || Math.max(1, Math.ceil((item.intro?.length || 100) / 200)),
+      readTime: item._read_time || Math.max(1, Math.ceil(((lang === 'en' ? item.intro_en : item.intro)?.length || 100) / 200)),
       views: 0,
       featured: false,
       category: 'general' // Could be added to CMS later
@@ -6479,9 +6479,10 @@ async function fetchPreprArticles(options = {}) {
     let filteredArticles = articles;
     if (tag) {
       filteredArticles = articles.filter(article => 
-        article.tags && article.tags.some(articleTag => 
-          articleTag.slug === tag || articleTag.body.toLowerCase().includes(tag.toLowerCase())
-        )
+        article.tags && article.tags.some(articleTag => {
+          const tagBody = lang === 'en' ? (articleTag.body_en || articleTag.body) : articleTag.body;
+          return articleTag.slug === tag || tagBody.toLowerCase().includes(tag.toLowerCase());
+        })
       );
     }
     
@@ -6498,9 +6499,9 @@ async function fetchPreprArticles(options = {}) {
 /**
  * Format article content from Prepr body blocks into proper HTML structure
  */
-function formatArticleContent(bodyBlocks) {
+function formatArticleContent(bodyBlocks, lang = 'nl') {
   if (!bodyBlocks || !Array.isArray(bodyBlocks)) {
-    return '<p>Geen content beschikbaar.</p>';
+    return lang === 'nl' ? '<p>Geen content beschikbaar.</p>' : '<p>No content available.</p>';
   }
 
   let formattedContent = '';
@@ -6538,7 +6539,8 @@ async function generateTagFiltersHTML(articles, activeTag, lang, theme) {
     if (article.tags && Array.isArray(article.tags)) {
       article.tags.forEach(tag => {
         if (tag.body && tag.slug) {
-          tagSet.add(JSON.stringify({ name: tag.body, slug: tag.slug }));
+          const tagName = lang === 'en' ? (tag.body_en || tag.body) : tag.body;
+          tagSet.add(JSON.stringify({ name: tagName, slug: tag.slug }));
         }
       });
     }
@@ -6572,7 +6574,7 @@ async function generateTagFiltersHTML(articles, activeTag, lang, theme) {
 async function fetchPreprArticle(slug, lang = 'nl') {
   const query = `
     query GetArticle($slug: String!) {
-      Article(slug: $slug, locale: "nl-NL") {
+      Article(slug: $slug, locale: "${lang === 'nl' ? 'nl-NL' : 'en-US'}") {
         _id
         title
         _slug
@@ -6651,15 +6653,15 @@ async function fetchPreprArticle(slug, lang = 'nl') {
     return {
       id: item._id,
       slug: item._slug,
-      title: item.title,
-      excerpt: item.intro || 'Geen samenvatting beschikbaar',
-      content: formatArticleContent(item.body || []) || `<p>Geen content beschikbaar.</p>`,
-      author: item.auteur?.[0]?.name || 'Redactie',
+      title: item.title || (lang === 'en' ? item.title_en : item.title),
+      excerpt: (lang === 'en' ? item.intro_en : item.intro) || (lang === 'nl' ? 'Geen samenvatting beschikbaar' : 'No summary available'),
+      content: formatArticleContent(item.body || [], lang) || (lang === 'nl' ? `<p>Geen content beschikbaar.</p>` : `<p>No content available.</p>`),
+      author: item.auteur?.[0]?.name || (lang === 'nl' ? 'Redactie' : 'Editorial'),
       publishedAt: item.publicatiedatum || item._created_on,
       updatedAt: item._changed_on,
       image: item.afbeeldingen?.[0]?.url || item.image_for_overviewpage?.url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop&auto=format',
       tags: item.tags || [],
-      readTime: item._read_time || Math.max(1, Math.ceil((item.intro?.length || 100) / 200)),
+      readTime: item._read_time || Math.max(1, Math.ceil(((lang === 'en' ? item.intro_en : item.intro)?.length || 100) / 200)),
       views: 0,
       featured: false,
       category: 'general'
