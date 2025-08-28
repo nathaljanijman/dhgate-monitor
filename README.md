@@ -1,296 +1,103 @@
-# 🛍️ DHgate Monitor - Complete E-commerce Monitoring Platform
+# DHgate Monitor
 
-> **Professional monitoring solution for DHgate dropshipping and e-commerce businesses**
+Professional monitoring platform for DHgate stores and products. Built with Cloudflare Workers for global performance and reliability.
 
-[![Deploy to Cloudflare](https://img.shields.io/badge/Deploy-Cloudflare-orange?logo=cloudflare)](https://dhgate-monitor.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue?logo=typescript)](https://www.typescriptlang.org/)
+## What it does
 
----
+DHgate Monitor provides a subscription system for monitoring DHgate stores. Users can register stores through a multi-step widget, and the platform sends daily monitoring reports.
 
-## 🎯 **Complete Solution Overview**
+### Current features
 
-DHgate Monitor is a comprehensive, production-ready platform that provides automated monitoring, intelligent analytics, and business insights for DHgate-based e-commerce operations. Built with modern serverless architecture and designed for global scalability.
+- **Subscription widget**: Multi-step form for email, store selection, and monitoring preferences
+- **Store management**: Admin dashboard for managing registered stores and subscriptions  
+- **Daily monitoring**: Scheduled monitoring at 09:00 UTC with email reports
+- **Multi-language**: Dutch and English interface support
+- **Admin dashboard**: User management, analytics, and system monitoring
+- **Content management**: Dynamic newsroom via Prepr CMS integration
 
-### **What This Platform Delivers:**
-- 🏪 **Store Monitoring Setup** - Register and track DHgate stores  
-- 📊 **Admin Dashboard** - Store management and subscription analytics
-- 📧 **Email Notification System** - Daily monitoring reports and updates
-- 🌍 **Multi-language Platform** - Full Dutch and English support
-- 📱 **Responsive Design** - Works perfectly on all devices
-- 🔒 **Enterprise Security** - GDPR compliant with advanced data protection
+### Technical architecture
 
----
+- **Cloudflare Workers**: Serverless edge computing platform
+- **D1 Database**: SQLite storage for subscriptions and analytics
+- **KV Storage**: High-speed caching and session management
+- **Prepr CMS**: Headless content management system
+- **Multi-provider email**: Fallback email delivery system
 
-## 🚀 **Live Platform Features**
+### Security and compliance
 
-### **1. Subscription Widget System**
-- **Modern Multi-step Form** - Intuitive signup process with store selection
-- **Real-time Validation** - Instant feedback and error prevention
-- **Flexible Integration** - Embeddable widget for any website
-- **Smart Store Selection** - Curated DHgate stores with ratings and stats
+- GDPR compliant data handling with right to erasure
+- XSS protection and input sanitization
+- CSRF token validation for forms
+- SSL/TLS encryption for all communications
+- Accessibility support with WCAG 2.1 AA compliance
 
-### **2. Monitoring System**
-```javascript
-// Current capabilities:
-- Store monitoring and tracking setup
-- Daily scheduled monitoring at 09:00 UTC
-- Email notifications for registered stores
-- Store database updates and maintenance
-```
+### Data storage
 
-### **3. Content Management System**
-- **Newsroom Integration** - Dynamic content via Prepr CMS
-- **GraphQL API** - Real-time content synchronization
-- **SEO Optimization** - Built-in search engine optimization
-- **Multi-language Content** - Seamless Dutch/English switching
+The platform uses a dual storage approach:
+- **KV**: Fast access for subscription data and caching
+- **D1**: Relational storage for analytics and admin dashboard
 
-### **4. Admin Dashboard**
-- **User Management** - Secure admin authentication
-- **Analytics Overview** - Subscription metrics and user insights
-- **Content Control** - Manage news articles and platform updates
-- **System Monitoring** - Health checks and performance metrics
+### Platform components
 
-### **5. Affiliate Program**
-- **Click Tracking** - Monitor affiliate link performance
-- **Commission Management** - Track earnings and conversions
-- **Analytics Dashboard** - Detailed performance reporting
-- **Automated Payouts** - Streamlined affiliate payments
-
----
-
-## 🏗️ **Technical Architecture**
-
-### **Modern Serverless Stack**
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Cloudflare    │    │     Modern      │    │   Enterprise    │
-│     Workers     │ -> │   Web Stack     │ -> │   Integrations  │
-│  (Edge Runtime) │    │  (HTML/CSS/JS)  │    │ (CMS/Analytics) │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
-
-### **Data Storage Strategy**
-- **D1 Database (SQLite)** - Primary storage for subscriptions, analytics
-- **KV Storage** - High-speed caching and session management  
-- **External APIs** - Prepr CMS, email services, analytics
-
-### **Security & Compliance**
-- ✅ **GDPR Compliant** - Privacy-first data handling
-- ✅ **XSS Protection** - Comprehensive input sanitization
-- ✅ **CSRF Tokens** - Form security and validation
-- ✅ **SSL/TLS Encryption** - End-to-end secure communications
-
----
-
-## 📊 **Platform Components**
-
-### **Core Application (`cloudflare_app.js`)**
-```javascript
-// Main application with full feature set:
+**Main application** (`cloudflare_app.js`)
 - Landing page with embedded subscription widget
-- Multi-language routing (Dutch/English) 
-- Admin dashboard with authentication
+- Multi-language routing and content delivery
+- Admin authentication and dashboard
 - Email notification system
-- Affiliate program management
-- Content management integration
-- API endpoints for all functionality
-```
+- Affiliate program functionality
 
-### **Subscription Widget (`signup-widget.js`)**
-```javascript
-// Advanced multi-step subscription form:
-- Email validation and sanitization
-- Store selection with preview cards
-- Tag/search term configuration
-- Real-time form validation
-- Success/error handling
-- Responsive design system
-```
+**Subscription widget** (`signup-widget.js`)
+- Advanced multi-step form with validation
+- Store selection interface with preview cards
+- Real-time form validation and error handling
+- Responsive design for all devices
 
-### **Enhanced Features**
-- **Admin Dashboard** (`enhanced_admin_dashboard.js`) - Complete admin interface
-- **Store Browser** (`enhanced_store_browser_clean.js`) - Advanced store management
-- **API Configuration** (`api-config.js`) - Robust API handling with retry logic
-- **Email System** - Multi-provider fallback email delivery
+**Admin dashboard** (`enhanced_admin_dashboard.js`)
+- Complete administrative interface
+- Subscription analytics and user management
+- System health monitoring
 
----
+### Accessibility features
 
-## 🎨 **User Experience Design**
+- Full keyboard navigation support
+- Screen reader compatibility with ARIA labels
+- Semantic HTML structure
+- Focus management and logical tab order
+- High contrast support for visual accessibility
 
-### **Modern Interface System**
-- **Design Tokens** - Consistent color scheme and typography
-- **Dark/Light Themes** - Automatic theme detection and switching
-- **Component Library** - Reusable UI components
-- **Animation System** - Smooth transitions and micro-interactions
+### Development
 
-### **Accessibility Features**
-- ✅ **WCAG 2.1 AA Compliance** - Full accessibility support
-- ✅ **Keyboard Navigation** - Complete keyboard accessibility
-- ✅ **Screen Reader Support** - ARIA labels and semantic HTML
-- ✅ **Focus Management** - Logical tab order and focus indicators
-
-### **Performance Optimization**
-- ⚡ **Edge Computing** - Sub-100ms response times globally
-- ⚡ **Resource Preloading** - Critical resource optimization
-- ⚡ **Lazy Loading** - Efficient content loading strategies
-- ⚡ **Caching Strategy** - Multi-layer caching for optimal performance
-
----
-
-## 🔧 **Development & Deployment**
-
-### **Local Development**
+Local development:
 ```bash
-# Clone and setup
 git clone https://github.com/nathaljanijman/dhgate-monitor.git
 cd dhgate-monitor
-
-# Install dependencies
 npm install
-
-# Start local development server
 npm run dev
-
-# Access local application
-open http://localhost:3000
 ```
 
-### **Testing & Quality Assurance**
+Production deployment:
 ```bash
-# Run comprehensive test suite
-npm run test:qa:full
-
-# Run specific test categories
-npm run test:core          # Core functionality
-npm run test:integration   # API integrations  
-npm run test:performance   # Performance tests
-npm run test:accessibility # A11y compliance
-```
-
-### **Production Deployment**
-```bash
-# Deploy to Cloudflare
 npx wrangler deploy
-
-# Monitor deployment
-npx wrangler tail
 ```
 
-### **Environment Configuration**
-```bash
-# Required environment variables
-PREPR_API_TOKEN=your_cms_token
-RESEND_API_KEY=your_email_key  
-GA4_MEASUREMENT_ID=your_analytics_id
-ADMIN_USERNAME=your_admin_user
-ADMIN_PASSWORD=your_admin_pass
-```
+### Environment configuration
 
----
+Required environment variables:
+- `PREPR_API_TOKEN`: CMS integration
+- `RESEND_API_KEY`: Email service
+- `GA4_MEASUREMENT_ID`: Analytics tracking
 
-## 📈 **Business Value & ROI**
+### Performance
 
-### **For E-commerce Entrepreneurs**
-- **Store Organization** - Centralized management of DHgate stores
-- **Automated Notifications** - Stay informed with daily monitoring reports  
-- **Time Savings** - Automated store tracking instead of manual checks
-- **Business Foundation** - Platform ready for enhanced monitoring features
+- Sub-100ms response times globally via edge computing
+- Multi-layer caching strategy for optimal performance
+- Resource preloading and lazy loading implementation
+- Comprehensive error handling with retry mechanisms
 
-### **For Development Teams**
-- **Rapid Deployment** - Production-ready in under 10 minutes
-- **Scalable Architecture** - Handles traffic spikes automatically
-- **Modern Stack** - Latest technologies and best practices
-- **Comprehensive Testing** - 27+ automated test scenarios
-
-### **Platform Metrics**
-```
-📊 Performance Indicators:
-- 99.9% Uptime SLA
-- <100ms Global Response Time
-- GDPR Compliant Data Handling
-- Multi-language Support (NL/EN)
-- Mobile-first Responsive Design
-```
-
----
-
-## 🌟 **Advanced Features**
-
-### **Store Management**
-- **Store Registration** - Add and manage DHgate stores for monitoring
-- **Daily Monitoring** - Scheduled store health checks and updates
-- **Store Database** - Maintain current DHgate store information
-- **Email Reports** - Daily system status and monitoring updates
-
-### **Platform Analytics**  
-- **Subscription Tracking** - Monitor user signups and engagement
-- **Admin Dashboard** - Real-time platform statistics and metrics
-- **Store Analytics** - Track registered stores and monitoring status
-- **System Health** - Platform uptime and performance monitoring
-
-### **Integration Capabilities**
-```javascript
-// API-first architecture for custom integrations
-- RESTful API endpoints
-- Webhook support for real-time events
-- GraphQL interface for flexible data queries
-- SDKs for popular e-commerce platforms
-```
-
----
-
-## 🔐 **Security & Compliance**
-
-### **Data Protection**
-- **GDPR Article 17** - Right to erasure implementation
-- **Data Minimization** - Only collect necessary information
-- **Encryption** - All data encrypted in transit and at rest
-- **Access Controls** - Role-based permission system
-
-### **Security Measures**
-- **Input Validation** - Comprehensive XSS and injection protection
-- **Rate Limiting** - DDoS protection and abuse prevention
-- **Audit Logging** - Complete activity tracking and monitoring
-- **Penetration Testing** - Regular security assessments
-
----
-
-## 📞 **Support & Resources**
-
-### **Platform Access**
-- **Production**: [dhgate-monitor.com](https://dhgate-monitor.com)
-- **Widget Demo**: [dhgate-monitor.com/widget](https://dhgate-monitor.com/widget)
-- **Admin Dashboard**: [dhgate-monitor.com/admin](https://dhgate-monitor.com/admin)
-- **API Documentation**: [dhgate-monitor.com/api](https://dhgate-monitor.com/api)
-
-### **Support Channels**
-- 📧 **Email**: support@dhgate-monitor.com
-- 🐛 **Issues**: [GitHub Issues](https://github.com/nathaljanijman/dhgate-monitor/issues)
-- 📚 **Documentation**: Comprehensive in-code documentation
-- 💼 **Business**: business@dhgate-monitor.com
-
----
-
-## 📄 **License & Contribution**
+### License
 
 MIT License - Open source and free for commercial use.
 
-**Contributions Welcome** - We welcome pull requests, feature suggestions, and bug reports.
-
 ---
 
-## 🎯 **Why Choose DHgate Monitor?**
-
-✅ **Production Ready** - Battle-tested in real business environments  
-✅ **Scalable Architecture** - Grows with your business needs  
-✅ **Open Source** - Transparent, auditable, and community-driven  
-✅ **Modern Stack** - Built with latest web technologies  
-✅ **Business Focused** - Designed specifically for e-commerce success  
-✅ **Global Performance** - Optimized for worldwide deployment  
-
----
-
-**Built with ❤️ for the global e-commerce community**
-
-*Transform your DHgate monitoring today - from manual tracking to automated intelligence.*
+Built for the e-commerce community. Live at [dhgate-monitor.com](https://dhgate-monitor.com)
