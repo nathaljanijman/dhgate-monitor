@@ -46,12 +46,22 @@ In de dynamische wereld van e-commerce is het cruciaal om continu inzicht te heb
 - **Conversie Monitoring**: Tracking van dalende conversieratio's
 - **Custom Thresholds**: Configureerbare alerting op basis van business requirements
 
-### Content Management
-- **Newsroom**: Dynamische nieuwsartikelen beheerd via Prepr CMS
-- **GraphQL API**: Real-time content ophalen met filtering en paginering
-- **Multi-taal Support**: Nederlandse en Engelse content versies
-- **SEO Geoptimaliseerd**: Meta tags, structured data en sociale media integratie
-- **Responsive Design**: Mobile-first artikelen met moderne typografie
+### Content Management & Multi-language Support
+- **Prepr CMS Integration**: Headless content management voor nieuwsartikelen
+  - **GraphQL API**: Real-time content ophalen met filtering en paginering
+  - **Dynamic Content**: Automatische content updates zonder deployment
+  - **Rich Media Support**: Afbeeldingen, video's en embedded content
+  - **SEO Optimization**: Meta tags, structured data en sociale media integratie
+- **Automatic Translation System**: 
+  - **Google Translate API**: Automatische vertaling van Nederlandse naar Engelse content
+  - **Fallback Translation**: Handmatige vertalingen voor veelgebruikte termen
+  - **Uniform Tags**: Tags blijven consistent in beide talen
+  - **Language Switching**: Seamless taal wisseling met URL parameters
+- **Multi-language Features**:
+  - **Dutch & English**: Volledige ondersteuning voor beide talen
+  - **Dynamic Language Detection**: Automatische taal detectie via URL
+  - **Content Fallback**: Nederlandse content als Engelse niet beschikbaar
+  - **Responsive Design**: Mobile-first artikelen met moderne typografie
 
 ---
 
@@ -89,6 +99,10 @@ Het platform bevat een geavanceerd testplan systeem dat:
 ### Integraties
 - **Google Analytics 4**: Uitgebreide gebruikersanalyse en tracking
 - **Prepr CMS**: Headless content management system voor nieuwsartikelen
+  - **GraphQL API**: Real-time content synchronisatie
+  - **Multi-language Support**: Nederlandse en Engelse content management
+  - **Rich Media**: Afbeeldingen, video's en embedded content
+- **Google Translate API**: Automatische content vertaling
 - **Test Pipelines**: Geautomatiseerde QA en compliance testing
 - **Monitoring Endpoints**: Real-time health checks voor alle services
 - **Email Services**: Geautomatiseerde notificaties en rapportages
@@ -168,6 +182,23 @@ In the dynamic world of e-commerce, it's crucial to have continuous insight into
 - **Conversion Monitoring**: Tracking of declining conversion ratios
 - **Custom Thresholds**: Configurable alerting based on business requirements
 
+### Content Management & Multi-language Support
+- **Prepr CMS Integration**: Headless content management for news articles
+  - **GraphQL API**: Real-time content retrieval with filtering and pagination
+  - **Dynamic Content**: Automatic content updates without deployment
+  - **Rich Media Support**: Images, videos and embedded content
+  - **SEO Optimization**: Meta tags, structured data and social media integration
+- **Automatic Translation System**: 
+  - **Google Translate API**: Automatic translation from Dutch to English content
+  - **Fallback Translation**: Manual translations for commonly used terms
+  - **Uniform Tags**: Tags remain consistent in both languages
+  - **Language Switching**: Seamless language switching with URL parameters
+- **Multi-language Features**:
+  - **Dutch & English**: Full support for both languages
+  - **Dynamic Language Detection**: Automatic language detection via URL
+  - **Content Fallback**: Dutch content when English is not available
+  - **Responsive Design**: Mobile-first articles with modern typography
+
 ---
 
 ## 📊 Dashboard & Interface
@@ -204,6 +235,10 @@ The platform includes an advanced test plan system that:
 ### Integrations
 - **Google Analytics 4**: Comprehensive user analysis and tracking
 - **Prepr CMS**: Headless content management system for news articles
+  - **GraphQL API**: Real-time content synchronization
+  - **Multi-language Support**: Dutch and English content management
+  - **Rich Media**: Images, videos and embedded content
+- **Google Translate API**: Automatic content translation
 - **Test Pipelines**: Automated QA and compliance testing
 - **Monitoring Endpoints**: Real-time health checks for all services
 - **Email Services**: Automated notifications and reporting
