@@ -7236,7 +7236,7 @@ async function handleNewsroomPage(request, env) {
                 font-weight: 500;
             }
             
-            .article-category {
+            .article-author {
                 background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
                 color: white;
                 padding: 0.5rem 1rem;
@@ -7250,7 +7250,7 @@ async function handleNewsroomPage(request, env) {
                 overflow: hidden;
             }
             
-            .article-category::before {
+            .article-author::before {
                 content: '';
                 position: absolute;
                 top: 0;
@@ -7261,7 +7261,7 @@ async function handleNewsroomPage(request, env) {
                 transition: left 0.5s ease;
             }
             
-            .article-card:hover .article-category::before {
+            .article-card:hover .article-author::before {
                 left: 100%;
             }
             
@@ -7682,7 +7682,7 @@ async function handleNewsroomPage(request, env) {
                                  loading="lazy">
                             <div class="article-content">
                                 <div class="article-meta">
-                                    <span class="article-category">${article.category}</span>
+                                    <span class="article-author">${article.author}</span>
                                     <span>${new Date(article.publishedAt).toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-US')}</span>
                                     <span>${article.readTime} ${t.readTime}</span>
                                 </div>
