@@ -5611,6 +5611,60 @@ async function handleRequest(request, env, ctx) {
     }
 }
 
+// Landing Page Handler
+async function handleLandingPage(request, env) {
+  try {
+    const url = new URL(request.url);
+    const lang = url.searchParams.get('lang') || 'nl';
+    const theme = url.searchParams.get('theme') || 'light';
+    
+    console.log('🏠 [LANDING] Serving landing page with lang:', lang, 'theme:', theme);
+    
+    // Import the signup widget function
+    const { generateSignupWidget } = await import('./signup-widget.js');
+    
+    const widgetHtml = generateSignupWidget(env, lang, theme);
+    
+    return new Response(widgetHtml, {
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      }
+    });
+    
+  } catch (error) {
+    console.error('❌ [LANDING] Error serving landing page:', error);
+    return new Response('Error loading landing page', { status: 500 });
+  }
+}
+
+// Signup Widget Handler
+async function handleSignupWidget(request, env) {
+  try {
+    const url = new URL(request.url);
+    const lang = url.searchParams.get('lang') || 'nl';
+    const theme = url.searchParams.get('theme') || 'light';
+    
+    console.log('🎯 [WIDGET] Serving signup widget with lang:', lang, 'theme:', theme);
+    
+    // Import the signup widget function
+    const { generateSignupWidget } = await import('./signup-widget.js');
+    
+    const widgetHtml = generateSignupWidget(env, lang, theme);
+    
+    return new Response(widgetHtml, {
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      }
+    });
+    
+  } catch (error) {
+    console.error('❌ [WIDGET] Error serving signup widget:', error);
+    return new Response('Error loading signup widget', { status: 500 });
+  }
+}
+
 // Export the main handler
 export default {
   fetch: handleRequest
