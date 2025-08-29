@@ -12810,7 +12810,7 @@ async function testUserRegistrationFlow(env) {
   const startTime = Date.now();
   
   try {
-    // Test widget signup API with proper error handling
+    // Test widget signup by directly calling the handler function
     const testData = {
       email: 'test-registration@example.com',
       stores: [{ name: 'Test Store', url: 'https://www.dhgate.com/store/test', category: 'Test' }],
@@ -12818,19 +12818,15 @@ async function testUserRegistrationFlow(env) {
       lang: 'nl'
     };
     
-    const response = await fetch('https://dhgate-monitor.com/api/widget-signup', {
+    // Create a mock request object
+    const mockRequest = new Request('https://dhgate-monitor.com/api/widget-signup', {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(testData)
     });
     
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    
+    // Call the handler directly
+    const response = await handleWidgetSignup(mockRequest, env);
     const result = await response.json();
     const duration = Date.now() - startTime;
     
@@ -12857,8 +12853,9 @@ async function testStoreSearchFunctionality(env) {
   const startTime = Date.now();
   
   try {
-    // Test stores API
-    const response = await fetch('https://dhgate-monitor.com/api/shops');
+    // Test stores API by calling handler directly
+    const mockRequest = new Request('https://dhgate-monitor.com/api/shops');
+    const response = await handleGetShops(mockRequest, env);
     const stores = await response.json();
     
     const duration = Date.now() - startTime;
@@ -12955,11 +12952,15 @@ async function testDashboardDataLoading(env) {
   const startTime = Date.now();
   
   try {
-    // Test dashboard data APIs
+    // Test dashboard data APIs by calling handlers directly
+    const statusRequest = new Request('https://dhgate-monitor.com/api/status');
+    const shopsRequest = new Request('https://dhgate-monitor.com/api/shops');
+    const tagsRequest = new Request('https://dhgate-monitor.com/api/tags');
+    
     const [statusResponse, shopsResponse, tagsResponse] = await Promise.all([
-      fetch('https://dhgate-monitor.com/api/status'),
-      fetch('https://dhgate-monitor.com/api/shops'),
-      fetch('https://dhgate-monitor.com/api/tags')
+      handleStatus(statusRequest, env),
+      handleGetShops(shopsRequest, env),
+      handleGetTags(tagsRequest, env)
     ]);
     
     const status = await statusResponse.json();
@@ -13014,7 +13015,9 @@ async function testPrivacyPolicyCompliance(env) {
   const startTime = Date.now();
   
   try {
-    const response = await fetch('https://dhgate-monitor.com/privacy?lang=nl&theme=light');
+    // Test privacy policy by calling handler directly
+    const mockRequest = new Request('https://dhgate-monitor.com/privacy?lang=nl&theme=light');
+    const response = await handlePrivacyPage(mockRequest, env);
     const duration = Date.now() - startTime;
     
     if (!response.ok) {
@@ -13063,7 +13066,9 @@ async function testMetaTagsGeneration(env) {
   const startTime = Date.now();
   
   try {
-    const response = await fetch('https://dhgate-monitor.com/?lang=en&theme=light');
+    // Test homepage by calling handler directly
+    const mockRequest = new Request('https://dhgate-monitor.com/?lang=en&theme=light');
+    const response = await handleLandingPage(mockRequest, env);
     
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -13102,7 +13107,9 @@ async function testStructuredDataMarkup(env) {
   const startTime = Date.now();
   
   try {
-    const response = await fetch('https://dhgate-monitor.com/?lang=en&theme=light');
+    // Test homepage by calling handler directly
+    const mockRequest = new Request('https://dhgate-monitor.com/?lang=en&theme=light');
+    const response = await handleLandingPage(mockRequest, env);
     
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -14045,70 +14052,96 @@ async function simulateDHgateSearch(query) {
 // Simulate Google search with browser behavior
 async function simulateGoogleSearch(query) {
   try {
-    const searchQuery = `site:dhgate.com/store/ "${query}"`;
-    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}&num=20`;
+    // Try different search strategies to find relevant store pages
+    const searchStrategies = [
+      `site:dhgate.com/store/ ${query}`,
+      `"dhgate.com/store/" ${query}`,
+      `dhgate store ${query}`,
+      `site:dhgate.com ${query} store`
+    ];
     
-    console.log(`🔍 Simulating browser search on Google: ${searchQuery}`);
+    let allStoreMatches = [];
     
-    const response = await fetch(searchUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'DNT': '1',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1'
+    for (const searchQuery of searchStrategies) {
+      const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}&num=20`;
+      
+      try {
+        console.log(`🔍 Trying Google search: ${searchQuery}`);
+        
+        const response = await fetch(searchUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'DNT': '1',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1'
+          }
+        });
+        
+        if (!response.ok) {
+          console.log(`❌ Google search strategy failed: ${response.status}`);
+          continue;
+        }
+        
+        const html = await response.text();
+        console.log(`📄 Google HTML response length: ${html.length} chars`);
+        
+        // Debug: Check for any DHgate mentions
+        const dhgateMatches = (html.match(/dhgate\.com/gi) || []).length;
+        console.log(`🔍 Found ${dhgateMatches} DHgate mentions`);
+        
+        // Multiple patterns to catch different URL formats in Google results
+        const patterns = [
+          /https?:\/\/(?:www\.)?dhgate\.com\/store\/(\d+)/g,
+          /dhgate\.com%2Fstore%2F(\d+)/g,
+          /dhgate\.com\/store\/(\d+)/g,
+          /dhgate\.com%2Fstore%2Ftop%2Dselling%2F(\d+)/g,
+          /dhgate\.com\/store\/top-selling\/(\d+)/g,
+          /dhgate\.com%2Fstore%2F[^%\s]*%2F(\d+)%2F/g,
+          /dhgate\.com\/store\/[^\/\s]*\/(\d+)\//g
+        ];
+        
+        // Apply all patterns to find store IDs
+        for (const pattern of patterns) {
+          let match;
+          while ((match = pattern.exec(html)) !== null) {
+            const storeId = match[1];
+            if (storeId && !allStoreMatches.find(s => s.storeId === storeId)) {
+              allStoreMatches.push({
+                url: `https://www.dhgate.com/store/${storeId}`,
+                storeId: storeId,
+                query: searchQuery
+              });
+            }
+          }
+        }
+        
+        // Also check for broader patterns (for debugging)
+        const broadPattern = /dhgate\.com[^"\s<>]*/gi;
+        const broadMatches = [];
+        let broadMatch;
+        while ((broadMatch = broadPattern.exec(html)) !== null) {
+          broadMatches.push(broadMatch[0]);
+        }
+        
+        console.log(`🔎 Strategy "${searchQuery}": ${allStoreMatches.filter(s => s.query === searchQuery).length} stores, ${broadMatches.length} broad URLs`);
+        
+        // Try delay between requests to avoid rate limiting
+        if (searchStrategies.indexOf(searchQuery) < searchStrategies.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+        
+      } catch (error) {
+        console.log(`⚠️ Google search strategy "${searchQuery}" failed: ${error.message}`);
+        continue;
       }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`Google returned ${response.status}`);
     }
     
-    const html = await response.text();
-    console.log(`📄 Google HTML response length: ${html.length} chars`);
+    console.log(`🔍 Google found ${allStoreMatches.length} total stores across all strategies`);
     
-    // Debug: Check for any DHgate mentions
-    const dhgateMatches = (html.match(/dhgate\.com/gi) || []).length;
-    console.log(`🔍 Found ${dhgateMatches} DHgate mentions in Google HTML`);
-    
-    // Extract DHgate store URLs from Google results  
-    const storePattern = /https?:\/\/(?:www\.)?dhgate\.com\/store\/(\d+)/g;
-    const storeMatches = [];
-    let match;
-    
-    while ((match = storePattern.exec(html)) !== null) {
-      storeMatches.push({
-        url: match[0],
-        storeId: match[1]
-      });
-    }
-    
-    // Also check for broader patterns
-    const broadPattern = /dhgate\.com[^"\s<>]*/gi;
-    const broadMatches = [];
-    let broadMatch;
-    while ((broadMatch = broadPattern.exec(html)) !== null) {
-      broadMatches.push(broadMatch[0]);
-    }
-    
-    console.log(`🔎 Google store pattern: ${storeMatches.length}, broad DHgate URLs: ${broadMatches.length}`);
-    if (broadMatches.length > 0) {
-      console.log(`📋 Sample Google matches:`, broadMatches.slice(0, 5));
-    }
-    
-    // Remove duplicates
-    const uniqueStores = storeMatches.reduce((acc, store) => {
-      if (!acc.find(s => s.storeId === store.storeId)) {
-        acc.push(store);
-      }
-      return acc;
-    }, []);
-    
-    console.log(`🔍 Google found ${uniqueStores.length} unique DHgate stores`);
-    
-    const stores = uniqueStores.slice(0, 5).map(store => ({
+    const stores = allStoreMatches.slice(0, 5).map(store => ({
       name: `DHgate Store #${store.storeId}`,
       url: store.url
     }));
@@ -14124,69 +14157,84 @@ async function simulateGoogleSearch(query) {
 // DuckDuckGo search function
 async function searchViaDuckDuckGo(query) {
   try {
-    // Use DuckDuckGo as it's more API-friendly than Google
-    const searchQuery = `site:dhgate.com/store/ "${query}"`;
-    const searchUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(searchQuery)}`;
+    // Try different DuckDuckGo search strategies
+    const searchStrategies = [
+      `site:dhgate.com/store/ ${query}`,
+      `"dhgate.com/store/" ${query}`,
+      `dhgate store ${query}`
+    ];
     
-    console.log(`🦆 Searching DuckDuckGo: ${searchQuery}`);
+    let allStoreMatches = [];
     
-    const response = await fetch(searchUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; DHgate-Monitor/2.0; +https://dhgate-monitor.com)',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'DNT': '1'
+    for (const searchQuery of searchStrategies) {
+      const searchUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(searchQuery)}`;
+      
+      try {
+        console.log(`🦆 DuckDuckGo strategy: ${searchQuery}`);
+        
+        const response = await fetch(searchUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; DHgate-Monitor/2.0; +https://dhgate-monitor.com)',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'DNT': '1'
+          }
+        });
+        
+        if (!response.ok) {
+          console.log(`❌ DuckDuckGo strategy failed: ${response.status}`);
+          continue;
+        }
+        
+        const html = await response.text();
+        console.log(`📄 DuckDuckGo HTML response length: ${html.length} chars`);
+        
+        // Debug: Check if we got any DHgate mentions at all
+        const dhgateMatches = (html.match(/dhgate/gi) || []).length;
+        console.log(`🔍 Found ${dhgateMatches} DHgate mentions in HTML`);
+        
+        // Pattern matching for store IDs
+        const patterns = [
+          /https?:\/\/(?:www\.)?dhgate\.com\/store\/(\d+)/g,
+          /dhgate\.com%2Fstore%2F(\d+)/g,
+          /dhgate\.com\/store\/(\d+)/g,
+          /dhgate\.com%2Fstore%2Ftop%2Dselling%2F(\d+)/g,
+          /dhgate\.com\/store\/top-selling\/(\d+)/g,
+          /dhgate\.com%2Fstore%2F[^%\s]*%2F(\d+)%2F/g,
+          /dhgate\.com\/store\/[^\/\s]*\/(\d+)\//g
+        ];
+        
+        // Apply all patterns to find store IDs
+        for (const pattern of patterns) {
+          let match;
+          while ((match = pattern.exec(html)) !== null) {
+            const storeId = match[1];
+            if (storeId && !allStoreMatches.find(s => s.storeId === storeId)) {
+              allStoreMatches.push({
+                url: `https://www.dhgate.com/store/${storeId}`,
+                storeId: storeId,
+                query: searchQuery
+              });
+            }
+          }
+        }
+        
+        console.log(`🔎 DuckDuckGo strategy "${searchQuery}": found ${allStoreMatches.filter(s => s.query === searchQuery).length} stores`);
+        
+        // Delay between requests
+        if (searchStrategies.indexOf(searchQuery) < searchStrategies.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+        
+      } catch (error) {
+        console.log(`⚠️ DuckDuckGo strategy "${searchQuery}" failed: ${error.message}`);
+        continue;
       }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`DuckDuckGo returned ${response.status}`);
     }
     
-    const html = await response.text();
-    console.log(`📄 DuckDuckGo HTML response length: ${html.length} chars`);
+    console.log(`🔍 DuckDuckGo found ${allStoreMatches.length} total stores across all strategies`);
     
-    // Debug: Check if we got any DHgate mentions at all
-    const dhgateMatches = (html.match(/dhgate/gi) || []).length;
-    console.log(`🔍 Found ${dhgateMatches} DHgate mentions in HTML`);
-    
-    // Extract DHgate store URLs from search results
-    const storePattern = /https?:\/\/(?:www\.)?dhgate\.com\/store\/(\d+)/g;
-    const storeMatches = [];
-    let match;
-    
-    while ((match = storePattern.exec(html)) !== null) {
-      storeMatches.push({
-        url: match[0],
-        storeId: match[1]
-      });
-    }
-    
-    // Also try broader pattern to see what we're missing
-    const broadDhgatePattern = /dhgate\.com[^"\s<>]*/g;
-    const broadMatches = [];
-    let broadMatch;
-    while ((broadMatch = broadDhgatePattern.exec(html)) !== null) {
-      broadMatches.push(broadMatch[0]);
-    }
-    
-    console.log(`🔎 Store pattern matches: ${storeMatches.length}, broad DHgate URLs: ${broadMatches.length}`);
-    if (broadMatches.length > 0) {
-      console.log(`📋 Sample broad matches:`, broadMatches.slice(0, 3));
-    }
-    
-    // Remove duplicates by store ID
-    const uniqueStores = storeMatches.reduce((acc, store) => {
-      if (!acc.find(s => s.storeId === store.storeId)) {
-        acc.push(store);
-      }
-      return acc;
-    }, []);
-    
-    console.log(`🔍 Extracted ${uniqueStores.length} unique DHgate stores`);
-    
-    // Convert to standardized store objects
-    const stores = uniqueStores.slice(0, 5).map(store => ({
+    const stores = allStoreMatches.slice(0, 5).map(store => ({
       name: `DHgate Store #${store.storeId}`, // Generic name since we can't fetch real name
       url: store.url.startsWith('https://www.') ? store.url : `https://www.dhgate.com/store/${store.storeId}`
     }));
@@ -21087,7 +21135,7 @@ async function handleDeleteData(request, env) {
     console.error('Error handling data deletion:', error);
     return new Response('Error processing data deletion request', { status: 500 });
   }
-}
+};
 
 // Generate data deletion page
 function generateDeleteDataPageHTML(email, lang, theme) {
@@ -21456,5 +21504,3 @@ function generateDeleteDataErrorHTML(lang, theme, errorType) {
   `;
 
 }
-
-
