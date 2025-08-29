@@ -5202,9 +5202,8 @@ async function getTestPlanResults(env) {
   };
 }
 
-export default {
-
-  async fetch(request, env, ctx) {
+// Main request handler
+async function handleRequest(request, env, ctx) {
     const url = new URL(request.url);
     const method = request.method;
 
@@ -5243,8 +5242,6 @@ export default {
         case '/en':
           return await handleEnglishLandingPage(request, env);
         
-        case '/api/stores/search':
-          return await handleStoreSearch(request, env);
         
         case '/api/health':
           return await handleAPIHealthCheck(request, env);
@@ -21135,7 +21132,7 @@ async function handleDeleteData(request, env) {
     console.error('Error handling data deletion:', error);
     return new Response('Error processing data deletion request', { status: 500 });
   }
-};
+}
 
 // Generate data deletion page
 function generateDeleteDataPageHTML(email, lang, theme) {
@@ -21504,3 +21501,8 @@ function generateDeleteDataErrorHTML(lang, theme, errorType) {
   `;
 
 }
+
+// Export the main handler
+export default {
+  fetch: handleRequest
+};

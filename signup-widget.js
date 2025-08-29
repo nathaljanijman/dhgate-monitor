@@ -64,7 +64,7 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
 
   const t = lang === 'nl' ? {
     title: 'DHgate Monitor',
-    subtitle: 'Monitor je favoriete winkels en krijg updates over nieuwe producten',
+    subtitle: 'Monitor je favoriete winkels en krijg updates over nieuwe producten. Naast het volgen van shops kun je nu ook specifieke producten tracken met prijs-, voorraad- en reviewalerts. Mis nooit een deal!',
     step1: 'Email',
     step2: 'Winkel',
     step3: 'Zoektermen',
@@ -99,7 +99,7 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
     }
   } : {
     title: 'DHgate Monitor',
-    subtitle: 'Monitor your favorite stores and get updates about new products',
+    subtitle: 'Monitor your favorite stores and get updates about new products. In addition to tracking shops, you can now also track specific products with price, stock, and review alerts. Never miss a deal!',
     step1: 'Email',
     step2: 'Store',
     step3: 'Search Terms',
@@ -522,6 +522,104 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             background: var(--primary-light);
         }
         
+        /* Store Search Styles */
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: border-color 0.2s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+        
+        .manual-input-wrapper {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+        
+        .manual-input-wrapper .custom-input {
+            flex: 1;
+        }
+        
+        .help-text {
+            border-left: 4px solid var(--primary, #2563eb);
+        
+        .fallback-text {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Selection Feedback Styles */
+        .selection-feedback {
+            display: none;
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid;
+            background: var(--bg-primary);
+        }
+        
+        .selection-feedback.success {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+            color: #047857;
+        }
+        
+        .selection-feedback.warning {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.05);
+            color: #92400e;
+        }
+        
+        .feedback-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .feedback-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .feedback-text strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+        
+        .feedback-store-name {
+            font-size: 0.875rem;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+        
+        /* Selected stores visual indicator */
+        .store-card.selected {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+        
+        .store-card.selected .store-name {
+            color: #047857;
+        }
+        
         .selection-counter {
             text-align: center;
             margin: 1rem 0;
@@ -772,10 +870,21 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
       </div>
       
                 <div class="custom-store" id="custom-store-section">
-                    <h3 class="custom-title">${t.addCustomTitle}</h3>
-        <p class="custom-description">${t.addCustomDescription}</p>
-                    <input type="url" class="custom-input" id="custom-store-url" placeholder="${t.addStorePlaceholder}">
-                    <button class="custom-button" onclick="addCustomStore()">${t.addStoreButton}</button>
+                    <h3 class="custom-title">${lang === 'nl' ? 'DHgate Winkel Toevoegen' : 'Add DHgate Store'}</h3>
+                    <p class="custom-description">${lang === 'nl' ? 'Voeg je DHgate winkel URL toe om monitoring in te stellen' : 'Add your DHgate store URL to set up monitoring'}</p>
+                    <div class="manual-input-wrapper">
+                        <input type="url" class="custom-input" id="custom-store-url" placeholder="${lang === 'nl' ? 'Bijv: https://www.dhgate.com/store/21168508' : 'e.g: https://www.dhgate.com/store/21168508'}">
+                        <button class="custom-button" onclick="addCustomStore()">${t.addStoreButton || (lang === 'nl' ? 'Winkel Toevoegen' : 'Add Store')}</button>
+                    </div>
+                    <div class="help-text" style="margin-top: 1rem; padding: 1rem; background: var(--bg-secondary, #f8f9fa); border-radius: 8px;">
+                        <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
+                            <strong>${lang === 'nl' ? 'Hoe vind je de store URL?' : 'How to find the store URL?'}</strong><br>
+                            ${lang === 'nl' ? 
+                              'Ga naar DHgate.com → Zoek je product → Klik op een winkel → Kopieer de URL uit je browser' : 
+                              'Go to DHgate.com → Search your product → Click on a store → Copy the URL from your browser'
+                            }
+                        </p>
+                    </div>
                 </div>
                 
                 <div class="selection-counter" id="selection-counter"></div>
@@ -853,6 +962,18 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
         let selectedStores = [];
         let customStoreAdded = false;
         const stores = ${JSON.stringify(featuredStores)};
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         // Navigation functions
         function nextStep() {
@@ -936,6 +1057,10 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             // Update summary if on step 4
             if (currentStep === 4) {
                 updateSummary();
+            }
+            
+            // Initialize store search on step 2
+            if (currentStep === 2) {
             }
         }
         

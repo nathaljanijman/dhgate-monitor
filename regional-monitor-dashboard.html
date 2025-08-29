@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHgate Monitor - Regional API Status Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .regions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .region-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .region-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .region-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+        
+        .status-healthy { background-color: #10b981; }
+        .status-degraded { background-color: #f59e0b; }
+        .status-unhealthy { background-color: #ef4444; }
+        .status-unknown { background-color: #6b7280; }
+        
+        .region-body {
+            padding: 20px;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .metric-label {
+            color: #666;
+        }
+        
+        .metric-value {
+            font-weight: 500;
+        }
+        
+        .circuit-breaker {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 6px;
+            border-left: 4px solid #6366f1;
+        }
+        
+        .circuit-breaker-state {
+            font-weight: bold;
+            color: #6366f1;
+        }
+        
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .controls button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0 10px;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        
+        .controls button:hover {
+            background: #4f46e5;
+        }
+        
+        .controls button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .last-updated {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.1rem;
+            margin: 40px 0;
+        }
+        
+        .error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>🌍 Regional API Status Dashboard</h1>
+            <p>Real-time monitoring of DHgate API endpoints across all regions</p>
+        </div>
+        
+        <div class="controls">
+            <button id="refreshBtn" onclick="refreshData()">🔄 Refresh</button>
+            <button id="testBtn" onclick="runTests()">🧪 Run Tests</button>
+            <button id="toggleAutoRefresh" onclick="toggleAutoRefresh()">⏰ Auto Refresh: ON</button>
+        </div>
+        
+        <div id="loading" class="loading">
+            🔄 Loading regional status data...
+        </div>
+        
+        <div id="error" class="error" style="display: none;"></div>
+        
+        <div id="dashboard-content" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="overall-status">-</div>
+                    <div class="stat-label">Overall Status</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="healthy-regions">-</div>
+                    <div class="stat-label">Healthy Regions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="success-rate">-</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="response-time">-</div>
+                    <div class="stat-label">Avg Response Time</div>
+                </div>
+            </div>
+            
+            <div id="regions-container" class="regions-grid">
+                <!-- Regional cards will be populated here -->
+            </div>
+        </div>
+        
+        <div class="last-updated">
+            Last updated: <span id="last-updated">-</span>
+        </div>
+    </div>
+
+    <script>
+        let autoRefreshInterval;
+        let isAutoRefreshEnabled = true;
+        
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshData();
+            startAutoRefresh();
+        });
+        
+        async function refreshData() {
+            const refreshBtn = document.getElementById('refreshBtn');
+            refreshBtn.disabled = true;
+            refreshBtn.textContent = '🔄 Loading...';
+            
+            try {
+                const response = await fetch('/api/health?circuit_breakers=true');
+                const data = await response.json();
+                
+                displayHealthData(data);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('dashboard-content').style.display = 'block';
+                document.getElementById('error').style.display = 'none';
+                
+            } catch (error) {
+                showError(`Failed to fetch health data: ${error.message}`);
+            } finally {
+                refreshBtn.disabled = false;
+                refreshBtn.textContent = '🔄 Refresh';
+                updateLastUpdatedTime();
+            }
+        }
+        
+        function displayHealthData(data) {
+            // Update overall statistics
+            document.getElementById('overall-status').textContent = data.overall_status.toUpperCase();
+            
+            const healthyCount = Object.values(data.regions).filter(r => r.healthy).length;
+            const totalRegions = Object.keys(data.regions).length;
+            document.getElementById('healthy-regions').textContent = `${healthyCount}/${totalRegions}`;
+            
+            const successRate = data.performance.success_rate || 0;
+            document.getElementById('success-rate').textContent = `${Math.round(successRate * 100)}%`;
+            
+            const avgResponseTime = Object.values(data.regions)
+                .filter(r => r.responseTime)
+                .reduce((sum, r, _, arr) => sum + r.responseTime / arr.length, 0);
+            document.getElementById('response-time').textContent = avgResponseTime 
+                ? `${Math.round(avgResponseTime)}ms` 
+                : 'N/A';
+            
+            // Update regional cards
+            const regionsContainer = document.getElementById('regions-container');
+            regionsContainer.innerHTML = '';
+            
+            Object.entries(data.regions).forEach(([regionKey, regionData]) => {
+                const card = createRegionCard(regionKey, regionData, data.circuit_breakers[regionKey]);
+                regionsContainer.appendChild(card);
+            });
+        }
+        
+        function createRegionCard(regionKey, regionData, circuitBreakerData) {
+            const card = document.createElement('div');
+            card.className = 'region-card';
+            
+            const statusClass = regionData.healthy ? 'status-healthy' : 
+                               regionData.status === 'circuit_breaker_open' ? 'status-degraded' : 
+                               'status-unhealthy';
+            
+            card.innerHTML = `
+                <div class="region-header">
+                    <span class="region-name">${formatRegionName(regionKey)}</span>
+                    <span class="status-indicator ${statusClass}"></span>
+                </div>
+                <div class="region-body">
+                    <div class="metric">
+                        <span class="metric-label">Status:</span>
+                        <span class="metric-value">${regionData.status || 'Unknown'}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Response Time:</span>
+                        <span class="metric-value">${regionData.responseTime ? regionData.responseTime + 'ms' : 'N/A'}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Healthy:</span>
+                        <span class="metric-value">${regionData.healthy ? '✅ Yes' : '❌ No'}</span>
+                    </div>
+                    ${regionData.error ? `
+                        <div class="metric">
+                            <span class="metric-label">Error:</span>
+                            <span class="metric-value" style="color: #ef4444;">${regionData.error}</span>
+                        </div>
+                    ` : ''}
+                    ${circuitBreakerData ? `
+                        <div class="circuit-breaker">
+                            <div><strong>Circuit Breaker</strong></div>
+                            <div>State: <span class="circuit-breaker-state">${circuitBreakerData.state}</span></div>
+                            <div>Failures: ${circuitBreakerData.failureCount}</div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        function formatRegionName(regionKey) {
+            const names = {
+                'global': '🌍 Global',
+                'us-east': '🇺🇸 US East',
+                'us-west': '🇺🇸 US West',
+                'europe': '🇪🇺 Europe',
+                'asia-pacific': '🌏 Asia-Pacific'
+            };
+            return names[regionKey] || regionKey;
+        }
+        
+        async function runTests() {
+            const testBtn = document.getElementById('testBtn');
+            testBtn.disabled = true;
+            testBtn.textContent = '🧪 Running Tests...';
+            
+            try {
+                // This would integrate with the test file we created
+                const testResponse = await fetch('/api/stores/search?q=test');
+                const testData = await testResponse.json();
+                
+                if (testResponse.ok) {
+                    alert('✅ Basic API test passed! Check console for details.');
+                    console.log('Test results:', testData);
+                } else {
+                    alert('❌ API test failed. Check console for details.');
+                    console.error('Test failed:', testData);
+                }
+            } catch (error) {
+                alert(`❌ Test error: ${error.message}`);
+                console.error('Test error:', error);
+            } finally {
+                testBtn.disabled = false;
+                testBtn.textContent = '🧪 Run Tests';
+            }
+        }
+        
+        function toggleAutoRefresh() {
+            isAutoRefreshEnabled = !isAutoRefreshEnabled;
+            const toggleBtn = document.getElementById('toggleAutoRefresh');
+            
+            if (isAutoRefreshEnabled) {
+                startAutoRefresh();
+                toggleBtn.textContent = '⏰ Auto Refresh: ON';
+            } else {
+                stopAutoRefresh();
+                toggleBtn.textContent = '⏰ Auto Refresh: OFF';
+            }
+        }
+        
+        function startAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+            
+            if (isAutoRefreshEnabled) {
+                autoRefreshInterval = setInterval(refreshData, 30000); // 30 seconds
+            }
+        }
+        
+        function stopAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+            }
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+        }
+        
+        function updateLastUpdatedTime() {
+            const now = new Date();
+            document.getElementById('last-updated').textContent = now.toLocaleTimeString();
+        }
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            stopAutoRefresh();
+        });
+    </script>
+</body>
+</html>
