@@ -2,6 +2,53 @@
 
 Professional monitoring platform for DHgate stores and products. Built with Cloudflare Workers for global performance and reliability.
 
+## Customer Journey Flow
+
+### 1. Aanmelding & Registratie
+- **Homepage Widget**: Multi-step aanmeldingsformulier op homepage
+- **Store Selection**: Visuele winkelkaarten met preview informatie
+- **Email & Tags**: Email registratie en zoektermen configuratie
+- **API Signup**: Automatische verwerking via `/api/widget-signup`
+- **Dashboard Token**: Unieke toegangslink gegenereerd voor klant
+
+### 2. Dashboard Toegang
+- **Dashboard URL**: `/dashboard?key=TOKEN&lang=nl&theme=light`
+- **Monitoring Status**: Overzicht van actieve monitoring
+- **Real-time Updates**: Groene status indicator voor actieve monitoring
+- **Subscription Info**: Email, winkels, zoektermen, frequentie, aanmaakdatum
+
+### 3. Dashboard Aanpassingen
+- **Settings**: Email configuratie en platform instellingen
+- **Tags Management**: Zoektermen aanpassen en beheren
+- **Store Updates**: Winkel selecties wijzigen
+- **Preferences**: Taal, thema en notificatie voorkeuren
+
+### 4. Monitoring & Notificaties
+- **Daily Reports**: Automatische monitoring om 09:00 UTC
+- **Email Alerts**: Notificaties bij nieuwe producten
+- **Real-time Status**: Live monitoring status in dashboard
+- **Performance Tracking**: Monitoring statistieken en metrics
+
+### 5. Content & Updates
+- **Newsroom**: Laatste nieuws en platform updates
+- **Multi-language**: Nederlandse en Engelse content
+- **SEO Optimized**: Zoekmachine geoptimaliseerde artikelen
+- **Social Sharing**: Delen van relevante content
+
+### 6. Account Management
+- **Unsubscribe**: Eenvoudige uitschrijving via token
+- **Data Management**: GDPR compliant data handling
+- **Access Control**: Veilige dashboard toegang
+- **Support**: Contact en help functionaliteit
+
+### Journey Flow Diagram
+```
+Homepage → Widget Signup → Dashboard Access → Settings/Tags → Monitoring → Notifications
+    ↓           ↓              ↓                ↓              ↓            ↓
+  Landing    Multi-step    Token-based      Customize      Daily      Email Alerts
+   Page       Form         Access          Preferences    Reports
+```
+
 ## Business value
 
 ### What it does
