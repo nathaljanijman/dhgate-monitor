@@ -141,6 +141,9 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${t.title}</title>
     
+    <!-- Google Fonts - Raleway for Premium Button System -->
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         * {
             margin: 0;
