@@ -764,7 +764,8 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             margin-top: 2rem;
         }
         
-        .btn {
+        .widget-container .btn,
+        .button-group .btn {
             font-family: 'Raleway', sans-serif;
             font-weight: 600;
             letter-spacing: 0.025em;
@@ -784,7 +785,8 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             min-width: 100px;
         }
         
-        .btn::before {
+        .widget-container .btn::before,
+        .button-group .btn::before {
             content: '';
             position: absolute;
             top: 0;
@@ -795,43 +797,50 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             transition: left 0.5s ease;
         }
         
-        .btn:hover::before {
+        .widget-container .btn:hover::before,
+        .button-group .btn:hover::before {
             left: 100%;
         }
         
-        .btn-primary {
+        .widget-container .btn-primary,
+        .button-group .btn-primary {
             background: var(--primary);
             color: white;
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
         
-        .btn-primary:hover {
+        .widget-container .btn-primary:hover,
+        .button-group .btn-primary:hover {
             background: var(--primary-light);
             box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
             transform: translateY(-1px);
         }
         
-        .btn-secondary {
+        .widget-container .btn-secondary,
+        .button-group .btn-secondary {
             background: var(--bg-secondary);
             color: var(--text-primary);
             border: 1px solid var(--border);
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
-        .btn-secondary:hover {
+        .widget-container .btn-secondary:hover,
+        .button-group .btn-secondary:hover {
             background: var(--border-light);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transform: translateY(-1px);
         }
         
-        .btn:disabled {
+        .widget-container .btn:disabled,
+        .button-group .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none !important;
             box-shadow: none !important;
         }
         
-        .btn:disabled::before {
+        .widget-container .btn:disabled::before,
+        .button-group .btn:disabled::before {
             display: none;
         }
         
