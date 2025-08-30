@@ -144,6 +144,9 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
     <!-- Google Fonts - Raleway for Premium Button System -->
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Cache-busting meta tag to force CSS refresh -->
+    <meta name="cache-version" content="v2-${Date.now()}">
+    
     <style>
         * {
             margin: 0;
@@ -766,23 +769,23 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
         
         .widget-container .btn,
         .button-group .btn {
-            font-family: 'Raleway', sans-serif;
-            font-weight: 600;
-            letter-spacing: 0.025em;
-            border-radius: 12px;
-            padding: 0.75rem 1.5rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-            min-width: 100px;
+            font-family: 'Raleway', sans-serif !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.025em !important;
+            border-radius: 12px !important;
+            padding: 0.75rem 1.5rem !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            position: relative !important;
+            overflow: hidden !important;
+            border: none !important;
+            cursor: pointer !important;
+            text-decoration: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0.5rem !important;
+            font-size: 0.875rem !important;
+            min-width: 100px !important;
         }
         
         .widget-container .btn::before,
@@ -804,9 +807,9 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
         
         .widget-container .btn-primary,
         .button-group .btn-primary {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            background: var(--primary) !important;
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
         }
         
         .widget-container .btn-primary:hover,
