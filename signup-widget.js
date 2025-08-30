@@ -92,10 +92,10 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
     loadingText: 'Bezig...',
     doneButton: 'Klaar',
     privacyNotice: 'Door aan te melden ga je akkoord met onze privacyvoorwaarden',
-    emailHelp: 'We gebruiken je e-mail alleen om je te informeren over nieuwe producten en deals',
-    privacyTitle: 'Je privacy is veilig.',
-    privacyText: 'We delen nooit je gegevens en je kunt je altijd afmelden.',
-    privacyLink: 'Privacybeleid',
+    emailHelp: 'Voor updates over nieuwe producten',
+    privacyTitle: '',
+    privacyText: 'Alleen voor product updates, geen spam.',
+    privacyLink: 'Privacy',
     accessibility: {
       progressLabel: 'Voortgang van aanmelding',
       stepLabel: 'Stap',
@@ -1225,13 +1225,9 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                         <button class="custom-button" onclick="addCustomStore()">${t.addStoreButton || (lang === 'nl' ? 'Winkel Toevoegen' : 'Add Store')}</button>
                         <div class="error-message" id="custom-store-error"></div>
                     </div>
-                    <div class="help-text" style="margin-top: 1rem; padding: 1rem; background: var(--bg-secondary, #f8f9fa); border-radius: 8px;">
-                        <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
-                            <strong>${lang === 'nl' ? 'Hoe vind je de store URL?' : 'How to find the store URL?'}</strong><br>
-                            ${lang === 'nl' ? 
-                              'Ga naar DHgate.com → Zoek je product → Klik op een winkel → Kopieer de URL uit je browser' : 
-                              'Go to DHgate.com → Search your product → Click on a store → Copy the URL from your browser'
-                            }
+                    <div class="help-text" style="margin-top: 0.5rem;">
+                        <p style="margin: 0; color: var(--text-muted); font-size: 0.75rem;">
+                            💡 ${lang === 'nl' ? 'Kopieer winkel-URL van DHgate.com' : 'Copy store URL from DHgate.com'}
                         </p>
                     </div>
                 </div>
@@ -1240,8 +1236,18 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                 <div class="error-message" id="store-error"></div>
             </div>
             <div class="button-group">
-                <button class="btn btn-secondary" onclick="prevStep()">${t.backButton}</button>
-                <button class="btn btn-primary" onclick="nextStep()">${t.nextButton}</button>
+                <button class="btn btn-secondary" onclick="prevStep()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15,18 9,12 15,6"/>
+                    </svg>
+                    ${t.backButton}
+                </button>
+                <button class="btn btn-primary" onclick="nextStep()">
+                    ${t.nextButton}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9,18 15,12 9,6"/>
+                    </svg>
+                </button>
         </div>
       </div>
       
@@ -1254,8 +1260,18 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                 <div class="error-message" id="tags-error"></div>
             </div>
             <div class="button-group">
-                <button class="btn btn-secondary" onclick="prevStep()">${t.backButton}</button>
-                <button class="btn btn-primary" onclick="nextStep()">${t.nextButton}</button>
+                <button class="btn btn-secondary" onclick="prevStep()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15,18 9,12 15,6"/>
+                    </svg>
+                    ${t.backButton}
+                </button>
+                <button class="btn btn-primary" onclick="nextStep()">
+                    ${t.nextButton}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9,18 15,12 9,6"/>
+                    </svg>
+                </button>
             </div>
     </div>
     
@@ -1281,8 +1297,19 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                 </div>
             </div>
             <div class="button-group">
-                <button class="btn btn-secondary" onclick="prevStep()">${t.backButton}</button>
-                <button class="btn btn-primary" onclick="submitForm()" id="submit-btn">${t.submitButton}</button>
+                <button class="btn btn-secondary" onclick="prevStep()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15,18 9,12 15,6"/>
+                    </svg>
+                    ${t.backButton}
+                </button>
+                <button class="btn btn-primary" onclick="submitForm()" id="submit-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                        <polyline points="22,4 12,14.01 9,11.01"/>
+                    </svg>
+                    ${t.submitButton}
+                </button>
             </div>
         </div>
         
@@ -1293,7 +1320,13 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                 <h2 class="success-title">${t.successTitle}</h2>
                 <p class="success-description">${t.successDescription}</p>
                 <div class="button-group">
-                    <button class="btn btn-primary" onclick="resetForm()">${t.doneButton}</button>
+                    <button class="btn btn-primary" onclick="resetForm()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                            <polyline points="22,4 12,14.01 9,11.01"/>
+                        </svg>
+                        ${t.doneButton}
+                    </button>
                 </div>
             </div>
         </div>
