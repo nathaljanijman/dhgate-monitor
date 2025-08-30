@@ -92,6 +92,10 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
     loadingText: 'Bezig...',
     doneButton: 'Klaar',
     privacyNotice: 'Door aan te melden ga je akkoord met onze privacyvoorwaarden',
+    emailHelp: 'We gebruiken je e-mail alleen om je te informeren over nieuwe producten en deals',
+    privacyTitle: 'Je privacy is veilig.',
+    privacyText: 'We delen nooit je gegevens en je kunt je altijd afmelden.',
+    privacyLink: 'Privacybeleid',
     accessibility: {
       progressLabel: 'Voortgang van aanmelding',
       stepLabel: 'Stap',
@@ -205,9 +209,13 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             margin: 0 auto;
         }
         
-        /* Progress Bar */
+        /* Enhanced Progress Bar */
         .progress-container {
             margin-bottom: 2.5rem;
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
       }
       
       .progress-bar {
@@ -223,10 +231,11 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             top: 50%;
             left: 0;
             right: 0;
-            height: 2px;
+            height: 4px;
             background: var(--border);
             transform: translateY(-50%);
             z-index: 1;
+            border-radius: 2px;
       }
       
       .progress-fill {
@@ -234,10 +243,12 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             top: 0;
             left: 0;
         height: 100%;
-            background: var(--primary);
-            transition: width 0.4s ease;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 2;
             width: 0%;
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
       }
       
       .progress-step {
@@ -300,10 +311,39 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
         
         .step-content {
         display: none;
+        animation: fadeIn 0.4s ease-in-out;
       }
       
         .step-content.active {
         display: block;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      /* Form Sections */
+      .form-section {
+        margin-bottom: 2rem;
+      }
+      
+      .form-section-header {
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+      
+      .form-section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+      }
+      
+      .form-section-subtitle {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
       }
       
         .form-group {
@@ -312,10 +352,61 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
       
         .form-label {
             display: block;
-            font-weight: 500;
-        margin-bottom: 0.5rem;
+            font-weight: 600;
+        margin-bottom: 0.75rem;
         color: var(--text-primary);
             font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+      }
+      
+      .label-required {
+        color: #ef4444;
+        font-weight: 600;
+      }
+      
+      /* Input Groups */
+      .input-group {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      
+      .input-icon {
+        position: absolute;
+        left: 0.75rem;
+        z-index: 3;
+        color: var(--text-muted);
+        pointer-events: none;
+      }
+      
+      .validation-icon {
+        position: absolute;
+        right: 0.75rem;
+        z-index: 3;
+        width: 20px;
+        height: 20px;
+        display: none;
+      }
+      
+      .validation-icon.success::after {
+        content: "✓";
+        color: #10b981;
+        font-weight: 600;
+        font-size: 1rem;
+      }
+      
+      .validation-icon.error::after {
+        content: "✗";
+        color: #ef4444;
+        font-weight: 600;
+        font-size: 1rem;
+      }
+      
+      .form-input {
+        padding-left: 3rem;
+        padding-right: 3rem;
       }
       
         .form-description {
@@ -365,17 +456,81 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             color: #991b1b;
         }
         
-        /* Inline Error Messages */
+        /* Help Text */
+        .input-help {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            line-height: 1.4;
+        }
+        
+        /* Inline Messages */
         .error-message {
             display: none;
             font-size: 0.875rem;
             color: #ef4444;
             margin-top: 0.5rem;
             font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 6px;
+            border-left: 3px solid #ef4444;
         }
         
         .error-message.show {
             display: block;
+        }
+        
+        .success-message {
+            display: none;
+            font-size: 0.875rem;
+            color: #10b981;
+            margin-top: 0.5rem;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 6px;
+            border-left: 3px solid #10b981;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        /* Privacy Trust Signal */
+        .privacy-trust {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .trust-icon {
+            color: #10b981;
+            margin-top: 0.1rem;
+        }
+        
+        .trust-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        
+        /* Screen Reader Only */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
         
         .form-input.error {
@@ -960,16 +1115,71 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             <div class="progress-text" id="progress-text">${t.accessibility.stepLabel} 1 ${t.accessibility.ofLabel} 5</div>
         </div>
         
-        <!-- Step 1: Email -->
+        <!-- Step 1: Enhanced Email -->
         <div class="step-content active" id="step-1-content">
-            <div class="form-group">
-                <label class="form-label" for="email-input">${t.emailLabel}</label>
-                <div class="form-description">${t.emailDescription}</div>
-                <input type="email" class="form-input" id="email-input" placeholder="${t.emailPlaceholder}">
-                <div class="error-message" id="email-error"></div>
+            <div class="form-section">
+                <div class="form-section-header">
+                    <h2 class="form-section-title">${t.emailLabel}</h2>
+                    <p class="form-section-subtitle">${t.emailDescription}</p>
                 </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="email-input">
+                        <span class="label-text">${t.emailLabel}</span>
+                        <span class="label-required" aria-label="verplicht">*</span>
+                    </label>
+                    
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                        </div>
+                        <input 
+                            type="email" 
+                            class="form-input" 
+                            id="email-input" 
+                            placeholder="${t.emailPlaceholder}"
+                            aria-describedby="email-help email-error"
+                            autocomplete="email"
+                            required
+                        >
+                        <div class="validation-icon" id="email-validation-icon"></div>
+                    </div>
+                    
+                    <div class="input-help" id="email-help">
+                        ${t.emailHelp}
+                    </div>
+                    
+                    <div class="error-message" id="email-error" role="alert"></div>
+                    
+                    <div class="success-message" id="email-success"></div>
+                </div>
+                
+                <!-- Privacy Trust Signal -->
+                <div class="privacy-trust">
+                    <div class="trust-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M9 12l2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <div class="trust-text">
+                        <strong>${t.privacyTitle}</strong> ${t.privacyText} 
+                        <a href="/privacy" class="privacy-link" target="_blank">${t.privacyLink}</a>
+                    </div>
+                </div>
+            </div>
+            
             <div class="button-group">
-                <button class="btn btn-primary" onclick="nextStep()" style="font-family: 'Raleway', sans-serif !important; font-weight: 600 !important; border-radius: 12px !important; background: #2563eb !important; color: white !important; border: none !important; padding: 0.75rem 1.5rem !important;">${t.nextButton}</button>
+                <button class="btn btn-primary" onclick="nextStep()" aria-describedby="step-1-help">
+                    ${t.nextButton}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9,18 15,12 9,6"/>
+                    </svg>
+                </button>
+                <div id="step-1-help" class="sr-only">Ga naar de volgende stap om winkels te selecteren</div>
               </div>
             </div>
         
@@ -1209,28 +1419,65 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             const errorElement = document.getElementById(elementId);
             const inputElement = elementId.replace('-error', '-input');
             const input = document.getElementById(inputElement);
+            const validationIcon = document.getElementById(inputElement.replace('-input', '-validation-icon'));
             
             if (errorElement) {
                 errorElement.textContent = message;
                 errorElement.classList.add('show');
+                errorElement.setAttribute('aria-live', 'polite');
             }
             if (input) {
                 input.classList.add('error');
                 input.classList.remove('success');
+                input.setAttribute('aria-invalid', 'true');
+            }
+            if (validationIcon) {
+                validationIcon.className = 'validation-icon error';
+                validationIcon.style.display = 'block';
+            }
+        }
+        
+        function showSuccess(elementId, message) {
+            const successElement = document.getElementById(elementId.replace('-error', '-success'));
+            const inputElement = elementId.replace('-error', '-input');
+            const input = document.getElementById(inputElement);
+            const validationIcon = document.getElementById(inputElement.replace('-input', '-validation-icon'));
+            
+            if (successElement && message) {
+                successElement.textContent = message;
+                successElement.classList.add('show');
+            }
+            if (input) {
+                input.classList.add('success');
+                input.classList.remove('error');
+                input.setAttribute('aria-invalid', 'false');
+            }
+            if (validationIcon) {
+                validationIcon.className = 'validation-icon success';
+                validationIcon.style.display = 'block';
             }
         }
         
         function clearError(elementId) {
             const errorElement = document.getElementById(elementId);
+            const successElement = document.getElementById(elementId.replace('-error', '-success'));
             const inputElement = elementId.replace('-error', '-input');
             const input = document.getElementById(inputElement);
+            const validationIcon = document.getElementById(inputElement.replace('-input', '-validation-icon'));
             
             if (errorElement) {
                 errorElement.classList.remove('show');
             }
+            if (successElement) {
+                successElement.classList.remove('show');
+            }
             if (input) {
                 input.classList.remove('error');
-                input.classList.add('success');
+                input.setAttribute('aria-invalid', 'false');
+            }
+            if (validationIcon) {
+                validationIcon.style.display = 'none';
+                validationIcon.className = 'validation-icon';
             }
         }
         
@@ -1266,11 +1513,11 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                 
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(email)) {
-                    showError('email-error', '${lang === 'nl' ? 'Voer een geldig email adres in' : 'Please enter a valid email address'}');
+                    showError('email-error', '${lang === 'nl' ? 'Voer een geldig email adres in (bijv. jan@voorbeeld.nl)' : 'Please enter a valid email address (e.g. john@example.com)'}');
                     return false;
                 }
                 
-                clearError('email-error');
+                showSuccess('email-error', '${lang === 'nl' ? 'Email adres is geldig' : 'Email address is valid'}');
             } else if (currentStep === 2) {
                 if (selectedStores.length === 0) {
                     showError('store-error', '${lang === 'nl' ? 'Selecteer minimaal één winkel om te monitoren' : 'Please select at least one store to monitor'}');
@@ -1307,27 +1554,41 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             }
         }
         
-        // Real-time validation
+        // Enhanced real-time validation
         function setupRealTimeValidation() {
-            // Email validation on input
+            // Email validation with enhanced UX
             const emailInput = document.getElementById('email-input');
             if (emailInput) {
-                emailInput.addEventListener('blur', function() {
+                let validationTimeout;
+                
+                emailInput.addEventListener('input', function() {
+                    clearTimeout(validationTimeout);
                     const email = this.value.trim();
-                    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                        showError('email-error', '${lang === 'nl' ? 'Voer een geldig email adres in' : 'Please enter a valid email address'}');
-                    } else if (email) {
-                        clearError('email-error');
+                    
+                    // Clear previous states
+                    clearError('email-error');
+                    
+                    if (email) {
+                        // Debounced validation
+                        validationTimeout = setTimeout(() => {
+                            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                            if (emailRegex.test(email)) {
+                                showSuccess('email-error', '${lang === 'nl' ? 'Email adres is geldig ✓' : 'Email address is valid ✓'}');
+                            } else if (email.length > 3) {
+                                showError('email-error', '${lang === 'nl' ? 'Voer een geldig email adres in (bijv. jan@voorbeeld.nl)' : 'Please enter a valid email address (e.g. john@example.com)'}');
+                            }
+                        }, 500);
                     }
                 });
                 
-                emailInput.addEventListener('input', function() {
-                    // Clear error as user types
-                    const errorElement = document.getElementById('email-error');
-                    if (errorElement && errorElement.classList.contains('show')) {
-                        const email = this.value.trim();
-                        if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                            clearError('email-error');
+                emailInput.addEventListener('blur', function() {
+                    const email = this.value.trim();
+                    if (email) {
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (emailRegex.test(email)) {
+                            showSuccess('email-error', '${lang === 'nl' ? 'Email adres is geldig ✓' : 'Email address is valid ✓'}');
+                        } else {
+                            showError('email-error', '${lang === 'nl' ? 'Voer een geldig email adres in (bijv. jan@voorbeeld.nl)' : 'Please enter a valid email address (e.g. john@example.com)'}');
                         }
                     }
                 });
