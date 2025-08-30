@@ -767,8 +767,11 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             margin-top: 2rem;
         }
         
-        .widget-container .btn,
-        .button-group .btn {
+        button.btn,
+        .widget-container button.btn,
+        .button-group button.btn,
+        button.btn.btn-primary,
+        button.btn.btn-secondary {
             font-family: 'Raleway', sans-serif !important;
             font-weight: 600 !important;
             letter-spacing: 0.025em !important;
@@ -876,6 +879,15 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             outline-offset: 2px;
         }
         
+        /* NUCLEAR OPTION - Force ALL buttons to use Raleway */
+        * button,
+        button,
+        input[type="button"],
+        input[type="submit"] {
+            font-family: 'Raleway', sans-serif !important;
+            border-radius: 12px !important;
+        }
+        
         /* Mobile */
         @media (max-width: 640px) {
             body { padding: 1rem; }
@@ -883,6 +895,31 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             .store-grid { grid-template-columns: 1fr; }
             .button-group { flex-direction: column; }
             .btn { width: 100%; }
+        }
+        
+        /* ULTIMATE FORCE - Highest specificity at end of stylesheet */
+        html body div.widget-container div.button-group button.btn,
+        html body div div div button.btn,
+        html body button.btn.btn-primary,
+        html body button.btn.btn-secondary {
+            font-family: 'Raleway', sans-serif !important;
+            font-weight: 600 !important;
+            border-radius: 12px !important;
+            padding: 0.75rem 1.5rem !important;
+            background: #2563eb !important;
+            color: white !important;
+            border: none !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            position: relative !important;
+            overflow: hidden !important;
+            cursor: pointer !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0.5rem !important;
+            font-size: 0.875rem !important;
+            min-width: 100px !important;
         }
     </style>
 </head>
@@ -932,7 +969,7 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                 <div class="error-message" id="email-error"></div>
                 </div>
             <div class="button-group">
-                <button class="btn btn-primary" onclick="nextStep()">${t.nextButton}</button>
+                <button class="btn btn-primary" onclick="nextStep()" style="font-family: 'Raleway', sans-serif !important; font-weight: 600 !important; border-radius: 12px !important; background: #2563eb !important; color: white !important; border: none !important; padding: 0.75rem 1.5rem !important;">${t.nextButton}</button>
               </div>
             </div>
         
@@ -1529,9 +1566,78 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             updateCounter();
         }
         
+        // Force button styling via JavaScript (CSS specificity workaround)
+        function forceButtonStyling() {
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.style.setProperty('font-family', 'Raleway, sans-serif', 'important');
+                button.style.setProperty('font-weight', '600', 'important');
+                button.style.setProperty('border-radius', '12px', 'important');
+                button.style.setProperty('padding', '0.75rem 1.5rem', 'important');
+                button.style.setProperty('transition', 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', 'important');
+                button.style.setProperty('border', 'none', 'important');
+                button.style.setProperty('cursor', 'pointer', 'important');
+                button.style.setProperty('display', 'inline-flex', 'important');
+                button.style.setProperty('align-items', 'center', 'important');
+                button.style.setProperty('justify-content', 'center', 'important');
+                button.style.setProperty('gap', '0.5rem', 'important');
+                button.style.setProperty('font-size', '0.875rem', 'important');
+                button.style.setProperty('min-width', '100px', 'important');
+                
+                if (button.classList.contains('btn-primary')) {
+                    button.style.setProperty('background', '#2563eb', 'important');
+                    button.style.setProperty('color', 'white', 'important');
+                    button.style.setProperty('box-shadow', '0 4px 12px rgba(37, 99, 235, 0.3)', 'important');
+                } else if (button.classList.contains('btn-secondary')) {
+                    button.style.setProperty('background', '#f8f9fa', 'important');
+                    button.style.setProperty('color', '#374151', 'important');
+                    button.style.setProperty('border', '1px solid #d1d5db', 'important');
+                    button.style.setProperty('box-shadow', '0 2px 8px rgba(0,0,0,0.1)', 'important');
+                }
+                
+                // Add hover effects
+                button.addEventListener('mouseenter', function() {
+                    if (this.classList.contains('btn-primary')) {
+                        this.style.setProperty('background', '#3b82f6', 'important');
+                        this.style.setProperty('box-shadow', '0 6px 20px rgba(37, 99, 235, 0.4)', 'important');
+                        this.style.setProperty('transform', 'translateY(-1px)', 'important');
+                    } else if (this.classList.contains('btn-secondary')) {
+                        this.style.setProperty('background', '#e5e7eb', 'important');
+                        this.style.setProperty('box-shadow', '0 4px 12px rgba(0,0,0,0.15)', 'important');
+                        this.style.setProperty('transform', 'translateY(-1px)', 'important');
+                    }
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    if (this.classList.contains('btn-primary')) {
+                        this.style.setProperty('background', '#2563eb', 'important');
+                        this.style.setProperty('box-shadow', '0 4px 12px rgba(37, 99, 235, 0.3)', 'important');
+                        this.style.setProperty('transform', 'none', 'important');
+                    } else if (this.classList.contains('btn-secondary')) {
+                        this.style.setProperty('background', '#f8f9fa', 'important');
+                        this.style.setProperty('box-shadow', '0 2px 8px rgba(0,0,0,0.1)', 'important');
+                        this.style.setProperty('transform', 'none', 'important');
+                    }
+                });
+            });
+        }
+        
         // Initialize
         updateCounter();
         setupRealTimeValidation();
+        
+        // Apply button styling immediately and when DOM changes
+        forceButtonStyling();
+        
+        // Re-apply styling when new buttons are added (e.g., form steps)
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList') {
+                    forceButtonStyling();
+                }
+            });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
         
         // Keyboard navigation
         document.addEventListener('keydown', function(e) {

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Widget</title>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { padding: 2rem; font-family: system-ui; }
+        .test-container { border: 2px solid red; padding: 1rem; margin: 1rem 0; }
+        .old-style { 
+            padding: 0.5rem 1rem; 
+            border: 1px solid #ccc; 
+            background: #fff; 
+            border-radius: 4px; 
+        }
+        .new-style {
+            font-family: 'Raleway', sans-serif !important;
+            font-weight: 600 !important;
+            border-radius: 12px !important;
+            padding: 0.75rem 1.5rem !important;
+            background: #2563eb !important;
+            color: white !important;
+            border: none !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+            cursor: pointer !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>Button Style Debug</h1>
+    
+    <div class="test-container">
+        <h3>OLD STYLE (wat je waarschijnlijk ziet):</h3>
+        <button class="old-style">Volgende</button>
+    </div>
+    
+    <div class="test-container">
+        <h3>NEW STYLE (wat je zou moeten zien):</h3>
+        <button class="new-style">Volgende</button>
+    </div>
+    
+    <p><strong>Vergelijk:</strong> De nieuwe button zou dikkere Raleway font, meer ronde hoeken en blauwe kleur moeten hebben.</p>
+</body>
+</html>
