@@ -530,19 +530,45 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
         }
         
         .custom-button {
+            font-family: 'Raleway', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+            border-radius: 12px;
             padding: 0.75rem 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
             background: var(--primary);
             color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s ease;
-            font-size: 0.875rem;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        
+        .custom-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .custom-button:hover::before {
+            left: 100%;
         }
         
         .custom-button:hover {
             background: var(--primary-light);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+            transform: translateY(-1px);
         }
         
         /* Store Search Styles */
@@ -727,7 +753,7 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             margin-bottom: 2rem;
         }
         
-        /* Buttons */
+        /* Premium Button System - Matching Design System */
         .button-group {
             display: flex;
             gap: 1rem;
@@ -736,38 +762,74 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
         }
         
         .btn {
+            font-family: 'Raleway', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+            border-radius: 12px;
             padding: 0.75rem 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
             border: none;
-            border-radius: 8px;
-            font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
             font-size: 0.875rem;
             min-width: 100px;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
         }
         
         .btn-primary {
             background: var(--primary);
             color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
         
         .btn-primary:hover {
             background: var(--primary-light);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+            transform: translateY(-1px);
         }
         
         .btn-secondary {
             background: var(--bg-secondary);
             color: var(--text-primary);
             border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .btn-secondary:hover {
             background: var(--border-light);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
         }
         
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .btn:disabled::before {
+            display: none;
         }
         
         /* Privacy Notice */
