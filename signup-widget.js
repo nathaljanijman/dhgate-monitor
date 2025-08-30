@@ -359,6 +359,29 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             color: #991b1b;
         }
         
+        /* Inline Error Messages */
+        .error-message {
+            display: none;
+            font-size: 0.875rem;
+            color: #ef4444;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .form-input.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        
+        .form-input.success {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
         /* Store Grid */
         .store-grid {
             display: grid;
@@ -829,6 +852,7 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                 <label class="form-label" for="email-input">${t.emailLabel}</label>
                 <div class="form-description">${t.emailDescription}</div>
                 <input type="email" class="form-input" id="email-input" placeholder="${t.emailPlaceholder}">
+                <div class="error-message" id="email-error"></div>
                 </div>
             <div class="button-group">
                 <button class="btn btn-primary" onclick="nextStep()">${t.nextButton}</button>
@@ -875,6 +899,7 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                     <div class="manual-input-wrapper">
                         <input type="url" class="custom-input" id="custom-store-url" placeholder="${lang === 'nl' ? 'Bijv: https://www.dhgate.com/store/21168508' : 'e.g: https://www.dhgate.com/store/21168508'}">
                         <button class="custom-button" onclick="addCustomStore()">${t.addStoreButton || (lang === 'nl' ? 'Winkel Toevoegen' : 'Add Store')}</button>
+                        <div class="error-message" id="custom-store-error"></div>
                     </div>
                     <div class="help-text" style="margin-top: 1rem; padding: 1rem; background: var(--bg-secondary, #f8f9fa); border-radius: 8px;">
                         <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
@@ -888,6 +913,7 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                 </div>
                 
                 <div class="selection-counter" id="selection-counter"></div>
+                <div class="error-message" id="store-error"></div>
             </div>
             <div class="button-group">
                 <button class="btn btn-secondary" onclick="prevStep()">${t.backButton}</button>
@@ -901,6 +927,7 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                 <label class="form-label" for="tags-input">${t.tagsLabel}</label>
                 <div class="form-description">${t.tagsDescription}</div>
                 <textarea class="tags-input" id="tags-input" placeholder="${t.tagsPlaceholder}"></textarea>
+                <div class="error-message" id="tags-error"></div>
             </div>
             <div class="button-group">
                 <button class="btn btn-secondary" onclick="prevStep()">${t.backButton}</button>
@@ -1064,23 +1091,78 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             }
         }
         
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            const inputElement = elementId.replace('-error', '-input');
+            const input = document.getElementById(inputElement);
+            
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.classList.add('show');
+            }
+            if (input) {
+                input.classList.add('error');
+                input.classList.remove('success');
+            }
+        }
+        
+        function clearError(elementId) {
+            const errorElement = document.getElementById(elementId);
+            const inputElement = elementId.replace('-error', '-input');
+            const input = document.getElementById(inputElement);
+            
+            if (errorElement) {
+                errorElement.classList.remove('show');
+            }
+            if (input) {
+                input.classList.remove('error');
+                input.classList.add('success');
+            }
+        }
+        
+        function clearAllErrors() {
+            ['email-error', 'store-error', 'tags-error'].forEach(errorId => {
+                const errorElement = document.getElementById(errorId);
+                const inputElement = errorId.replace('-error', '-input');
+                const input = document.getElementById(inputElement);
+                
+                if (errorElement) {
+                    errorElement.classList.remove('show');
+                }
+                if (input) {
+                    input.classList.remove('error', 'success');
+                }
+            });
+        }
+
         function validateCurrentStep() {
+            clearAllErrors();
+            
             if (currentStep === 1) {
                 const emailInput = document.getElementById('email-input');
                 if (!emailInput) {
                     console.error('Email input not found');
                     return false;
                 }
-                const email = emailInput.value;
-                if (!email || !email.includes('@')) {
-                    alert('${lang === 'nl' ? 'Voer een geldig email adres in' : 'Please enter a valid email address'}');
+                const email = emailInput.value.trim();
+                if (!email) {
+                    showError('email-error', '${lang === 'nl' ? 'Email adres is verplicht' : 'Email address is required'}');
                     return false;
                 }
+                
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showError('email-error', '${lang === 'nl' ? 'Voer een geldig email adres in' : 'Please enter a valid email address'}');
+                    return false;
+                }
+                
+                clearError('email-error');
             } else if (currentStep === 2) {
                 if (selectedStores.length === 0) {
-                    alert('${lang === 'nl' ? 'Selecteer minimaal één winkel' : 'Please select at least one store'}');
+                    showError('store-error', '${lang === 'nl' ? 'Selecteer minimaal één winkel om te monitoren' : 'Please select at least one store to monitor'}');
                     return false;
                 }
+                clearError('store-error');
             } else if (currentStep === 3) {
                 const tagsInput = document.getElementById('tags-input');
                 if (!tagsInput) {
@@ -1089,11 +1171,73 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
                 }
                 const tags = tagsInput.value.trim();
                 if (!tags) {
-                    alert('${lang === 'nl' ? 'Voer minimaal één zoekterm in' : 'Please enter at least one search term'}');
+                    showError('tags-error', '${lang === 'nl' ? 'Voer minimaal één zoekterm in (bijv. smartphone, handtas)' : 'Please enter at least one search term (e.g. smartphone, handbag)'}');
                     return false;
                 }
+                clearError('tags-error');
             }
             return true;
+        }
+        
+        function showCustomStoreError(message) {
+            const errorElement = document.getElementById('custom-store-error');
+            const input = document.getElementById('custom-store-url');
+            
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.classList.add('show');
+            }
+            if (input) {
+                input.classList.add('error');
+                input.classList.remove('success');
+            }
+        }
+        
+        // Real-time validation
+        function setupRealTimeValidation() {
+            // Email validation on input
+            const emailInput = document.getElementById('email-input');
+            if (emailInput) {
+                emailInput.addEventListener('blur', function() {
+                    const email = this.value.trim();
+                    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                        showError('email-error', '${lang === 'nl' ? 'Voer een geldig email adres in' : 'Please enter a valid email address'}');
+                    } else if (email) {
+                        clearError('email-error');
+                    }
+                });
+                
+                emailInput.addEventListener('input', function() {
+                    // Clear error as user types
+                    const errorElement = document.getElementById('email-error');
+                    if (errorElement && errorElement.classList.contains('show')) {
+                        const email = this.value.trim();
+                        if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                            clearError('email-error');
+                        }
+                    }
+                });
+            }
+            
+            // Tags validation
+            const tagsInput = document.getElementById('tags-input');
+            if (tagsInput) {
+                tagsInput.addEventListener('blur', function() {
+                    const tags = this.value.trim();
+                    if (currentStep === 3 && !tags) {
+                        showError('tags-error', '${lang === 'nl' ? 'Voer minimaal één zoekterm in' : 'Please enter at least one search term'}');
+                    } else if (tags) {
+                        clearError('tags-error');
+                    }
+                });
+                
+                tagsInput.addEventListener('input', function() {
+                    const tags = this.value.trim();
+                    if (tags) {
+                        clearError('tags-error');
+                    }
+                });
+            }
         }
         
         // Store selection functions
@@ -1120,20 +1264,29 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             const customSection = document.getElementById('custom-store-section');
             const url = urlInput.value.trim();
             
+            // Clear previous error
+            const errorElement = document.getElementById('custom-store-error');
+            if (errorElement) {
+                errorElement.classList.remove('show');
+            }
+            if (urlInput) {
+                urlInput.classList.remove('error', 'success');
+            }
+            
             if (!url) {
-                alert('${lang === 'nl' ? 'Voer een winkel URL in' : 'Please enter a store URL'}');
+                showCustomStoreError('${lang === 'nl' ? 'Voer een winkel URL in' : 'Please enter a store URL'}');
                 return;
             }
             
             // Validate DHgate URL
             if (!url.includes('dhgate.com/store/')) {
-                alert('${lang === 'nl' ? 'Voer een geldige DHgate winkel URL in (bijv. https://www.dhgate.com/store/12345678)' : 'Please enter a valid DHgate store URL (e.g. https://www.dhgate.com/store/12345678)'}');
+                showCustomStoreError('${lang === 'nl' ? 'Voer een geldige DHgate winkel URL in (bijv. https://www.dhgate.com/store/12345678)' : 'Please enter a valid DHgate store URL (e.g. https://www.dhgate.com/store/12345678)'}');
                 return;
             }
             
             const existingStore = selectedStores.find(s => s.url === url);
             if (existingStore) {
-                alert('${lang === 'nl' ? 'Deze winkel is al geselecteerd' : 'This store is already selected'}');
+                showCustomStoreError('${lang === 'nl' ? 'Deze winkel is al geselecteerd' : 'This store is already selected'}');
                 return;
             }
             
@@ -1301,6 +1454,7 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
         
         // Initialize
         updateCounter();
+        setupRealTimeValidation();
         
         // Keyboard navigation
         document.addEventListener('keydown', function(e) {
