@@ -159,63 +159,177 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
         }
         
         :root {
-            --primary: #2563eb;
-            --primary-light: #3b82f6;
-            --success: #10b981;
-            --text-primary: ${theme === 'dark' ? '#f8fafc' : '#1e293b'};
-            --text-secondary: ${theme === 'dark' ? '#cbd5e1' : '#64748b'};
-            --text-muted: ${theme === 'dark' ? '#94a3b8' : '#94a3b8'};
-            --bg-primary: ${theme === 'dark' ? '#0f172a' : '#ffffff'};
-            --bg-secondary: ${theme === 'dark' ? '#1e293b' : '#f8fafc'};
-            --border: ${theme === 'dark' ? '#334155' : '#e2e8f0'};
-            --border-light: ${theme === 'dark' ? '#475569' : '#f1f5f9'};
-            --shadow: ${theme === 'dark' ? '0 4px 6px rgba(0, 0, 0, 0.3)' : '0 1px 3px rgba(0, 0, 0, 0.1)'};
-            --shadow-lg: ${theme === 'dark' ? '0 10px 25px rgba(0, 0, 0, 0.4)' : '0 10px 25px rgba(0, 0, 0, 0.1)'};
+            /* Premium Brand Colors - DHgate Monitor */
+            --primary: #2563EB;
+            --primary-light: #3B82F6;
+            --primary-hover: #1D4ED8;
+            --accent-orange: #EA580C;
+            --accent-orange-light: #FB923C;
+            --success: #10B981;
+            
+            /* Luxury Gradients */
+            --bg-gradient: ${theme === 'dark' 
+                ? 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%)' 
+                : 'linear-gradient(135deg, #FEFEFE 0%, #F8FAFC 50%, #F1F5F9 100%)'};
+            --hero-gradient: 'linear-gradient(135deg, #2563EB 0%, #EA580C 100%)';
+            --btn-primary-gradient: 'linear-gradient(135deg, #2563EB, #1D4ED8)';
+            --btn-primary-hover-gradient: 'linear-gradient(135deg, #1D4ED8, #1E3A8A)';
+            --btn-secondary-gradient: 'linear-gradient(135deg, #EA580C, #C2410C)';
+            
+            /* Premium Typography */
+            --text-primary: ${theme === 'dark' ? '#F8FAFC' : '#111827'};
+            --text-secondary: ${theme === 'dark' ? '#CBD5E1' : '#64748B'};
+            --text-muted: ${theme === 'dark' ? '#94A3B8' : '#6B7280'};
+            
+            /* Glassmorphism Backgrounds */
+            --bg-primary: ${theme === 'dark' ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)'};
+            --bg-secondary: ${theme === 'dark' ? 'rgba(30, 41, 59, 0.8)' : 'rgba(248, 250, 252, 0.9)'};
+            --card-bg: ${theme === 'dark' ? 'rgba(30, 41, 59, 0.9)' : 'rgba(255, 255, 255, 0.9)'};
+            --card-bg-alpha: ${theme === 'dark' ? 'rgba(30, 41, 59, 0.95)' : 'rgba(255, 255, 255, 0.95)'};
+            
+            /* Premium Borders */
+            --border: ${theme === 'dark' ? 'rgba(37, 99, 235, 0.15)' : 'rgba(37, 99, 235, 0.1)'};
+            --border-light: ${theme === 'dark' ? 'rgba(71, 85, 105, 0.3)' : 'rgba(226, 232, 240, 0.5)'};
+            --card-border: 'rgba(37, 99, 235, 0.1)';
+            
+            /* Luxury Shadows & Effects */
+            --shadow: ${theme === 'dark' 
+                ? '0 4px 20px rgba(0, 0, 0, 0.4)' 
+                : '0 4px 20px rgba(37, 99, 235, 0.08)'};
+            --shadow-lg: ${theme === 'dark' 
+                ? '0 10px 40px rgba(0, 0, 0, 0.5)' 
+                : '0 20px 40px rgba(71, 85, 105, 0.1)'};
+            --shadow-hover: ${theme === 'dark' 
+                ? '0 20px 60px rgba(0, 0, 0, 0.6)' 
+                : '0 8px 32px rgba(37, 99, 235, 0.15)'};
+            --card-shadow: ${theme === 'dark' 
+                ? '0 4px 20px rgba(0, 0, 0, 0.4)' 
+                : '0 4px 20px rgba(37, 99, 235, 0.08)'};
+            --card-shadow-hover: ${theme === 'dark' 
+                ? '0 8px 32px rgba(0, 0, 0, 0.5)' 
+                : '0 8px 32px rgba(37, 99, 235, 0.15)'};
+            
+            /* Glassmorphism */
+            --glass-bg: ${theme === 'dark' 
+                ? 'rgba(15, 23, 42, 0.8)' 
+                : 'rgba(255, 255, 255, 0.85)'};
+            --glass-border: ${theme === 'dark' 
+                ? 'rgba(37, 99, 235, 0.1)' 
+                : 'rgba(255, 255, 255, 0.2)'};
+            --glass-shadow: ${theme === 'dark' 
+                ? '0 8px 32px rgba(0, 0, 0, 0.4)' 
+                : '0 8px 32px rgba(0, 0, 0, 0.1)'};
+            --backdrop-blur: 'blur(16px)';
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-primary);
+            font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-gradient);
             color: var(--text-primary);
             line-height: 1.6;
             padding: 1.5rem;
+            min-height: 100vh;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .widget-container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            background: var(--bg-primary);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: var(--shadow-lg);
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: var(--glass-shadow);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .widget-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(37, 99, 235, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(234, 88, 12, 0.05) 0%, transparent 50%);
+            border-radius: inherit;
+            z-index: -1;
+            pointer-events: none;
         }
         
         .widget-header {
             text-align: center;
-            margin-bottom: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
         }
         
         .widget-title {
-            font-size: 1.75rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--hero-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            position: relative;
+        }
+        
+        .widget-title::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--hero-gradient);
+            border-radius: 2px;
+            opacity: 0.6;
         }
         
         .widget-subtitle {
-            font-size: 1rem;
+            font-size: 1.125rem;
             color: var(--text-secondary);
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
+            line-height: 1.6;
+            font-weight: 400;
         }
         
         /* Enhanced Progress Bar */
         .progress-container {
-            margin-bottom: 2.5rem;
-            background: var(--bg-secondary);
-            padding: 1.5rem;
-            border-radius: 12px;
-            border: 1px solid var(--border);
+            margin-bottom: 3rem;
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(234, 88, 12, 0.03) 0%, transparent 50%);
+            border-radius: inherit;
+            z-index: -1;
+            pointer-events: none;
       }
       
       .progress-bar {
@@ -243,12 +357,31 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
             top: 0;
             left: 0;
         height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light));
-            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--hero-gradient);
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 2;
             width: 0%;
             border-radius: 2px;
-            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
+            position: relative;
+            overflow: hidden;
+      }
+      
+      .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s ease-in-out infinite;
+      }
+      
+      @keyframes shimmer {
+        0% { left: -100%; }
+        50% { left: 100%; }
+        100% { left: 100%; }
       }
       
       .progress-step {
@@ -261,30 +394,56 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
       }
       
         .step-indicator {
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
         border-radius: 50%;
-        background: var(--bg-primary);
+        background: var(--glass-bg);
+        backdrop-filter: var(--backdrop-blur);
+        -webkit-backdrop-filter: var(--backdrop-blur);
             border: 2px solid var(--border);
         display: flex;
         align-items: center;
         justify-content: center;
             font-size: 0.875rem;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-secondary);
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.3s ease;
       }
       
         .step-indicator.active {
-            background: var(--primary);
+            background: var(--btn-primary-gradient);
             border-color: var(--primary);
         color: white;
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
+        transform: scale(1.1);
+        }
+        
+        .step-indicator.active::before {
+            opacity: 1;
         }
         
         .step-indicator.completed {
-            background: var(--success);
-            border-color: var(--success);
+            background: var(--btn-secondary-gradient);
+            border-color: var(--accent-orange);
         color: white;
+        box-shadow: 0 4px 16px rgba(234, 88, 12, 0.4);
       }
       
       .step-label {
@@ -417,19 +576,26 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
       
         .form-input {
         width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border);
-        border-radius: 8px;
-        background: var(--bg-primary);
+            padding: 1rem;
+            border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        background: var(--glass-bg);
+        backdrop-filter: var(--backdrop-blur);
+        -webkit-backdrop-filter: var(--backdrop-blur);
         color: var(--text-primary);
         font-size: 1rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--card-shadow);
+            position: relative;
       }
       
         .form-input:focus {
         outline: none;
             border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15), var(--card-shadow-hover);
+        transform: translateY(-1px);
+        background: var(--card-bg);
       }
       
         .form-input::placeholder {
@@ -552,25 +718,53 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
         }
         
         .store-tile {
-            border: 1px solid var(--border);
-        border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        border-radius: 20px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-            background: var(--bg-primary);
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            box-shadow: var(--card-shadow);
+        }
+        
+        .store-tile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(234, 88, 12, 0.03) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+            border-radius: inherit;
+        }
+        
+        .store-tile:hover::before {
+            opacity: 1;
         }
         
         .store-tile:hover {
             border-color: var(--primary);
-            box-shadow: var(--shadow);
-            transform: translateY(-1px);
+            box-shadow: var(--card-shadow-hover);
+            transform: translateY(-4px) scale(1.02);
         }
         
         .store-tile.selected {
             border-color: var(--primary);
-            box-shadow: 0 0 0 1px var(--primary);
-            background: rgba(37, 99, 235, 0.02);
+            box-shadow: 0 0 0 2px var(--primary), var(--card-shadow-hover);
+            background: var(--glass-bg);
+            transform: translateY(-2px);
+        }
+        
+        .store-tile.selected::before {
+            opacity: 1;
         }
         
         .store-image {
@@ -889,16 +1083,47 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
         }
         
         .success-icon {
-            width: 64px;
-            height: 64px;
-            background: var(--success);
+            width: 80px;
+            height: 80px;
+            background: var(--btn-secondary-gradient);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 1.5rem;
-            font-size: 1.5rem;
+            font-size: 2rem;
             color: white;
+            box-shadow: 0 8px 32px rgba(234, 88, 12, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .success-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s ease-in-out infinite;
+        }
+        
+        .success-icon::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: rotate 3s linear infinite;
+            opacity: 0.7;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         
         .success-title {
@@ -965,31 +1190,76 @@ export function generateSignupWidget(env = null, lang = 'nl', theme = 'light') {
         
         .widget-container .btn-primary,
         .button-group .btn-primary {
-            background: var(--primary) !important;
+            background: var(--btn-primary-gradient) !important;
             color: white !important;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4) !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+        
+        .widget-container .btn-primary::before,
+        .button-group .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+            z-index: 1;
+        }
+        
+        .widget-container .btn-primary:hover::before,
+        .button-group .btn-primary:hover::before {
+            left: 100%;
         }
         
         .widget-container .btn-primary:hover,
         .button-group .btn-primary:hover {
-            background: var(--primary-light);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
-            transform: translateY(-1px);
+            background: var(--btn-primary-hover-gradient) !important;
+            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.5) !important;
+            transform: translateY(-2px) scale(1.02) !important;
         }
         
         .widget-container .btn-secondary,
         .button-group .btn-secondary {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: var(--glass-bg) !important;
+            backdrop-filter: var(--backdrop-blur) !important;
+            -webkit-backdrop-filter: var(--backdrop-blur) !important;
+            color: var(--text-primary) !important;
+            border: 1px solid var(--glass-border) !important;
+            box-shadow: var(--card-shadow) !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+        
+        .widget-container .btn-secondary::before,
+        .button-group .btn-secondary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(37, 99, 235, 0.05) 0%, transparent 70%);
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        
+        .widget-container .btn-secondary:hover::before,
+        .button-group .btn-secondary:hover::before {
+            opacity: 1;
         }
         
         .widget-container .btn-secondary:hover,
         .button-group .btn-secondary:hover {
-            background: var(--border-light);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transform: translateY(-1px);
+            box-shadow: var(--card-shadow-hover) !important;
+            transform: translateY(-2px) scale(1.02) !important;
+            border-color: var(--primary) !important;
         }
         
         .widget-container .btn:disabled,
