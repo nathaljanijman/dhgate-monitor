@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHgate Monitor - Complete E-commerce Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2563eb;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #374151;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: white;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #1f2937;
+            text-align: center;
+        }
+        
+        .widget-container {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        
+        .widget-frame {
+            width: 100%;
+            max-width: 480px;
+            height: 600px;
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: white;
+            overflow: hidden;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+        
+        .feature-card p {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .control-group label {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .control-group select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+            font-family: inherit;
+        }
+        
+        /* DHgate Monitor Toolkit Section - Professional Product Layout */
+        .toolkit-section {
+            background: #f8fafc;
+            color: #1e293b;
+            padding: 8rem 0;
+            margin: 0 -2rem 3rem -2rem;
+        }
+        
+        .toolkit-section .section {
+            background: transparent;
+            box-shadow: none;
+            backdrop-filter: none;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .toolkit-section h2 {
+            color: #1e293b;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+        
+        .toolkit-section .subtitle {
+            color: #64748b;
+            font-size: 1.125rem;
+            text-align: center;
+            margin-bottom: 4rem;
+            line-height: 1.6;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+        }
+        
+        .product-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+        
+        .product-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(30, 41, 59, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            text-align: left;
+            padding: 0;
+            position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transform: translateY(0);
+        }
+        
+        .product-card:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(30, 41, 59, 0.2);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-card:active {
+            transform: translateY(-4px) scale(1.01);
+            transition: all 0.1s ease;
+        }
+        
+        .card-header {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;
+        }
+        
+        .card-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #1e293b;
+            line-height: 1.3;
+        }
+        
+        .card-content p {
+            color: #64748b;
+            line-height: 1.6;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+        
+        .expand-icon {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-size: 1.25rem;
+            font-weight: 300;
+            color: #94a3b8;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            background: rgba(30, 41, 59, 0.05);
+            transform: scale(1);
+        }
+        
+        .product-card:hover .expand-icon {
+            color: #1e293b;
+            background: rgba(30, 41, 59, 0.1);
+            transform: scale(1.1) rotate(90deg);
+        }
+        
+        /* Modal Popup System with Professional Article Layout */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(16px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .modal-content {
+            background: #ffffff;
+            border: 1px solid rgba(30, 41, 59, 0.1);
+            border-radius: 24px;
+            max-width: 900px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(80px) scale(0.85) rotateX(5deg);
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: translateY(0) scale(1) rotateX(0deg);
+            opacity: 1;
+        }
+        
+        .modal-header {
+            padding: 3rem 3rem 2rem;
+            border-bottom: 1px solid rgba(30, 41, 59, 0.1);
+            position: relative;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 24px 24px 0 0;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(30, 41, 59, 0.1);
+            border: none;
+            color: #64748b;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            color: #1e293b;
+            background: rgba(30, 41, 59, 0.15);
+            transform: scale(1.1);
+        }
+        
+        .modal-hero {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-hero-icon {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .modal-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+        
+        .modal-subtitle {
+            color: #64748b;
+            font-size: 1.25rem;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+        
+        .modal-body {
+            padding: 3rem;
+        }
+        
+        .modal-overview {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 3rem;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .modal-overview p {
+            color: #475569;
+            font-size: 1.125rem;
+            line-height: 1.7;
+            font-weight: 500;
+        }
+        
+        .modal-sections {
+            display: grid;
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .modal-section {
+            background: #ffffff;
+            border: 1px solid rgba(30, 41, 59, 0.08);
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-section:hover {
+            border-color: rgba(30, 41, 59, 0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-icon {
+            font-size: 1.5rem;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border-radius: 12px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1.3;
+        }
+        
+        .section-description {
+            color: #64748b;
+            font-size: 1.125rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #475569;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.75rem;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+        
+        .section-feature::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        .section-details {
+            color: #64748b;
+            font-size: 1rem;
+            line-height: 1.6;
+            padding: 1.5rem;
+            background: rgba(248, 250, 252, 0.8);
+            border-radius: 12px;
+            border-left: 3px solid #e2e8f0;
+        }
+        
+        .modal-benefits {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 3rem;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+        
+        .benefits-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #1e40af;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .benefit-item::before {
+            content: "→";
+            color: #3b82f6;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(30, 41, 59, 0.1);
+        }
+        
+        /* Professional Button Hierarchy */
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #ffffff;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-secondary {
+            background: none;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            padding: 1rem 2.5rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-radius: 12px;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(59, 130, 246, 0.05);
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary::after {
+            content: "→";
+            font-size: 1rem;
+            font-weight: 400;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn-secondary:hover::after {
+            transform: translateX(4px);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .product-cards-grid {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .section {
+                padding: 2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .toolkit-section {
+                padding: 4rem 0;
+            }
+            
+            .toolkit-section h2 {
+                font-size: 2.5rem;
+            }
+            
+            .product-cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .card-header {
+                padding: 2rem;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+            }
+            
+            .modal-header,
+            .modal-body {
+                padding: 2rem;
+            }
+            
+            .modal-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .section-features {
+                grid-template-columns: 1fr;
+            }
+            
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .toolkit-section h2 {
+                font-size: 2rem;
+            }
+            
+            .modal-title {
+                font-size: 2rem;
+            }
+            
+            .modal-header,
+            .modal-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">🚀 DHgate Monitor Toolkit</div>
+            <ul class="nav-links">
+                <li><a href="#widget">Widget</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#toolkit">Toolkit</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section class="hero">
+        <h1>DHgate Monitor Toolkit</h1>
+        <p>Complete e-commerce toolkit voor professionele monitoring en analyse</p>
+        <a href="#toolkit" class="cta-button">Ontdek de Toolkit</a>
+    </section>
+    
+    <main class="main-content">
+        <section id="features" class="section">
+            <h2>✨ Core Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🏪</div>
+                    <h3>Shop Tracking</h3>
+                    <p>Monitor complete DHgate winkels voor prijswijzigingen en nieuwe producten</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📦</div>
+                    <h3>Product Tracking</h3>
+                    <p>Volg individuele producten op prijs, voorraad en beschikbaarheid</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Margin Calculator</h3>
+                    <p>Bereken winstmarges en optimaliseer je pricing strategie</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Recommendations</h3>
+                    <p>Expert-aanbevolen winkels gebaseerd op jouw voorkeuren</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔔</div>
+                    <h3>Smart Notifications</h3>
+                    <p>Ontvang alerts wanneer jouw favoriete items in prijs dalen</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Mobile Optimized</h3>
+                    <p>Perfecte ervaring op alle devices en schermformaten</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- DHgate Monitor Toolkit Section -->
+        <section id="toolkit" class="section toolkit-section">
+            <h2>Complete E-commerce Toolkit</h2>
+            <p class="subtitle">Drie krachtige tools die samen een complete oplossing vormen voor professionele DHgate monitoring, product tracking en winstoptimalisatie.</p>
+            
+            <div class="product-cards-grid">
+                <!-- Product 1: Shop Tracking -->
+                <div class="product-card" onclick="openModal('shops')">
+                    <div class="card-header">
+                        <div class="card-content">
+                            <h3>🏪 Shop Tracking</h3>
+                            <p>Monitor complete DHgate winkels voor prijswijzigingen, nieuwe producten en voorraadveranderingen</p>
+                        </div>
+                        <div class="expand-icon">+</div>
+                    </div>
+                </div>
+
+                <!-- Product 2: Product Tracking -->
+                <div class="product-card" onclick="openModal('products')">
+                    <div class="card-header">
+                        <div class="card-content">
+                            <h3>📦 Product Tracking</h3>
+                            <p>Volg individuele producten op prijs, voorraad, beschikbaarheid en concurrentie</p>
+                        </div>
+                        <div class="expand-icon">+</div>
+                    </div>
+                </div>
+
+                <!-- Product 3: Margin Calculator -->
+                <div class="product-card" onclick="openModal('margin')">
+                    <div class="card-header">
+                        <div class="card-content">
+                            <h3>💰 Margin Calculator</h3>
+                            <p>Bereken winstmarges, optimaliseer pricing en analyseer marktconcurrentie</p>
+                        </div>
+                        <div class="expand-icon">+</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="widget" class="section">
+            <h2>🎯 Live Widget Demo</h2>
+            <p style="text-align: center; margin-bottom: 2rem; color: #6b7280;">
+                Test de widget hieronder. Verander taal en thema om verschillende configuraties te zien.
+            </p>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label for="lang-select">Taal:</label>
+                    <select id="lang-select">
+                        <option value="nl">Nederlands</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="theme-select">Thema:</label>
+                    <select id="theme-select">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="widget-container">
+                <div id="widget-container" class="widget-frame">
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #9ca3af; text-align: center; padding: 2rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
+                        <h3 style="margin-bottom: 1rem; color: #374151;">Widget Demo</h3>
+                        <p style="margin-bottom: 1.5rem;">Kies een taal en thema hierboven om de widget te starten</p>
+                        <button onclick="updateWidget()" style="background: #2563eb; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 500;">
+                            Start Widget
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Modal Popup System with Professional Article Layout -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+                <div class="modal-hero">
+                    <div class="modal-hero-icon" id="modal-hero-icon">🏪</div>
+                    <div>
+                        <h3 class="modal-title" id="modal-title">Product Details</h3>
+                        <p class="modal-subtitle" id="modal-subtitle">Learn more about this powerful tool</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-overview">
+                    <p id="modal-overview">Discover the powerful features and capabilities of this essential e-commerce tool.</p>
+                </div>
+                
+                <div class="modal-sections" id="modal-sections">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+                
+                <div class="modal-benefits">
+                    <div class="benefits-title">Key Benefits</div>
+                    <div class="benefits-grid" id="modal-benefits">
+                        <!-- Benefits will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="modal-actions" id="modal-actions">
+                    <!-- Buttons will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Import the widget script -->
+    <script type="module" src="signup-widget.js"></script>
+    
+    <script>
+        const langSelect = document.getElementById('lang-select');
+        const themeSelect = document.getElementById('theme-select');
+        const widgetContainer = document.getElementById('widget-container');
+        
+        function updateWidget() {
+            const lang = langSelect.value;
+            const theme = themeSelect.value;
+            
+            // Generate widget directly
+            widgetContainer.innerHTML = generateSignupWidget(null, lang, theme);
+        }
+        
+        // Professional Product Toolkit Modal Data
+        const modalData = {
+            shops: {
+                title: "🏪 Shop Tracking",
+                subtitle: "Monitor complete DHgate winkels voor prijswijzigingen, nieuwe producten en voorraadveranderingen",
+                heroIcon: "🏪",
+                overview: "Onze Shop Tracking tool geeft je complete inzicht in DHgate winkels. Monitor prijswijzigingen, ontdek nieuwe producten en blijf op de hoogte van voorraadveranderingen in real-time.",
+                sections: [
+                    {
+                        title: "Complete Store Monitoring",
+                        description: "Monitor alle aspecten van een DHgate winkel in één overzichtelijk dashboard.",
+                        icon: "📊",
+                        features: ["Real-time prijsupdates", "Nieuwe product detectie", "Voorraad monitoring", "Performance metrics"],
+                        details: "Krijg een 360-graden beeld van elke winkel met gedetailleerde analytics en trends."
+                    },
+                    {
+                        title: "Price Change Alerts",
+                        description: "Ontvang directe notificaties wanneer prijzen veranderen in je gemonitorde winkels.",
+                        icon: "🔔",
+                        features: ["Instant notifications", "Custom alert rules", "Price threshold alerts", "Email & push alerts"],
+                        details: "Stel je eigen regels in en ontvang alerts die perfect aansluiten bij jouw strategie."
+                    },
+                    {
+                        title: "Competitive Analysis",
+                        description: "Vergelijk winkels onderling en identificeer de beste deals en trends.",
+                        icon: "⚖️",
+                        features: ["Store comparison", "Price benchmarking", "Trend analysis", "Market insights"],
+                        details: "Blijf voorop lopen met uitgebreide concurrentieanalyse en marktinzichten."
+                    },
+                    {
+                        title: "Historical Data",
+                        description: "Analyseer prijstrends en voorraadveranderingen over tijd.",
+                        icon: "📈",
+                        features: ["Price history", "Stock trends", "Seasonal patterns", "Performance reports"],
+                        details: "Maak data-gedreven beslissingen met uitgebreide historische analyses."
+                    }
+                ],
+                benefits: [
+                    "Complete winkel overzicht",
+                    "Real-time prijs updates",
+                    "Competitive insights",
+                    "Data-driven beslissingen"
+                ],
+                actions: [
+                    { type: "primary", text: "Start Shop Tracking", action: "startShopTracking" },
+                    { type: "secondary", text: "View demo", action: "viewDemo" },
+                    { type: "secondary", text: "Pricing plans", action: "viewPricing" }
+                ]
+            },
+            products: {
+                title: "📦 Product Tracking",
+                subtitle: "Volg individuele producten op prijs, voorraad, beschikbaarheid en concurrentie",
+                heroIcon: "📦",
+                overview: "Product Tracking is de kern van je monitoring strategie. Volg individuele producten op prijs, voorraad en beschikbaarheid met geavanceerde analytics en slimme notificaties.",
+                sections: [
+                    {
+                        title: "Individual Product Monitoring",
+                        description: "Monitor specifieke producten met gedetailleerde tracking en analytics.",
+                        icon: "🎯",
+                        features: ["Product-specific alerts", "Price tracking", "Stock monitoring", "Availability alerts"],
+                        details: "Focus op de producten die er voor jou toe doen met gepersonaliseerde monitoring."
+                    },
+                    {
+                        title: "Advanced Price Analysis",
+                        description: "Analyseer prijsbewegingen en identificeer de beste koopmomenten.",
+                        icon: "💰",
+                        features: ["Price trend analysis", "Best time to buy", "Price drop alerts", "Market price tracking"],
+                        details: "Optimaliseer je aankopen met geavanceerde prijsanalyse en timing."
+                    },
+                    {
+                        title: "Multi-Store Comparison",
+                        description: "Vergelijk producten tussen verschillende DHgate winkels.",
+                        icon: "🔄",
+                        features: ["Cross-store comparison", "Best price finder", "Store reliability", "Quality indicators"],
+                        details: "Vind altijd de beste deal door producten tussen winkels te vergelijken."
+                    },
+                    {
+                        title: "Smart Notifications",
+                        description: "Ontvang intelligente alerts gebaseerd op jouw criteria en voorkeuren.",
+                        icon: "🧠",
+                        features: ["AI-powered alerts", "Custom criteria", "Smart scheduling", "Priority notifications"],
+                        details: "Laat AI je helpen met slimme notificaties die perfect aansluiten bij jouw behoeften."
+                    }
+                ],
+                benefits: [
+                    "Product-specifieke monitoring",
+                    "Geavanceerde prijsanalyse",
+                    "Multi-store vergelijking",
+                    "Intelligente notificaties"
+                ],
+                actions: [
+                    { type: "primary", text: "Start Product Tracking", action: "startProductTracking" },
+                    { type: "secondary", text: "View demo", action: "viewDemo" },
+                    { type: "secondary", text: "Pricing plans", action: "viewPricing" }
+                ]
+            },
+            margin: {
+                title: "💰 Margin Calculator",
+                subtitle: "Bereken winstmarges, optimaliseer pricing en analyseer marktconcurrentie",
+                heroIcon: "💰",
+                overview: "De Margin Calculator helpt je winstgevendheid te maximaliseren. Analyseer kosten, bereken optimale prijzen en begrijp je marktpositie met professionele tools.",
+                sections: [
+                    {
+                        title: "Profit Margin Calculation",
+                        description: "Bereken nauwkeurige winstmarges voor elk product en elke verkoop.",
+                        icon: "🧮",
+                        features: ["Cost analysis", "Profit calculation", "Margin optimization", "Break-even analysis"],
+                        details: "Krijg volledig inzicht in je winstgevendheid met gedetailleerde berekeningen."
+                    },
+                    {
+                        title: "Pricing Strategy Optimization",
+                        description: "Ontwikkel optimale pricing strategieën gebaseerd op marktdata en kosten.",
+                        icon: "📊",
+                        features: ["Market price analysis", "Competitive pricing", "Dynamic pricing", "Price optimization"],
+                        details: "Maximaliseer je winst met data-gedreven pricing strategieën."
+                    },
+                    {
+                        title: "Market Competition Analysis",
+                        description: "Analyseer concurrentie en begrijp je marktpositie.",
+                        icon: "🔍",
+                        features: ["Competitor analysis", "Market positioning", "Price benchmarking", "Trend analysis"],
+                        details: "Blijf voorop lopen met uitgebreide marktanalyse en concurrentie-inzichten."
+                    },
+                    {
+                        title: "Financial Planning Tools",
+                        description: "Plan je financiën en voorspel toekomstige winstgevendheid.",
+                        icon: "📈",
+                        features: ["Revenue forecasting", "Cost planning", "Profit projections", "Financial reports"],
+                        details: "Maak solide financiële plannen met geavanceerde forecasting tools."
+                    }
+                ],
+                benefits: [
+                    "Nauwkeurige marge berekening",
+                    "Pricing optimalisatie",
+                    "Marktconcurrentie analyse",
+                    "Financiële planning tools"
+                ],
+                actions: [
+                    { type: "primary", text: "Start Margin Calculator", action: "startMarginCalculator" },
+                    { type: "secondary", text: "View demo", action: "viewDemo" },
+                    { type: "secondary", text: "Pricing plans", action: "viewPricing" }
+                ]
+            }
+        };
+        
+        // Professional Modal System with URL Routing
+        function openModal(type) {
+            const data = modalData[type];
+            if (!data) return;
+            
+            // Update URL with modal parameter
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('modal', type);
+            window.history.pushState({ modal: type }, '', currentUrl);
+            
+            // Populate modal content
+            document.getElementById('modal-hero-icon').textContent = data.heroIcon;
+            document.getElementById('modal-title').textContent = data.title;
+            document.getElementById('modal-subtitle').textContent = data.subtitle;
+            document.getElementById('modal-overview').innerHTML = `<p>${data.overview}</p>`;
+            
+            // Populate sections with professional layout
+            const sectionsContainer = document.getElementById('modal-sections');
+            sectionsContainer.innerHTML = data.sections.map(section => `
+                <div class="modal-section">
+                    <div class="section-header">
+                        <div class="section-icon">${section.icon}</div>
+                        <div class="section-title">${section.title}</div>
+                    </div>
+                    <div class="section-description">${section.description}</div>
+                    <div class="section-features">
+                        ${section.features.map(feature => `
+                            <div class="section-feature">${feature}</div>
+                        `).join('')}
+                    </div>
+                    <div class="section-details">${section.details}</div>
+                </div>
+            `).join('');
+            
+            // Populate benefits
+            const benefitsContainer = document.getElementById('modal-benefits');
+            benefitsContainer.innerHTML = data.benefits.map(benefit => `
+                <div class="benefit-item">${benefit}</div>
+            `).join('');
+            
+            // Populate actions
+            const actionsContainer = document.getElementById('modal-actions');
+            actionsContainer.innerHTML = data.actions.map(action => {
+                if (action.type === 'primary') {
+                    return `<button class="btn-primary" onclick="handleAction('${action.action}')">${action.text}</button>`;
+                } else {
+                    return `<button class="btn-secondary" onclick="handleAction('${action.action}')">${action.text}</button>`;
+                }
+            }).join('');
+            
+            // Show modal
+            document.getElementById('modal-overlay').classList.add('active');
+        }
+        
+        function closeModal() {
+            // Remove modal parameter from URL
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.delete('modal');
+            window.history.pushState({}, '', currentUrl);
+            
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        
+        function handleAction(action) {
+            console.log('Action:', action);
+            // Handle different actions here
+            closeModal();
+        }
+        
+        // Handle browser back/forward buttons for modal state
+        window.addEventListener('popstate', function(event) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const modalType = urlParams.get('modal');
+            
+            if (modalType && modalData[modalType]) {
+                openModal(modalType);
+            } else {
+                closeModal();
+            }
+        });
+        
+        // Check URL on page load for modal parameter
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const modalType = urlParams.get('modal');
+            
+            if (modalType && modalData[modalType]) {
+                // Small delay to ensure DOM is ready
+                setTimeout(() => openModal(modalType), 100);
+            }
+            
+            console.log('DHgate Monitor Toolkit geladen. Ontdek de krachtige tools!');
+        });
+        
+        // Close modal when clicking outside
+        document.getElementById('modal-overlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        langSelect.addEventListener('change', updateWidget);
+        themeSelect.addEventListener('change', updateWidget);
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

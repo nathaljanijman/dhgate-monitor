@@ -278,73 +278,106 @@
             <div class="widget-section">
                 <h3>Huidige Widget</h3>
                 <p>De bestaande widget met uitgebreide functionaliteit en complexe styling</p>
-                <iframe 
-                    id="current-widget-iframe"
+                <div 
+                    id="current-widget-container"
                     class="widget-iframe"
-                    src="/widget?lang=nl&theme=light"
                     title="Huidige DHgate Monitor Widget"
-                ></iframe>
+                ></div>
             </div>
             
             <div class="widget-section">
                 <h3>Nieuwe Modern Widget</h3>
                 <p>Minimalist design met focus op gebruiksvriendelijkheid en moderne UX trends</p>
-                <iframe 
-                    id="modern-widget-iframe"
+                <div 
+                    id="modern-widget-container"
                     class="widget-iframe"
-                    src="/modern-widget?lang=nl&theme=light"
                     title="Nieuwe Modern DHgate Monitor Widget"
-                ></iframe>
+                ></div>
             </div>
         </div>
         
         <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">🎨</div>
+            <div class="feature-card clickable-tile" onclick="openProductModal('design')">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                </div>
                 <h4 class="feature-title">Modern Design System</h4>
                 <p class="feature-description">
-                    Gebruikt Inter font, moderne kleurenpalet en consistente spacing volgens 2024 design trends
+                    Gebruikt Inter font, moderne kleurenpalet en consistente spacing volgens 2025 design trends
                 </p>
+                <div class="tile-click-indicator">Klik voor details</div>
             </div>
             
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
+            <div class="feature-card clickable-tile" onclick="openProductModal('mobile')">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                        <line x1="12" y1="18" x2="12.01" y2="18"/>
+                    </svg>
+                </div>
                 <h4 class="feature-title">Verbeterde Mobile UX</h4>
                 <p class="feature-description">
                     Geoptimaliseerd voor mobile devices met betere touch targets en responsive layout
                 </p>
+                <div class="tile-click-indicator">Klik voor details</div>
             </div>
             
-            <div class="feature-card">
-                <div class="feature-icon">⚡</div>
+            <div class="feature-card clickable-tile" onclick="openProductModal('performance')">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"/>
+                    </svg>
+                </div>
                 <h4 class="feature-title">Snellere Performance</h4>
                 <p class="feature-description">
                     Minder complexe styling en geoptimaliseerde animaties voor betere laadtijden
                 </p>
+                <div class="tile-click-indicator">Klik voor details</div>
             </div>
             
-            <div class="feature-card">
-                <div class="feature-icon">♿</div>
+            <div class="feature-card clickable-tile" onclick="openProductModal('accessibility')">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M16.2 7.8l-2 6.3-6.4-2.1"/>
+                        <path d="M7.8 7.8l2 6.3 6.4-2.1"/>
+                        <circle cx="12" cy="12" r="2"/>
+                    </svg>
+                </div>
                 <h4 class="feature-title">Toegankelijkheid</h4>
                 <p class="feature-description">
                     Verbeterde keyboard navigation, screen reader support en focus management
                 </p>
+                <div class="tile-click-indicator">Klik voor details</div>
             </div>
             
-            <div class="feature-card">
-                <div class="feature-icon">🎯</div>
+            <div class="feature-card clickable-tile" onclick="openProductModal('ux')">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 12l2 2 4-4"/>
+                        <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                </div>
                 <h4 class="feature-title">Focused User Journey</h4>
                 <p class="feature-description">
                     Vereenvoudigde 4-stap flow in plaats van 5 stappen voor minder cognitive load
                 </p>
+                <div class="tile-click-indicator">Klik voor details</div>
             </div>
             
-            <div class="feature-card">
-                <div class="feature-icon">🔧</div>
+            <div class="feature-card clickable-tile" onclick="openProductModal('maintenance')">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 20v-6M6 20V10M18 20V4"/>
+                    </svg>
+                </div>
                 <h4 class="feature-title">Eenvoudiger Onderhoud</h4>
                 <p class="feature-description">
                     Cleaner code structuur met CSS custom properties en modulaire componenten
                 </p>
+                <div class="tile-click-indicator">Klik voor details</div>
             </div>
         </div>
         

@@ -195,17 +195,24 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         
         body {
             font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: transparent;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
             color: var(--text-primary);
             line-height: 1.6;
-            padding: var(--space-6);
+            padding: 0;
+            margin: 0;
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: var(--transition);
         }
         
         .widget-container {
             max-width: 480px;
-            margin: 0 auto;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
             background: var(--glass-bg);
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -213,10 +220,10 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             border-radius: var(--radius-xl);
             padding: var(--space-8);
             box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.1),
+                0 20px 64px rgba(0, 0, 0, 0.3),
+                0 8px 32px rgba(0, 0, 0, 0.2),
                 inset 0 1px 0 rgba(255, 255, 255, 0.2);
             position: relative;
-            overflow: hidden;
         }
         
         .widget-header {
@@ -435,17 +442,19 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         }
         
         .store-card {
-            border: 1px solid ${theme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'};
-            border-radius: var(--radius-md);
+            border: 1px solid ${theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)'};
+            border-radius: var(--radius-lg);
             padding: var(--space-4);
             cursor: pointer;
-            transition: var(--transition);
-            background: ${theme === 'dark' ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)'};
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: ${theme === 'dark' ? 'rgba(30, 41, 59, 0.9)' : 'rgba(255, 255, 255, 0.9)'};
+            backdrop-filter: blur(12px);
             position: relative;
-            min-height: 140px;
+            min-height: 160px;
             overflow: hidden;
         }
         
+        /* Exclusive Linear-style background pattern */
         .store-card::before {
             content: '';
             position: absolute;
@@ -453,32 +462,38 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: var(--store-bg-image);
-            background-size: cover;
-            background-position: center;
-            opacity: 0.15;
-            transition: var(--transition);
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(147, 197, 253, 0.05) 0%, transparent 50%);
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
             z-index: 1;
         }
         
-        /* Fallback background if image fails to load */
-        .store-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, 
-                ${theme === 'dark' ? 'rgba(37, 99, 235, 0.1)' : 'rgba(37, 99, 235, 0.05)'}, 
-                ${theme === 'dark' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.05)'}
-            );
-            opacity: 0.3;
-            z-index: 0;
+        /* Product image overlay for beauty store */
+        .store-card[data-store-id="1"]::before {
+            background: 
+                var(--store-bg-image, none),
+                radial-gradient(circle at 70% 30%, rgba(236, 72, 153, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 30% 70%, rgba(59, 130, 246, 0.06) 0%, transparent 60%);
+            background-size: cover, 80% 80%, 80% 80%;
+            background-position: center, 70% 30%, 30% 70%;
+            background-blend-mode: overlay, normal, normal;
         }
         
-        .store-card:hover::before {
-            opacity: 0.2;
+        /* Eyewear store styling */
+        .store-card[data-store-id="2"]::before {
+            background: 
+                radial-gradient(circle at 60% 40%, rgba(251, 191, 36, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 40% 60%, rgba(37, 99, 235, 0.06) 0%, transparent 60%);
+        }
+        
+        /* Sports store styling */
+        .store-card[data-store-id="3"]::before {
+            background: 
+                radial-gradient(circle at 80% 20%, rgba(34, 197, 94, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 60%);
         }
         
         .store-card > * {
@@ -488,14 +503,32 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         
         .store-card:hover {
             border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
-            transform: translateY(-1px);
+            box-shadow: 
+                0 8px 25px rgba(37, 99, 235, 0.12),
+                0 3px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px) scale(1.01);
+        }
+        
+        .store-card:hover::before {
+            opacity: 1;
+        }
+        
+        .store-card:hover .store-icon {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
         }
         
         .store-card.selected {
             border-color: var(--primary);
-            background: rgba(37, 99, 235, 0.05);
-            box-shadow: 0 0 0 1px var(--primary);
+            background: rgba(37, 99, 235, 0.08);
+            box-shadow: 
+                0 0 0 2px rgba(37, 99, 235, 0.2),
+                0 8px 25px rgba(37, 99, 235, 0.15);
+            transform: translateY(-1px);
+        }
+        
+        .store-card.selected::before {
+            opacity: 1;
         }
         
         .ai-badge {
@@ -514,9 +547,27 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         
         .store-header {
             display: flex;
-            flex-direction: column;
             align-items: flex-start;
-            margin-bottom: var(--space-2);
+            gap: var(--space-3);
+            margin-bottom: var(--space-3);
+        }
+        
+        .store-icon {
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            transition: var(--transition);
+        }
+        
+        .store-name-container {
+            flex: 1;
         }
         
         .store-name {
@@ -524,7 +575,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             color: ${theme === 'dark' ? '#FFFFFF' : '#111827'};
             font-size: 0.875rem;
             line-height: 1.3;
-            flex: 1;
+            margin-bottom: var(--space-1);
         }
         
 
@@ -602,6 +653,25 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             font-size: 0.75rem;
             color: ${theme === 'dark' ? '#94A3B8' : '#6B7280'};
             line-height: 1.4;
+            margin-bottom: var(--space-2);
+        }
+        
+        .url-format-hint {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            color: ${theme === 'dark' ? '#94A3B8' : '#6B7280'};
+            font-size: 0.75rem;
+            margin-bottom: var(--space-3);
+            padding: var(--space-2);
+            background: ${theme === 'dark' ? 'rgba(30, 41, 59, 0.6)' : 'rgba(255, 255, 255, 0.6)'};
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--primary);
+        }
+        
+        .url-format-hint svg {
+            color: var(--primary);
+            flex-shrink: 0;
         }
         
         .custom-store-input-group {
@@ -621,7 +691,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             color: ${theme === 'dark' ? '#FFFFFF' : '#111827'};
             font-size: 0.875rem;
             font-family: inherit;
-            min-height: 32px;
+            min-height: 28px;
         }
         
         .custom-store-input:focus {
@@ -636,11 +706,11 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         
         .custom-store-btn {
             flex-shrink: 0;
-            min-width: 60px;
+            min-width: 50px;
             padding: var(--space-1) var(--space-2);
-            min-height: 32px;
+            min-height: 28px;
             white-space: nowrap;
-            font-size: 0.625rem;
+            font-size: 0.6rem;
             font-weight: 400;
             border-radius: var(--radius-sm);
         }
@@ -1050,13 +1120,34 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                                 <div class="store-check" aria-hidden="true">✓</div>
                                 
                                 <div class="store-header">
-                                    <div class="store-name">${store.name}</div>
-                                    ${store.verified ? `<div class="verified-badge">
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        ${lang === 'nl' ? 'Geverifieerd' : 'Verified'}
-                                    </div>` : ''}
+                                    <div class="store-icon">
+                                        ${store.id === 1 ? `
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                                <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                                <path d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                            </svg>
+                                        ` : store.id === 2 ? `
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="3"/>
+                                                <path d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6z"/>
+                                            </svg>
+                                        ` : `
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="10"/>
+                                                <polygon points="10,8 16,12 10,16 10,8"/>
+                                            </svg>
+                                        `}
+                                    </div>
+                                    <div class="store-name-container">
+                                        <div class="store-name">${store.name}</div>
+                                        ${store.verified ? `<div class="verified-badge">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            ${lang === 'nl' ? 'Geverifieerd' : 'Verified'}
+                                        </div>` : ''}
+                                    </div>
                                 </div>
                                 
                                                                 <div class="store-proposition">${store.reason}</div>
@@ -1085,6 +1176,14 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                     <div class="custom-store-header">
                         <h3 class="custom-store-title">${t.addCustomTitle}</h3>
                         <p class="custom-store-description">${t.addCustomDescription}</p>
+                        <div class="url-format-hint">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3"/>
+                                <line x1="12" y1="17" x2="12.01" y2="17"/>
+                            </svg>
+                            <span>${lang === 'nl' ? 'Format: https://www.dhgate.com/store/[winkelnaam]' : 'Format: https://www.dhgate.com/store/[storename]'}</span>
+                        </div>
                     </div>
                     
                     <div class="custom-store-input-group">
@@ -1255,51 +1354,18 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             location.reload();
         }
         
-        // Test DHgate image loading and fallback to alternatives
-        function testAndSetBackgroundImages() {
+        // Verify DHgate images are loading correctly
+        function verifyBackgroundImages() {
             const storeCards = document.querySelectorAll('.store-card');
-            console.log(\`Found \${storeCards.length} store cards\`);
-            
-            // Try multiple DHgate image sources
-            const dhgateImageSources = [
-                [
-                    'https://image.dhgate.com/200x200/f2/albu/g17/M00/7E/A4/rBVa4l2XK6SAYVhAAAFuQb0upcU892.jpg',
-                    'https://image.dhgate.com/200x200/f2/albu/g18/M00/7E/A4/rBVa4l2XK6SAYVhAAAFuQb0upcU892.jpg', 
-                    'https://image.dhgate.com/200x200/f2/albu/g19/M00/7E/A4/rBVa4l2XK6SAYVhAAAFuQb0upcU892.jpg'
-                ],
-                [
-                    'https://img.dhgate.com/200x200/f2/albu/g17/M00/7E/A4/rBVa4l2XK6SAYVhAAAFuQb0upcU892.jpg',
-                    'https://img.dhgate.com/200x200/f2/albu/g18/M00/7E/A4/rBVa4l2XK6SAYVhAAAFuQb0upcU892.jpg',
-                    'https://img.dhgate.com/200x200/f2/albu/g19/M00/7E/A4/rBVa4l2XK6SAYVhAAAFuQb0upcU892.jpg'
-                ],
-                [
-                    'https://f.dhgate.com/albu/g17/M00/7E/A4/rBVa4l2XK6SAYVhAAAFuQb0upcU892.jpg',
-                    'https://f.dhgate.com/albu/g18/M00/7E/A4/rBVa4l2XK6SAYVhAAAFuQb0upcU892.jpg',
-                    'https://f.dhgate.com/albu/g19/M00/7E/A4/rBVa4l2XK6SAYVhAAAFuQb0upcU892.jpg'
-                ]
-            ];
+            console.log('Verifying ' + storeCards.length + ' store cards with DHgate images');
             
             storeCards.forEach((card, index) => {
-                console.log(\`Testing images for store \${index + 1}\`);
-                
-                // Try each source until one works
-                let imageFound = false;
-                dhgateImageSources.forEach((sourceSet, sourceIndex) => {
-                    if (imageFound) return;
-                    
-                    const img = new Image();
-                    img.onload = function() {
-                        if (!imageFound) {
-                            card.style.setProperty('--store-bg-image', \`url('\${sourceSet[index]}')\`);
-                            console.log(\`✅ DHgate image loaded for store \${index + 1} from source \${sourceIndex + 1}\`);
-                            imageFound = true;
-                        }
-                    };
-                    img.onerror = function() {
-                        console.log(\`❌ DHgate image failed for store \${index + 1} from source \${sourceIndex + 1}\`);
-                    };
-                    img.src = sourceSet[index];
-                });
+                const bgImage = getComputedStyle(card).getPropertyValue('--store-bg-image');
+                if (bgImage && bgImage !== 'none') {
+                    console.log('✅ Store ' + (index + 1) + ' has background image: ' + bgImage);
+                } else {
+                    console.log('⚠️ Store ' + (index + 1) + ' missing background image');
+                }
             });
         }
         
@@ -1309,7 +1375,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             const randomPart = Math.random().toString(36).substring(2, 15);
             const email = document.getElementById('email-input').value;
             const emailHash = btoa(email).substring(0, 8);
-            return \`dh_\${timestamp}_\${randomPart}_\${emailHash}\`;
+            return 'dh_' + timestamp + '_' + randomPart + '_' + emailHash;
         }
         
         // Expert User Type Detection
@@ -1404,7 +1470,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         }
         
         function selectStore(storeId) {
-            const storeCard = document.querySelector(\`[data-store-id="\${storeId}"]\`);
+            const storeCard = document.querySelector('[data-store-id="' + storeId + '"]');
             const isSelected = selectedStores.includes(storeId);
             
             if (isSelected) {
@@ -1500,7 +1566,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             // Update dashboard link with unique key
             const dashboardLink = document.querySelector('.dashboard-link');
             if (dashboardLink) {
-                dashboardLink.href = \`/dashboard?key=\${dashboardKey}\`;
+                dashboardLink.href = '/dashboard?key=' + dashboardKey;
             }
         }
         
@@ -1508,7 +1574,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             const submitBtn = document.getElementById('submit-btn');
             const originalText = submitBtn.innerHTML;
             
-            submitBtn.innerHTML = \`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Processing...\`;
+            submitBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Processing...';
             submitBtn.disabled = true;
             
             // Get form data
@@ -1650,7 +1716,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             generateDashboardKey();
             
             // Test and set background images after DOM is loaded
-            setTimeout(testAndSetBackgroundImages, 500);
+            setTimeout(verifyBackgroundImages, 500);
         });
     </script>
 </body>

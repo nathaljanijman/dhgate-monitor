@@ -5580,6 +5580,9 @@ export default {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
           });
         
+        case '/toolkit':
+          return await handleToolkit(request, env);
+
         default:
 
           
@@ -6302,6 +6305,15 @@ async function handleContactPage(request, env) {
   const lang = getLanguage(request);
   const t = getTranslations(lang);
   const html = generateContactHTML(t, lang);
+  return new Response(html, {
+    headers: { 'Content-Type': 'text/html' }
+  });
+}
+
+async function handleToolkit(request, env) {
+  const lang = getLanguage(request);
+  const t = getTranslations(lang);
+  const html = generateToolkitHTML(t, lang);
   return new Response(html, {
     headers: { 'Content-Type': 'text/html' }
   });
@@ -21474,4 +21486,541 @@ function generateDeleteDataErrorHTML(lang, theme, errorType) {
 </html>
   `;
 
+}
+
+function generateToolkitHTML(t, lang, theme = 'light') {
+  return `<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${lang === 'nl' ? 'Toolkit - DHgate Monitor' : 'Toolkit - DHgate Monitor'}</title>
+    <meta name="description" content="${lang === 'nl' ? 'Professionele tools voor DHgate monitoring: shop tracking, product tracking en marge calculator.' : 'Professional tools for DHgate monitoring: shop tracking, product tracking and margin calculator.'}">
+    <link rel="icon" href="/assets/logo.png" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6; color: #1a202c;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container { 
+            max-width: 1400px; margin: 0 auto; padding: 3rem 2rem;
+            opacity: 0; animation: pageReveal 1.2s ease forwards;
+        }
+        
+        @keyframes pageReveal {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        header { 
+            text-align: center; margin-bottom: 4rem; color: white;
+            opacity: 0; animation: headerFloat 1.5s ease 0.3s forwards;
+        }
+        
+        @keyframes headerFloat {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        header h1 {
+            font-size: 3.5rem; font-weight: 800; margin-bottom: 1.5rem;
+            text-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #ffffff, #e0e0e0);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        header p { 
+            font-size: 1.3rem; opacity: 0.9; max-width: 600px; margin: 0 auto;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .toolkit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2.5rem; margin-bottom: 4rem;
+        }
+        
+        .tool-card {
+            background: rgba(255,255,255,0.95); border-radius: 20px; 
+            padding: 3rem 2.5rem; min-height: 320px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; overflow: hidden; cursor: pointer;
+            backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2);
+            opacity: 0; transform: translateY(40px);
+        }
+        
+        .tool-card:nth-child(1) { animation: cardReveal 0.8s ease 0.6s forwards; }
+        .tool-card:nth-child(2) { animation: cardReveal 0.8s ease 0.8s forwards; }
+        .tool-card:nth-child(3) { animation: cardReveal 0.8s ease 1.0s forwards; }
+        
+        @keyframes cardReveal {
+            0% { opacity: 0; transform: translateY(40px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        .tool-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(102, 126, 234, 0.03) 100%);
+            opacity: 0; transition: opacity 0.4s ease;
+        }
+        
+        .tool-card:hover::before { opacity: 1; }
+        
+        .tool-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+        
+        .tool-background {
+            position: absolute; top: 0; right: 0; width: 200px; height: 200px;
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            border-radius: 50%; transform: translate(60px, -60px);
+            transition: all 0.4s ease;
+        }
+        
+        .tool-card:hover .tool-background {
+            transform: translate(40px, -40px) scale(1.2);
+        }
+        
+        .tool-icon-integrated {
+            position: absolute; top: 2rem; right: 2rem;
+            width: 80px; height: 80px; opacity: 0.1;
+            transition: all 0.4s ease; z-index: 1;
+        }
+        
+        .tool-card:hover .tool-icon-integrated {
+            opacity: 0.2; transform: scale(1.1) rotate(5deg);
+        }
+        
+        .tool-icon-integrated svg {
+            width: 100%; height: 100%; fill: #667eea;
+        }
+        
+        .tool-content {
+            position: relative; z-index: 2; text-align: left;
+            display: flex; flex-direction: column; height: 100%;
+        }
+        
+        .tool-card h3 {
+            font-size: 1.6rem; font-weight: 700; color: #1a202c; 
+            margin-bottom: 1rem; line-height: 1.3;
+        }
+        
+        .tool-description {
+            font-size: 1rem; color: #4a5568; line-height: 1.6;
+            flex: 1; margin-bottom: 2rem;
+        }
+        
+        .tool-expand {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            color: #667eea; font-weight: 600; font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-card:hover .tool-expand {
+            color: #4c51bf; transform: translateX(5px);
+        }
+        
+        .tool-expand svg { width: 16px; height: 16px; fill: currentColor; }
+        
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.95); z-index: 1000; padding: 0; overflow-y: auto;
+        }
+        
+        .modal-content {
+            background: #1a1a1a; color: white; border-radius: 20px; max-width: 1200px;
+            margin: 0; position: relative; min-height: 100vh; display: flex; flex-direction: column;
+            opacity: 0; transform: scale(0.9) translateY(30px);
+            animation: luxuriousModalEntry 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+        
+        @keyframes luxuriousModalEntry {
+            0% { 
+                opacity: 0; 
+                transform: scale(0.9) translateY(30px);
+                filter: blur(10px);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(0.95) translateY(15px);
+                filter: blur(5px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: scale(1) translateY(0);
+                filter: blur(0px);
+            }
+        }
+        
+        .modal-exit {
+            animation: luxuriousModalExit 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+        
+        @keyframes luxuriousModalExit {
+            0% { 
+                opacity: 1; 
+                transform: scale(1) translateY(0);
+                filter: blur(0px);
+            }
+            100% { 
+                opacity: 0; 
+                transform: scale(0.85) translateY(-40px);
+                filter: blur(15px);
+            }
+        }
+        
+        .modal-hero {
+            position: relative; padding: 4rem 3rem 2rem 3rem; text-align: center;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .modal-illustration {
+            width: 300px; height: 200px; margin: 0 auto 3rem auto;
+            position: relative; perspective: 1000px;
+        }
+        
+        .isometric-scene {
+            width: 100%; height: 100%; position: relative;
+            transform-style: preserve-3d; animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: rotateX(15deg) rotateY(-15deg) translateY(0px); }
+            50% { transform: rotateX(15deg) rotateY(-15deg) translateY(-10px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        .modal-title h1 {
+            font-size: 3rem; font-weight: 700; margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff, #a0a0a0);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .modal-subtitle {
+            font-size: 1.2rem; color: #a0a0a0; line-height: 1.6;
+            max-width: 600px; margin: 0 auto 1rem auto;
+        }
+        
+        .modal-description {
+            font-size: 1rem; color: #808080; line-height: 1.7;
+            max-width: 500px; margin: 0 auto;
+        }
+        
+        .modal-close {
+            position: absolute; top: 2rem; right: 3rem; background: rgba(255,255,255,0.1);
+            border: none; width: 40px; height: 40px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s ease; backdrop-filter: blur(10px);
+        }
+        
+        .modal-close:hover { 
+            background: rgba(255,255,255,0.2); transform: scale(1.1);
+        }
+        .modal-close svg { width: 20px; height: 20px; stroke: white; }
+        
+        .modal-body { 
+            padding: 3rem; flex: 1; background: #1a1a1a;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .feature-section {
+            margin-bottom: 2rem;
+        }
+        
+        .feature-section h3 {
+            font-size: 1.3rem; font-weight: 600; color: #2d3748;
+            margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;
+        }
+        
+        .feature-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .feature-item {
+            padding: 1rem; background: #f8fafc; border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .feature-item h4 {
+            font-weight: 600; color: #2d3748; margin-bottom: 0.5rem;
+        }
+        
+        .feature-item p { color: #718096; font-size: 0.9rem; }
+        
+        .status-badge {
+            display: inline-flex; align-items: center; padding: 0.5rem 1rem;
+            border-radius: 50px; font-size: 0.85rem; font-weight: 600;
+        }
+        
+        .status-available { background: #f0fff4; color: #22543d; }
+        .status-coming-soon { background: #fef5e7; color: #744210; }
+        
+        .tool-actions {
+            margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e2e8f0;
+            display: flex; gap: 1rem; justify-content: flex-end;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem; border-radius: 8px; border: none;
+            font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+            text-decoration: none; display: inline-flex; align-items: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f7fafc; color: #4a5568; border: 1px solid #e2e8f0;
+        }
+        
+        .btn-secondary:hover { background: #e2e8f0; }
+        
+        .back-button {
+            position: fixed; top: 2rem; left: 2rem;
+            background: rgba(255,255,255,0.9); border: none; border-radius: 50px;
+            padding: 0.75rem 1.25rem; color: #4a5568; text-decoration: none;
+            display: flex; align-items: center; gap: 0.5rem; font-weight: 600;
+            backdrop-filter: blur(10px); transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: white; transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            header h1 { font-size: 2rem; }
+            .toolkit-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+            .modal-content { margin: 1rem; }
+            .modal-header { padding: 1.5rem 1.5rem 1rem 1.5rem; }
+            .modal-body { padding: 1.5rem; }
+            .back-button { top: 1rem; left: 1rem; padding: 0.5rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        ${lang === 'nl' ? 'Terug' : 'Back'}
+    </a>
+    
+    <div class="container">
+        <header>
+            <h1>${lang === 'nl' ? 'DHgate Monitor Toolkit' : 'DHgate Monitor Toolkit'}</h1>
+            <p>${lang === 'nl' ? 'Professionele tools voor DHgate sellers' : 'Professional tools for DHgate sellers'}</p>
+        </header>
+        
+        <div class="toolkit-grid">
+            <div class="tool-card" onclick="openToolModal('shop-tracking')">
+                <div class="tool-background"></div>
+                <div class="tool-icon-integrated">
+                    <svg viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"/><path d="M8 21v-4a2 2 0 012-2h4a2 2 0 012 2v4"/></svg>
+                </div>
+                <div class="tool-content">
+                    <h3>${lang === 'nl' ? 'Shop Tracking' : 'Shop Tracking'}</h3>
+                    <p class="tool-description">${lang === 'nl' ? 'Monitor de prestaties van DHgate shops, track bestellingen en analyseer trends om de beste leveranciers te identificeren.' : 'Monitor DHgate shop performance, track orders and analyze trends to identify the best suppliers.'}</p>
+                    <div class="tool-expand">
+                        ${lang === 'nl' ? 'Meer informatie' : 'Learn more'}
+                        <svg viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tool-card" onclick="openToolModal('product-tracking')">
+                <div class="tool-background"></div>
+                <div class="tool-icon-integrated">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 01-2 2H7a2 2 0 01-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 010-5A4.8 8 0 0112 8a4.8 8 0 014.5-5 2.5 2.5 0 010 5"/></svg>
+                </div>
+                <div class="tool-content">
+                    <h3>${lang === 'nl' ? 'Product Tracking' : 'Product Tracking'}</h3>
+                    <p class="tool-description">${lang === 'nl' ? 'Volg specifieke producten, monitor prijswijzigingen en ontvang alerts wanneer je favoriete items in voorraad komen.' : 'Track specific products, monitor price changes and receive alerts when your favorite items come in stock.'}</p>
+                    <div class="tool-expand">
+                        ${lang === 'nl' ? 'Meer informatie' : 'Learn more'}
+                        <svg viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tool-card" onclick="openToolModal('margin-calculator')">
+                <div class="tool-background"></div>
+                <div class="tool-icon-integrated">
+                    <svg viewBox="0 0 24 24"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                </div>
+                <div class="tool-content">
+                    <h3>${lang === 'nl' ? 'Marge Calculator' : 'Margin Calculator'}</h3>
+                    <p class="tool-description">${lang === 'nl' ? 'Bereken je winst marge, inclusief verzendkosten, belastingen en andere fees om je pricing strategie te optimaliseren.' : 'Calculate your profit margin, including shipping costs, taxes and other fees to optimize your pricing strategy.'}</p>
+                    <div class="tool-expand">
+                        ${lang === 'nl' ? 'Meer informatie' : 'Learn more'}
+                        <svg viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="toolModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeToolModal()">
+                <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+    
+    <script>
+        const toolData = {
+            'shop-tracking': {
+                title: '${lang === 'nl' ? 'Shop Tracking' : 'Shop Tracking'}',
+                description: '${lang === 'nl' ? 'Monitor DHgate shops en analyseer prestaties' : 'Monitor DHgate shops and analyze performance'}',
+                status: 'coming-soon',
+                icon: '<svg viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"/><path d="M8 21v-4a2 2 0 012-2h4a2 2 0 012 2v4"/></svg>',
+                features: [
+                    {
+                        title: '${lang === 'nl' ? 'Real-time Monitoring' : 'Real-time Monitoring'}',
+                        description: '${lang === 'nl' ? 'Volg shop prestaties live' : 'Track shop performance live'}'
+                    },
+                    {
+                        title: '${lang === 'nl' ? 'Prestatie Analytics' : 'Performance Analytics'}',
+                        description: '${lang === 'nl' ? 'Gedetailleerde rapporten en trends' : 'Detailed reports and trends'}'
+                    },
+                    {
+                        title: '${lang === 'nl' ? 'Order Tracking' : 'Order Tracking'}',
+                        description: '${lang === 'nl' ? 'Bestellingen monitoring systeem' : 'Order monitoring system'}'
+                    },
+                    {
+                        title: '${lang === 'nl' ? 'Leverancier Vergelijking' : 'Supplier Comparison'}',
+                        description: '${lang === 'nl' ? 'Vergelijk verschillende leveranciers' : 'Compare different suppliers'}'
+                    }
+                ]
+            },
+            'product-tracking': {
+                title: '${lang === 'nl' ? 'Product Tracking' : 'Product Tracking'}',
+                description: '${lang === 'nl' ? 'Volg specifieke producten en prijswijzigingen' : 'Track specific products and price changes'}',
+                status: 'coming-soon',
+                icon: '<svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 01-2 2H7a2 2 0 01-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 010-5A4.8 8 0 0112 8a4.8 8 0 014.5-5 2.5 2.5 0 010 5"/></svg>',
+                features: [
+                    {
+                        title: '${lang === 'nl' ? 'Prijs Alerts' : 'Price Alerts'}',
+                        description: '${lang === 'nl' ? 'Ontvang notificaties bij prijswijzigingen' : 'Receive notifications on price changes'}'
+                    },
+                    {
+                        title: '${lang === 'nl' ? 'Voorraad Monitoring' : 'Stock Monitoring'}',
+                        description: '${lang === 'nl' ? 'Track product beschikbaarheid' : 'Track product availability'}'
+                    },
+                    {
+                        title: '${lang === 'nl' ? 'Product Geschiedenis' : 'Product History'}',
+                        description: '${lang === 'nl' ? 'Historische data en trends' : 'Historical data and trends'}'
+                    },
+                    {
+                        title: '${lang === 'nl' ? 'Concurrentie Analyse' : 'Competition Analysis'}',
+                        description: '${lang === 'nl' ? 'Vergelijk met concurrerende producten' : 'Compare with competing products'}'
+                    }
+                ]
+            },
+            'margin-calculator': {
+                title: '${lang === 'nl' ? 'Marge Calculator' : 'Margin Calculator'}',
+                description: '${lang === 'nl' ? 'Bereken winst marges en ROI' : 'Calculate profit margins and ROI'}',
+                status: 'available',
+                icon: '<svg viewBox="0 0 24 24"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>',
+                features: [
+                    {
+                        title: '${lang === 'nl' ? 'Winst Berekening' : 'Profit Calculation'}',
+                        description: '${lang === 'nl' ? 'Bereken exacte winst marges' : 'Calculate exact profit margins'}'
+                    },
+                    {
+                        title: '${lang === 'nl' ? 'Verzendkosten' : 'Shipping Costs'}',
+                        description: '${lang === 'nl' ? 'Inclusief alle verzendkosten' : 'Including all shipping costs'}'
+                    },
+                    {
+                        title: '${lang === 'nl' ? 'BTW Calculator' : 'Tax Calculator'}',
+                        description: '${lang === 'nl' ? 'Automatische BTW berekeningen' : 'Automatic tax calculations'}'
+                    },
+                    {
+                        title: '${lang === 'nl' ? 'ROI Analyse' : 'ROI Analysis'}',
+                        description: '${lang === 'nl' ? 'Return on investment metrics' : 'Return on investment metrics'}'
+                    }
+                ]
+            }
+        };
+        
+        function getIsometricIllustration(toolId) {
+            const illustrations = {
+                'shop-tracking': '<div class="isometric-scene"><div style="position: absolute; width: 80px; height: 50px; background: linear-gradient(45deg, #4a90e2, #357abd); border-radius: 8px; transform: rotateX(60deg) rotateY(-45deg); left: 50%; top: 30%; margin-left: -40px;"></div><div style="position: absolute; width: 60px; height: 40px; background: linear-gradient(45deg, #50c878, #3a9b5c); border-radius: 6px; transform: rotateX(60deg) rotateY(-45deg); left: 60%; top: 50%; margin-left: -30px;"></div><div style="position: absolute; width: 70px; height: 45px; background: linear-gradient(45deg, #ff6b6b, #e55a5a); border-radius: 7px; transform: rotateX(60deg) rotateY(-45deg); left: 40%; top: 60%; margin-left: -35px;"></div></div>',
+                'product-tracking': '<div class="isometric-scene"><div style="position: absolute; width: 100px; height: 60px; background: linear-gradient(45deg, #667eea, #764ba2); border-radius: 10px; transform: rotateX(60deg) rotateY(-45deg); left: 50%; top: 40%; margin-left: -50px; box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);"></div><div style="position: absolute; width: 20px; height: 20px; background: #ffffff; border-radius: 50%; left: 50%; top: 25%; margin-left: -10px; animation: pulse 2s infinite;"></div></div>',
+                'margin-calculator': '<div class="isometric-scene"><div style="position: absolute; width: 120px; height: 80px; background: linear-gradient(45deg, #50c878, #3a9b5c); border-radius: 12px; transform: rotateX(60deg) rotateY(-45deg); left: 50%; top: 35%; margin-left: -60px;"></div><div style="position: absolute; width: 30px; height: 4px; background: #ffffff; left: 50%; top: 45%; margin-left: -15px; transform: rotateY(-45deg);"></div><div style="position: absolute; width: 4px; height: 30px; background: #ffffff; left: 50%; top: 35%; margin-left: -2px; transform: rotateX(60deg);"></div></div>'
+            };
+            return illustrations[toolId] || '';
+        }
+        
+        function openToolModal(toolId) {
+            const tool = toolData[toolId];
+            const modal = document.getElementById('toolModal');
+            const modalBody = document.getElementById('modalBody');
+            
+            const statusClass = tool.status === 'available' ? 'status-available' : 'status-coming-soon';
+            const statusText = tool.status === 'available' 
+                ? '${lang === 'nl' ? 'Beschikbaar' : 'Available'}' 
+                : '${lang === 'nl' ? 'Binnenkort' : 'Coming Soon'}';
+            
+            const illustration = getIsometricIllustration(toolId);
+            
+            modalBody.innerHTML = '<div class="modal-hero"><div class="modal-illustration">' + illustration + '</div><div class="modal-title"><h1>' + tool.title + '</h1></div><p class="modal-subtitle">' + tool.description + '</p><p class="modal-description">' + (toolId === 'shop-tracking' ? '${lang === 'nl' ? 'DHgate Monitor brengt de kracht van professionele shop analytics naar jouw business. Monitor prestaties, track trends en identificeer de beste leveranciers.' : 'DHgate Monitor brings the power of professional shop analytics to your business. Monitor performance, track trends and identify the best suppliers.'}' : toolId === 'product-tracking' ? '${lang === 'nl' ? 'Blijf altijd op de hoogte van je favoriete producten. Ontvang real-time notificaties over prijswijzigingen en voorraad updates.' : 'Stay always informed about your favorite products. Receive real-time notifications about price changes and stock updates.'}' : '${lang === 'nl' ? 'Maak data-gedreven beslissingen met onze geavanceerde marge calculator. Bereken exacte winsten inclusief alle kosten en belastingen.' : 'Make data-driven decisions with our advanced margin calculator. Calculate exact profits including all costs and taxes.'}') + '</p></div><div class="modal-body"><div class="feature-section"><h3 style="color: white; margin-bottom: 2rem;">${lang === 'nl' ? 'Kern Functionaliteiten' : 'Core Features'}</h3><div class="feature-grid">' + tool.features.map(f => '<div class="feature-item" style="background: rgba(255,255,255,0.05); border-left: 4px solid #667eea; color: white;"><h4 style="color: white;">' + f.title + '</h4><p style="color: #a0a0a0;">' + f.description + '</p></div>').join('') + '</div></div><div class="tool-actions" style="border-top: 1px solid #333;"><span class="status-badge ' + statusClass + '">' + statusText + '</span>' + (tool.status === 'available' && toolId === 'margin-calculator' ? '<button class="btn btn-primary" onclick="openCalculator(); closeToolModal();">${lang === 'nl' ? 'Tool Openen' : 'Open Tool'}</button>' : '') + '</div></div>';
+            
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeToolModal() {
+            const modal = document.getElementById('toolModal');
+            const modalContent = modal.querySelector('.modal-content');
+            
+            modalContent.classList.add('modal-exit');
+            
+            setTimeout(() => {
+                modal.style.display = 'none';
+                modalContent.classList.remove('modal-exit');
+                document.body.style.overflow = 'auto';
+            }, 600);
+        }
+        
+        function openCalculator() {
+            // Implementation for calculator modal would go here
+            alert('${lang === 'nl' ? 'Marge Calculator wordt geladen...' : 'Margin Calculator loading...'}');
+        }
+        
+        document.getElementById('toolModal').addEventListener('click', function(e) {
+            if (e.target === this) closeToolModal();
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeToolModal();
+        });
+    </script>
+</body>
+</html>`;
 }

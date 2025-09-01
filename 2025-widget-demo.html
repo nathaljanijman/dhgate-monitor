@@ -101,6 +101,7 @@
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             background: white;
+            overflow: hidden;
         }
         
         .features-grid {
@@ -225,7 +226,7 @@
         </div>
         
         <div class="widget-preview">
-            <iframe id="widget-frame" class="widget-frame" src="/widget?lang=nl&theme=light"></iframe>
+            <div id="widget-container" class="widget-frame"></div>
         </div>
         
         <div class="features-grid">
@@ -331,19 +332,30 @@
         </table>
     </div>
     
+    <!-- Import the widget script -->
+    <script type="module" src="2025-signup-widget.js"></script>
+    
     <script>
         const langSelect = document.getElementById('lang-select');
         const themeSelect = document.getElementById('theme-select');
-        const widgetFrame = document.getElementById('widget-frame');
+        const widgetContainer = document.getElementById('widget-container');
         
         function updateWidget() {
             const lang = langSelect.value;
             const theme = themeSelect.value;
-            widgetFrame.src = `/widget?lang=${lang}&theme=${theme}`;
+            
+            // Generate widget directly instead of loading from API
+            const widgetContainer = document.getElementById('widget-container');
+            widgetContainer.innerHTML = generateSignupWidget(null, lang, theme);
         }
         
         langSelect.addEventListener('change', updateWidget);
         themeSelect.addEventListener('change', updateWidget);
+        
+        // Initialize widget on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateWidget();
+        });
         
         // Track demo interactions
         if (typeof gtag !== 'undefined') {
