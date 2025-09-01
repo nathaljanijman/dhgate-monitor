@@ -16280,31 +16280,27 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
             background: var(--card-bg);
         }
         
-        .subscription-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 2rem 2rem;
-            box-shadow: var(--card-shadow);
-            position: relative;
-            overflow: hidden;
+        .subscription-section {
+            padding: 2rem 0;
+            text-align: center;
         }
         
-        .subscription-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--btn-primary-bg);
+        .subscription-section iframe {
+            max-width: 100%;
+            margin: 0 auto;
+            display: block;
         }
         
-        /* ✨ MODERN UX ENHANCEMENTS */
-        .modern-signup {
-            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(var(--accent-color-rgb), 0.02) 100%);
-            border: 2px solid rgba(var(--accent-color-rgb), 0.1);
-            padding: 3rem 2.5rem;
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .subscription-section {
+                padding: 1rem 0;
+            }
+            
+            .subscription-section iframe {
+                width: 100%;
+                height: 600px;
+            }
         }
         
         /* Progress Indicator */
@@ -18668,42 +18664,17 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
 
     <!-- Enhanced Widget Signup Section -->
     <section id="subscription-form" class="subscription-section" aria-labelledby="subscription-title">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="subscription-card modern-signup">
-                        <iframe 
-                            src="/widget?lang=${lang}&theme=${theme}"
-                            width="100%" 
-                            height="800"
-                            frameborder="0"
-                            title="DHgate Monitor Subscription Widget"
-                            allow="clipboard-write"
-                            style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: none;"
-                            referrerpolicy="strict-origin-when-cross-origin">
-                        </iframe>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <iframe 
+            src="/widget?lang=${lang}&theme=${theme}"
+            width="100%" 
+            height="800"
+            frameborder="0"
+            title="DHgate Monitor Subscription Widget"
+            allow="clipboard-write"
+            style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: none;"
+            referrerpolicy="strict-origin-when-cross-origin">
+        </iframe>
     </section>
-
-    <div class="container py-5">
-        <!-- Legal Footer -->
-        <div class="row mt-4 mt-md-5">
-            <div class="col text-center">
-                <div class="text-muted small d-flex flex-column flex-md-row justify-content-center gap-2 gap-md-3">
-                    <a href="/privacy?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Privacybeleid' : 'Privacy Policy'}</a>
-                    <a href="/terms?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Algemene voorwaarden' : 'Terms of Service'}</a>
-                    <a href="/service?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Service' : 'Service'}</a>
-                    <a href="/delete-data?lang=${lang}&theme=${theme}" class="text-muted">${lang === 'nl' ? 'Verwijder mijn data' : 'Delete my data'}</a>
-                </div>
-                <div class="text-muted small mt-2">
-                    © ${new Date().getFullYear()} DHgate Monitor - ${lang === 'nl' ? 'Juridische informatie' : 'Legal information'}
-                </div>
-            </div>
-        </div>
-    </div>
     
     
     <script>

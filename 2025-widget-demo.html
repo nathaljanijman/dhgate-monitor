@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 DHgate Monitor Widget Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: #333;
+        }
+        
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .demo-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2563EB, #EA580C);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        
+        .demo-subtitle {
+            font-size: 1.125rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .control-label {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .control-select {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 500;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .control-select:focus {
+            outline: none;
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .widget-preview {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        
+        .widget-frame {
+            width: 100%;
+            max-width: 480px;
+            height: 600px;
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: white;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+        
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .feature-description {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .trend-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .comparison-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .status-yes {
+            color: #10B981;
+            font-weight: 600;
+        }
+        
+        .status-no {
+            color: #EF4444;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .demo-container { padding: 1.5rem; }
+            .demo-title { font-size: 2rem; }
+            .controls { flex-direction: column; align-items: center; }
+            .widget-frame { height: 500px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1 class="demo-title">2025 DHgate Monitor Widget</h1>
+            <p class="demo-subtitle">Toekomstbestendige signup widget met 2024/2025 UX trends en Raleway font</p>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label class="control-label">Taal:</label>
+                <select class="control-select" id="lang-select">
+                    <option value="nl">Nederlands</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Thema:</label>
+                <select class="control-select" id="theme-select">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="widget-preview">
+            <iframe id="widget-frame" class="widget-frame" src="/widget?lang=nl&theme=light"></iframe>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3 class="feature-title">AI-Powered Personalization<span class="trend-badge">2025</span></h3>
+                <p class="feature-description">Slimme winkel aanbevelingen gebaseerd op gebruikerstype en gedrag. De AI detecteert automatisch het beste type gebruiker en past de interface aan.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">👆</div>
+                <h3 class="feature-title">Gesture Navigation<span class="trend-badge">2025</span></h3>
+                <p class="feature-description">Swipe tussen stappen voor natuurlijke mobile interactie. Ondersteunt haptic feedback voor tactiele bevestiging van acties.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">♿</div>
+                <h3 class="feature-title">Accessibility-First<span class="trend-badge">2025</span></h3>
+                <p class="feature-description">WCAG 3.0 ready met cognitive accessibility features. Keyboard navigation, screen reader support, en reduced motion opties.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🌙</div>
+                <h3 class="feature-title">Dark Mode by Default<span class="trend-badge">2025</span></h3>
+                <p class="feature-description">Automatische dark/light mode detectie met system preference support. OLED-optimized kleuren voor energiebesparing.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">✨</div>
+                <h3 class="feature-title">Glassmorphism 2.0<span class="trend-badge">2025</span></h3>
+                <p class="feature-description">Geavanceerde glassmorphism effecten met verbeterde backdrop-filter support en realistische depth.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🌱</div>
+                <h3 class="feature-title">Sustainability<span class="trend-badge">2025</span></h3>
+                <p class="feature-description">Energy-efficient design met reduced motion support en geoptimaliseerde assets voor minimale carbon footprint.</p>
+            </div>
+        </div>
+        
+        <h2 style="margin-top: 3rem; margin-bottom: 1rem; color: #333;">Vergelijking: Oude vs 2025 Widget</h2>
+        
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Oude Widget</th>
+                    <th>2025 Widget</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Font</td>
+                    <td>Raleway (basis)</td>
+                    <td class="status-yes">Raleway (volledig)</td>
+                </tr>
+                <tr>
+                    <td>AI Personalization</td>
+                    <td class="status-no">Nee</td>
+                    <td class="status-yes">Ja</td>
+                </tr>
+                <tr>
+                    <td>Gesture Navigation</td>
+                    <td class="status-no">Nee</td>
+                    <td class="status-yes">Ja</td>
+                </tr>
+                <tr>
+                    <td>Haptic Feedback</td>
+                    <td class="status-no">Nee</td>
+                    <td class="status-yes">Ja</td>
+                </tr>
+                <tr>
+                    <td>Dark Mode Support</td>
+                    <td class="status-no">Basis</td>
+                    <td class="status-yes">Geavanceerd</td>
+                </tr>
+                <tr>
+                    <td>Accessibility</td>
+                    <td class="status-no">WCAG 2.1</td>
+                    <td class="status-yes">WCAG 3.0 Ready</td>
+                </tr>
+                <tr>
+                    <td>Glassmorphism</td>
+                    <td class="status-no">Basis</td>
+                    <td class="status-yes">2.0</td>
+                </tr>
+                <tr>
+                    <td>Fluid Typography</td>
+                    <td class="status-no">Nee</td>
+                    <td class="status-yes">Ja</td>
+                </tr>
+                <tr>
+                    <td>Sustainability</td>
+                    <td class="status-no">Nee</td>
+                    <td class="status-yes">Ja</td>
+                </tr>
+                <tr>
+                    <td>Mobile Optimization</td>
+                    <td class="status-no">Basis</td>
+                    <td class="status-yes">Geavanceerd</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        const langSelect = document.getElementById('lang-select');
+        const themeSelect = document.getElementById('theme-select');
+        const widgetFrame = document.getElementById('widget-frame');
+        
+        function updateWidget() {
+            const lang = langSelect.value;
+            const theme = themeSelect.value;
+            widgetFrame.src = `/widget?lang=${lang}&theme=${theme}`;
+        }
+        
+        langSelect.addEventListener('change', updateWidget);
+        themeSelect.addEventListener('change', updateWidget);
+        
+        // Track demo interactions
+        if (typeof gtag !== 'undefined') {
+            gtag('event', '2025_widget_demo_viewed', {
+                event_category: 'demo',
+                event_label: 'widget_2025'
+            });
+        }
+    </script>
+</body>
+</html>
+
