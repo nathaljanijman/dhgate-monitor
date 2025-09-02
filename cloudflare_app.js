@@ -5408,6 +5408,9 @@ export default {
         case '/newsroom':
           return await handleNewsroomPage(request, env);
         
+        case '/newsroom/changelog':
+          return await handleChangelogPage(request, env);
+        
         case '/sitemap.xml':
           return await handleSitemap(request, env);
         
@@ -6923,7 +6926,7 @@ async function handleNewsroomPage(request, env) {
     subtitle: 'Het laatste nieuws, updates en inzichten over DHgate Monitor',
     searchPlaceholder: 'Zoek in artikelen...',
     filterAll: 'Alle categorieën',
-    filterProductUpdates: 'Product Updates',
+    filterProductUpdates: 'Product update',
     filterMonitoringTips: 'Monitoring Tips',
     filterMarketInsights: 'Markt Inzichten',
     filterCompanyNews: 'Bedrijfsnieuws',
@@ -6944,7 +6947,7 @@ async function handleNewsroomPage(request, env) {
     subtitle: 'Latest news, updates and insights about DHgate Monitor',
     searchPlaceholder: 'Search articles...',
     filterAll: 'All categories',
-    filterProductUpdates: 'Product Updates',
+    filterProductUpdates: 'Product update',
     filterMonitoringTips: 'Monitoring Tips',
     filterMarketInsights: 'Market Insights',
     filterCompanyNews: 'Company News',
@@ -7774,6 +7777,149 @@ async function handleNewsroomPage(request, env) {
                 }
             }
             
+            /* Changelog Section Styles - Linear Inspired */
+            .changelog-section {
+                margin: 4rem 0;
+                padding: 3rem 0;
+                background: var(--bg-primary);
+                border-radius: 0;
+                border: none;
+            }
+            
+            .changelog-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 3rem;
+                padding: 0 2rem;
+                max-width: 1200px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            
+            .changelog-title {
+                font-size: 2rem;
+                font-weight: 700;
+                color: var(--text-primary);
+                margin: 0;
+            }
+            
+            .changelog-view-all-header {
+                color: var(--text-secondary);
+                text-decoration: none;
+                font-size: 0.875rem;
+                font-weight: 500;
+                transition: color 0.3s ease;
+            }
+            
+            .changelog-view-all-header:hover {
+                color: var(--primary);
+            }
+            
+            .changelog-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 2rem;
+                margin: 0 auto;
+                max-width: 1200px;
+                padding: 0 2rem;
+            }
+            
+            .changelog-entry {
+                background: var(--card-bg);
+                border: 1px solid var(--border-light);
+                border-radius: 12px;
+                padding: 1.5rem;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .changelog-entry:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+                border-color: var(--border-medium);
+            }
+            
+            .changelog-entry-date {
+                font-size: 0.75rem;
+                color: var(--text-muted);
+                font-weight: 500;
+                margin-bottom: 1rem;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+            
+            .changelog-entry-title {
+                font-size: 1.125rem;
+                font-weight: 600;
+                color: var(--text-primary);
+                margin-bottom: 0.75rem;
+                line-height: 1.4;
+            }
+            
+            .changelog-entry-description {
+                color: var(--text-secondary);
+                line-height: 1.6;
+                font-size: 0.875rem;
+                margin: 0;
+            }
+            
+            /* Mobile Responsiveness for Changelog */
+            @media (max-width: 1024px) {
+                .changelog-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 1.5rem;
+                }
+            }
+            
+            @media (max-width: 768px) {
+                .changelog-section {
+                    margin: 2rem 0;
+                    padding: 2rem 0;
+                }
+                
+                .changelog-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 1rem;
+                    text-align: left;
+                }
+                
+                .changelog-title {
+                    font-size: 1.75rem;
+                }
+                
+                .changelog-grid {
+                    grid-template-columns: 1fr;
+                    gap: 1.5rem;
+                    margin: 0 1rem;
+                }
+                
+                .changelog-entry {
+                    padding: 1.25rem;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .changelog-section {
+                    padding: 1.5rem 0;
+                }
+                
+                .changelog-title {
+                    font-size: 1.5rem;
+                }
+                
+                .changelog-grid {
+                    margin: 0 0.75rem;
+                }
+                
+                .changelog-entry {
+                    padding: 1rem;
+                }
+            }
+            
             ${generateMinimalBreadcrumbStyles()}
         </style>
     </head>
@@ -7924,6 +8070,30 @@ async function handleNewsroomPage(request, env) {
                     <p>${t.searchPlaceholder}</p>
                 </div>
                 `}
+                
+                <!-- Changelog Section -->
+                <section class="changelog-section">
+                    <div class="changelog-header">
+                        <h2 class="changelog-title">${lang === 'nl' ? 'Product update' : 'Product update'}</h2>
+                        <a href="/newsroom/changelog?lang=${lang}&theme=${theme}" class="changelog-view-all-header">
+                            ${lang === 'nl' ? 'Alle updates' : 'All updates'} →
+                        </a>
+                    </div>
+                    
+                    <div class="changelog-grid">
+                        <article class="changelog-entry">
+                            <div class="changelog-entry-date">${lang === 'nl' ? '2 september 2025' : 'September 2, 2025'}</div>
+                            <h3 class="changelog-entry-title">${lang === 'nl' ? 'Nieuwe changelog feature' : 'New changelog feature'}</h3>
+                            <p class="changelog-entry-description">${lang === 'nl' ? 'Vandaag hebben we een volledig nieuwe changelog feature toegevoegd aan DHgate Monitor! Deze feature laat gebruikers alle product updates, verbeteringen en fixes op één plek bekijken.' : 'Today we have added a completely new changelog feature to DHgate Monitor! This feature allows users to view all product updates, improvements and fixes in one place.'}</p>
+                        </article>
+                        
+                        <article class="changelog-entry">
+                            <div class="changelog-entry-date">${lang === 'nl' ? '30 augustus 2025' : 'August 30, 2025'}</div>
+                            <h3 class="changelog-entry-title">${lang === 'nl' ? 'Nieuwe feature: Shop Tracker' : 'New feature: Shop Tracker'}</h3>
+                            <p class="changelog-entry-description">${lang === 'nl' ? 'We hebben een nieuwe tool toegevoegd: Shop Tracker. Met de Shop Tracker kun je individuele DHgate-winkels volgen en realtime inzicht krijgen in hun activiteiten en prestaties.' : 'We have added a new tool: Shop Tracker. With the Shop Tracker you can track individual DHgate shops and get real-time insight into their activities and performance.'}</p>
+                        </article>
+                    </div>
+                </section>
                 </div>
             </div>
         </main>
@@ -8046,6 +8216,522 @@ async function handleNewsroomPage(request, env) {
             function removeFilter(type) {
                 const url = new URL(window.location);
                 url.searchParams.delete(type);
+                window.location.href = url.toString();
+            }
+        </script>
+    </body>
+    </html>`;
+  
+  return new Response(html, {
+    headers: {
+      'Content-Type': 'text/html;charset=UTF-8',
+      'Cache-Control': 'public, max-age=300'
+    }
+  });
+}
+
+/**
+ * Handles the changelog overview page
+ * @param {Request} request - The incoming request
+ * @param {Object} env - Environment variables
+ * @returns {Response} - HTML response
+ */
+async function handleChangelogPage(request, env) {
+  const url = new URL(request.url);
+  const lang = getLanguage(request);
+  const theme = getTheme(request);
+  
+  // Get query parameters for filtering
+  const search = url.searchParams.get('search') || '';
+  const page = parseInt(url.searchParams.get('page') || '1');
+  
+  // Changelog data about the new changelog feature
+      const changelogEntries = [
+      {
+        id: 1,
+        slug: 'new-changelog-feature',
+        title: lang === 'nl' ? 'Nieuwe changelog feature' : 'New changelog feature',
+        description: lang === 'nl' ? 'Vandaag hebben we een volledig nieuwe changelog feature toegevoegd aan DHgate Monitor! Deze feature laat gebruikers alle product updates, verbeteringen en fixes op één plek bekijken. De changelog biedt een clean, minimalistische ervaring met eenvoudige navigatie en duidelijke artikelen.' : 'Today we have added a completely new changelog feature to DHgate Monitor! This feature allows users to view all product updates, improvements and fixes in one place. The changelog offers a clean, minimalist experience with simple navigation and clear articles.',
+        date: '2025-09-02',
+        author: 'DHgate Monitor Team',
+        readTime: 0
+      },
+      {
+        id: 2,
+        slug: 'new-shop-tracker-feature',
+        title: lang === 'nl' ? 'Nieuwe feature: Shop Tracker' : 'New feature: Shop Tracker',
+        description: lang === 'nl' ? 'We hebben een nieuwe tool toegevoegd: Shop Tracker. Met de Shop Tracker kun je individuele DHgate-winkels volgen en realtime inzicht krijgen in hun activiteiten en prestaties. Dit is een krachtige tool voor resellers en dropshippers om concurrenten in de gaten te houden, trends eerder te spotten en sneller in te spelen op nieuwe producten.' : 'We have added a new tool: Shop Tracker. With the Shop Tracker you can track individual DHgate shops and get real-time insight into their activities and performance. This is a powerful tool for resellers and dropshippers to keep an eye on competitors, spot trends earlier and respond faster to new products.',
+        date: '2025-08-30',
+        author: 'DHgate Monitor Team',
+        readTime: 0
+      }
+    ];
+  
+  // Filter entries based on search
+  let filteredEntries = changelogEntries;
+  
+  if (search) {
+    filteredEntries = filteredEntries.filter(entry => 
+      entry.title.toLowerCase().includes(search.toLowerCase()) ||
+      entry.description.toLowerCase().includes(search.toLowerCase())
+    );
+  }
+  
+  // Pagination
+  const entriesPerPage = 10;
+  const totalPages = Math.ceil(filteredEntries.length / entriesPerPage);
+  const offset = (page - 1) * entriesPerPage;
+  const paginatedEntries = filteredEntries.slice(offset, offset + entriesPerPage);
+  
+  const t = lang === 'nl' ? {
+    title: 'Product Updates',
+    subtitle: 'Bekijk alle nieuwe features, verbeteringen en fixes van DHgate Monitor',
+    searchPlaceholder: 'Zoek in updates...',
+    readMore: 'Lees meer',
+    by: 'door',
+    noResults: 'Geen updates gevonden',
+    backToNewsroom: 'Terug naar Newsroom'
+  } : {
+    title: 'Product Updates',
+    subtitle: 'See all new features, improvements and fixes from DHgate Monitor',
+    searchPlaceholder: 'Search updates...',
+    readMore: 'Read more',
+    by: 'by',
+    noResults: 'No updates found',
+    backToNewsroom: 'Back to Newsroom'
+  };
+  
+  const html = `
+    <!DOCTYPE html>
+    <html lang="${lang}" dir="ltr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${t.title} - DHgate Monitor</title>
+        <meta name="description" content="${t.subtitle}">
+        
+        <!-- Open Graph Meta Tags -->
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="${t.title} - DHgate Monitor">
+        <meta property="og:description" content="${t.subtitle}">
+        <meta property="og:url" content="${url.origin}/newsroom/changelog">
+        <meta property="og:site_name" content="DHgate Monitor">
+        
+        <!-- Twitter Meta Tags -->
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="${t.title} - DHgate Monitor">
+        <meta name="twitter:description" content="${t.subtitle}">
+        
+        ${generateGlobalCSS(theme)}
+        
+        <!-- DHgate Monitor Icons CSS -->
+        <link rel="stylesheet" href="/assets/icons/dhgate-monitor-icons.css">
+        
+        <style>
+            /* Linear-style Changelog Styles */
+            /* Service-style Header (same as Service & Contact page) */
+            .service-header {
+                background: var(--bg-hero);
+                color: white;
+                text-align: center;
+                padding: 0;
+                height: 200px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .service-header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+                animation: shimmer 3s ease-in-out infinite;
+            }
+            
+            @keyframes shimmer {
+                0%, 100% { transform: translateX(-100%); }
+                50% { transform: translateX(100%); }
+            }
+            
+            .service-title {
+                font-size: 3rem;
+                font-weight: 700;
+                margin-bottom: 1rem;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            }
+            
+            .service-subtitle {
+                font-size: 1.25rem;
+                opacity: 0.9;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+            
+
+            
+
+            
+            /* Linear-style Article Layout - Clean & Minimal */
+            .changelog-entries {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 0 2rem;
+            }
+            
+            .changelog-entry {
+                padding: 2rem 0;
+                border-bottom: 1px solid var(--border-light);
+                margin-bottom: 0;
+            }
+            
+            .changelog-entry:last-child {
+                border-bottom: none;
+            }
+            
+            .changelog-entry-header {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 1rem;
+            }
+            
+            .changelog-entry-date {
+                font-size: 0.875rem;
+                color: var(--text-muted);
+                font-weight: 500;
+            }
+            
+            .changelog-entry-type {
+                font-size: 0.75rem;
+                color: var(--primary-blue);
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            
+            .changelog-entry-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: var(--text-primary);
+                margin-bottom: 1rem;
+                line-height: 1.4;
+                font-family: var(--font-family);
+            }
+            
+            .changelog-entry-description {
+                color: var(--text-secondary);
+                line-height: 1.6;
+                font-size: 1rem;
+                margin-bottom: 1rem;
+                font-family: var(--font-family);
+            }
+            
+            .changelog-entry-features {
+                margin-bottom: 1rem;
+            }
+            
+            .changelog-entry-features h4 {
+                font-size: 0.875rem;
+                font-weight: 600;
+                color: var(--text-primary);
+                margin-bottom: 0.75rem;
+                font-family: var(--font-family);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            
+            .changelog-entry-features ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .changelog-entry-features p {
+                padding: 0.25rem 0;
+                color: var(--text-secondary);
+                font-size: 0.875rem;
+                font-family: var(--font-family);
+                line-height: 1.5;
+            }
+            
+            .changelog-entry-features p strong {
+                color: var(--text-primary);
+                font-weight: 600;
+            }
+            
+            .changelog-entry-meta {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                font-size: 0.75rem;
+                color: var(--text-muted);
+                margin-top: 1rem;
+            }
+            
+            .changelog-entry-author {
+                color: var(--text-secondary);
+                font-weight: 500;
+                font-family: var(--font-family);
+            }
+            
+            .changelog-entry-availability {
+                color: var(--success);
+                font-weight: 600;
+                font-family: var(--font-family);
+            }
+            
+            .changelog-pagination {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 1rem;
+                margin: 3rem 0;
+                padding: 0 2rem;
+            }
+            
+            .changelog-pagination a {
+                padding: 0.75rem 1rem;
+                background: var(--card-bg);
+                color: var(--text-primary);
+                text-decoration: none;
+                border: 1px solid var(--border-light);
+                border-radius: 8px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+            
+            .changelog-pagination a:hover {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+            }
+            
+            .changelog-pagination .current {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+            }
+            
+            .changelog-pagination .disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+            
+            .changelog-pagination .disabled:hover {
+                background: var(--card-bg);
+                color: var(--text-primary);
+                border-color: var(--border-light);
+            }
+            
+            .changelog-no-results {
+                text-align: center;
+                padding: 4rem 2rem;
+                color: var(--text-secondary);
+            }
+            
+            .changelog-no-results h3 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+                color: var(--text-primary);
+            }
+            
+            /* Mobile Responsiveness */
+            @media (max-width: 768px) {
+                .service-header {
+                    height: 180px;
+                }
+                
+                .service-title {
+                    font-size: 2.5rem;
+                }
+                
+                .changelog-entries {
+                    margin: 2rem 1rem;
+                    padding: 0;
+                }
+                
+                .changelog-entry {
+                    padding: 1.5rem 0;
+                }
+                
+                .changelog-entry-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 0.75rem;
+                }
+                
+                .changelog-entry-title {
+                    font-size: 1.25rem;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .service-header {
+                    height: 160px;
+                }
+                
+                .service-title {
+                    font-size: 2rem;
+                }
+                
+                .changelog-entries {
+                    margin: 1.5rem 0.75rem;
+                }
+                
+                .changelog-entry {
+                    padding: 1rem;
+                    margin-bottom: 1rem;
+                }
+                
+                .changelog-entry-title {
+                    font-size: 1.25rem;
+                }
+                
+                .changelog-entry-features {
+                    padding: 0.75rem;
+                }
+                
+                .changelog-entry-features h4 {
+                    font-size: 0.875rem;
+                }
+            }
+            
+            ${generateMinimalBreadcrumbStyles()}
+        </style>
+        
+
+    </head>
+    <body data-page-type="changelog">
+        ${generateModernNavbar(lang, theme, '/newsroom/changelog')}
+        
+        ${generateMinimalBreadcrumb('/newsroom/changelog', lang, theme, [
+            { path: '/newsroom', label: lang === 'nl' ? 'Newsroom' : 'Newsroom' },
+            { path: '/newsroom/changelog', label: lang === 'nl' ? 'Changelog' : 'Changelog' }
+        ])}
+        
+        <main>
+            <div class="changelog-container">
+                <!-- Service-style Changelog Header -->
+                <header class="service-header">
+                    <div class="container">
+                        <h1 class="service-title">
+                            ${lang === 'nl' ? 'Changelog' : 'Changelog'}
+                        </h1>
+                        <p class="service-subtitle">
+                            ${lang === 'nl' ? 'Bekijk alle updates en nieuwe features van DHgate Monitor' : 'View all updates and new features of DHgate Monitor'}
+                        </p>
+                    </div>
+                </header>
+                
+
+                
+                <!-- Changelog Entries -->
+                ${paginatedEntries.length > 0 ? `
+                <section class="changelog-entries">
+                    ${paginatedEntries.map(entry => `
+                    <article class="changelog-entry">
+                        <div class="changelog-entry-header">
+                            <div class="changelog-entry-date">
+                                ${new Date(entry.date).toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-US')}
+                            </div>
+                            <div class="changelog-entry-type">
+                                ${entry.slug.includes('feature') ? (lang === 'nl' ? 'Feature' : 'Feature') : (lang === 'nl' ? 'Update' : 'Update')}
+                            </div>
+                        </div>
+                        
+                        <h2 class="changelog-entry-title">
+                            ${entry.title}
+                        </h2>
+                        
+                        <p class="changelog-entry-description">
+                            ${entry.description}
+                        </p>
+                        
+                        ${entry.slug === 'new-shop-tracker-feature' ? `
+                        <div class="changelog-entry-features">
+                            <h4>${lang === 'nl' ? 'Wat kun je ermee?' : 'What can you do with it?'}</h4>
+                            <div class="feature-list">
+                                <p>* <strong>${lang === 'nl' ? 'Winkelvolging:' : 'Shop tracking:'}</strong> ${lang === 'nl' ? 'Voeg een shop toe aan je tracker en zie direct updates' : 'Add a shop to your tracker and see updates directly'}</p>
+                                <p>* <strong>${lang === 'nl' ? 'Analytics per shop:' : 'Analytics per shop:'}</strong> ${lang === 'nl' ? 'Ontdek bestverkopende producten' : 'Discover best-selling products'}</p>
+                                <p>* <strong>${lang === 'nl' ? 'Notificaties:' : 'Notifications:'}</strong> ${lang === 'nl' ? 'Blijf op de hoogte van belangrijke veranderingen' : 'Stay informed about important changes'}</p>
+                                <p>* <strong>${lang === 'nl' ? 'Vergelijking:' : 'Comparison:'}</strong> ${lang === 'nl' ? 'Monitor meerdere shops naast elkaar' : 'Monitor multiple shops side by side'}</p>
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        <div class="changelog-entry-meta">
+                            <span class="changelog-entry-author">
+                                ${t.by} ${entry.author}
+                            </span>
+                            ${entry.slug === 'new-shop-tracker-feature' ? `
+                            <span class="changelog-entry-availability">
+                                ${lang === 'nl' ? 'Beschikbaar vanaf 2 september 2025' : 'Available from September 2, 2025'}
+                            </span>
+                            ` : ''}
+                        </div>
+                    </article>
+                    `).join('')}
+                </section>
+                
+                <!-- Pagination -->
+                ${totalPages > 1 ? `
+                <nav class="changelog-pagination" role="navigation" aria-label="Changelog pagination">
+                    ${page > 1 ? `
+                    <a href="?${new URLSearchParams({...Object.fromEntries(url.searchParams), page: page - 1})}">
+                        ← ${lang === 'nl' ? 'Vorige' : 'Previous'}
+                    </a>
+                    ` : ''}
+                    
+                    ${Array.from({length: totalPages}, (_, i) => i + 1).map(pageNum => `
+                    <a href="?${new URLSearchParams({...Object.fromEntries(url.searchParams), page: pageNum})}" 
+                       class="${pageNum === page ? 'current' : ''}">
+                        ${pageNum}
+                    </a>
+                    `).join('')}
+                    
+                    ${page < totalPages ? `
+                    <a href="?${new URLSearchParams({...Object.fromEntries(url.searchParams), page: page + 1})}">
+                        ${lang === 'nl' ? 'Volgende' : 'Next'} →
+                    </a>
+                    ` : ''}
+                </nav>
+                ` : ''}
+                ` : `
+                <div class="changelog-no-results">
+                    <h3>${t.noResults}</h3>
+                    <p>${t.searchPlaceholder}</p>
+                </div>
+                `}
+                
+                <!-- Back to Newsroom -->
+                <div style="text-align: center; margin: 3rem 0;">
+                    <a href="/newsroom?lang=${lang}&theme=${theme}" class="changelog-back-link">
+                        ← ${t.backToNewsroom}
+                    </a>
+                </div>
+            </div>
+        </main>
+        
+        ${generateConsistentFooter(lang, theme)}
+        
+        <script>
+            // Theme toggle functionality
+            function toggleTheme() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const currentTheme = urlParams.get('theme') || 'light';
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                localStorage.setItem('selectedTheme', newTheme);
+                const url = new URL(window.location);
+                url.searchParams.set('theme', newTheme);
+                // Preserve language parameter
+                const currentLang = url.searchParams.get('lang') || '${lang}';
+                url.searchParams.set('lang', currentLang);
                 window.location.href = url.toString();
             }
         </script>
@@ -10195,7 +10881,7 @@ function generateServiceHeaderStyles() {
  * @returns {string} - Enhanced breadcrumb HTML
  */
 // Modern Minimalistic Breadcrumb System
-function generateMinimalBreadcrumb(currentPath, lang = 'nl', theme = 'light') {
+function generateMinimalBreadcrumb(currentPath, lang = 'nl', theme = 'light', customPaths = null) {
   // Only show breadcrumbs for non-home pages
   if (currentPath === '/') return '';
   
@@ -10205,13 +10891,15 @@ function generateMinimalBreadcrumb(currentPath, lang = 'nl', theme = 'light') {
       contact: 'Contact',
       service: 'Service & Contact', 
       newsroom: 'Newsroom',
+      changelog: 'Changelog',
       dashboard: 'Dashboard'
     },
     en: {
       home: 'Home',
       contact: 'Contact',
       service: 'Service & Contact',
-      newsroom: 'Newsroom', 
+      newsroom: 'Newsroom',
+      changelog: 'Changelog',
       dashboard: 'Dashboard'
     }
   };
@@ -10221,9 +10909,39 @@ function generateMinimalBreadcrumb(currentPath, lang = 'nl', theme = 'light') {
     '/contact': t.contact,
     '/service': t.service,
     '/newsroom': t.newsroom,
+    '/newsroom/changelog': t.changelog,
     '/dashboard': t.dashboard
   };
   
+  // If custom paths are provided, use them instead
+  if (customPaths && customPaths.length > 0) {
+    let breadcrumbHTML = `
+      <nav class="minimal-breadcrumb" role="navigation" aria-label="${lang === 'nl' ? 'Navigatie' : 'Navigation'}">
+        <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
+          <a href="/?lang=${lang}&theme=${theme}" class="breadcrumb-home">${t.home}</a>`;
+    
+    customPaths.forEach((pathInfo, index) => {
+      if (index === customPaths.length - 1) {
+        // Last item (current page)
+        breadcrumbHTML += `
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-current">${pathInfo.label}</span>`;
+      } else {
+        // Navigation item
+        breadcrumbHTML += `
+          <span class="breadcrumb-sep">/</span>
+          <a href="${pathInfo.path}?lang=${lang}&theme=${theme}" class="breadcrumb-link">${pathInfo.label}</a>`;
+      }
+    });
+    
+    breadcrumbHTML += `
+        </div>
+      </nav>`;
+    
+    return breadcrumbHTML;
+  }
+  
+  // Fallback to simple breadcrumb
   const currentLabel = pathMap[currentPath];
   if (!currentLabel) return '';
   
@@ -10256,6 +10974,18 @@ function generateMinimalBreadcrumbStyles() {
     }
     
     .breadcrumb-home:hover {
+      color: var(--primary-blue);
+      text-decoration: underline;
+    }
+    
+    .breadcrumb-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      font-weight: 400;
+    }
+    
+    .breadcrumb-link:hover {
       color: var(--primary-blue);
       text-decoration: underline;
     }
@@ -17075,7 +17805,7 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
             margin-bottom: 0;
         }
         
-        .feature-card {
+        .tool-card {
             background: var(--card-bg);
             border: none;
             border-radius: 12px;
@@ -18209,9 +18939,9 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
                         </div>
                     </div>
                     <div class="benefits-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: auto; justify-content: center;">
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Nieuwe producten' : 'New products'}</span>
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Markttrends' : 'Market trends'}</span>
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Automatische alerts' : 'Auto alerts'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--dhg-primary-blue); padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Nieuwe producten' : 'New products'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--dhg-primary-blue); padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Markttrends' : 'Market trends'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--dhg-primary-blue); padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Automatische alerts' : 'Auto alerts'}</span>
                     </div>
                 </div>
                 
@@ -18236,9 +18966,9 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
                         </div>
                     </div>
                     <div class="benefits-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: auto; justify-content: center;">
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Markt intelligence' : 'Market intelligence'}</span>
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Concurrentie analyse' : 'Competitor analysis'}</span>
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Leverancier monitoring' : 'Supplier monitoring'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--dhg-primary-blue); padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Markt intelligence' : 'Market intelligence'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--dhg-primary-blue); padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Concurrentie analyse' : 'Competitor analysis'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--dhg-primary-blue); padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Leverancier monitoring' : 'Supplier monitoring'}</span>
                     </div>
                 </div>
                 
@@ -18264,9 +18994,9 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
                         </div>
                     </div>
                     <div class="benefits-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: auto; justify-content: center;">
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Vroege toegang' : 'Early access'}</span>
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Prijsmonitoring' : 'Price monitoring'}</span>
-                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Bulk mogelijkheden' : 'Bulk opportunities'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--dhg-primary-blue); padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Vroege toegang' : 'Early access'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--dhg-primary-blue); padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Prijsmonitoring' : 'Price monitoring'}</span>
+                        <span class="benefit-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--dhg-primary-blue); padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 500;">${lang === 'nl' ? 'Bulk mogelijkheden' : 'Bulk opportunities'}</span>
                     </div>
                 </div>
                 
@@ -19671,7 +20401,7 @@ function generateDashboardAccessEmailHTML(email, dashboardUrl, lang) {
             background: white;
         }
         .content h2 { 
-            color: #2563EB; 
+            color: var(--dhg-primary-blue); 
             font-size: 24px; 
             font-weight: 600;
             margin: 0 0 24px 0;
@@ -19752,7 +20482,7 @@ function generateDashboardAccessEmailHTML(email, dashboardUrl, lang) {
             color: #64748b;
         }
         .fallback-card a {
-            color: #2563EB;
+            color: var(--dhg-primary-blue);
             font-weight: 500;
             word-break: break-all;
             text-decoration: none;
@@ -19778,7 +20508,7 @@ function generateDashboardAccessEmailHTML(email, dashboardUrl, lang) {
             </div>
             
             <div class="content">
-                <h2>${lang === 'nl' ? '<span style="color: #2563EB; font-size: 18px; margin-right: 8px;">🎛️</span>Dashboard toegang aangevraagd' : '<span style="color: #2563EB; font-size: 18px; margin-right: 8px;">🎛️</span>Dashboard Access Requested'}</h2>
+                <h2>${lang === 'nl' ? '<span style="color: var(--dhg-primary-blue); font-size: 18px; margin-right: 8px;">🎛️</span>Dashboard toegang aangevraagd' : '<span style="color: var(--dhg-primary-blue); font-size: 18px; margin-right: 8px;">🎛️</span>Dashboard Access Requested'}</h2>
                 
                 <p>
                     ${lang === 'nl' ? 
@@ -19993,7 +20723,7 @@ function generateWidgetConfirmationEmailHTML(email, stores, tags, lang) {
             background: white;
         }
         .content h2 { 
-            color: #2563EB; 
+            color: var(--dhg-primary-blue); 
             font-size: 24px; 
             font-weight: 600;
             margin: 0 0 24px 0;
@@ -20168,7 +20898,7 @@ function generateWidgetConfirmationEmailHTML(email, stores, tags, lang) {
                 
                 <!-- Next Steps -->
                 <div class="details-card">
-                    <h3 style="color: #2563EB; margin-bottom: 16px; font-size: 18px;">
+                    <h3 style="color: var(--dhg-primary-blue); margin-bottom: 16px; font-size: 18px;">
                         ${lang === 'nl' ? 'Wat gebeurt er nu?' : 'What happens next?'}
                     </h3>
                     <ul style="margin: 0; padding-left: 20px; color: #475569;">
@@ -20650,7 +21380,7 @@ function generateProductNotificationEmailHTML(email, products, lang) {
             margin: 40px 0;
         }
         .cta-section h3 {
-            color: #2563EB;
+            color: var(--dhg-primary-blue);
             font-size: 20px;
             font-weight: 600;
             margin: 0 0 12px 0;
@@ -21635,9 +22365,21 @@ function generateToolkitHTML(t, lang, theme = 'light') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${lang === 'nl' ? 'Toolkit - DHgate Monitor' : 'Toolkit - DHgate Monitor'}</title>
-    <meta name="description" content="${lang === 'nl' ? 'Professionele tools voor DHgate monitoring: shop tracking, product tracking en marge calculator.' : 'Professional tools for DHgate monitoring: shop tracking, product tracking and margin calculator.'}">
+    <title>DHgate Monitor Toolkit - Interactive Demo</title>
+    <meta name="description" content="Ontdek de geavanceerde functies van ons moderne monitoring platform met interactieve product demonstraties">
+    <meta name="keywords" content="DHgate Monitor, Toolkit, Modern Design, Mobile UX, Performance, Accessibility">
+    <meta property="og:title" content="DHgate Monitor Toolkit">
+    <meta property="og:description" content="Ontdek de geavanceerde functies van ons moderne monitoring platform">
+    <meta property="og:type" content="website">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://dhgate-monitor.com/toolkit">
     <link rel="icon" href="/assets/logo.png" type="image/png">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- DHgate Monitor Icons CSS -->
+    <link rel="stylesheet" href="/assets/icons/dhgate-monitor-icons.css">
     
     <!-- DHGate Monitor Design System Colors -->
     <style>
@@ -21736,21 +22478,24 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         .tool-card:nth-child(1) { animation: cardReveal 0.8s ease 0.6s forwards; }
         .tool-card:nth-child(2) { animation: cardReveal 0.8s ease 0.8s forwards; }
         .tool-card:nth-child(3) { animation: cardReveal 0.8s ease 1.0s forwards; }
+        .feature-card:nth-child(4) { animation: cardReveal 0.8s ease 1.2s forwards; }
+        .feature-card:nth-child(5) { animation: cardReveal 0.8s ease 1.4s forwards; }
+        .feature-card:nth-child(6) { animation: cardReveal 0.8s ease 1.6s forwards; }
         
         @keyframes cardReveal {
             0% { opacity: 0; transform: translateY(40px) scale(0.95); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
         
-        .tool-card::before {
+        .feature-card::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(135deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.15) 100%);
             opacity: 0; transition: opacity 0.4s ease;
         }
         
-        .tool-card:hover::before { opacity: 1; }
+        .feature-card:hover::before { opacity: 1; }
         
-        .tool-card:hover {
+        .feature-card:hover {
             transform: translateY(-10px) scale(1.02);
             box-shadow: 0 30px 80px rgba(0,0,0,0.25);
             border-color: rgba(102, 126, 234, 0.3);
@@ -21758,12 +22503,13 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         
         .tool-background {
             position: absolute; top: 0; right: 0; width: 200px; height: 200px;
-            background: linear-gradient(135deg, rgba(0,0,0,0.08), rgba(0,0,0,0.12));
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.06), rgba(118, 75, 162, 0.10));
             border-radius: 50%; transform: translate(60px, -60px);
-            transition: all 0.4s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .tool-card:hover .tool-background {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.20));
             transform: translate(40px, -40px) scale(1.2);
         }
         
@@ -21784,8 +22530,19 @@ function generateToolkitHTML(t, lang, theme = 'light') {
             transition: stroke 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
+        .tool-icon-integrated i {
+            font-size: 48px;
+            color: var(--dhg-icon-color);
+            opacity: inherit;
+            transition: color 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
         .tool-card:hover .tool-icon-integrated svg {
             stroke: var(--dhg-icon-color-hover);
+        }
+        
+        .tool-card:hover .tool-icon-integrated i {
+            color: var(--dhg-icon-color-hover);
         }
         
         .tool-content {
@@ -21793,7 +22550,7 @@ function generateToolkitHTML(t, lang, theme = 'light') {
             display: flex; flex-direction: column; height: 100%;
         }
         
-        .tool-card h3 {
+        .feature-card h3 {
             font-size: 1.6rem; font-weight: 700; color: #1a202c; 
             margin-bottom: 1rem; line-height: 1.3;
         }
@@ -21805,18 +22562,18 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         
         .tool-expand {
             display: inline-flex; align-items: center; gap: 0.5rem;
-            color: #2563EB; font-weight: 600; font-size: 0.9rem;
+            color: var(--dhg-primary-blue); font-weight: 600; font-size: 0.9rem;
             padding: 0.5rem 0; border-radius: 6px;
             transition: all 0.3s ease; position: relative;
         }
         
         .tool-card:hover .tool-expand {
-            color: #1D4ED8; transform: translateX(5px);
+            color: var(--dhg-primary-blue-hover); transform: translateX(5px);
         }
         
         .tool-expand::after {
             content: ''; position: absolute; bottom: -2px; left: 0; right: 100%;
-            height: 2px; background: #2563EB; transition: right 0.3s ease;
+            height: 2px; background: var(--dhg-primary-blue); transition: right 0.3s ease;
         }
         
         .tool-card:hover .tool-expand::after {
@@ -21825,16 +22582,81 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         
         .tool-expand svg { width: 16px; height: 16px; fill: currentColor; }
         
+        /* New feature card styles */
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #2563EB, #1D4ED8);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-icon i {
+            font-size: inherit;
+            color: inherit;
+        }
+        
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #111827;
+        }
+        
+        .feature-description {
+            color: #64748B;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .tile-click-indicator {
+            position: absolute;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background: linear-gradient(135deg, #2563EB, #1D4ED8);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.5rem;
+            opacity: 0;
+            transform: translateY(4px);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .clickable-tile:hover .tile-click-indicator {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .clickable-tile:hover .feature-icon {
+            transform: scale(1.05);
+        }
+        
         .modal {
             display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.95); z-index: 1000; padding: 0; overflow-y: auto;
+            background: rgba(0, 0, 0, 0.8); z-index: 1000; padding: 2rem;
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            overflow-y: auto;
         }
         
         .modal-content {
-            background: #1a1a1a; color: white; border-radius: 20px; max-width: 1200px;
-            margin: 0; position: relative; min-height: 100vh; display: flex; flex-direction: column;
-            opacity: 0; transform: scale(0.9) translateY(30px);
-            animation: luxuriousModalEntry 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            background: #ffffff; color: #000000; border-radius: 16px; 
+            max-width: 1000px; margin: 0 auto; position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            opacity: 0; transform: scale(0.95) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .modal-content.modal-enter {
+            opacity: 1; transform: scale(1) translateY(0);
         }
         
         @keyframes luxuriousModalEntry {
@@ -21916,16 +22738,18 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         }
         
         .modal-close {
-            position: absolute; top: 2rem; right: 3rem; background: rgba(255,255,255,0.1);
-            border: none; width: 40px; height: 40px; border-radius: 50%;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: all 0.3s ease; backdrop-filter: blur(10px);
+            position: absolute; top: 1.5rem; right: 1.5rem; z-index: 1001;
+            background: rgba(0, 0, 0, 0.05); border: none; color: #6B7280;
+            width: 40px; height: 40px; border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s ease;
         }
         
-        .modal-close:hover { 
-            background: rgba(255,255,255,0.2); transform: scale(1.1);
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.1); color: #374151;
         }
-        .modal-close svg { width: 20px; height: 20px; stroke: white; }
+        
+        .modal-close svg { width: 20px; height: 20px; }
         
         .modal-body { 
             padding: 3rem; flex: 1; background: #1a1a1a;
@@ -22029,18 +22853,13 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         </header>
         
         <div class="toolkit-grid">
-            <div class="tool-card" onclick="openToolModal('shop-tracking')">
+            <div class="tool-card" onclick="openProductPage('shop-tracking')"
                 <div class="tool-background"></div>
                 <div class="tool-icon-integrated">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                        <rect x="3" y="3" width="7" height="7" rx="1"/>
-                        <rect x="14" y="3" width="7" height="7" rx="1"/>
-                        <rect x="3" y="14" width="7" height="7" rx="1"/>
-                        <rect x="14" y="14" width="7" height="7" rx="1"/>
-                    </svg>
+                    <i class="dhg dhg-aeroplane-1"></i>
                 </div>
                 <div class="tool-content">
-                    <h3>${lang === 'nl' ? 'Shop tracking' : 'Shop tracking'}</h3>
+                    <h3>${lang === 'nl' ? 'Shop Tracking' : 'Shop Tracking'}</h3>
                     <p class="tool-description">${lang === 'nl' ? 'Monitor de prestaties van DHgate shops, track bestellingen en analyseer trends om de beste leveranciers te identificeren.' : 'Monitor DHgate shop performance, track orders and analyze trends to identify the best suppliers.'}</p>
                     <div class="tool-expand">
                         ${lang === 'nl' ? 'Meer informatie' : 'Learn more'}
@@ -22049,16 +22868,13 @@ function generateToolkitHTML(t, lang, theme = 'light') {
                 </div>
             </div>
             
-            <div class="tool-card" onclick="openToolModal('product-tracking')">
+            <div class="tool-card" onclick="openProductPage('product-tracking')">
                 <div class="tool-background"></div>
                 <div class="tool-icon-integrated">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="m21 21-4.35-4.35"/>
-                    </svg>
+                    <i class="dhg dhg-search-1"></i>
                 </div>
                 <div class="tool-content">
-                    <h3>${lang === 'nl' ? 'Product tracking' : 'Product tracking'}</h3>
+                    <h3>${lang === 'nl' ? 'Product Tracking' : 'Product Tracking'}</h3>
                     <p class="tool-description">${lang === 'nl' ? 'Volg specifieke producten, monitor prijswijzigingen en ontvang alerts wanneer je favoriete items in voorraad komen.' : 'Track specific products, monitor price changes and receive alerts when your favorite items come in stock.'}</p>
                     <div class="tool-expand">
                         ${lang === 'nl' ? 'Meer informatie' : 'Learn more'}
@@ -22067,19 +22883,13 @@ function generateToolkitHTML(t, lang, theme = 'light') {
                 </div>
             </div>
             
-            <div class="tool-card" onclick="openToolModal('margin-calculator')">
+            <div class="tool-card" onclick="openProductPage('margin-calculator')">
                 <div class="tool-background"></div>
                 <div class="tool-icon-integrated">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                        <rect x="4" y="2" width="16" height="20" rx="2"/>
-                        <line x1="8" y1="6" x2="16" y2="6"/>
-                        <line x1="8" y1="10" x2="16" y2="10"/>
-                        <line x1="8" y1="14" x2="16" y2="14"/>
-                        <line x1="8" y1="18" x2="16" y2="18"/>
-                    </svg>
+                    <i class="dhg dhg-calculator-1"></i>
                 </div>
                 <div class="tool-content">
-                    <h3>${lang === 'nl' ? 'Marge calculator' : 'Margin calculator'}</h3>
+                    <h3>${lang === 'nl' ? 'Marge Calculator' : 'Margin Calculator'}</h3>
                     <p class="tool-description">${lang === 'nl' ? 'Bereken je winst marge, inclusief verzendkosten, belastingen en andere fees om je pricing strategie te optimaliseren.' : 'Calculate your profit margin, including shipping costs, taxes and other fees to optimize your pricing strategy.'}</p>
                     <div class="tool-expand">
                         ${lang === 'nl' ? 'Meer informatie' : 'Learn more'}
@@ -22090,9 +22900,9 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         </div>
     </div>
     
-    <div id="toolModal" class="modal">
+    <div id="productModal" class="modal">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeToolModal()">
+            <button class="modal-close" onclick="closeProductModal()">
                 <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
             <div id="modalBody"></div>
@@ -22100,11 +22910,20 @@ function generateToolkitHTML(t, lang, theme = 'light') {
     </div>
     
     <script>
+        // Load DHgate Monitor Icon Font first
+        const fontFace = new FontFace('DHGateMonitor-Icons', 'url(/assets/icons/fonts/Lineicons.woff2)');
+        fontFace.load().then(function(font) {
+            document.fonts.add(font);
+            console.log('DHgate Monitor Icons font loaded successfully');
+        }).catch(function(error) {
+            console.log('Font loading failed:', error);
+        });
+        
         // Font fallback system - use SVG if font doesn't load
         document.addEventListener('DOMContentLoaded', function() {
             // Wait for font to load, then show icons or fall back to SVG
             setTimeout(() => {
-                const icons = document.querySelectorAll('.dhg-tile');
+                const icons = document.querySelectorAll('.feature-icon i.dhg');
                 icons.forEach((icon, index) => {
                     const svgFallbacks = [
                         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
@@ -22219,35 +23038,208 @@ function generateToolkitHTML(t, lang, theme = 'light') {
             return illustrations[toolId] || '';
         }
         
-        function openToolModal(toolId) {
-            const tool = toolData[toolId];
-            const modal = document.getElementById('toolModal');
+        function openProductPage(productId) {
+            const modal = document.getElementById('productModal');
             const modalBody = document.getElementById('modalBody');
             
-            const statusClass = tool.status === 'available' ? 'status-available' : 'status-coming-soon';
-            const statusText = tool.status === 'available' 
-                ? '${lang === 'nl' ? 'Beschikbaar' : 'Available'}' 
-                : '${lang === 'nl' ? 'Binnenkort' : 'Coming Soon'}';
+            // Update URL with hash
+            history.pushState({ productId }, '', \`#\${productId}\`);
             
-            const illustration = getIsometricIllustration(toolId);
+            // Product data with Linear.app inspired content
+            const products = {
+                'shop-tracking': {
+                    title: 'Shop Tracking',
+                    subtitle: 'Monitor DHgate shops like a pro',
+                    heroVideo: '<div class="product-hero-visual"><div class="dashboard-preview"><div class="chart-container"><div class="chart-bar" style="height: 60%;"></div><div class="chart-bar" style="height: 80%;"></div><div class="chart-bar" style="height: 45%;"></div><div class="chart-bar" style="height: 70%;"></div></div><div class="metrics-row"><div class="metric"><span class="metric-value">€2,847</span><span class="metric-label">Revenue</span></div><div class="metric"><span class="metric-value">94%</span><span class="metric-label">Uptime</span></div></div></div></div>',
+                    description: 'Take control of your DHgate supplier relationships with professional-grade analytics. Monitor shop performance, track delivery times, and identify the most reliable suppliers for your business.',
+                    highlights: [
+                        'Real-time performance monitoring across all your suppliers',
+                        'Advanced analytics to identify trends and opportunities',
+                        'Automated alerts for critical supply chain events'
+                    ],
+                    features: [
+                        { 
+                            icon: '<i class="dhg dhg-gauge-1"></i>',
+                            title: 'Performance Dashboard',
+                            description: 'Track shop ratings, delivery times and customer satisfaction in real-time.'
+                        },
+                        {
+                            icon: '<i class="dhg dhg-trend-up-1"></i>',
+                            title: 'Trend Analysis',
+                            description: 'Identify seasonal patterns and market opportunities with historical data.'
+                        },
+                        {
+                            icon: '<i class="dhg dhg-bell-1"></i>',
+                            title: 'Smart Alerts',
+                            description: 'Get notified when shop performance drops or new opportunities arise.'
+                        },
+                        {
+                            icon: '<i class="dhg dhg-shield-2-check"></i>',
+                            title: 'Supplier Scoring',
+                            description: 'AI-powered reliability scores help you choose the best suppliers.'
+                        }
+                    ],
+                    cta: '${lang === 'nl' ? 'Probeer Gratis' : 'Try Free'}',
+                    status: 'coming-soon'
+                },
+                'product-tracking': {
+                    title: 'Product Tracking',
+                    subtitle: 'Never miss a price drop or restock',
+                    heroVideo: '<div class="product-hero-visual"><div class="product-grid-preview"><div class="product-card"><div class="product-image"></div><div class="price-badge">€24.99</div><div class="stock-indicator green"></div></div><div class="product-card"><div class="product-image"></div><div class="price-badge discount">€18.99</div><div class="stock-indicator green"></div></div><div class="product-card"><div class="product-image"></div><div class="price-badge">€31.50</div><div class="stock-indicator red"></div></div></div></div>',
+                    description: 'Stay ahead of the competition with intelligent product monitoring. Track prices, inventory levels, and market trends across thousands of products automatically.',
+                    highlights: [
+                        'Monitor unlimited products across multiple DHgate shops',
+                        'Instant notifications for price changes and restocks',
+                        'Historical data to identify the best buying opportunities'
+                    ],
+                    features: [
+                        {
+                            icon: '<i class="dhg dhg-search-1"></i>',
+                            title: 'Product Discovery',
+                            description: 'Find profitable products with our advanced search and filtering tools.'
+                        },
+                        {
+                            icon: '<i class="dhg dhg-dollar-circle"></i>',
+                            title: 'Price Monitoring',
+                            description: 'Track price changes and get alerts when products hit your target price.'
+                        },
+                        {
+                            icon: '<i class="dhg dhg-refresh-circle-1-clockwise"></i>',
+                            title: 'Stock Alerts',
+                            description: 'Never miss a restock with intelligent inventory monitoring.'
+                        },
+                        {
+                            icon: '<i class="dhg dhg-bar-chart-4"></i>',
+                            title: 'Market Analysis',
+                            description: 'Understand market trends with comprehensive historical data.'
+                        }
+                    ],
+                    cta: '${lang === 'nl' ? 'Begin Tracking' : 'Start Tracking'}',
+                    status: 'coming-soon'
+                },
+                'margin-calculator': {
+                    title: 'Margin Calculator',
+                    subtitle: 'Maximize your profits with precision',
+                    heroVideo: '<div class="product-hero-visual"><div class="calculator-preview"><div class="calc-header">Profit Calculator</div><div class="calc-inputs"><div class="calc-row"><span>Product Cost:</span><span class="calc-value">€24.99</span></div><div class="calc-row"><span>Shipping:</span><span class="calc-value">€3.50</span></div><div class="calc-row"><span>Fees:</span><span class="calc-value">€2.10</span></div></div><div class="calc-result"><div class="profit-margin">67% margin</div><div class="profit-amount">€20.41 profit</div></div></div></div>',
+                    description: 'Make data-driven pricing decisions with our comprehensive margin calculator. Factor in all costs, fees, and market conditions to optimize your profitability.',
+                    highlights: [
+                        'Calculate exact profit margins including all hidden costs',
+                        'Optimize pricing strategies with market-based recommendations',
+                        'Bulk calculations for your entire product catalog'
+                    ],
+                    features: [
+                        {
+                            icon: '<i class="dhg dhg-calculator-1"></i>',
+                            title: 'Smart Calculations',
+                            description: 'Factor in product cost, shipping, taxes, and platform fees automatically.'
+                        },
+                        {
+                            icon: '<i class="dhg dhg-pie-chart-2"></i>',
+                            title: 'Profit Analysis',
+                            description: 'Visualize profit breakdown and identify cost optimization opportunities.'
+                        },
+                        {
+                            icon: '<i class="dhg dhg-file-multiple"></i>',
+                            title: 'Bulk Processing',
+                            description: 'Calculate margins for hundreds of products simultaneously.'
+                        },
+                        {
+                            icon: '<i class="dhg dhg-download-1"></i>',
+                            title: 'Export Reports',
+                            description: 'Download detailed profit analysis reports for accounting and planning.'
+                        }
+                    ],
+                    cta: '${lang === 'nl' ? 'Bereken Nu' : 'Calculate Now'}',
+                    status: 'coming-soon'
+                }
+            };
             
-            modalBody.innerHTML = '<div class="modal-hero"><div class="modal-illustration">' + illustration + '</div><div class="modal-title"><h1>' + tool.title + '</h1></div><p class="modal-subtitle">' + tool.description + '</p><p class="modal-description">' + (toolId === 'shop-tracking' ? '${lang === 'nl' ? 'DHgate Monitor brengt de kracht van professionele shop analytics naar jouw business. Monitor prestaties, track trends en identificeer de beste leveranciers.' : 'DHgate Monitor brings the power of professional shop analytics to your business. Monitor performance, track trends and identify the best suppliers.'}' : toolId === 'product-tracking' ? '${lang === 'nl' ? 'Blijf altijd op de hoogte van je favoriete producten. Ontvang real-time notificaties over prijswijzigingen en voorraad updates.' : 'Stay always informed about your favorite products. Receive real-time notifications about price changes and stock updates.'}' : '${lang === 'nl' ? 'Maak data-gedreven beslissingen met onze geavanceerde marge calculator. Bereken exacte winsten inclusief alle kosten en belastingen.' : 'Make data-driven decisions with our advanced margin calculator. Calculate exact profits including all costs and taxes.'}') + '</p></div><div class="modal-body"><div class="feature-section"><h3 style="color: white; margin-bottom: 2rem;">${lang === 'nl' ? 'Kern Functionaliteiten' : 'Core Features'}</h3><div class="feature-grid">' + tool.features.map(f => '<div class="feature-item" style="background: rgba(255,255,255,0.05); border-left: 4px solid #667eea; color: white;"><h4 style="color: white;">' + f.title + '</h4><p style="color: #a0a0a0;">' + f.description + '</p></div>').join('') + '</div></div><div class="tool-actions" style="border-top: 1px solid #333;"><span class="status-badge ' + statusClass + '">' + statusText + '</span>' + (tool.status === 'available' && toolId === 'margin-calculator' ? '<button class="btn btn-primary" onclick="openCalculator(); closeToolModal();">${lang === 'nl' ? 'Tool Openen' : 'Open Tool'}</button>' : '') + '</div></div>';
+            const product = products[productId];
+            if (!product) return;
+            
+            modalBody.innerHTML = \`
+                <div class="product-modal-container">
+                    <!-- Hero Section -->
+                    <div class="product-hero">
+                        <div class="product-hero-content">
+                            <h1 class="product-title">\${product.title}</h1>
+                            <p class="product-subtitle">\${product.subtitle}</p>
+                            <div class="product-description">
+                                <p>\${product.description}</p>
+                            </div>
+                            <div class="product-highlights">
+                                \${product.highlights.map(highlight => \`
+                                    <div class="highlight-item">
+                                        <svg class="highlight-icon" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                        <span>\${highlight}</span>
+                                    </div>
+                                \`).join('')}
+                            </div>
+                        </div>
+                        <div class="product-hero-visual-container">
+                            \${product.heroVideo}
+                        </div>
+                    </div>
+                    
+                    <!-- Features Section -->
+                    <div class="product-features">
+                        <h2 class="features-title">${lang === 'nl' ? 'Belangrijkste functies' : 'Key Features'}</h2>
+                        <div class="features-grid">
+                            \${product.features.map(feature => \`
+                                <div class="feature-card-modal">
+                                    <div class="feature-icon-container">
+                                        \${feature.icon}
+                                    </div>
+                                    <div class="feature-content">
+                                        <h3 class="feature-title">\${feature.title}</h3>
+                                        <p class="feature-description">\${feature.description}</p>
+                                    </div>
+                                </div>
+                            \`).join('')}
+                        </div>
+                    </div>
+                    
+                    <!-- CTA Section -->
+                    <div class="product-cta-section">
+                        <div class="cta-container">
+                            \${product.status === 'coming-soon' ? \`
+                                <div class="coming-soon-badge">${lang === 'nl' ? 'Binnenkort beschikbaar' : 'Coming Soon'}</div>
+                                <p class="cta-description">${lang === 'nl' ? 'Deze functie wordt momenteel ontwikkeld en zal binnenkort beschikbaar zijn.' : 'This feature is currently in development and will be available soon.'}</p>
+                            \` : \`
+                                <button class="cta-button" onclick="alert('Feature available!')">\${product.cta}</button>
+                                <p class="cta-description">${lang === 'nl' ? 'Start je gratis proefperiode van 14 dagen.' : 'Start your 14-day free trial.'}</p>
+                            \`}
+                        </div>
+                    </div>
+                </div>
+            \`;
             
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
+            
+            // Add entrance animation
+            requestAnimationFrame(() => {
+                modal.querySelector('.modal-content').classList.add('modal-enter');
+            });
         }
         
-        function closeToolModal() {
-            const modal = document.getElementById('toolModal');
+        function closeProductModal() {
+            const modal = document.getElementById('productModal');
             const modalContent = modal.querySelector('.modal-content');
             
             modalContent.classList.add('modal-exit');
+            modalContent.classList.remove('modal-enter');
             
             setTimeout(() => {
                 modal.style.display = 'none';
                 modalContent.classList.remove('modal-exit');
                 document.body.style.overflow = 'auto';
-            }, 600);
+                
+                // Update URL to remove hash
+                history.pushState({}, '', window.location.pathname);
+            }, 400);
         }
         
         function openCalculator() {

@@ -1,0 +1,16 @@
+RewriteEngine On
+
+# Simulate /toolkit route
+RewriteRule ^toolkit/?$ toolkit-demo.html [L]
+
+# Simulate /admin/component-library route
+RewriteRule ^admin/component-library/?$ components/dhgate-logo.html [L]
+
+# Simulate root route
+RewriteRule ^$ index.html [L]
+
+# Handle other routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.html [L]
+
