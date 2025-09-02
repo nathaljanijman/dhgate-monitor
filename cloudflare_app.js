@@ -7129,6 +7129,7 @@ async function handleNewsroomPage(request, env) {
                 flex-grow: 1;
                 text-align: left;
                 letter-spacing: 0.025em;
+                font-family: 'Raleway', sans-serif;
             }
             
             .filter-toggle-icon {
@@ -7756,6 +7757,7 @@ async function handleNewsroomPage(request, env) {
                 .filter-title {
                     font-size: 1.1rem;
                     text-align: center;
+                    font-family: 'Raleway', sans-serif;
                 }
                 
                 .filter-tags-header {
@@ -7770,6 +7772,7 @@ async function handleNewsroomPage(request, env) {
                 
                 .filter-title {
                     font-size: 1.1rem;
+                    font-family: 'Raleway', sans-serif;
                 }
                 
                 .clear-filters {
@@ -7950,7 +7953,7 @@ async function handleNewsroomPage(request, env) {
                         <div class="filter-tags-section">
                             <div class="filter-tags-header">
                                 <button class="filter-toggle" onclick="toggleFilters()" aria-expanded="false">
-                                    <h3 class="filter-title">${lang === 'nl' ? 'Filter op onderwerp' : 'Filter by topic'}</h3>
+                                    <h3 class="filter-title">${lang === 'nl' ? 'Filter' : 'Filter'}</h3>
                                     <svg class="filter-toggle-icon" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M7.41 8.84L12 13.42l4.59-4.58L18 10.25l-6 6-6-6z"/>
                                     </svg>
