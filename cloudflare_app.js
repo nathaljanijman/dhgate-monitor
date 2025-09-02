@@ -4813,7 +4813,51 @@ async function handleAdminDashboard(request, env) {
   }
 }
 
+// Handle icons & components admin page
+async function handleIconsComponents(request, env) {
+  const url = new URL(request.url);
+  const lang = url.searchParams.get('lang') || 'nl';
+  const theme = url.searchParams.get('theme') || 'light';
+  
+  // Check authentication
+  const cookies = request.headers.get('Cookie') || '';
+  const tokenMatch = cookies.match(/admin_token=([^;]+)/);
+  const token = tokenMatch ? tokenMatch[1] : null;
+  
+  const isAuthenticated = await verifyAdminSession(env, token);
+  
+  if (!isAuthenticated) {
+    return Response.redirect(`${url.origin}/admin/login?lang=${lang}&theme=${theme}`, 302);
+  }
+  
+  const html = generateIconsComponentsHTML(lang, theme);
+  return new Response(html, {
+    headers: { 'Content-Type': 'text/html' }
+  });
+}
 
+// Handle component library admin page
+async function handleComponentLibrary(request, env) {
+  const url = new URL(request.url);
+  const lang = url.searchParams.get('lang') || 'nl';
+  const theme = url.searchParams.get('theme') || 'light';
+  
+  // Check authentication
+  const cookies = request.headers.get('Cookie') || '';
+  const tokenMatch = cookies.match(/admin_token=([^;]+)/);
+  const token = tokenMatch ? tokenMatch[1] : null;
+  
+  const isAuthenticated = await verifyAdminSession(env, token);
+  
+  if (!isAuthenticated) {
+    return Response.redirect(`${url.origin}/admin/login?lang=${lang}&theme=${theme}`, 302);
+  }
+  
+  const html = generateComponentLibraryHTML(lang, theme);
+  return new Response(html, {
+    headers: { 'Content-Type': 'text/html' }
+  });
+}
 
 // Handle admin logout
 async function handleAdminLogout(request, env) {
@@ -5281,6 +5325,12 @@ export default {
         case '/admin/dashboard':
           return await handleAdminDashboard(request, env);
           
+        case '/admin/icons-components':
+          return await handleIconsComponents(request, env);
+          
+        case '/admin/component-library':
+          return await handleComponentLibrary(request, env);
+          
 
           
         case '/admin/logout':
@@ -5582,6 +5632,16 @@ export default {
         
         case '/toolkit':
           return await handleToolkit(request, env);
+
+        // Icon font assets
+        case '/assets/icons/fonts/Lineicons.woff2':
+        case '/assets/icons/fonts/Lineicons.woff':
+        case '/assets/icons/fonts/Lineicons.ttf':
+        case '/assets/icons/fonts/DHGateMonitor-Icons.woff2':
+        case '/assets/icons/fonts/DHGateMonitor-Icons.woff':
+        case '/assets/icons/fonts/DHGateMonitor-Icons.ttf':
+        case '/assets/icons/dhgate-monitor-icons.css':
+          return await handleIconFont(request, url.pathname, env);
 
         default:
 
@@ -6317,6 +6377,87 @@ async function handleToolkit(request, env) {
   return new Response(html, {
     headers: { 'Content-Type': 'text/html' }
   });
+}
+
+async function handleIconFont(request, pathname, env) {
+  try {
+    // Handle CSS file requests
+    if (pathname.endsWith('.css')) {
+      const cssKey = pathname.includes('dhgate-monitor-icons.css') ? 'dhgate-monitor-css' : null;
+      if (cssKey) {
+        const cssData = await env.DHGATE_MONITOR_KV.get(cssKey, { type: 'text' });
+        if (cssData) {
+          return new Response(cssData, {
+            headers: { 
+              'Content-Type': 'text/css',
+              'Cache-Control': 'public, max-age=31536000'
+            }
+          });
+        } else {
+          // Fallback: serve CSS file directly if not in KV
+          console.log('CSS not in KV, trying direct file serve');
+          return new Response('/* DHgate Monitor Icons CSS - Loading... */', {
+            headers: { 'Content-Type': 'text/css' }
+          });
+        }
+      }
+      return new Response('CSS file not found', { 
+        status: 404,
+        headers: { 'Content-Type': 'text/plain' }
+      });
+    }
+    
+    // Determine which font file to serve based on path
+    let fontKey = null;
+    if (pathname.includes('DHGateMonitor-Icons')) {
+      fontKey = pathname.endsWith('.woff2') ? 'dhgate-monitor-woff2' : 
+               pathname.endsWith('.woff') ? 'dhgate-monitor-woff' : 
+               pathname.endsWith('.ttf') ? 'dhgate-monitor-ttf' : null;
+    } else {
+      fontKey = pathname.endsWith('.woff2') ? 'lineicons-woff2' : 
+               pathname.endsWith('.woff') ? 'lineicons-woff' : null;
+    }
+    
+    if (!fontKey) {
+      return new Response('Font format not supported', { 
+        status: 404,
+        headers: { 'Content-Type': 'text/plain' }
+      });
+    }
+    
+    // Get font from KV storage
+    const fontData = await env.DHGATE_MONITOR_KV.get(fontKey, { type: 'arrayBuffer' });
+    const fontMetadata = await env.DHGATE_MONITOR_KV.getWithMetadata(fontKey);
+    
+    if (!fontData) {
+      return new Response('Font file not found', { 
+        status: 404,
+        headers: { 'Content-Type': 'text/plain' }
+      });
+    }
+    
+    // Get content type from metadata or default
+    const contentType = fontMetadata?.metadata?.contentType || 
+                       (pathname.endsWith('.woff2') ? 'font/woff2' : 'font/woff');
+    
+    // Return font with proper headers
+    return new Response(fontData, {
+      status: 200,
+      headers: {
+        'Content-Type': contentType,
+        'Cache-Control': 'public, max-age=31536000', // Cache for 1 year
+        'Access-Control-Allow-Origin': '*',
+        'Cross-Origin-Resource-Policy': 'cross-origin'
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error serving font:', error);
+    return new Response('Internal server error', { 
+      status: 500,
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  }
 }
 
 async function handleServicePage(request, env) {
@@ -21498,6 +21639,41 @@ function generateToolkitHTML(t, lang, theme = 'light') {
     <meta name="description" content="${lang === 'nl' ? 'Professionele tools voor DHgate monitoring: shop tracking, product tracking en marge calculator.' : 'Professional tools for DHgate monitoring: shop tracking, product tracking and margin calculator.'}">
     <link rel="icon" href="/assets/logo.png" type="image/png">
     
+    <!-- DHGate Monitor Design System Colors -->
+    <style>
+        /* DHGate Monitor Design System Variables from Icon Library */
+        :root {
+          /* Primary Brand Colors */
+          --dhg-primary-blue: #2563EB;
+          --dhg-primary-blue-hover: #1D4ED8;
+          --dhg-primary-blue-light: #60A5FA;
+          --dhg-accent-orange: #EA580C;
+          --dhg-accent-orange-hover: #C2410C;
+          --dhg-accent-orange-light: #FB923C;
+          
+          /* Light Theme Text Colors */
+          --dhg-text-primary: #111827;
+          --dhg-text-secondary: #374151;
+          --dhg-text-muted: #4B5563;
+          --dhg-text-white: #FFFFFF;
+          
+          /* Icon specific colors */
+          --dhg-icon-color: var(--dhg-primary-blue);
+          --dhg-icon-color-hover: var(--dhg-primary-blue-hover);
+          --dhg-icon-color-muted: var(--dhg-text-muted);
+        }
+
+        /* Dark Theme Support */
+        [data-theme="dark"] {
+          /* Dark Theme Text Colors */
+          --dhg-text-primary: #F8FAFC;
+          --dhg-text-secondary: #CBD5E1;
+          --dhg-text-muted: #94A3B8;
+          --dhg-icon-color-muted: var(--dhg-text-muted);
+        }
+    </style>
+    
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -21568,7 +21744,7 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         
         .tool-card::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, transparent 0%, rgba(102, 126, 234, 0.03) 100%);
+            background: linear-gradient(135deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.15) 100%);
             opacity: 0; transition: opacity 0.4s ease;
         }
         
@@ -21582,7 +21758,7 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         
         .tool-background {
             position: absolute; top: 0; right: 0; width: 200px; height: 200px;
-            background: linear-gradient(135deg, #667eea15, #764ba215);
+            background: linear-gradient(135deg, rgba(0,0,0,0.08), rgba(0,0,0,0.12));
             border-radius: 50%; transform: translate(60px, -60px);
             transition: all 0.4s ease;
         }
@@ -21593,16 +21769,23 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         
         .tool-icon-integrated {
             position: absolute; top: 2rem; right: 2rem;
-            width: 80px; height: 80px; opacity: 0.1;
+            width: 48px; height: 48px; opacity: 0.4;
             transition: all 0.4s ease; z-index: 1;
         }
         
         .tool-card:hover .tool-icon-integrated {
-            opacity: 0.2; transform: scale(1.1) rotate(5deg);
+            opacity: 0.8; transform: scale(1.1) rotate(5deg);
         }
         
         .tool-icon-integrated svg {
-            width: 100%; height: 100%; fill: #667eea;
+            width: 100%; height: 100%; 
+            stroke: var(--dhg-icon-color);
+            opacity: inherit;
+            transition: stroke 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .tool-card:hover .tool-icon-integrated svg {
+            stroke: var(--dhg-icon-color-hover);
         }
         
         .tool-content {
@@ -21622,12 +21805,22 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         
         .tool-expand {
             display: inline-flex; align-items: center; gap: 0.5rem;
-            color: #667eea; font-weight: 600; font-size: 0.9rem;
-            transition: all 0.3s ease;
+            color: #2563EB; font-weight: 600; font-size: 0.9rem;
+            padding: 0.5rem 0; border-radius: 6px;
+            transition: all 0.3s ease; position: relative;
         }
         
         .tool-card:hover .tool-expand {
-            color: #4c51bf; transform: translateX(5px);
+            color: #1D4ED8; transform: translateX(5px);
+        }
+        
+        .tool-expand::after {
+            content: ''; position: absolute; bottom: -2px; left: 0; right: 100%;
+            height: 2px; background: #2563EB; transition: right 0.3s ease;
+        }
+        
+        .tool-card:hover .tool-expand::after {
+            right: 0;
         }
         
         .tool-expand svg { width: 16px; height: 16px; fill: currentColor; }
@@ -21839,10 +22032,15 @@ function generateToolkitHTML(t, lang, theme = 'light') {
             <div class="tool-card" onclick="openToolModal('shop-tracking')">
                 <div class="tool-background"></div>
                 <div class="tool-icon-integrated">
-                    <svg viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"/><path d="M8 21v-4a2 2 0 012-2h4a2 2 0 012 2v4"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                    </svg>
                 </div>
                 <div class="tool-content">
-                    <h3>${lang === 'nl' ? 'Shop Tracking' : 'Shop Tracking'}</h3>
+                    <h3>${lang === 'nl' ? 'Shop tracking' : 'Shop tracking'}</h3>
                     <p class="tool-description">${lang === 'nl' ? 'Monitor de prestaties van DHgate shops, track bestellingen en analyseer trends om de beste leveranciers te identificeren.' : 'Monitor DHgate shop performance, track orders and analyze trends to identify the best suppliers.'}</p>
                     <div class="tool-expand">
                         ${lang === 'nl' ? 'Meer informatie' : 'Learn more'}
@@ -21854,10 +22052,13 @@ function generateToolkitHTML(t, lang, theme = 'light') {
             <div class="tool-card" onclick="openToolModal('product-tracking')">
                 <div class="tool-background"></div>
                 <div class="tool-icon-integrated">
-                    <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 01-2 2H7a2 2 0 01-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 010-5A4.8 8 0 0112 8a4.8 8 0 014.5-5 2.5 2.5 0 010 5"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
                 </div>
                 <div class="tool-content">
-                    <h3>${lang === 'nl' ? 'Product Tracking' : 'Product Tracking'}</h3>
+                    <h3>${lang === 'nl' ? 'Product tracking' : 'Product tracking'}</h3>
                     <p class="tool-description">${lang === 'nl' ? 'Volg specifieke producten, monitor prijswijzigingen en ontvang alerts wanneer je favoriete items in voorraad komen.' : 'Track specific products, monitor price changes and receive alerts when your favorite items come in stock.'}</p>
                     <div class="tool-expand">
                         ${lang === 'nl' ? 'Meer informatie' : 'Learn more'}
@@ -21869,10 +22070,16 @@ function generateToolkitHTML(t, lang, theme = 'light') {
             <div class="tool-card" onclick="openToolModal('margin-calculator')">
                 <div class="tool-background"></div>
                 <div class="tool-icon-integrated">
-                    <svg viewBox="0 0 24 24"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                        <rect x="4" y="2" width="16" height="20" rx="2"/>
+                        <line x1="8" y1="6" x2="16" y2="6"/>
+                        <line x1="8" y1="10" x2="16" y2="10"/>
+                        <line x1="8" y1="14" x2="16" y2="14"/>
+                        <line x1="8" y1="18" x2="16" y2="18"/>
+                    </svg>
                 </div>
                 <div class="tool-content">
-                    <h3>${lang === 'nl' ? 'Marge Calculator' : 'Margin Calculator'}</h3>
+                    <h3>${lang === 'nl' ? 'Marge calculator' : 'Margin calculator'}</h3>
                     <p class="tool-description">${lang === 'nl' ? 'Bereken je winst marge, inclusief verzendkosten, belastingen en andere fees om je pricing strategie te optimaliseren.' : 'Calculate your profit margin, including shipping costs, taxes and other fees to optimize your pricing strategy.'}</p>
                     <div class="tool-expand">
                         ${lang === 'nl' ? 'Meer informatie' : 'Learn more'}
@@ -21893,6 +22100,41 @@ function generateToolkitHTML(t, lang, theme = 'light') {
     </div>
     
     <script>
+        // Font fallback system - use SVG if font doesn't load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait for font to load, then show icons or fall back to SVG
+            setTimeout(() => {
+                const icons = document.querySelectorAll('.dhg-tile');
+                icons.forEach((icon, index) => {
+                    const svgFallbacks = [
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>',
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>'
+                    ];
+                    
+                    // Check if font is working by testing character width
+                    const testSpan = document.createElement('span');
+                    testSpan.style.fontFamily = 'DHGateMonitor-Icons';
+                    testSpan.style.position = 'absolute';
+                    testSpan.style.left = '-9999px';
+                    testSpan.innerHTML = '&#60071;';
+                    document.body.appendChild(testSpan);
+                    
+                    const fontWidth = testSpan.offsetWidth;
+                    document.body.removeChild(testSpan);
+                    
+                    // If font character has no width, fall back to SVG
+                    if (fontWidth === 0) {
+                        console.log('Font not loaded, using SVG fallback for icon', index);
+                        icon.innerHTML = svgFallbacks[index] || svgFallbacks[0];
+                        icon.style.display = 'flex';
+                        icon.style.alignItems = 'center';
+                        icon.style.justifyContent = 'center';
+                    }
+                });
+            }, 200);
+        });
+        
         const toolData = {
             'shop-tracking': {
                 title: '${lang === 'nl' ? 'Shop Tracking' : 'Shop Tracking'}',
@@ -22019,6 +22261,919 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeToolModal();
+        });
+    </script>
+</body>
+</html>`;
+}
+
+function generateIconsComponentsHTML(lang, theme) {
+  return `<!DOCTYPE html>
+<html lang="${lang}" data-theme="${theme}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${lang === 'nl' ? 'Icons & Components - DHgate Monitor Admin' : 'Icons & Components - DHgate Monitor Admin'}</title>
+    <link rel="icon" href="/assets/logo.png" type="image/png">
+    
+    <style>
+        :root {
+          --dhg-primary-blue: #2563EB;
+          --dhg-primary-blue-hover: #1D4ED8;
+          --dhg-text-primary: #111827;
+          --dhg-text-secondary: #374151;
+          --bg-primary: #FFFFFF;
+          --bg-secondary: #F8FAFC;
+          --border-color: #E5E7EB;
+        }
+
+        [data-theme="dark"] {
+          --dhg-text-primary: #F8FAFC;
+          --dhg-text-secondary: #CBD5E1;
+          --bg-primary: #0F172A;
+          --bg-secondary: #1E293B;
+          --border-color: #334155;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--dhg-text-primary);
+            min-height: 100vh;
+        }
+        
+        .admin-header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .admin-nav a {
+            color: var(--dhg-text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+            margin-right: 1rem;
+        }
+        
+        .admin-nav a:hover, .admin-nav a.active {
+            color: var(--dhg-primary-blue);
+            background: rgba(37, 99, 235, 0.1);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .section {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .stat-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dhg-primary-blue);
+        }
+        
+        .stat-label {
+            color: var(--dhg-text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: var(--dhg-primary-blue);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--dhg-text-secondary);
+            border: 1px solid var(--border-color);
+        }
+        
+        /* DHgate Monitor Icons - Font Face */
+        @font-face {
+          font-family: 'DHGateMonitor-Icons';
+          src: url('/assets/icons/fonts/Lineicons.woff2') format('woff2'),
+               url('/assets/icons/fonts/Lineicons.woff') format('woff');
+          font-display: swap;
+        }
+        
+        /* Base icon class */
+        .dhg {
+          font-family: 'DHGateMonitor-Icons';
+          font-weight: normal;
+          font-style: normal;
+          font-variant: normal;
+          text-transform: none;
+          line-height: 1;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          speak: none;
+        }
+        
+        /* Icon sizes */
+        .dhg-sm { font-size: 16px; }
+        .dhg-md { font-size: 24px; }  
+        .dhg-lg { font-size: 32px; }
+        .dhg-xl { font-size: 48px; }
+        .dhg-tile { font-size: 80px; }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <div class="admin-nav">
+            <a href="/admin/dashboard?lang=${lang}&theme=${theme}">Dashboard</a>
+            <a href="/admin/icons-components?lang=${lang}&theme=${theme}" class="active">Icons & Components</a>
+        </div>
+        <a href="/admin/logout?lang=${lang}&theme=${theme}" class="btn btn-secondary">Logout</a>
+    </div>
+    
+    <div class="container">
+        <h1 class="page-title">${lang === 'nl' ? 'Icons & Components' : 'Icons & Components'}</h1>
+        <p style="color: var(--dhg-text-secondary); margin-bottom: 3rem;">${lang === 'nl' ? 'DHgate Monitor Design System bibliotheek' : 'DHgate Monitor Design System library'}</p>
+        
+        <!-- Icon Library Section -->
+        <div class="section">
+            <h2 class="section-title">🎨 ${lang === 'nl' ? 'Icon Bibliotheek' : 'Icon Library'}</h2>
+            <p>${lang === 'nl' ? 'DHgate Monitor custom icon font met 606 professionele icons' : 'DHgate Monitor custom icon font with 606 professional icons'}</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">606</div>
+                    <div class="stat-label">${lang === 'nl' ? 'Beschikbare Icons' : 'Available Icons'}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">WOFF2</div>
+                    <div class="stat-label">${lang === 'nl' ? 'Font Formaat' : 'Font Format'}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">48KB</div>
+                    <div class="stat-label">${lang === 'nl' ? 'Bestandsgrootte' : 'File Size'}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">✅</div>
+                    <div class="stat-label">${lang === 'nl' ? 'Status' : 'Status'}</div>
+                </div>
+            </div>
+            
+            <!-- Icon Browser -->
+            <div style="margin-top: 2rem;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+                    <h3 style="margin: 0; font-size: 1.2rem; font-weight: 600;">${lang === 'nl' ? 'Icon Browser' : 'Icon Browser'}</h3>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <input type="text" id="iconSearch" placeholder="${lang === 'nl' ? 'Zoek icons...' : 'Search icons...'}" 
+                               style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--dhg-text-primary); width: 200px;">
+                        <select id="iconSize" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--dhg-text-primary);">
+                            <option value="24px">24px</option>
+                            <option value="32px" selected>32px</option>
+                            <option value="48px">48px</option>
+                            <option value="64px">64px</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="iconGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; max-height: 500px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; background: var(--bg-secondary);">
+                    <!-- Icons will be loaded here dynamically -->
+                </div>
+                
+                <div style="margin-top: 1rem; padding: 1rem; background: var(--bg-secondary); border-radius: 6px; border: 1px solid var(--border-color);">
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">${lang === 'nl' ? 'Geselecteerd Icon:' : 'Selected Icon:'}</div>
+                    <div id="selectedIcon" style="font-family: monospace; padding: 0.5rem; background: #1f2937; color: #f3f4f6; border-radius: 4px; user-select: all; cursor: pointer;" onclick="copyToClipboard(this.textContent)">
+                        &lt;i class="dhg dhg-search-1 dhg-md"&gt;&lt;/i&gt;
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--dhg-text-secondary); margin-top: 0.5rem;">
+                        ${lang === 'nl' ? 'Klik om naar klembord te kopiëren' : 'Click to copy to clipboard'}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Component Library -->
+        <div class="section">
+            <h2 class="section-title">🧩 ${lang === 'nl' ? 'Components' : 'Components'}</h2>
+            <p>${lang === 'nl' ? 'Herbruikbare UI componenten voor DHgate Monitor' : 'Reusable UI components for DHgate Monitor'}</p>
+            
+            <div style="margin-top: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div style="border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden;">
+                    <div style="padding: 2rem; background: var(--bg-secondary); text-align: center;">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; padding: 2rem; color: white; display: inline-block;">
+                            <h3>Toolkit Card</h3>
+                            <p style="opacity: 0.8; margin: 1rem 0; font-size: 0.9rem;">Interactive cards</p>
+                            <div style="color: #60A5FA; font-weight: 500;">Meer informatie →</div>
+                        </div>
+                    </div>
+                    <div style="padding: 1rem;">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Toolkit Cards</div>
+                        <div style="font-size: 0.9rem; color: var(--dhg-text-secondary);">${lang === 'nl' ? 'Tool showcases met animaties' : 'Tool showcases with animations'}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Documentation -->
+        <div class="section">
+            <h2 class="section-title">📖 ${lang === 'nl' ? 'Documentatie' : 'Documentation'}</h2>
+            
+            <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px;">
+                <h3 style="margin-bottom: 1rem;">${lang === 'nl' ? 'Icon Gebruik' : 'Icon Usage'}</h3>
+                <pre style="background: #1f2937; color: #f3f4f6; padding: 1rem; border-radius: 6px; overflow-x: auto;"><code>&lt;i class="dhg dhg-search-1 dhg-lg"&gt;&lt;/i&gt;
+
+.dhg-sm    /* 16px */
+.dhg-md    /* 24px */ 
+.dhg-lg    /* 32px */
+.dhg-tile  /* 80px */</code></pre>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // DHgate Monitor Icons Data - embedded from unicodesMap.json
+        const iconData = {"dhg-500px":59905,"dhg-adobe":59906,"dhg-adonis":59907,"dhg-aeroplane-1":59908,"dhg-agenda":59909,"dhg-airbnb":59910,"dhg-airtable":59911,"dhg-alarm-1":59912,"dhg-align-text-center":59913,"dhg-align-text-left":59914,"dhg-align-text-right":59915,"dhg-alpinejs":59916,"dhg-amazon":59917,"dhg-amazon-original":59918,"dhg-amazon-pay":59919,"dhg-ambulance-1":59920,"dhg-amd":59921,"dhg-amex":59922,"dhg-anchor":59923,"dhg-android":59924,"dhg-android-old":59925,"dhg-angellist":59926,"dhg-angle-double-down":59927,"dhg-angle-double-left":59928,"dhg-angle-double-right":59929,"dhg-angle-double-up":59930,"dhg-angular":59931,"dhg-app-store":59932,"dhg-apple-brand":59933,"dhg-apple-music":59934,"dhg-apple-music-alt":59935,"dhg-apple-pay":59936,"dhg-arc-browser":59937,"dhg-arrow-all-direction":59938,"dhg-arrow-angular-top-left":59939,"dhg-arrow-angular-top-right":59940,"dhg-arrow-both-direction-horizontal-1":59941,"dhg-arrow-both-direction-vertical-1":59942,"dhg-arrow-downward":59943,"dhg-arrow-left":59944,"dhg-arrow-left-circle":59945,"dhg-arrow-right":59946,"dhg-arrow-right-circle":59947,"dhg-arrow-upward":59948,"dhg-asana":59949,"dhg-astro":59950,"dhg-atlassian":59951,"dhg-audi":59952,"dhg-audi-alt":59953,"dhg-aws":59954,"dhg-azure":59955,"dhg-badge-decagram-percent":59956,"dhg-balloons":59957,"dhg-ban-2":59958,"dhg-bar-chart-4":59959,"dhg-bar-chart-dollar":59960,"dhg-basket-shopping-3":59961,"dhg-beat":59962,"dhg-behance":59963,"dhg-bell-1":59964,"dhg-bike":59965,"dhg-bing":59966,"dhg-bitbucket":59967,"dhg-bitcoin":59968,"dhg-bittorrent":59969,"dhg-blogger":59970,"dhg-blogger-alt":59971,"dhg-bluetooth":59972,"dhg-bluetooth-logo":59973,"dhg-bmw":59974,"dhg-board-writing-3":59975,"dhg-bold":59976,"dhg-bolt-2":59977,"dhg-bolt-3":59978,"dhg-book-1":59979,"dhg-bookmark-1":59980,"dhg-bookmark-circle":59981,"dhg-books-2":59982,"dhg-bootstrap-5":59983,"dhg-bootstrap-5-square":59984,"dhg-box-archive-1":59985,"dhg-box-closed":59986,"dhg-box-gift-1":59987,"dhg-brave":59988,"dhg-bricks":59989,"dhg-bridge-3":59990,"dhg-briefcase-1":59991,"dhg-briefcase-2":59992,"dhg-briefcase-plus-1":59993,"dhg-brush-1-rotated":59994,"dhg-brush-2":59995,"dhg-btc":59996,"dhg-bug-1":59997,"dhg-buildings-1":59998,"dhg-bulb-2":59999,"dhg-bulb-4":60000,"dhg-burger-1":60001,"dhg-burger-drink":60002,"dhg-bus-1":60003,"dhg-busket-ball":60004,"dhg-cake-1":60005,"dhg-calculator-1":60006,"dhg-calculator-2":60007,"dhg-calendar-days":60008,"dhg-camera-1":60009,"dhg-camera-movie-1":60010,"dhg-candy-cane-2":60011,"dhg-candy-round-1":60012,"dhg-canva":60013,"dhg-capsule-1":60014,"dhg-car-2":60015,"dhg-car-4":60016,"dhg-car-6":60017,"dhg-caravan-1":60018,"dhg-cart-1":60019,"dhg-cart-2":60020,"dhg-cash-app":60021,"dhg-certificate-badge-1":60022,"dhg-chat-bubble-2":60023,"dhg-check":60024,"dhg-check-circle-1":60025,"dhg-check-square-2":60026,"dhg-chevron-down":60027,"dhg-chevron-down-circle":60028,"dhg-chevron-left":60029,"dhg-chevron-left-circle":60030,"dhg-chevron-right-circle":60031,"dhg-chevron-up":60032,"dhg-chevron-up-circle":60033,"dhg-chrome":60034,"dhg-chromecast":60035,"dhg-cisco":60036,"dhg-claude":60037,"dhg-clickup":60038,"dhg-clipboard":60039,"dhg-cloud-2":60040,"dhg-cloud-bolt-1":60041,"dhg-cloud-bolt-2":60042,"dhg-cloud-check-circle":60043,"dhg-cloud-download":60044,"dhg-cloud-iot-2":60045,"dhg-cloud-rain":60046,"dhg-cloud-refresh-clockwise":60047,"dhg-cloud-sun":60048,"dhg-cloud-upload":60049,"dhg-cloudflare":60050,"dhg-code-1":60051,"dhg-code-s":60052,"dhg-codepen":60053,"dhg-coffee-cup-2":60054,"dhg-coinbase":60055,"dhg-colour-palette-3":60056,"dhg-comment-1":60057,"dhg-comment-1-share":60058,"dhg-comment-1-text":60059,"dhg-compass-drafting-2":60060,"dhg-connectdevelop":60061,"dhg-copilot":60062,"dhg-coral":60063,"dhg-cpanel":60064,"dhg-crane-4":60065,"dhg-creative-commons":60066,"dhg-credit-card-multiple":60067,"dhg-crop-2":60068,"dhg-crown-3":60069,"dhg-css3":60070,"dhg-dashboard-square-1":60071,"dhg-database-2":60072,"dhg-deno":60073,"dhg-dev":60074,"dhg-dialogflow":60075,"dhg-diamonds-1":60076,"dhg-diamonds-2":60077,"dhg-digitalocean":60078,"dhg-diners-club":60079,"dhg-direction-ltr":60080,"dhg-direction-rtl":60081,"dhg-discord":60082,"dhg-discord-chat":60083,"dhg-discover":60084,"dhg-docker":60085,"dhg-dollar":60086,"dhg-dollar-circle":60087,"dhg-double-quotes-end-1":60088,"dhg-download-1":60089,"dhg-download-circle-1":60090,"dhg-dribbble":60091,"dhg-dribbble-symbol":60092,"dhg-drizzle":60093,"dhg-dropbox":60094,"dhg-drupal":60095,"dhg-dumbbell-1":60096,"dhg-edge":60097,"dhg-emoji-expressionless":60098,"dhg-emoji-expressionless-flat-eyes":60099,"dhg-emoji-grin":60100,"dhg-emoji-sad":60101,"dhg-emoji-smile":60102,"dhg-emoji-smile-side":60103,"dhg-emoji-smile-sunglass":60104,"dhg-emoji-smile-tongue":60105,"dhg-enter":60106,"dhg-enter-down":60107,"dhg-envato":60108,"dhg-envelope-1":60109,"dhg-eraser-1":60110,"dhg-ethereum-logo":60111,"dhg-euro":60112,"dhg-exit":60113,"dhg-exit-up":60114,"dhg-expand-arrow-1":60115,"dhg-expand-square-4":60116,"dhg-expressjs":60117,"dhg-eye":60118,"dhg-facebook":60119,"dhg-facebook-messenger":60120,"dhg-facebook-rounded":60121,"dhg-facebook-square":60122,"dhg-facetime":60123,"dhg-figma":60124,"dhg-file-format-zip":60125,"dhg-file-multiple":60126,"dhg-file-pencil":60127,"dhg-file-plus-circle":60128,"dhg-file-question":60129,"dhg-file-xmark":60130,"dhg-firebase":60131,"dhg-firefox":60132,"dhg-firework-rocket-4":60133,"dhg-fitbit":60134,"dhg-flag-1":60135,"dhg-flag-2":60136,"dhg-flickr":60137,"dhg-floppy-disk-1":60138,"dhg-flower-2":60139,"dhg-flutter":60140,"dhg-folder-1":60141,"dhg-ford":60142,"dhg-framer":60143,"dhg-funnel-1":60144,"dhg-gallery":60145,"dhg-game-pad-modern-1":60146,"dhg-gatsby":60147,"dhg-gauge-1":60148,"dhg-gear-1":60149,"dhg-gears-3":60150,"dhg-gemini":60151,"dhg-git":60152,"dhg-github":60153,"dhg-glass-juice-1":60154,"dhg-globe-1":60155,"dhg-globe-stand":60156,"dhg-go":60157,"dhg-goodreads":60158,"dhg-google":60159,"dhg-google-cloud":60160,"dhg-google-drive":60161,"dhg-google-meet":60162,"dhg-google-pay":60163,"dhg-google-wallet":60164,"dhg-graduation-cap-1":60165,"dhg-grammarly":60166,"dhg-hacker-news":60167,"dhg-hammer-1":60168,"dhg-hammer-2":60169,"dhg-hand-mic":60170,"dhg-hand-shake":60171,"dhg-hand-stop":60172,"dhg-hand-taking-dollar":60173,"dhg-hand-taking-leaf-1":60174,"dhg-hand-taking-user":60175,"dhg-hashnode":60176,"dhg-hat-chef-3":60177,"dhg-headphone-1":60178,"dhg-heart":60179,"dhg-helicopter-2":60180,"dhg-helmet-safety-1":60181,"dhg-hierarchy-1":60182,"dhg-highlighter-1":60183,"dhg-highlighter-2":60184,"dhg-home-2":60185,"dhg-hospital-2":60186,"dhg-hourglass":60187,"dhg-html5":60188,"dhg-ibm":60189,"dhg-id-card":60190,"dhg-imdb":60191,"dhg-indent":60192,"dhg-info":60193,"dhg-injection-1":60194,"dhg-instagram":60195,"dhg-instagram-logotype":60196,"dhg-intel":60197,"dhg-ios":60198,"dhg-island-2":60199,"dhg-jaguar":60200,"dhg-jamstack":60201,"dhg-java":60202,"dhg-javascript":60203,"dhg-jcb":60204,"dhg-joomla":60205,"dhg-jsfiddle":60206,"dhg-key-1":60207,"dhg-keyboard":60208,"dhg-knife-fork-1":60209,"dhg-kubernetes":60210,"dhg-label-dollar-2":60211,"dhg-laptop-2":60212,"dhg-laptop-phone":60213,"dhg-laravel":60214,"dhg-layers-1":60215,"dhg-layout-26":60216,"dhg-layout-9":60217,"dhg-leaf-1":60218,"dhg-leaf-6":60219,"dhg-lemon-squeezy":60220,"dhg-life-guard-tube-1":60221,"dhg-line":60222,"dhg-line-dashed":60223,"dhg-line-dotted":60224,"dhg-line-height":60225,"dhg-lineicons":60226,"dhg-link-2-angular-right":60227,"dhg-linkedin":60228,"dhg-location-arrow-right":60229,"dhg-locked-1":60230,"dhg-locked-2":60231,"dhg-loom":60232,"dhg-magento":60233,"dhg-magnet":60234,"dhg-mailchimp":60235,"dhg-map-marker-1":60236,"dhg-map-marker-5":60237,"dhg-map-pin-5":60238,"dhg-markdown":60239,"dhg-mastercard":60240,"dhg-medium":60241,"dhg-medium-alt":60242,"dhg-megaphone-1":60243,"dhg-menu-cheesburger":60244,"dhg-menu-hamburger-1":60245,"dhg-menu-meatballs-1":60246,"dhg-menu-meatballs-2":60247,"dhg-mercedes":60248,"dhg-message-2":60249,"dhg-message-2-question":60250,"dhg-message-3-text":60251,"dhg-meta":60252,"dhg-meta-alt":60253,"dhg-microphone-1":60254,"dhg-microscope":60255,"dhg-microsoft":60256,"dhg-microsoft-edge":60257,"dhg-microsoft-teams":60258,"dhg-minus":60259,"dhg-minus-circle":60260,"dhg-mongodb":60261,"dhg-monitor":60262,"dhg-monitor-code":60263,"dhg-monitor-mac":60264,"dhg-moon-half-right-5":60265,"dhg-mountains-2":60266,"dhg-mouse-2":60267,"dhg-mushroom-1":60268,"dhg-mushroom-5":60269,"dhg-music":60270,"dhg-mysql":60271,"dhg-nasa":60272,"dhg-netflix":60273,"dhg-netlify":60274,"dhg-next-step-2":60275,"dhg-nextjs":60276,"dhg-nike":60277,"dhg-nissan":60278,"dhg-nodejs":60279,"dhg-nodejs-alt":60280,"dhg-notebook-1":60281,"dhg-notion":60282,"dhg-npm":60283,"dhg-nuxt":60284,"dhg-nvidia":60285,"dhg-oculus":60286,"dhg-open-ai":60287,"dhg-opera-mini":60288,"dhg-oracle":60289,"dhg-outdent":60290,"dhg-paddle":60291,"dhg-page-break-1":60292,"dhg-pagination":60293,"dhg-paint-bucket":60294,"dhg-paint-roller-1":60295,"dhg-paperclip-1":60296,"dhg-party-flags":60297,"dhg-party-spray":60298,"dhg-patreon":60299,"dhg-pause":60300,"dhg-payoneer":60301,"dhg-paypal":60302,"dhg-pen-to-square":60303,"dhg-pencil-1":60304,"dhg-pepsi":60305,"dhg-phone":60306,"dhg-photos":60307,"dhg-php":60308,"dhg-pie-chart-2":60309,"dhg-pilcrow":60310,"dhg-pimjo-logo":60311,"dhg-pimjo-symbol":60312,"dhg-pinterest":60313,"dhg-pizza-2":60314,"dhg-placeholder-dollar":60315,"dhg-plantscale":60316,"dhg-play":60317,"dhg-play-store":60318,"dhg-playstation":60319,"dhg-plug-1":60320,"dhg-plus":60321,"dhg-plus-circle":60322,"dhg-pnpm":60323,"dhg-postgresql":60324,"dhg-postman":60325,"dhg-pound":60326,"dhg-power-button":60327,"dhg-previous-step-2":60328,"dhg-printer":60329,"dhg-prisma":60330,"dhg-producthunt":60331,"dhg-proton-mail-logo":60332,"dhg-proton-mail-symbol":60333,"dhg-python":60334,"dhg-question-mark":60335,"dhg-question-mark-circle":60336,"dhg-quora":60337,"dhg-radis":60338,"dhg-react":60339,"dhg-reddit":60340,"dhg-refresh-circle-1-clockwise":60341,"dhg-refresh-dollar-1":60342,"dhg-refresh-user-1":60343,"dhg-remix-js":60344,"dhg-road-1":60345,"dhg-rocket-5":60346,"dhg-route-1":60347,"dhg-rss-right":60348,"dhg-ruler-1":60349,"dhg-ruler-pen":60350,"dhg-rupee":60351,"dhg-safari":60352,"dhg-sanity":60353,"dhg-school-bench-1":60354,"dhg-school-bench-2":60355,"dhg-scissors-1-vertical":60356,"dhg-scoter":60357,"dhg-scroll-down-2":60358,"dhg-search-1":60359,"dhg-search-2":60360,"dhg-search-minus":60361,"dhg-search-plus":60362,"dhg-search-text":60363,"dhg-select-cursor-1":60364,"dhg-seo-monitor":60365,"dhg-service-bell-1":60366,"dhg-share-1":60367,"dhg-share-1-circle":60368,"dhg-share-2":60369,"dhg-shield-2":60370,"dhg-shield-2-check":60371,"dhg-shield-dollar":60372,"dhg-shift-left":60373,"dhg-shift-right":60374,"dhg-ship-1":60375,"dhg-shirt-1":60376,"dhg-shopify":60377,"dhg-shovel":60378,"dhg-shuffle":60379,"dhg-sign-post-left":60380,"dhg-signal-app":60381,"dhg-signs-post-2":60382,"dhg-sketch":60383,"dhg-skype":60384,"dhg-slack":60385,"dhg-slice-2":60386,"dhg-sliders-horizontal-square-2":60387,"dhg-slideshare":60388,"dhg-snapchat":60389,"dhg-sort-alphabetical":60390,"dhg-sort-high-to-low":60391,"dhg-soundcloud":60392,"dhg-spacex":60393,"dhg-spellcheck":60394,"dhg-spinner-2-sacle":60395,"dhg-spinner-3":60396,"dhg-sports":60397,"dhg-spotify":60398,"dhg-spotify-alt":60399,"dhg-squarespace":60400,"dhg-stackoverflow":60401,"dhg-stamp":60402,"dhg-star-fat":60403,"dhg-star-fat-half-2":60404,"dhg-star-sharp-disabled":60405,"dhg-statista":60406,"dhg-steam":60407,"dhg-stethoscope-1":60408,"dhg-stopwatch":60409,"dhg-storage-hdd-2":60410,"dhg-strikethrough-1":60411,"dhg-stripe":60412,"dhg-stumbleupon":60413,"dhg-sun-1":60414,"dhg-supabase":60415,"dhg-surfboard-2":60416,"dhg-svelte":60417,"dhg-swift":60418,"dhg-tab":60419,"dhg-tailwindcss":60420,"dhg-target-user":60421,"dhg-telegram":60422,"dhg-telephone-1":60423,"dhg-telephone-3":60424,"dhg-tesla":60425,"dhg-text-format":60426,"dhg-text-format-remove":60427,"dhg-text-paragraph":60428,"dhg-thumbs-down-3":60429,"dhg-thumbs-up-3":60430,"dhg-ticket-1":60431,"dhg-tickets-3":60432,"dhg-tiktok":60433,"dhg-tiktok-alt":60434,"dhg-tower-broadcast-1":60435,"dhg-toyota":60436,"dhg-train-1":60437,"dhg-train-3":60438,"dhg-trash-3":60439,"dhg-tree-2":60440,"dhg-trees-3":60441,"dhg-trello":60442,"dhg-trend-down-1":60443,"dhg-trend-up-1":60444,"dhg-trophy-1":60445,"dhg-trowel-1":60446,"dhg-truck-delivery-1":60447,"dhg-tumblr":60448,"dhg-turborepo":60449,"dhg-twitch":60450,"dhg-twitter-old":60451,"dhg-typescript":60452,"dhg-uber":60453,"dhg-uber-symbol":60454,"dhg-ubuntu":60455,"dhg-underline":60456,"dhg-unlink-2-angular-eft":60457,"dhg-unlocked-2":60458,"dhg-unsplash":60459,"dhg-upload-1":60460,"dhg-upload-circle-1":60461,"dhg-user-4":60462,"dhg-user-multiple-4":60463,"dhg-vector-nodes-6":60464,"dhg-vector-nodes-7":60465,"dhg-vercel":60466,"dhg-vimeo":60467,"dhg-visa":60468,"dhg-vite":60469,"dhg-vk":60470,"dhg-vmware":60471,"dhg-volkswagen":60472,"dhg-volume-1":60473,"dhg-volume-high":60474,"dhg-volume-low":60475,"dhg-volume-mute":60476,"dhg-volume-off":60477,"dhg-vs-code":60478,"dhg-vuejs":60479,"dhg-wallet-1":60480,"dhg-watch-beat-1":60481,"dhg-water-drop-1":60482,"dhg-webflow":60483,"dhg-webhooks":60484,"dhg-wechat":60485,"dhg-weight-machine-1":60486,"dhg-whatsapp":60487,"dhg-wheelbarrow-empty":60488,"dhg-wheelchair-1":60489,"dhg-windows":60490,"dhg-wise":60491,"dhg-wordpress":60492,"dhg-www":60493,"dhg-www-cursor":60494,"dhg-x":60495,"dhg-xampp":60496,"dhg-xbox":60497,"dhg-xmark":60498,"dhg-xmark-circle":60499,"dhg-xrp":60500,"dhg-yahoo":60501,"dhg-yarn":60502,"dhg-ycombinator":60503,"dhg-yen":60504,"dhg-youtube":60505,"dhg-youtube-kids":60506,"dhg-youtube-music":60507,"dhg-zapier":60508,"dhg-zero-size":60509,"dhg-zoom":60510};
+        
+        let allIcons = Object.keys(iconData);
+        let filteredIcons = [...allIcons];
+        
+        // Generate CSS for all icons dynamically
+        function generateIconCSS() {
+            let css = '';
+            for (const [iconName, unicodeValue] of Object.entries(iconData)) {
+                const unicodeHex = '\\\\' + unicodeValue.toString(16).toUpperCase();
+                css += \`.dhg.\${iconName}:before { content: "\${unicodeHex}"; }\n\`;
+            }
+            
+            const style = document.createElement('style');
+            style.textContent = css;
+            document.head.appendChild(style);
+        }
+        
+        // Load DHgate Monitor Icon Font (uses Lineicons font files)
+        const fontFace = new FontFace('DHGateMonitor-Icons', 'url(/assets/icons/fonts/Lineicons.woff2)');
+        fontFace.load().then(function(font) {
+            document.fonts.add(font);
+            generateIconCSS(); // Generate CSS for all icons
+            loadIcons(); // Load icons after font is loaded
+        }).catch(function(error) {
+            console.log('Font loading failed, using fallback');
+            loadIconsFallback(); // Fallback to SVG/text representation
+        });
+        
+        function loadIcons() {
+            const iconGrid = document.getElementById('iconGrid');
+            const currentSize = document.getElementById('iconSize').value;
+            
+            iconGrid.innerHTML = '';
+            
+            filteredIcons.slice(0, 200).forEach(iconName => { // Limit to first 200 for performance
+                const iconCard = document.createElement('div');
+                iconCard.style.cssText = \`
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    padding: 1rem;
+                    border: 1px solid var(--border-color);
+                    border-radius: 8px;
+                    background: var(--bg-primary);
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    min-height: 100px;
+                    position: relative;
+                \`;
+                
+                iconCard.innerHTML = \`
+                    <i class="dhg \${iconName}" style="font-size: \${currentSize}; color: var(--dhg-primary-blue); margin-bottom: 0.5rem;"></i>
+                    <div style="font-size: 0.7rem; text-align: center; color: var(--dhg-text-secondary); font-family: monospace; line-height: 1.2; word-break: break-all;">
+                        \${iconName}
+                    </div>
+                \`;
+                
+                iconCard.addEventListener('click', () => selectIcon(iconName));
+                iconCard.addEventListener('mouseenter', () => {
+                    iconCard.style.transform = 'scale(1.05)';
+                    iconCard.style.borderColor = 'var(--dhg-primary-blue)';
+                });
+                iconCard.addEventListener('mouseleave', () => {
+                    iconCard.style.transform = 'scale(1)';
+                    iconCard.style.borderColor = 'var(--border-color)';
+                });
+                
+                iconGrid.appendChild(iconCard);
+            });
+        }
+        
+        function loadIconsFallback() {
+            // Fallback for when font fails to load
+            const iconGrid = document.getElementById('iconGrid');
+            iconGrid.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--dhg-text-secondary);">Icons laden... Als dit bericht blijft, controleer of de DHgate Monitor font correct is geladen.</div>';
+        }
+        
+        function selectIcon(iconName) {
+            const selectedIcon = document.getElementById('selectedIcon');
+            const currentSize = document.getElementById('iconSize').value;
+            const sizeClass = currentSize === '24px' ? 'dhg-sm' : 
+                            currentSize === '32px' ? 'dhg-md' : 
+                            currentSize === '48px' ? 'dhg-lg' : 'dhg-xl';
+            
+            const iconHTML = \`&lt;i class="dhg \${iconName} \${sizeClass}"&gt;&lt;/i&gt;\`;
+            selectedIcon.textContent = iconHTML;
+            
+            // Visual feedback
+            selectedIcon.style.backgroundColor = '#10b981';
+            setTimeout(() => {
+                selectedIcon.style.backgroundColor = '#1f2937';
+            }, 500);
+        }
+        
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text.replace(/&lt;/g, '<').replace(/&gt;/g, '>')).then(function() {
+                // Show success feedback
+                const selectedIcon = document.getElementById('selectedIcon');
+                const originalBg = selectedIcon.style.backgroundColor;
+                selectedIcon.style.backgroundColor = '#10b981';
+                setTimeout(() => {
+                    selectedIcon.style.backgroundColor = originalBg || '#1f2937';
+                }, 1000);
+            });
+        }
+        
+        // Search functionality
+        document.getElementById('iconSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            filteredIcons = allIcons.filter(iconName => 
+                iconName.toLowerCase().includes(searchTerm)
+            );
+            loadIcons();
+        });
+        
+        // Size change functionality
+        document.getElementById('iconSize').addEventListener('change', function() {
+            loadIcons();
+        });
+        
+        // Initial load after a small delay to ensure DOM is ready
+        setTimeout(() => {
+            if (document.fonts && document.fonts.check) {
+                loadIcons();
+            } else {
+                loadIconsFallback();
+            }
+        }, 100);
+    </script>
+</body>
+</html>`;
+}
+
+function generateComponentLibraryHTML(lang, theme) {
+  return `<!DOCTYPE html>
+<html lang="${lang}" data-theme="${theme}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${lang === 'nl' ? 'Component Bibliotheek - DHgate Monitor Admin' : 'Component Library - DHgate Monitor Admin'}</title>
+    <link rel="icon" href="/assets/logo.png" type="image/png">
+    
+    <style>
+        :root {
+          --dhg-primary-blue: #2563EB;
+          --dhg-primary-blue-hover: #1D4ED8;
+          --dhg-text-primary: #111827;
+          --dhg-text-secondary: #374151;
+          --bg-primary: #FFFFFF;
+          --bg-secondary: #F8FAFC;
+          --border-color: #E5E7EB;
+        }
+
+        [data-theme="dark"] {
+          --dhg-text-primary: #F8FAFC;
+          --dhg-text-secondary: #CBD5E1;
+          --bg-primary: #0F172A;
+          --bg-secondary: #1E293B;
+          --border-color: #334155;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--dhg-text-primary);
+            min-height: 100vh;
+        }
+        
+        .admin-header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .admin-nav a {
+            color: var(--dhg-text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+            margin-right: 1rem;
+        }
+        
+        .admin-nav a:hover, .admin-nav a.active {
+            color: var(--dhg-primary-blue);
+            background: rgba(37, 99, 235, 0.1);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .section {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: var(--dhg-primary-blue);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--dhg-text-secondary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .component-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--bg-primary);
+        }
+        
+        .component-preview {
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .component-info {
+            padding: 1.5rem;
+        }
+        
+        .component-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .component-description {
+            color: var(--dhg-text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .component-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--dhg-primary-blue);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .toolkit-card-example {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            color: white;
+            text-align: center;
+            min-width: 280px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .toolkit-card-example:hover {
+            transform: translateY(-10px) scale(1.02);
+        }
+        
+        .toolkit-card-example h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .toolkit-card-example p {
+            opacity: 0.9;
+            margin: 1rem 0;
+        }
+        
+        .toolkit-card-example .cta {
+            color: #60A5FA;
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+        
+        .subscription-form-example {
+            background: var(--bg-primary);
+            border: 2px solid var(--dhg-primary-blue);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            min-width: 300px;
+        }
+        
+        .subscription-form-example h3 {
+            color: var(--dhg-primary-blue);
+            margin-bottom: 1rem;
+        }
+        
+        .subscription-form-example input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin: 0.5rem 0;
+            background: var(--bg-secondary);
+            color: var(--dhg-text-primary);
+        }
+        
+        .subscription-form-example button {
+            width: 100%;
+            background: var(--dhg-primary-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .code-block {
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            margin-top: 1rem;
+            white-space: pre-wrap;
+        }
+        
+        .copy-btn {
+            background: var(--dhg-primary-blue);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <div class="admin-nav">
+            <a href="/admin/dashboard?lang=${lang}&theme=${theme}">Dashboard</a>
+            <a href="/admin/icons-components?lang=${lang}&theme=${theme}">Icons & Components</a>
+            <a href="/admin/component-library?lang=${lang}&theme=${theme}" class="active">Component Library</a>
+        </div>
+        <a href="/admin/logout?lang=${lang}&theme=${theme}" class="btn btn-secondary">Logout</a>
+    </div>
+    
+    <div class="container">
+        <h1 class="page-title">${lang === 'nl' ? 'Component Bibliotheek' : 'Component Library'}</h1>
+        <p style="color: var(--dhg-text-secondary); margin-bottom: 3rem;">${lang === 'nl' ? 'Herbruikbare UI componenten voor DHgate Monitor' : 'Reusable UI components for DHgate Monitor'}</p>
+        
+        <!-- Components Grid -->
+        <div class="component-grid">
+            
+            <!-- Toolkit Card Component -->
+            <div class="component-card">
+                <div class="component-preview">
+                    <div class="toolkit-card-example">
+                        <h3>Product Tracker</h3>
+                        <p>Track DHgate product prices and availability in real-time</p>
+                        <div class="cta">Start tracking →</div>
+                    </div>
+                </div>
+                <div class="component-info">
+                    <div class="component-title">Toolkit Card</div>
+                    <div class="component-description">${lang === 'nl' ? 'Interactieve kaarten voor tool showcases met hover animaties' : 'Interactive cards for tool showcases with hover animations'}</div>
+                    <div class="component-tags">
+                        <span class="tag">Interactive</span>
+                        <span class="tag">Responsive</span>
+                        <span class="tag">Animated</span>
+                    </div>
+                    <div class="code-block">/* Toolkit Card CSS */
+.toolkit-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 2rem;
+  color: white;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toolkit-card:hover {
+  transform: translateY(-10px) scale(1.02);
+}</div>
+                    <button class="copy-btn" onclick="copyCode(this, 'toolkit-card')">Copy Code</button>
+                </div>
+            </div>
+            
+            <!-- Subscription Form Component -->
+            <div class="component-card">
+                <div class="component-preview">
+                    <div class="subscription-form-example">
+                        <h3>${lang === 'nl' ? 'Blijf op de hoogte' : 'Stay Updated'}</h3>
+                        <input type="email" placeholder="${lang === 'nl' ? 'Je e-mailadres' : 'Your email address'}" disabled>
+                        <button>${lang === 'nl' ? 'Inschrijven' : 'Subscribe'}</button>
+                        <p style="font-size: 0.8rem; color: var(--dhg-text-secondary); margin-top: 0.5rem;">
+                            ${lang === 'nl' ? 'Ontvang updates over nieuwe features' : 'Get updates about new features'}
+                        </p>
+                    </div>
+                </div>
+                <div class="component-info">
+                    <div class="component-title">Subscription Form</div>
+                    <div class="component-description">${lang === 'nl' ? 'Email subscription formulier voor nieuwsbrieven en updates' : 'Email subscription form for newsletters and updates'}</div>
+                    <div class="component-tags">
+                        <span class="tag">Form</span>
+                        <span class="tag">Validation</span>
+                        <span class="tag">GDPR Ready</span>
+                    </div>
+                    <div class="code-block">/* Subscription Form HTML */
+&lt;form class="subscription-form"&gt;
+  &lt;h3&gt;Stay Updated&lt;/h3&gt;
+  &lt;input type="email" placeholder="Your email address" required&gt;
+  &lt;button type="submit"&gt;Subscribe&lt;/button&gt;
+  &lt;p class="disclaimer"&gt;Get updates about new features&lt;/p&gt;
+&lt;/form&gt;</div>
+                    <button class="copy-btn" onclick="copyCode(this, 'subscription-form')">Copy Code</button>
+                </div>
+            </div>
+            
+            <!-- Admin Card Component -->
+            <div class="component-card">
+                <div class="component-preview">
+                    <div style="background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; min-width: 250px;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 40px; height: 40px; background: var(--dhg-primary-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">A</div>
+                            <div>
+                                <div style="font-weight: 600;">Admin Panel</div>
+                                <div style="font-size: 0.8rem; color: var(--dhg-text-secondary);">System Management</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.9rem; color: var(--dhg-text-secondary);">Manage users, settings, and system configuration.</div>
+                    </div>
+                </div>
+                <div class="component-info">
+                    <div class="component-title">Admin Card</div>
+                    <div class="component-description">${lang === 'nl' ? 'Admin paneel kaarten voor dashboard management' : 'Admin panel cards for dashboard management'}</div>
+                    <div class="component-tags">
+                        <span class="tag">Admin</span>
+                        <span class="tag">Dashboard</span>
+                        <span class="tag">Management</span>
+                    </div>
+                    <div class="code-block">/* Admin Card Structure */
+&lt;div class="admin-card"&gt;
+  &lt;div class="admin-card-header"&gt;
+    &lt;div class="admin-avatar"&gt;A&lt;/div&gt;
+    &lt;div class="admin-info"&gt;
+      &lt;div class="admin-title"&gt;Admin Panel&lt;/div&gt;
+      &lt;div class="admin-subtitle"&gt;System Management&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="admin-description"&gt;...&lt;/div&gt;
+&lt;/div&gt;</div>
+                    <button class="copy-btn" onclick="copyCode(this, 'admin-card')">Copy Code</button>
+                </div>
+            </div>
+            
+            <!-- Button Component -->
+            <div class="component-card">
+                <div class="component-preview">
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                        <button class="btn btn-primary">Primary Button</button>
+                        <button class="btn btn-secondary">Secondary Button</button>
+                    </div>
+                </div>
+                <div class="component-info">
+                    <div class="component-title">Button System</div>
+                    <div class="component-description">${lang === 'nl' ? 'Consistente button styling voor alle interacties' : 'Consistent button styling for all interactions'}</div>
+                    <div class="component-tags">
+                        <span class="tag">Interactive</span>
+                        <span class="tag">Consistent</span>
+                        <span class="tag">Accessible</span>
+                    </div>
+                    <div class="code-block">/* Button Component CSS */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--dhg-primary-blue);
+  color: white;
+}</div>
+                    <button class="copy-btn" onclick="copyCode(this, 'button-system')">Copy Code</button>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- Usage Guidelines -->
+        <div class="section">
+            <h2 class="section-title">📋 ${lang === 'nl' ? 'Gebruik Richtlijnen' : 'Usage Guidelines'}</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 1.5rem;">
+                <div>
+                    <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--dhg-primary-blue);">🎨 Styling</h3>
+                    <ul style="color: var(--dhg-text-secondary); line-height: 1.6;">
+                        <li>Gebruik CSS custom properties voor thema ondersteuning</li>
+                        <li>Volg de DHgate Monitor design system kleuren</li>
+                        <li>Implementeer hover states en transitions</li>
+                        <li>Zorg voor mobile-first responsive design</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--dhg-primary-blue);">⚡ Performance</h3>
+                    <ul style="color: var(--dhg-text-secondary); line-height: 1.6;">
+                        <li>Gebruik transform en opacity voor animaties</li>
+                        <li>Implementeer lazy loading voor grote componenten</li>
+                        <li>Minify CSS en JavaScript voor productie</li>
+                        <li>Optimaliseer afbeeldingen en fonts</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--dhg-primary-blue);">♿ Accessibility</h3>
+                    <ul style="color: var(--dhg-text-secondary); line-height: 1.6;">
+                        <li>Gebruik semantische HTML elementen</li>
+                        <li>Zorg voor keyboard navigatie ondersteuning</li>
+                        <li>Implementeer ARIA labels waar nodig</li>
+                        <li>Test contrast ratios (min. 4.5:1)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function copyCode(button, componentType) {
+            const codeBlock = button.previousElementSibling;
+            const code = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(code).then(function() {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = 'var(--dhg-primary-blue)';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Failed to copy: ', err);
+                button.textContent = 'Copy failed';
+                setTimeout(() => {
+                    button.textContent = 'Copy Code';
+                }, 2000);
+            });
+        }
+        
+        // Add interactive preview functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Make toolkit card interactive in preview
+            const toolkitCard = document.querySelector('.toolkit-card-example');
+            if (toolkitCard) {
+                toolkitCard.addEventListener('click', function() {
+                    this.style.transform = 'translateY(-15px) scale(1.05)';
+                    setTimeout(() => {
+                        this.style.transform = 'translateY(-10px) scale(1.02)';
+                    }, 200);
+                });
+            }
+            
+            // Make subscription form interactive in preview
+            const subscriptionButton = document.querySelector('.subscription-form-example button');
+            if (subscriptionButton) {
+                subscriptionButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const originalText = this.textContent;
+                    this.textContent = '✓ Subscribed!';
+                    this.style.background = '#10b981';
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                        this.style.background = 'var(--dhg-primary-blue)';
+                    }, 2000);
+                });
+            }
         });
     </script>
 </body>

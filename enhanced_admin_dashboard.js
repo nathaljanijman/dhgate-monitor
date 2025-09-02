@@ -897,6 +897,24 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
                     <p>${t.subtitle}</p>
                 </div>
                 <div class="header-actions">
+                    <a href="/admin/icons-components?lang=${lang}&theme=${theme}" class="btn btn-secondary" aria-label="${lang === 'nl' ? 'Icon Bibliotheek' : 'Icon Library'}">
+                        <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                        ${lang === 'nl' ? 'Icons' : 'Icons'}
+                    </a>
+                    
+                    <a href="/admin/component-library?lang=${lang}&theme=${theme}" class="btn btn-secondary" aria-label="${lang === 'nl' ? 'Component Bibliotheek' : 'Component Library'}">
+                        <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <circle cx="12" cy="12" r="4"/>
+                        </svg>
+                        ${lang === 'nl' ? 'Components' : 'Components'}
+                    </a>
+                    
                     <button class="btn btn-secondary" onclick="refreshDashboard()" aria-label="${t.refresh}">
                         <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
                             <polyline points="23,4 23,10 17,10"/>
