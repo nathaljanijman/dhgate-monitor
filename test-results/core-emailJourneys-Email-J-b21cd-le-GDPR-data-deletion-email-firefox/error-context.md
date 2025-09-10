@@ -1,0 +1,72 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]: LIGHT
+    - generic [ref=e6] [cursor=pointer]: ☀️
+    - generic [ref=e7]: DARK
+  - generic [ref=e9]:
+    - link "EN" [ref=e10] [cursor=pointer]:
+      - /url: "?email=&lang=en&theme=light"
+    - generic [ref=e11]: "|"
+    - link "NL" [ref=e12] [cursor=pointer]:
+      - /url: "?email=&lang=nl&theme=light"
+  - generic [ref=e13]:
+    - generic [ref=e15]:
+      - generic [ref=e16]:
+        - heading "Delete All My Data" [level=1] [ref=e17]:
+          - img [ref=e18]
+          - text: Delete All My Data
+        - paragraph [ref=e23]: GDPR Article 17 - Right to be forgotten
+      - generic [ref=e25]:
+        - generic [ref=e27]:
+          - img [ref=e29]
+          - generic [ref=e33]:
+            - heading "Permanent Deletion" [level=5] [ref=e34]
+            - paragraph [ref=e35]: This action CANNOT be undone
+        - paragraph [ref=e37]: You are about to permanently delete ALL data we have about you from our systems.
+        - generic [ref=e39]:
+          - heading "What will be deleted:" [level=6] [ref=e40]:
+            - img [ref=e41]
+            - text: "What will be deleted:"
+          - generic [ref=e43]:
+            - list [ref=e45]:
+              - listitem [ref=e46]:
+                - generic [ref=e47]: •
+                - text: Personal information
+              - listitem [ref=e48]:
+                - generic [ref=e49]: •
+                - text: Monitoring settings
+            - list [ref=e51]:
+              - listitem [ref=e52]:
+                - generic [ref=e53]: •
+                - text: Dashboard access
+              - listitem [ref=e54]:
+                - generic [ref=e55]: •
+                - text: Email subscriptions
+        - generic [ref=e56]:
+          - generic [ref=e57]:
+            - generic [ref=e58]: "Email address:"
+            - textbox "Enter your email address" [ref=e59]
+          - generic [ref=e60]:
+            - generic [ref=e61]: "Type \"DELETE MY DATA\" to confirm:"
+            - textbox "DELETE MY DATA" [ref=e62]
+            - generic [ref=e63]: Exact spelling required (uppercase)
+          - generic [ref=e64]:
+            - button "Delete My Data" [ref=e65] [cursor=pointer]:
+              - img [ref=e66] [cursor=pointer]
+              - text: Delete My Data
+            - link "Cancel" [ref=e68] [cursor=pointer]:
+              - /url: /
+        - generic [ref=e70]: DHgate Monitor respects your privacy and GDPR rights
+    - generic [ref=e72]:
+      - generic [ref=e73]:
+        - link "Privacy Policy" [ref=e74] [cursor=pointer]:
+          - /url: /privacy?lang=en&theme=light
+        - link "Terms of Service" [ref=e75] [cursor=pointer]:
+          - /url: /terms?lang=en&theme=light
+        - link "Service" [ref=e76] [cursor=pointer]:
+          - /url: /service?lang=en&theme=light
+      - generic [ref=e77]: © 2025 DHgate Monitor - Legal information
+```

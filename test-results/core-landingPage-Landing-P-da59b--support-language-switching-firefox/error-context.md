@@ -9,227 +9,209 @@
       - button "Accept" [ref=e8] [cursor=pointer]
       - button "Decline" [ref=e9] [cursor=pointer]
       - button "Cookie settings" [ref=e10] [cursor=pointer]
-  - link "Skip to content" [ref=e11] [cursor=pointer]:
+  - link "Skip to main content" [ref=e11] [cursor=pointer]:
     - /url: "#main-content"
-  - navigation "Main navigation" [ref=e12]:
+  - banner [ref=e12]:
     - generic [ref=e13]:
-      - link "DHgate Monitor - Automated Product Tracking for Dropshippers" [ref=e14] [cursor=pointer]:
+      - link "DHgate Monitor homepage" [ref=e14] [cursor=pointer]:
         - /url: /?lang=en&theme=light
-        - img "DHgate Monitor - Automated Product Tracking for Dropshippers" [ref=e15] [cursor=pointer]
-      - generic [ref=e16]:
-        - link "Get Started" [ref=e17] [cursor=pointer]:
-          - /url: "#subscription-form"
-        - link "Dashboard" [ref=e18] [cursor=pointer]:
-          - /url: /dashboard?lang=en&theme=light
-        - link "Service" [ref=e19] [cursor=pointer]:
-          - /url: /service?lang=en&theme=light
-      - generic [ref=e20]:
-        - generic [ref=e21]:
-          - link "EN" [ref=e22] [cursor=pointer]:
-            - /url: /?lang=en&theme=light
-          - generic [ref=e23]: "|"
-          - link "NL" [ref=e24] [cursor=pointer]:
-            - /url: /?lang=nl&theme=light
-        - switch "Switch to dark theme" [ref=e26] [cursor=pointer]:
-          - img [ref=e28] [cursor=pointer]
-          - generic [ref=e31] [cursor=pointer]: Light theme active
-        - link "START" [ref=e32] [cursor=pointer]:
-          - /url: "#subscription-form"
-  - generic [ref=e33]:
-    - generic [ref=e34]:
-      - img [ref=e36]
-      - button "Close menu" [ref=e40] [cursor=pointer]: ✕
-    - generic [ref=e41]:
-      - link "Get Started" [ref=e42] [cursor=pointer]:
-        - /url: "#subscription-form"
-      - link "Dashboard" [ref=e43] [cursor=pointer]:
+        - img "DHgate Monitor" [ref=e15] [cursor=pointer]
+        - generic [ref=e16] [cursor=pointer]:
+          - generic [ref=e17] [cursor=pointer]: DHgate Monitor
+          - generic [ref=e18] [cursor=pointer]: E-commerce Intelligence
+      - navigation "Main navigation" [ref=e19]:
+        - menubar [ref=e20]:
+          - menuitem "Home" [ref=e21] [cursor=pointer]
+          - menuitem "Dashboard" [ref=e22] [cursor=pointer]
+          - menuitem "Newsroom" [ref=e23] [cursor=pointer]
+          - menuitem "Contact" [ref=e24] [cursor=pointer]
+      - generic [ref=e25]:
+        - menu "Select language" [ref=e26]:
+          - menuitemradio "NL" [ref=e27] [cursor=pointer]
+          - menuitemradio "EN" [checked] [ref=e28] [cursor=pointer]
+        - switch "Toggle theme" [ref=e29] [cursor=pointer]:
+          - generic [ref=e31] [cursor=pointer]: ☀️
+  - dialog "Mobile main menu" [ref=e32]:
+    - generic [ref=e33]:
+      - generic [ref=e34]: Menu
+      - button "Close menu" [ref=e35] [cursor=pointer]:
+        - img [ref=e36] [cursor=pointer]
+    - navigation "Mobile navigation" [ref=e39]:
+      - link "Home" [ref=e40] [cursor=pointer]:
+        - /url: /?lang=en&theme=light
+      - link "Dashboard" [ref=e41] [cursor=pointer]:
         - /url: /dashboard?lang=en&theme=light
-      - link "Service" [ref=e44] [cursor=pointer]:
-        - /url: /service?lang=en&theme=light
+      - link "Newsroom" [ref=e42] [cursor=pointer]:
+        - /url: /newsroom?lang=en&theme=light
+      - link "Contact" [ref=e43] [cursor=pointer]:
+        - /url: /contact?lang=en&theme=light
     - generic [ref=e45]:
-      - generic [ref=e46]:
-        - link "English" [ref=e47] [cursor=pointer]:
-          - /url: /?lang=en&theme=light
-        - link "Nederlands" [ref=e48] [cursor=pointer]:
-          - /url: /?lang=nl&theme=light
-      - generic [ref=e49]:
-        - generic [ref=e50]: "Theme:"
-        - switch "Theme:" [ref=e51] [cursor=pointer]:
-          - img [ref=e53] [cursor=pointer]
-          - generic [ref=e56] [cursor=pointer]: Light theme active
-  - main [ref=e57]:
-    - region "Automated DHgate Product Monitoring for Dropshippers" [ref=e58]:
-      - generic [ref=e62]:
-        - generic [ref=e63]:
-          - heading "Automated DHgate Product Monitoring for Dropshippers" [level=1] [ref=e64]:
+      - heading "Settings" [level=3] [ref=e46]
+      - radiogroup "Select language" [ref=e47]:
+        - radio "NL" [ref=e48] [cursor=pointer]
+        - radio "EN" [checked] [ref=e49] [cursor=pointer]
+      - switch "Toggle theme" [ref=e50] [cursor=pointer]:
+        - generic [ref=e52] [cursor=pointer]: ☀️
+        - generic [ref=e53] [cursor=pointer]: Light
+  - main [ref=e54]:
+    - region "Automated DHgate Product Monitoring for Dropshippers" [ref=e55]:
+      - generic [ref=e59]:
+        - generic [ref=e60]:
+          - heading "Automated DHgate Product Monitoring for Dropshippers" [level=1] [ref=e61]:
             - text: Automated
-            - generic [ref=e65]: DHgate Product Monitoring
+            - generic [ref=e62]: DHgate Product Monitoring
             - text: for Dropshippers
-          - paragraph [ref=e66]: Automate your product research with advanced monitoring tools. Receive real-time notifications when new products match your criteria.
-          - generic [ref=e67]:
-            - generic [ref=e68]:
-              - img [ref=e69]
-              - generic [ref=e72]: 100% Free
-            - generic [ref=e73]:
-              - img [ref=e74]
-              - generic [ref=e76]: First to know
-            - generic [ref=e77]:
-              - img [ref=e78]
-              - generic [ref=e80]: No account needed
-          - generic [ref=e81]:
-            - link "Sign Up" [ref=e82] [cursor=pointer]:
+          - paragraph [ref=e63]: Automate your product research with advanced monitoring tools. Receive real-time notifications when new products match your criteria.
+          - generic [ref=e64]:
+            - generic [ref=e65]:
+              - img [ref=e66]
+              - generic [ref=e69]: 100% Free
+            - generic [ref=e70]:
+              - img [ref=e71]
+              - generic [ref=e73]: First to know
+            - generic [ref=e74]:
+              - img [ref=e75]
+              - generic [ref=e77]: No account needed
+          - generic [ref=e78]:
+            - link "Sign Up" [ref=e79] [cursor=pointer]:
               - /url: "#subscription-form"
               - text: Sign Up
-              - img [ref=e83] [cursor=pointer]
-            - link "Learn More" [ref=e85] [cursor=pointer]:
+              - img [ref=e80] [cursor=pointer]
+            - link "Learn More" [ref=e82] [cursor=pointer]:
               - /url: /service?lang=en&theme=light
-        - img "DHgate Monitor Dashboard Preview - Product Monitoring Interface for Dropshipping and E-commerce" [ref=e88]
-    - generic [ref=e90]:
+        - img "DHgate Monitor Dashboard Preview - Product Monitoring Interface for Dropshipping and E-commerce" [ref=e85]
+    - generic [ref=e87]:
+      - generic [ref=e88]:
+        - heading "Perfect for E-commerce Professionals and Online Retailers" [level=2] [ref=e89]
+        - paragraph [ref=e90]: Discover how DHgate Monitor elevates your business to the next level
       - generic [ref=e91]:
-        - heading "Perfect for E-commerce Professionals and Online Retailers" [level=2] [ref=e92]
-        - paragraph [ref=e93]: Discover how DHgate Monitor elevates your business to the next level
-      - generic [ref=e94]:
-        - generic [ref=e95] [cursor=pointer]:
-          - generic [ref=e96] [cursor=pointer]:
-            - img [ref=e98] [cursor=pointer]
-            - heading "E-commerce entrepreneurs" [level=3] [ref=e104] [cursor=pointer]
-            - paragraph [ref=e106] [cursor=pointer]: Dropshippers and retailers who want to discover trending products early to gain competitive advantage.
-          - generic [ref=e107] [cursor=pointer]:
-            - generic [ref=e108] [cursor=pointer]: New products
-            - generic [ref=e109] [cursor=pointer]: Market trends
-            - generic [ref=e110] [cursor=pointer]: Auto alerts
-        - generic [ref=e111] [cursor=pointer]:
-          - generic [ref=e112] [cursor=pointer]:
-            - img [ref=e114] [cursor=pointer]
-            - heading "Business Professionals" [level=3] [ref=e118] [cursor=pointer]
-            - paragraph [ref=e120] [cursor=pointer]: Buyers, product managers and analysts who want to make data-driven decisions for strategic advantage.
-          - generic [ref=e121] [cursor=pointer]:
-            - generic [ref=e122] [cursor=pointer]: Market intelligence
-            - generic [ref=e123] [cursor=pointer]: Competitor analysis
-            - generic [ref=e124] [cursor=pointer]: Supplier monitoring
-        - generic [ref=e125] [cursor=pointer]:
-          - generic [ref=e126] [cursor=pointer]:
-            - img [ref=e128] [cursor=pointer]
-            - heading "Smart Shoppers" [level=3] [ref=e133] [cursor=pointer]
-            - paragraph [ref=e135] [cursor=pointer]: Bargain hunters and bulk buyers looking for the best prices and trading opportunities for maximum profit.
-          - generic [ref=e136] [cursor=pointer]:
-            - generic [ref=e137] [cursor=pointer]: Early access
-            - generic [ref=e138] [cursor=pointer]: Price monitoring
-            - generic [ref=e139] [cursor=pointer]: Bulk opportunities
-    - generic [ref=e141]:
-      - generic [ref=e142]:
-        - heading "Trending DHgate Shops for Product Research" [level=2] [ref=e143]
-        - paragraph [ref=e144]: Monitor the best and most trusted DHgate sellers from 2025
-      - generic [ref=e146]:
-        - link "BTime - Luxury Watches 97.2% • 55,925 sales" [ref=e147] [cursor=pointer]:
+        - generic [ref=e92] [cursor=pointer]:
+          - generic [ref=e93] [cursor=pointer]:
+            - img [ref=e95] [cursor=pointer]
+            - heading "E-commerce entrepreneurs" [level=3] [ref=e101] [cursor=pointer]
+            - paragraph [ref=e103] [cursor=pointer]: Dropshippers and retailers who want to discover trending products early to gain competitive advantage.
+          - generic [ref=e104] [cursor=pointer]:
+            - generic [ref=e105] [cursor=pointer]: New products
+            - generic [ref=e106] [cursor=pointer]: Market trends
+            - generic [ref=e107] [cursor=pointer]: Auto alerts
+        - generic [ref=e108] [cursor=pointer]:
+          - generic [ref=e109] [cursor=pointer]:
+            - img [ref=e111] [cursor=pointer]
+            - heading "Business Professionals" [level=3] [ref=e115] [cursor=pointer]
+            - paragraph [ref=e117] [cursor=pointer]: Buyers, product managers and analysts who want to make data-driven decisions for strategic advantage.
+          - generic [ref=e118] [cursor=pointer]:
+            - generic [ref=e119] [cursor=pointer]: Market intelligence
+            - generic [ref=e120] [cursor=pointer]: Competitor analysis
+            - generic [ref=e121] [cursor=pointer]: Supplier monitoring
+        - generic [ref=e122] [cursor=pointer]:
+          - generic [ref=e123] [cursor=pointer]:
+            - img [ref=e125] [cursor=pointer]
+            - heading "Smart Shoppers" [level=3] [ref=e130] [cursor=pointer]
+            - paragraph [ref=e132] [cursor=pointer]: Bargain hunters and bulk buyers looking for the best prices and trading opportunities for maximum profit.
+          - generic [ref=e133] [cursor=pointer]:
+            - generic [ref=e134] [cursor=pointer]: Early access
+            - generic [ref=e135] [cursor=pointer]: Price monitoring
+            - generic [ref=e136] [cursor=pointer]: Bulk opportunities
+    - generic [ref=e138]:
+      - generic [ref=e139]:
+        - heading "Trending DHgate Shops for Product Research" [level=2] [ref=e140]
+        - paragraph [ref=e141]: Monitor the best and most trusted DHgate sellers from 2025
+      - generic [ref=e143]:
+        - link "BTime - Luxury Watches 97.2% • 55,925 sales" [ref=e144] [cursor=pointer]:
           - /url: https://www.dhgate.com/store/btime
-          - img [ref=e148] [cursor=pointer]
-          - generic [ref=e152] [cursor=pointer]:
-            - generic [ref=e153] [cursor=pointer]: BTime - Luxury Watches
-            - generic [ref=e154] [cursor=pointer]: 97.2% • 55,925 sales
-        - link "Amy 1003_1 - Sportswear 98.5% • 70,458 sales" [ref=e155] [cursor=pointer]:
+          - img [ref=e145] [cursor=pointer]
+          - generic [ref=e149] [cursor=pointer]:
+            - generic [ref=e150] [cursor=pointer]: BTime - Luxury Watches
+            - generic [ref=e151] [cursor=pointer]: 97.2% • 55,925 sales
+        - link "Amy 1003_1 - Sportswear 98.5% • 70,458 sales" [ref=e152] [cursor=pointer]:
           - /url: https://www.dhgate.com/store/20451494
-          - img [ref=e156] [cursor=pointer]
-          - generic [ref=e158] [cursor=pointer]:
-            - generic [ref=e159] [cursor=pointer]: Amy 1003_1 - Sportswear
-            - generic [ref=e160] [cursor=pointer]: 98.5% • 70,458 sales
-        - link "DHgate Beauty 99.7% • 20,164 sales" [ref=e161] [cursor=pointer]:
+          - img [ref=e153] [cursor=pointer]
+          - generic [ref=e155] [cursor=pointer]:
+            - generic [ref=e156] [cursor=pointer]: Amy 1003_1 - Sportswear
+            - generic [ref=e157] [cursor=pointer]: 98.5% • 70,458 sales
+        - link "DHgate Beauty 99.7% • 20,164 sales" [ref=e158] [cursor=pointer]:
           - /url: https://www.dhgate.com/store/20522858
-          - img [ref=e162] [cursor=pointer]
-          - generic [ref=e164] [cursor=pointer]:
-            - generic [ref=e165] [cursor=pointer]: DHgate Beauty
-            - generic [ref=e166] [cursor=pointer]: 99.7% • 20,164 sales
-        - link "IZeso - Phone Accessories 100% • 4,919 sales" [ref=e167] [cursor=pointer]:
+          - img [ref=e159] [cursor=pointer]
+          - generic [ref=e161] [cursor=pointer]:
+            - generic [ref=e162] [cursor=pointer]: DHgate Beauty
+            - generic [ref=e163] [cursor=pointer]: 99.7% • 20,164 sales
+        - link "IZeso - Phone Accessories 100% • 4,919 sales" [ref=e164] [cursor=pointer]:
           - /url: https://www.dhgate.com/store/18282436
           - img
-          - generic [ref=e168] [cursor=pointer]:
-            - generic [ref=e169] [cursor=pointer]: IZeso - Phone Accessories
-            - generic [ref=e170] [cursor=pointer]: 100% • 4,919 sales
-        - link "Arthur032 - Electronics 97.5% • 22,432 sales" [ref=e171] [cursor=pointer]:
+          - generic [ref=e165] [cursor=pointer]:
+            - generic [ref=e166] [cursor=pointer]: IZeso - Phone Accessories
+            - generic [ref=e167] [cursor=pointer]: 100% • 4,919 sales
+        - link "Arthur032 - Electronics 97.5% • 22,432 sales" [ref=e168] [cursor=pointer]:
           - /url: https://www.dhgate.com/store/14772307
-          - img [ref=e172] [cursor=pointer]
-          - generic [ref=e176] [cursor=pointer]:
-            - generic [ref=e177] [cursor=pointer]: Arthur032 - Electronics
-            - generic [ref=e178] [cursor=pointer]: 97.5% • 22,432 sales
-        - link "Beija 2013 - Jewelry 98.9% • 17,470 sales" [ref=e179] [cursor=pointer]:
+          - img [ref=e169] [cursor=pointer]
+          - generic [ref=e173] [cursor=pointer]:
+            - generic [ref=e174] [cursor=pointer]: Arthur032 - Electronics
+            - generic [ref=e175] [cursor=pointer]: 97.5% • 22,432 sales
+        - link "Beija 2013 - Jewelry 98.9% • 17,470 sales" [ref=e176] [cursor=pointer]:
           - /url: https://www.dhgate.com/store/14772307
-          - img [ref=e180] [cursor=pointer]
-          - generic [ref=e183] [cursor=pointer]:
-            - generic [ref=e184] [cursor=pointer]: Beija 2013 - Jewelry
-            - generic [ref=e185] [cursor=pointer]: 98.9% • 17,470 sales
-        - link "Dicky0750 - Designer Bags 99.2% • 99,999+ sales" [ref=e186] [cursor=pointer]:
+          - img [ref=e177] [cursor=pointer]
+          - generic [ref=e180] [cursor=pointer]:
+            - generic [ref=e181] [cursor=pointer]: Beija 2013 - Jewelry
+            - generic [ref=e182] [cursor=pointer]: 98.9% • 17,470 sales
+        - link "Dicky0750 - Designer Bags 99.2% • 99,999+ sales" [ref=e183] [cursor=pointer]:
           - /url: https://www.dhgate.com/store/20425879
           - img
-          - generic [ref=e187] [cursor=pointer]:
-            - generic [ref=e188] [cursor=pointer]: Dicky0750 - Designer Bags
-            - generic [ref=e189] [cursor=pointer]: 99.2% • 99,999+ sales
-        - link "Boost 700 V2 - Sneakers 99.4% • 53,914 sales" [ref=e190] [cursor=pointer]:
+          - generic [ref=e184] [cursor=pointer]:
+            - generic [ref=e185] [cursor=pointer]: Dicky0750 - Designer Bags
+            - generic [ref=e186] [cursor=pointer]: 99.2% • 99,999+ sales
+        - link "Boost 700 V2 - Sneakers 99.4% • 53,914 sales" [ref=e187] [cursor=pointer]:
           - /url: https://www.dhgate.com/store/21208299
-          - img [ref=e191] [cursor=pointer]
-          - generic [ref=e195] [cursor=pointer]:
-            - generic [ref=e196] [cursor=pointer]: Boost 700 V2 - Sneakers
-            - generic [ref=e197] [cursor=pointer]: 99.4% • 53,914 sales
-        - link "iBestshoppingmall - Electronics 99.5% • 53,915 sales" [ref=e198] [cursor=pointer]:
+          - img [ref=e188] [cursor=pointer]
+          - generic [ref=e192] [cursor=pointer]:
+            - generic [ref=e193] [cursor=pointer]: Boost 700 V2 - Sneakers
+            - generic [ref=e194] [cursor=pointer]: 99.4% • 53,914 sales
+        - link "iBestshoppingmall - Electronics 99.5% • 53,915 sales" [ref=e195] [cursor=pointer]:
           - /url: https://www.dhgate.com/store/20047923
           - img
-          - generic [ref=e199] [cursor=pointer]:
-            - generic [ref=e200] [cursor=pointer]: iBestshoppingmall - Electronics
-            - generic [ref=e201] [cursor=pointer]: 99.5% • 53,915 sales
-        - link "CasualTrendyShoes - Footwear 99.1% • 20,077 sales" [ref=e202] [cursor=pointer]:
+          - generic [ref=e196] [cursor=pointer]:
+            - generic [ref=e197] [cursor=pointer]: iBestshoppingmall - Electronics
+            - generic [ref=e198] [cursor=pointer]: 99.5% • 53,915 sales
+        - link "CasualTrendyShoes - Footwear 99.1% • 20,077 sales" [ref=e199] [cursor=pointer]:
           - /url: https://www.dhgate.com/store/21926048
           - img
-          - generic [ref=e203] [cursor=pointer]:
-            - generic [ref=e204] [cursor=pointer]: CasualTrendyShoes - Footwear
-            - generic [ref=e205] [cursor=pointer]: 99.1% • 20,077 sales
-        - link "Alexandr Store - Gym Equipment 100% • 1,191 sales" [ref=e206] [cursor=pointer]:
+          - generic [ref=e200] [cursor=pointer]:
+            - generic [ref=e201] [cursor=pointer]: CasualTrendyShoes - Footwear
+            - generic [ref=e202] [cursor=pointer]: 99.1% • 20,077 sales
+        - link "Alexandr Store - Gym Equipment 100% • 1,191 sales" [ref=e203] [cursor=pointer]:
           - /url: https://www.dhgate.com/store/20245807
           - img
-          - generic [ref=e207] [cursor=pointer]:
-            - generic [ref=e208] [cursor=pointer]: Alexandr Store - Gym Equipment
-            - generic [ref=e209] [cursor=pointer]: 100% • 1,191 sales
-    - region [ref=e210]:
-      - form "Registration form for DHgate monitoring" [ref=e215]:
-        - generic [ref=e216]:
-          - generic [ref=e217]:
-            - heading "What's your email address?" [level=3] [ref=e218]
-            - paragraph [ref=e219]: We'll send you alerts when new products are found that match your criteria.
-            - generic [ref=e220]:
-              - generic [ref=e221]: Email address
-              - generic [ref=e222]:
-                - img
-                - textbox "Enter your email address" [ref=e223]
-              - alert [ref=e224]: ⚠
-          - button "Next" [ref=e226] [cursor=pointer]:
-            - text: Next
-            - img [ref=e227] [cursor=pointer]
-        - paragraph [ref=e230]:
-          - text: By subscribing you agree to our
-          - link "terms" [ref=e231] [cursor=pointer]:
-            - /url: /terms?lang=en&theme=light
-          - text: and
-          - link "privacy policy" [ref=e232] [cursor=pointer]:
-            - /url: /privacy?lang=en&theme=light
-          - text: .
-    - generic [ref=e235]:
-      - generic [ref=e236]:
-        - link "Privacy Policy" [ref=e237] [cursor=pointer]:
-          - /url: /privacy?lang=en&theme=light
-        - link "Terms of Service" [ref=e238] [cursor=pointer]:
-          - /url: /terms?lang=en&theme=light
-        - link "Service" [ref=e239] [cursor=pointer]:
-          - /url: /service?lang=en&theme=light
-        - link "Delete my data" [ref=e240] [cursor=pointer]:
-          - /url: /delete-data?lang=en&theme=light
-      - generic [ref=e241]: © 2025 DHgate Monitor - Legal information
-    - contentinfo "Website footer with links and copyright information" [ref=e242]:
-      - generic [ref=e243]:
-        - link "Privacy & GDPR" [ref=e244] [cursor=pointer]:
-          - /url: /privacy?lang=en
-        - text: "|"
-        - link "Terms of Service" [ref=e245] [cursor=pointer]:
-          - /url: /terms?lang=en
-        - text: "|"
-        - link "Service & Contact" [ref=e246] [cursor=pointer]:
-          - /url: /service?lang=en
-      - generic [ref=e247]: © 2024 DHgate Monitor - Professional E-commerce Monitoring Platform
+          - generic [ref=e204] [cursor=pointer]:
+            - generic [ref=e205] [cursor=pointer]: Alexandr Store - Gym Equipment
+            - generic [ref=e206] [cursor=pointer]: 100% • 1,191 sales
+    - region [ref=e207]:
+      - iframe [ref=e208]:
+        - generic [ref=f1e2]:
+          - generic [ref=f1e3]:
+            - generic [ref=f1e4]:
+              - button "Switch to Dutch" [ref=f1e5] [cursor=pointer]: NL
+              - button "Switch to English" [ref=f1e6] [cursor=pointer]: EN
+            - heading "DHgate Monitor" [level=1] [ref=f1e7]
+            - paragraph [ref=f1e8]: Expert monitoring for your favorite stores
+          - progressbar "Registration progress" [ref=f1e9]:
+            - generic [ref=f1e11]:
+              - generic [ref=f1e12]: "1"
+              - generic [ref=f1e13]: Email
+            - generic [ref=f1e14]:
+              - generic [ref=f1e15]: "2"
+              - generic [ref=f1e16]: Store
+            - generic [ref=f1e17]:
+              - generic [ref=f1e18]: "3"
+              - generic [ref=f1e19]: Search Terms
+            - generic [ref=f1e20]:
+              - generic [ref=f1e21]: "4"
+              - generic [ref=f1e22]: Confirmation
+          - generic [ref=f1e23]:
+            - generic [ref=f1e24]:
+              - generic [ref=f1e25]: Email address
+              - textbox "Email address" [ref=f1e26]
+              - generic [ref=f1e27]: We'll send you updates about new products
+            - button "Next" [ref=f1e29] [cursor=pointer]:
+              - text: Next
+              - img [ref=f1e30] [cursor=pointer]
+          - generic [ref=f1e32]: Use the buttons to navigate through the steps
 ```

@@ -1,171 +1,207 @@
-# DHgate Monitor
+# 🚀 DHgate Monitor - Staffel-Marge Calculator
 
-Professional monitoring platform for DHgate stores and products. Built with Cloudflare Workers for global performance and reliability.
+Een geavanceerde calculator voor het berekenen van marges op basis van staffelprijzen, kosten en verkoopprijzen. Perfect voor e-commerce ondernemers die inkopen via DHgate, Alibaba en AliExpress.
 
-## Customer Journey Flow
+## ✨ Features
 
-### 1. Aanmelding & Registratie
-- **Homepage Widget**: Multi-step aanmeldingsformulier op homepage
-- **Store Selection**: Visuele winkelkaarten met preview informatie
-- **Email & Tags**: Email registratie en zoektermen configuratie
-- **API Signup**: Automatische verwerking via `/api/widget-signup`
-- **Dashboard Token**: Unieke toegangslink gegenereerd voor klant
+### 🎯 Core Functionaliteiten
+- **Staffelprijzen Management**: Dynamische tabel met CRUD operaties
+- **Kostenmodel**: Vaste, variabele en percentage-gebaseerde kosten
+- **Real-time Berekeningen**: Automatische marge berekening bij elke wijziging
+- **Break-even Analyse**: Berekening van het break-even punt
+- **URL Scraping**: Automatische invoer van productdata (DHgate, Alibaba, AliExpress)
 
-### 2. Dashboard Toegang
-- **Dashboard URL**: `/dashboard?key=TOKEN&lang=nl&theme=light`
-- **Monitoring Status**: Overzicht van actieve monitoring
-- **Real-time Updates**: Groene status indicator voor actieve monitoring
-- **Subscription Info**: Email, winkels, zoektermen, frequentie, aanmaakdatum
+### 📊 Visualisatie & Analyse
+- **Interactieve Grafieken**: Marge % en € over verschillende hoeveelheden
+- **Resultaten Dashboard**: Overzicht van alle berekeningen
+- **Quantity Selector**: Slider en quick-select knoppen voor hoeveelheden
+- **Responsive Design**: Mobiel-vriendelijk met touch gestures
 
-### 3. Dashboard Aanpassingen
-- **Settings**: Email configuratie en platform instellingen
-- **Tags Management**: Zoektermen aanpassen en beheren
-- **Store Updates**: Winkel selecties wijzigen
-- **Preferences**: Taal, thema en notificatie voorkeuren
+### 📤 Export & Sharing
+- **CSV Export**: Download resultaten voor Excel/Google Sheets
+- **PDF Export**: Professionele rapporten (komt in V2)
+- **Deelbare Links**: Share berekeningen zonder login
+- **Project Samenvatting**: Overzicht van alle metrics
 
-### 4. Monitoring & Notificaties
-- **Daily Reports**: Automatische monitoring om 09:00 UTC
-- **Email Alerts**: Notificaties bij nieuwe producten
-- **Real-time Status**: Live monitoring status in dashboard
-- **Performance Tracking**: Monitoring statistieken en metrics
+## 🛠️ Technische Stack
 
-### 5. Content & Updates
-- **Newsroom**: Laatste nieuws en platform updates
-- **Multi-language**: Nederlandse en Engelse content
-- **SEO Optimized**: Zoekmachine geoptimaliseerde artikelen
-- **Social Sharing**: Delen van relevante content
+- **Frontend**: React 18 + TypeScript
+- **Styling**: TailwindCSS + Custom Design System
+- **State Management**: Zustand
+- **Charts**: Chart.js + react-chartjs-2
+- **Icons**: Lucide React
+- **Build Tool**: Vite
 
-### 6. Account Management
-- **Unsubscribe**: Eenvoudige uitschrijving via token
-- **Data Management**: GDPR compliant data handling
-- **Access Control**: Veilige dashboard toegang
-- **Support**: Contact en help functionaliteit
+## 🚀 Installatie & Setup
 
-### Journey Flow Diagram
+### Vereisten
+- Node.js 18+ 
+- npm of yarn
+
+### Stappen
+```bash
+# Clone repository
+git clone <repository-url>
+cd staffel-calculator
+
+# Installeer dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Open browser
+open http://localhost:5173
 ```
-Homepage → Widget Signup → Dashboard Access → Settings/Tags → Monitoring → Notifications
-    ↓           ↓              ↓                ↓              ↓            ↓
-  Landing    Multi-step    Token-based      Customize      Daily      Email Alerts
-   Page       Form         Access          Preferences    Reports
+
+## 📱 Gebruik
+
+### 1. Project Setup
+- Geef je project een naam
+- Kies valuta (EUR, USD, GBP)
+- Voer verkoopprijs per stuk in
+
+### 2. Staffelprijzen
+- Voeg staffelprijzen toe (min/max hoeveelheid + prijs)
+- Bewerk bestaande staffels
+- Valideer dat er geen gaten of overlap zijn
+
+### 3. Kosten Invoeren
+- **Per stuk**: Kosten die per eenheid worden toegevoegd
+- **Per batch**: Vaste kosten per bestelling
+- **Percentage**: Kosten als % van verkoopprijs
+
+### 4. Resultaten Bekijken
+- Bekijk marges per hoeveelheid
+- Analyseer break-even punt
+- Gebruik interactieve grafieken
+
+### 5. Export & Share
+- Download CSV voor verdere analyse
+- Genereer deelbare links
+- Bekijk project samenvatting
+
+## 🎨 Design System
+
+### Kleuren
+- **Primary**: Blue (#3B82F6), Purple (#8B5CF6)
+- **Accents**: Orange (#F59E0B), Green (#10B981)
+- **Backgrounds**: Dark theme met verschillende niveaus
+- **Text**: High contrast voor leesbaarheid
+
+### Typografie
+- **Font**: Raleway (Google Fonts)
+- **Weights**: 300, 400, 500, 600, 700
+- **Hierarchy**: Duidelijke heading en body text
+
+### Componenten
+- **Cards**: Consistent border radius en shadows
+- **Buttons**: Primary, secondary en interactive states
+- **Inputs**: Focus states en validatie feedback
+- **Tables**: Responsive grid layouts
+
+## 🔧 Development
+
+### Project Structuur
+```
+src/
+├── components/          # React componenten
+│   ├── Calculator.tsx  # Hoofdcomponent
+│   ├── URLInput.tsx    # URL scraping modal
+│   ├── StaffelEditor.tsx # Staffelprijzen editor
+│   ├── CostsEditor.tsx # Kosten editor
+│   ├── ResultsView.tsx # Resultaten & grafieken
+│   └── ExportPanel.tsx # Export functionaliteit
+├── store/              # State management
+│   └── calculatorStore.ts # Zustand store
+├── types/              # TypeScript interfaces
+│   └── index.ts        # Type definities
+├── utils/              # Utility functies
+│   └── calculations.ts # Berekening logica
+└── App.tsx             # Hoofdapp component
 ```
 
-## Business value
+### Scripts
+```bash
+npm run dev          # Development server
+npm run build        # Production build
+npm run preview      # Preview production build
+npm run lint         # ESLint check
+```
 
-### What it does
+## 📈 Roadmap
 
-DHgate Monitor provides a subscription system for monitoring DHgate stores. Users can register stores through a multi-step widget, and the platform sends daily monitoring reports.
+### V1 (Huidig) ✅
+- [x] Basis calculator functionaliteit
+- [x] Staffelprijzen management
+- [x] Kostenmodel
+- [x] Real-time berekeningen
+- [x] Basis grafieken
+- [x] CSV export
 
-### Current capabilities
+### V2 (2-3 maanden)
+- [ ] URL scraping voor DHgate
+- [ ] Valuta API integratie
+- [ ] Deelbare project links
+- [ ] PDF export
 
-- **Store monitoring setup**: Users can register DHgate stores for tracking
-- **Daily monitoring reports**: Scheduled monitoring at 09:00 UTC with email notifications
-- **Store management**: Admin dashboard for managing registered stores and subscriptions
-- **Multi-language support**: Dutch and English interface support
-- **Content management**: Dynamic newsroom via CMS integration
-- **Analytics tracking**: User subscription metrics and platform usage data
+### V3 (3-6 maanden)
+- [ ] Ondersteuning meerdere marketplaces
+- [ ] User accounts + database
+- [ ] Scenario vergelijking
+- [ ] AI insights
 
-### Business benefits
+## 🧪 Testing
 
-- **Centralized store management**: Organize multiple DHgate stores in one dashboard
-- **Automated notifications**: Daily reports eliminate manual store checking
-- **Foundation for growth**: Platform ready for enhanced monitoring features
-- **Professional presentation**: Clean, accessible interface builds user trust
+### Test Data
+De applicatie bevat mock data voor testing:
+- Voorbeeld staffelprijzen
+- Standaard kostenposten
+- Mock DHgate scraping
 
-## User experience
+### Validatie
+- Staffelprijzen validatie (geen gaten/overlap)
+- Kosten input validatie
+- Break-even berekening validatie
 
-### Subscription widget
+## 🚀 Deployment
 
-- **Multi-step form**: Progressive disclosure reduces form abandonment
-- **Store selection**: Visual store cards with preview information
-- **Real-time validation**: Immediate feedback prevents submission errors
-- **Responsive design**: Works seamlessly on desktop, tablet, and mobile
-- **Accessibility compliance**: Full keyboard navigation and screen reader support
+### Development
+```bash
+npm run dev
+```
 
-### Interface design
+### Production
+```bash
+npm run build
+npm run preview
+```
 
-- **Progressive enhancement**: Works without JavaScript, enhanced with it
-- **Theme support**: Light and dark mode with automatic detection
-- **Multi-language routing**: Seamless Dutch/English switching
-- **Professional layout**: Clean typography and consistent spacing
-- **Focus management**: Logical tab order and visual focus indicators
+### Cloudflare Pages
+```bash
+npm run build
+# Upload dist/ folder naar Cloudflare Pages
+```
 
-### Accessibility features
+## 🤝 Bijdragen
 
-- **WCAG 2.1 AA compliance**: Meets international accessibility standards
-- **Keyboard navigation**: Complete functionality without mouse
-- **Screen reader support**: ARIA labels and semantic HTML structure
-- **High contrast support**: Visual accessibility for all users
-- **Focus indicators**: Clear visual feedback for interactive elements
+1. Fork het project
+2. Maak een feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit je wijzigingen (`git commit -m 'Add some AmazingFeature'`)
+4. Push naar de branch (`git push origin feature/AmazingFeature`)
+5. Open een Pull Request
 
-## Technical implementation
+## 📄 Licentie
 
-### Architecture
+Dit project is onderdeel van DHgate Monitor en is eigendom van [Company Name].
 
-- **Runtime**: Cloudflare Workers (V8 JavaScript engine)
-- **Database**: Cloudflare D1 (SQLite) for relational data
-- **Storage**: Cloudflare KV (key-value) for caching and sessions
-- **Frontend**: Vanilla JavaScript, HTML5, CSS3 (no framework)
-- **Email**: Multi-provider fallback (Resend API, SMTP, FormSubmit)
-- **CMS**: Prepr headless CMS with GraphQL API
-- **Deployment**: Wrangler CLI, GitHub Actions compatible
-- **Analytics**: Google Analytics 4 integration
+## 📞 Support
 
-### Data storage strategy
-
-The platform uses a dual storage approach:
-- **KV storage**: Fast access for subscription data and caching
-- **D1 database**: Relational storage for analytics and admin dashboard
-
-### Platform components
-
-**Main application** (`cloudflare_app.js` - 20,000+ lines)
-- ES6 modules with async/await patterns
-- RESTful API endpoints with CORS handling
-- Server-side rendering with template literals
-- JWT-like token authentication for admin
-- Scheduled events (cron: 0 9 * * *)
-- Circuit breaker pattern for external APIs
-
-**Subscription widget** (`signup-widget.js`)
-- Vanilla JavaScript with modern DOM APIs
-- Progressive form enhancement
-- Client-side validation with regex patterns
-- Fetch API for async form submissions
-- CSS Grid and Flexbox layouts
-
-**Enhanced modules**
-- `enhanced_admin_dashboard.js`: Administrative interface
-- `enhanced_store_browser_clean.js`: Store management UI
-- `api-config.js`: API configuration with retry logic
-
-### Security and compliance
-
-- **GDPR compliance**: Data handling with right to erasure implementation
-- **XSS protection**: Comprehensive input sanitization
-- **CSRF protection**: Token validation for all forms
-- **SSL/TLS encryption**: End-to-end secure communications
-- **Input validation**: Regex patterns and type checking
-
-### Performance and patterns
-
-- **Edge computing**: Global CDN with sub-100ms response times
-- **Caching strategy**: KV TTL, browser cache headers, CDN caching
-- **Error handling**: Exponential backoff, circuit breaker patterns
-- **Resource optimization**: Lazy loading, preload hints, minification
-- **API design**: RESTful endpoints, proper HTTP status codes
-- **Database**: Prepared statements, connection pooling via D1
-
-### Environment configuration
-
-Required environment variables:
-- `PREPR_API_TOKEN`: CMS integration
-- `RESEND_API_KEY`: Email service
-- `GA4_MEASUREMENT_ID`: Analytics tracking
-
-### License
-
-MIT License - Open source and free for commercial use.
+Voor vragen of ondersteuning:
+- Email: support@dhgatemonitor.com
+- Issues: GitHub Issues
+- Documentatie: [Link naar docs]
 
 ---
 
-Built for the e-commerce community. Live at [dhgate-monitor.com](https://dhgate-monitor.com)
+**Gemaakt met ❤️ voor e-commerce ondernemers**

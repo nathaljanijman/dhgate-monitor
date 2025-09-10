@@ -9,16 +9,16 @@
       - button "Accept" [ref=e8] [cursor=pointer]
       - button "Decline" [ref=e9] [cursor=pointer]
       - button "Cookie settings" [ref=e10] [cursor=pointer]
-  - link "Skip to main content" [ref=e11] [cursor=pointer]:
+  - link "Skip to main content" [ref=e11]:
     - /url: "#main-content"
   - banner [ref=e12]:
     - generic [ref=e13]:
-      - link "DHgate Monitor homepage" [ref=e14] [cursor=pointer]:
+      - link "DHgate Monitor homepage" [ref=e14]:
         - /url: /?lang=en&theme=light
-        - img "DHgate Monitor" [ref=e15] [cursor=pointer]
-        - generic [ref=e16] [cursor=pointer]:
-          - generic [ref=e17] [cursor=pointer]: DHgate Monitor
-          - generic [ref=e18] [cursor=pointer]: E-commerce Intelligence
+        - img "DHgate Monitor" [ref=e15]
+        - generic [ref=e16]:
+          - generic [ref=e17]: DHgate Monitor
+          - generic [ref=e18]: E-commerce Intelligence
       - navigation "Main navigation" [ref=e19]:
         - menubar [ref=e20]:
           - menuitem "Home" [ref=e21] [cursor=pointer]
@@ -37,13 +37,13 @@
       - button "Close menu" [ref=e35] [cursor=pointer]:
         - img [ref=e36] [cursor=pointer]
     - navigation "Mobile navigation" [ref=e39]:
-      - link "Home" [ref=e40] [cursor=pointer]:
+      - link "Home" [ref=e40]:
         - /url: /?lang=en&theme=light
-      - link "Dashboard" [ref=e41] [cursor=pointer]:
+      - link "Dashboard" [ref=e41]:
         - /url: /dashboard?lang=en&theme=light
-      - link "Newsroom" [ref=e42] [cursor=pointer]:
+      - link "Newsroom" [ref=e42]:
         - /url: /newsroom?lang=en&theme=light
-      - link "Contact" [ref=e43] [cursor=pointer]:
+      - link "Contact" [ref=e43]:
         - /url: /contact?lang=en&theme=light
     - generic [ref=e45]:
       - heading "Settings" [level=3] [ref=e46]
@@ -73,11 +73,11 @@
               - img [ref=e75]
               - generic [ref=e77]: No account needed
           - generic [ref=e78]:
-            - link "Sign Up" [ref=e79] [cursor=pointer]:
+            - link "Sign Up" [ref=e79]:
               - /url: "#subscription-form"
               - text: Sign Up
-              - img [ref=e80] [cursor=pointer]
-            - link "Learn More" [ref=e82] [cursor=pointer]:
+              - img [ref=e80]
+            - link "Learn More" [ref=e82]:
               - /url: /service?lang=en&theme=light
         - img "DHgate Monitor Dashboard Preview - Product Monitoring Interface for Dropshipping and E-commerce" [ref=e85]
     - generic [ref=e87]:
@@ -117,74 +117,74 @@
         - heading "Trending DHgate Shops for Product Research" [level=2] [ref=e140]
         - paragraph [ref=e141]: Monitor the best and most trusted DHgate sellers from 2025
       - generic [ref=e143]:
-        - link "BTime - Luxury Watches 97.2% • 55,925 sales" [ref=e144] [cursor=pointer]:
+        - link "BTime - Luxury Watches 97.2% • 55,925 sales" [ref=e144]:
           - /url: https://www.dhgate.com/store/btime
-          - img [ref=e145] [cursor=pointer]
-          - generic [ref=e149] [cursor=pointer]:
-            - generic [ref=e150] [cursor=pointer]: BTime - Luxury Watches
-            - generic [ref=e151] [cursor=pointer]: 97.2% • 55,925 sales
-        - link "Amy 1003_1 - Sportswear 98.5% • 70,458 sales" [ref=e152] [cursor=pointer]:
+          - img [ref=e145]
+          - generic [ref=e149]:
+            - generic [ref=e150]: BTime - Luxury Watches
+            - generic [ref=e151]: 97.2% • 55,925 sales
+        - link "Amy 1003_1 - Sportswear 98.5% • 70,458 sales" [ref=e152]:
           - /url: https://www.dhgate.com/store/20451494
-          - img [ref=e153] [cursor=pointer]
-          - generic [ref=e155] [cursor=pointer]:
-            - generic [ref=e156] [cursor=pointer]: Amy 1003_1 - Sportswear
-            - generic [ref=e157] [cursor=pointer]: 98.5% • 70,458 sales
-        - link "DHgate Beauty 99.7% • 20,164 sales" [ref=e158] [cursor=pointer]:
+          - img [ref=e153]
+          - generic [ref=e155]:
+            - generic [ref=e156]: Amy 1003_1 - Sportswear
+            - generic [ref=e157]: 98.5% • 70,458 sales
+        - link "DHgate Beauty 99.7% • 20,164 sales" [ref=e158]:
           - /url: https://www.dhgate.com/store/20522858
-          - img [ref=e159] [cursor=pointer]
-          - generic [ref=e161] [cursor=pointer]:
-            - generic [ref=e162] [cursor=pointer]: DHgate Beauty
-            - generic [ref=e163] [cursor=pointer]: 99.7% • 20,164 sales
-        - link "IZeso - Phone Accessories 100% • 4,919 sales" [ref=e164] [cursor=pointer]:
+          - img [ref=e159]
+          - generic [ref=e161]:
+            - generic [ref=e162]: DHgate Beauty
+            - generic [ref=e163]: 99.7% • 20,164 sales
+        - link "IZeso - Phone Accessories 100% • 4,919 sales" [ref=e164]:
           - /url: https://www.dhgate.com/store/18282436
           - img
-          - generic [ref=e165] [cursor=pointer]:
-            - generic [ref=e166] [cursor=pointer]: IZeso - Phone Accessories
-            - generic [ref=e167] [cursor=pointer]: 100% • 4,919 sales
-        - link "Arthur032 - Electronics 97.5% • 22,432 sales" [ref=e168] [cursor=pointer]:
+          - generic [ref=e166]:
+            - generic [ref=e167]: IZeso - Phone Accessories
+            - generic [ref=e168]: 100% • 4,919 sales
+        - link "Arthur032 - Electronics 97.5% • 22,432 sales" [ref=e169]:
           - /url: https://www.dhgate.com/store/14772307
-          - img [ref=e169] [cursor=pointer]
-          - generic [ref=e173] [cursor=pointer]:
-            - generic [ref=e174] [cursor=pointer]: Arthur032 - Electronics
-            - generic [ref=e175] [cursor=pointer]: 97.5% • 22,432 sales
-        - link "Beija 2013 - Jewelry 98.9% • 17,470 sales" [ref=e176] [cursor=pointer]:
+          - img [ref=e170]
+          - generic [ref=e172]:
+            - generic [ref=e173]: Arthur032 - Electronics
+            - generic [ref=e174]: 97.5% • 22,432 sales
+        - link "Beija 2013 - Jewelry 98.9% • 17,470 sales" [ref=e175]:
           - /url: https://www.dhgate.com/store/14772307
-          - img [ref=e177] [cursor=pointer]
-          - generic [ref=e180] [cursor=pointer]:
-            - generic [ref=e181] [cursor=pointer]: Beija 2013 - Jewelry
-            - generic [ref=e182] [cursor=pointer]: 98.9% • 17,470 sales
-        - link "Dicky0750 - Designer Bags 99.2% • 99,999+ sales" [ref=e183] [cursor=pointer]:
+          - img [ref=e176]
+          - generic [ref=e179]:
+            - generic [ref=e180]: Beija 2013 - Jewelry
+            - generic [ref=e181]: 98.9% • 17,470 sales
+        - link "Dicky0750 - Designer Bags 99.2% • 99,999+ sales" [ref=e182]:
           - /url: https://www.dhgate.com/store/20425879
           - img
-          - generic [ref=e184] [cursor=pointer]:
-            - generic [ref=e185] [cursor=pointer]: Dicky0750 - Designer Bags
-            - generic [ref=e186] [cursor=pointer]: 99.2% • 99,999+ sales
-        - link "Boost 700 V2 - Sneakers 99.4% • 53,914 sales" [ref=e187] [cursor=pointer]:
+          - generic [ref=e185]:
+            - generic [ref=e186]: Dicky0750 - Designer Bags
+            - generic [ref=e187]: 99.2% • 99,999+ sales
+        - link "Boost 700 V2 - Sneakers 99.4% • 53,914 sales" [ref=e188]:
           - /url: https://www.dhgate.com/store/21208299
-          - img [ref=e188] [cursor=pointer]
-          - generic [ref=e192] [cursor=pointer]:
-            - generic [ref=e193] [cursor=pointer]: Boost 700 V2 - Sneakers
-            - generic [ref=e194] [cursor=pointer]: 99.4% • 53,914 sales
-        - link "iBestshoppingmall - Electronics 99.5% • 53,915 sales" [ref=e195] [cursor=pointer]:
+          - img [ref=e189]
+          - generic [ref=e191]:
+            - generic [ref=e192]: Boost 700 V2 - Sneakers
+            - generic [ref=e193]: 99.4% • 53,914 sales
+        - link "iBestshoppingmall - Electronics 99.5% • 53,915 sales" [ref=e194]:
           - /url: https://www.dhgate.com/store/20047923
           - img
-          - generic [ref=e196] [cursor=pointer]:
-            - generic [ref=e197] [cursor=pointer]: iBestshoppingmall - Electronics
-            - generic [ref=e198] [cursor=pointer]: 99.5% • 53,915 sales
-        - link "CasualTrendyShoes - Footwear 99.1% • 20,077 sales" [ref=e199] [cursor=pointer]:
+          - generic [ref=e197]:
+            - generic [ref=e198]: iBestshoppingmall - Electronics
+            - generic [ref=e199]: 99.5% • 53,915 sales
+        - link "CasualTrendyShoes - Footwear 99.1% • 20,077 sales" [ref=e200]:
           - /url: https://www.dhgate.com/store/21926048
           - img
-          - generic [ref=e200] [cursor=pointer]:
-            - generic [ref=e201] [cursor=pointer]: CasualTrendyShoes - Footwear
-            - generic [ref=e202] [cursor=pointer]: 99.1% • 20,077 sales
-        - link "Alexandr Store - Gym Equipment 100% • 1,191 sales" [ref=e203] [cursor=pointer]:
+          - generic [ref=e202]:
+            - generic [ref=e203]: CasualTrendyShoes - Footwear
+            - generic [ref=e204]: 99.1% • 20,077 sales
+        - link "Alexandr Store - Gym Equipment 100% • 1,191 sales" [ref=e205]:
           - /url: https://www.dhgate.com/store/20245807
           - img
-          - generic [ref=e204] [cursor=pointer]:
-            - generic [ref=e205] [cursor=pointer]: Alexandr Store - Gym Equipment
-            - generic [ref=e206] [cursor=pointer]: 100% • 1,191 sales
-    - region [ref=e207]:
-      - iframe [ref=e208]:
+          - generic [ref=e208]:
+            - generic [ref=e209]: Alexandr Store - Gym Equipment
+            - generic [ref=e210]: 100% • 1,191 sales
+    - region [ref=e211]:
+      - iframe [ref=e212]:
         - generic [ref=f1e2]:
           - generic [ref=f1e3]:
             - generic [ref=f1e4]:

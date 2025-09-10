@@ -90,7 +90,6 @@ const CONFIG = {
 // IMPORT ENHANCED ADMIN DASHBOARD
 // ============================================================================
 import { generateEnhancedAdminDashboard } from './enhanced_admin_dashboard.js';
-import { generateEnhancedStoreBrowser } from './enhanced_store_browser_clean.js';
 import { generateSignupWidget } from './signup-widget.js';
 import { API_CONFIG, getRegionsByPriority, calculateRetryDelay, CircuitBreaker } from './api-config.js';
 
@@ -2052,9 +2051,9 @@ class AnalyticsService {
    * @param {Object} data - Page view data
    */
   static trackPageView(data) {
-    if (typeof gtag !== 'function') return;
+    if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
     
-    gtag('event', 'page_view', {
+    window.gtag('event', 'page_view', {
       page_title: data.title,
       page_location: data.url,
       page_path: data.path,
@@ -2071,9 +2070,9 @@ class AnalyticsService {
    * @param {Object} parameters - Event parameters
    */
   static trackConversion(eventName, parameters = {}) {
-    if (typeof gtag !== 'function') return;
+    if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
     
-    gtag('event', eventName, {
+    window.gtag('event', eventName, {
       ...parameters,
       event_category: 'conversion',
       event_timestamp: new Date().toISOString(),
@@ -2418,20 +2417,52 @@ function getTranslations(lang) {
   return translations[lang] || translations.en;
 }
 
-// Helper function to mask email addresses for privacy
-function maskEmail(email) {
-  if (!email || !email.includes('@')) return '••••••••@••••••';
+// Performance monitoring utility
+function createPerformanceTracker(operation) {
+  const startTime = Date.now();
   
-  const [local, domain] = email.split('@');
-  const maskedLocal = local.length > 2 ? 
-    local.substring(0, 2) + '••••' : 
-    '••••';
-  const maskedDomain = domain.length > 4 ? 
-    '••' + domain.substring(domain.length - 4) : 
-    '••••••';
-  
-  return maskedLocal + '@' + maskedDomain;
+  return {
+    end: () => {
+      const duration = Date.now() - startTime;
+      console.log(`⏱️  [PERF] ${operation}: ${duration}ms`);
+      return duration;
+    },
+    checkpoint: (label) => {
+      const duration = Date.now() - startTime;
+      console.log(`⏱️  [PERF] ${operation} - ${label}: ${duration}ms`);
+      return duration;
+    }
+  };
 }
+
+// Enhanced header utility for performance and security
+function getEnhancedHeaders(contentType = 'text/html', cacheControl = 'public, max-age=3600', extraHeaders = {}) {
+  const baseHeaders = {
+    'Content-Type': contentType,
+    'Cache-Control': cacheControl,
+    
+    // Security headers
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'X-XSS-Protection': '1; mode=block',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
+    
+    // Performance headers  
+    'X-DNS-Prefetch-Control': 'on',
+    'X-Powered-By': 'DHgate Monitor v2.0',
+    
+    // CORS for API endpoints
+    'Access-Control-Allow-Origin': 'https://dhgate-monitor.com',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    
+    ...extraHeaders
+  };
+  
+  return baseHeaders;
+}
+
 
 // Get user's preferred theme
 function getTheme(request) {
@@ -5249,19 +5280,24 @@ async function getTestPlanResults(env) {
 export default {
 
   async fetch(request, env, ctx) {
+    const perf = createPerformanceTracker(`${request.method} ${new URL(request.url).pathname}`);
     const url = new URL(request.url);
     const method = request.method;
 
-    // CORS headers for all responses
-    const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    };
+    // Enhanced headers with security and performance optimizations
+    const defaultHeaders = getEnhancedHeaders('text/html', 'public, max-age=3600', {
+      'Access-Control-Allow-Origin': '*', // Override for API compatibility
+    });
 
     // Handle CORS preflight
     if (method === 'OPTIONS') {
-      return new Response(null, { headers: corsHeaders });
+      return new Response(null, { 
+        headers: getEnhancedHeaders('text/plain', 'no-cache', {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+        })
+      });
     }
 
     try {
@@ -5396,11 +5432,12 @@ export default {
         case '/terms':
           return await handleTermsPage(request, env);
         
-        case '/contact':
+        case '/contact': {
           // Redirect old contact page to new service page
           const lang = getLanguage(request);
           const theme = getTheme(request);
           return Response.redirect(`${url.origin}/service?lang=${lang}&theme=${theme}`, 301);
+        }
         
         case '/service':
           return await handleServicePage(request, env);
@@ -5630,7 +5667,7 @@ export default {
             status: 'healthy', 
             timestamp: new Date().toISOString() 
           }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            headers: getEnhancedHeaders('application/json', 'no-cache')
           });
         
         case '/toolkit':
@@ -5662,11 +5699,11 @@ export default {
           
           // Handle asset requests
           if (url.pathname.startsWith('/assets/')) {
-            return await handleAsset(url.pathname, corsHeaders);
+            return await handleAsset(url.pathname, getEnhancedHeaders('text/plain', 'public, max-age=86400'));
           }
           return new Response('Not Found', { 
             status: 404, 
-            headers: corsHeaders 
+            headers: getEnhancedHeaders('text/plain', 'no-cache') 
           });
       }
     } catch (error) {
@@ -5675,7 +5712,7 @@ export default {
         error: error.message 
       }), {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: getEnhancedHeaders('application/json', 'no-cache')
       });
     }
   },
@@ -6830,7 +6867,7 @@ async function fetchPreprArticle(slug, lang = 'nl') {
     }
     
     // Transform Prepr data to our expected format (always fetch Dutch articles)
-    let article = {
+    const article = {
       id: item._id,
       slug: item._slug,
       title: item.title,
@@ -6903,7 +6940,7 @@ async function handleNewsroomPage(request, env) {
   });
   
   // Local filtering (could be moved to GraphQL query for better performance)
-  let filteredArticles = allArticles.filter(article => {
+  const filteredArticles = allArticles.filter(article => {
     if (search && !article.title.toLowerCase().includes(search.toLowerCase()) && 
         !article.excerpt.toLowerCase().includes(search.toLowerCase())) {
       return false;
@@ -8766,7 +8803,7 @@ async function handleNewsroomArticle(request, env) {
   const slug = url.pathname.replace('/newsroom/', '');
   
   // Fetch article from Prepr CMS
-  let article = await fetchPreprArticle(slug, lang);
+  const article = await fetchPreprArticle(slug, lang);
   
   // If article not found in Prepr, redirect to newsroom
   if (!article) {
@@ -14297,10 +14334,11 @@ async function handleAPIHealthCheck(request, env) {
 // Enhanced API Handler for store search with retry logic and regional fallback
 async function handleStoreSearch(request, env) {
   const startTime = Date.now();
+  let query = '';
   
   try {
     const url = new URL(request.url);
-    const query = url.searchParams.get('q');
+    query = url.searchParams.get('q');
     const region = url.searchParams.get('region') || 'auto';
     
     console.log(`🔍 Store search request: query="${query}", region="${region}"`);
@@ -14381,7 +14419,7 @@ async function handleStoreSearch(request, env) {
     
     const responseData = {
       stores: filteredStores,
-      query: query,
+      query: query || '',
       region: region,
       total: filteredStores.length,
       performance: {
@@ -14409,14 +14447,14 @@ async function handleStoreSearch(request, env) {
     });
     
   } catch (error) {
-    console.error(`❌ Error in store search for query "${query}":`, error);
+    console.error(`❌ Error in store search for query "${query || 'undefined'}":`, error);
     
     // Return graceful error response with fallback data
     const errorResponse = {
       stores: [],
       error: 'Search temporarily unavailable',
       message: 'Please try again in a few moments',
-      query: query,
+      query: query || '',
       performance: {
         duration: Date.now() - startTime,
         error: error.message
@@ -14946,7 +14984,7 @@ async function simulateGoogleSearch(query) {
       `site:dhgate.com ${query} store`
     ];
     
-    let allStoreMatches = [];
+    const allStoreMatches = [];
     
     for (const searchQuery of searchStrategies) {
       const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}&num=20`;
@@ -14986,7 +15024,7 @@ async function simulateGoogleSearch(query) {
           /dhgate\.com%2Fstore%2Ftop%2Dselling%2F(\d+)/g,
           /dhgate\.com\/store\/top-selling\/(\d+)/g,
           /dhgate\.com%2Fstore%2F[^%\s]*%2F(\d+)%2F/g,
-          /dhgate\.com\/store\/[^\/\s]*\/(\d+)\//g
+          /dhgate\.com\/store\/[^/\s]*\/(\d+)\//g
         ];
         
         // Apply all patterns to find store IDs
@@ -15050,7 +15088,7 @@ async function searchViaDuckDuckGo(query) {
       `dhgate store ${query}`
     ];
     
-    let allStoreMatches = [];
+    const allStoreMatches = [];
     
     for (const searchQuery of searchStrategies) {
       const searchUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(searchQuery)}`;
@@ -15087,7 +15125,7 @@ async function searchViaDuckDuckGo(query) {
           /dhgate\.com%2Fstore%2Ftop%2Dselling%2F(\d+)/g,
           /dhgate\.com\/store\/top-selling\/(\d+)/g,
           /dhgate\.com%2Fstore%2F[^%\s]*%2F(\d+)%2F/g,
-          /dhgate\.com\/store\/[^\/\s]*\/(\d+)\//g
+          /dhgate\.com\/store\/[^/\s]*\/(\d+)\//g
         ];
         
         // Apply all patterns to find store IDs
@@ -19925,6 +19963,73 @@ function generateLandingPageHTML(t, lang, theme = 'light', env = null) {
                 });
             }
             
+            // WCAG 2.1 Keyboard Navigation for Tool Cards - Make functions global
+            window.handleCardKeydown = function(event, productId) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    openProductPage(productId);
+                } else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    focusNextCard(event.target);
+                } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    focusPreviousCard(event.target);
+                }
+            }
+            
+            window.focusNextCard = function(currentCard) {
+                const cards = Array.from(document.querySelectorAll('.tool-card'));
+                const currentIndex = cards.indexOf(currentCard);
+                const nextIndex = (currentIndex + 1) % cards.length;
+                cards[nextIndex].focus();
+            }
+            
+            window.focusPreviousCard = function(currentCard) {
+                const cards = Array.from(document.querySelectorAll('.tool-card'));
+                const currentIndex = cards.indexOf(currentCard);
+                const previousIndex = currentIndex === 0 ? cards.length - 1 : currentIndex - 1;
+                cards[previousIndex].focus();
+            }
+            
+            // DHgate Monitor Icon Font Loading
+            const fontFace = new FontFace('DHGateMonitor-Icons', 'url(/assets/icons/fonts/Lineicons.woff2)');
+            fontFace.load().then(function(font) {
+                document.fonts.add(font);
+                console.log('DHgate Monitor Icons font loaded successfully');
+            }).catch(function(error) {
+                console.log('Font loading failed:', error);
+            });
+            
+            // Add click event listeners to replace onclick attributes
+            document.addEventListener('DOMContentLoaded', function() {
+                const toolCards = document.querySelectorAll('.tool-card');
+                toolCards.forEach(card => {
+                    card.addEventListener('click', function() {
+                        const productId = this.dataset.product;
+                        if (productId) {
+                            openProductPage(productId);
+                        }
+                    });
+                });
+                
+                // Announce page changes to screen readers
+                announcePageChange('${lang === 'nl' ? 'DHgate Monitor Toolkit geladen. Gebruik pijltjestoetsen om te navigeren tussen tools.' : 'DHgate Monitor Toolkit loaded. Use arrow keys to navigate between tools.'}');
+            });
+            
+            // Screen reader announcements
+            function announcePageChange(message, priority = 'polite') {
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', priority);
+                announcement.setAttribute('aria-atomic', 'true');
+                announcement.className = 'sr-only';
+                announcement.textContent = message;
+                document.body.appendChild(announcement);
+                
+                setTimeout(() => {
+                    document.body.removeChild(announcement);
+                }, 1000);
+            }
+            
             // Enhanced form error announcements
             function announceError(message, priority = 'polite') {
                 const announcement = document.createElement('div');
@@ -21992,7 +22097,7 @@ async function handleDeleteData(request, env) {
     console.error('Error handling data deletion:', error);
     return new Response('Error processing data deletion request', { status: 500 });
   }
-};
+}
 
 // Generate data deletion page
 function generateDeleteDataPageHTML(email, lang, theme) {
@@ -22374,15 +22479,54 @@ function generateToolkitHTML(t, lang, theme = 'light') {
     <meta property="og:title" content="DHgate Monitor Toolkit">
     <meta property="og:description" content="Ontdek de geavanceerde functies van ons moderne monitoring platform">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://dhgate-monitor.com/toolkit">
+    <meta property="og:image" content="https://dhgate-monitor.com/assets/logo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="DHgate Monitor Toolkit">
+    <meta name="twitter:description" content="Ontdek de geavanceerde functies van ons moderne monitoring platform">
+    <meta name="twitter:image" content="https://dhgate-monitor.com/assets/logo.png">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://dhgate-monitor.com/toolkit">
     <link rel="icon" href="/assets/logo.png" type="image/png">
+    
+    <!-- Structured Data Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "DHgate Monitor Toolkit",
+        "description": "Professional tools for DHgate sellers including shop tracking, product monitoring, and margin calculation",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "EUR"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "DHgate Monitor",
+            "url": "https://dhgate-monitor.com",
+            "logo": "https://dhgate-monitor.com/assets/logo.png"
+        },
+        "featureList": [
+            "Shop Performance Tracking",
+            "Product Price Monitoring", 
+            "Margin Calculation Tools",
+            "Real-time Analytics",
+            "Supplier Reliability Scoring"
+        ]
+    }
+    </script>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- DHgate Monitor Icons CSS -->
     <link rel="stylesheet" href="/assets/icons/dhgate-monitor-icons.css">
+    
+    <!-- DHgate Monitor Icon Font Preload -->
+    <link rel="preload" href="/assets/icons/fonts/Lineicons.woff2" as="font" type="font/woff2" crossorigin>
     
     <!-- DHGate Monitor Design System Colors -->
     <style>
@@ -22424,106 +22568,381 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6; color: #1a202c;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            line-height: 1.6; color: #0f172a;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
             min-height: 100vh;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23e2e8f0" fill-opacity="0.4"><circle cx="30" cy="30" r="1"/></g></svg>');
+            pointer-events: none;
+            z-index: 0;
         }
         
         .container { 
-            max-width: 1400px; margin: 0 auto; padding: 3rem 2rem;
-            opacity: 0; animation: pageReveal 1.2s ease forwards;
+            max-width: 1400px; margin: 0 auto; padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem);
+            opacity: 0; animation: pageReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            position: relative; z-index: 1;
         }
         
         @keyframes pageReveal {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
+            0% { 
+                opacity: 0; 
+                transform: translateY(clamp(20px, 3vw, 40px)) scale(0.98);
+                filter: blur(8px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+                filter: blur(0px);
+            }
         }
         
         header { 
-            text-align: center; margin-bottom: 4rem; color: white;
-            opacity: 0; animation: headerFloat 1.5s ease 0.3s forwards;
+            text-align: center; 
+            margin-bottom: clamp(3rem, 6vw, 5rem); 
+            opacity: 0; 
+            animation: headerFloat 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
         }
         
         @keyframes headerFloat {
-            0% { opacity: 0; transform: translateY(30px); }
-            100% { opacity: 1; transform: translateY(0); }
+            0% { 
+                opacity: 0; 
+                transform: translateY(clamp(20px, 4vw, 60px));
+                filter: blur(4px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0);
+                filter: blur(0px);
+            }
         }
         
         header h1 {
-            font-size: 3.5rem; font-weight: 800; margin-bottom: 1.5rem;
-            text-shadow: 0 8px 16px rgba(0,0,0,0.3);
-            background: linear-gradient(135deg, #ffffff, #e0e0e0);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-size: clamp(2.5rem, 6vw, 4rem); 
+            font-weight: 800; 
+            margin-bottom: clamp(1rem, 3vw, 2rem);
+            color: #0f172a;
+            background: linear-gradient(135deg, #1e293b 0%, #475569 50%, #64748b 100%);
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: -0.02em;
+            text-rendering: optimizeLegibility;
         }
         
         header p { 
-            font-size: 1.3rem; opacity: 0.9; max-width: 600px; margin: 0 auto;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem); 
+            color: #64748b;
+            max-width: min(600px, 90vw); 
+            margin: 0 auto;
+            font-weight: 500;
+            letter-spacing: -0.01em;
         }
         
         .toolkit-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 2.5rem; margin-bottom: 4rem;
+            grid-template-columns: repeat(auto-fit, minmax(clamp(300px, 25vw, 400px), 1fr));
+            gap: clamp(1.5rem, 4vw, 2.5rem); 
+            margin-bottom: clamp(3rem, 6vw, 5rem);
         }
         
         .tool-card {
-            background: rgba(255,255,255,0.95); border-radius: 20px; 
-            padding: 3rem 2.5rem; min-height: 320px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative; overflow: hidden; cursor: pointer;
-            backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2);
-            opacity: 0; transform: translateY(40px);
+            /* Linear.app inspired luxury design */
+            background: 
+                linear-gradient(135deg, 
+                    rgba(255, 255, 255, 0.95) 0%, 
+                    rgba(255, 255, 255, 0.85) 100%);
+            backdrop-filter: blur(24px) saturate(200%);
+            -webkit-backdrop-filter: blur(24px) saturate(200%);
+            
+            /* Premium border radius */
+            border-radius: clamp(20px, 4vw, 32px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            
+            /* Luxury shadow system */
+            box-shadow: 
+                0 1px 3px rgba(0, 0, 0, 0.02),
+                0 4px 12px rgba(0, 0, 0, 0.04),
+                0 12px 24px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+                
+            padding: clamp(2.5rem, 6vw, 4rem);
+            min-height: clamp(320px, 28vh, 400px);
+            
+            /* Linear.app style transitions */
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative; 
+            overflow: hidden; 
+            cursor: pointer;
+            
+            /* Accessibility - Focus states */
+            outline: none;
+            
+            /* Initial animation state */
+            opacity: 0; 
+            transform: translateY(clamp(24px, 5vw, 48px)) scale(0.96);
         }
         
-        .tool-card:nth-child(1) { animation: cardReveal 0.8s ease 0.6s forwards; }
-        .tool-card:nth-child(2) { animation: cardReveal 0.8s ease 0.8s forwards; }
-        .tool-card:nth-child(3) { animation: cardReveal 0.8s ease 1.0s forwards; }
-        .feature-card:nth-child(4) { animation: cardReveal 0.8s ease 1.2s forwards; }
-        .feature-card:nth-child(5) { animation: cardReveal 0.8s ease 1.4s forwards; }
-        .feature-card:nth-child(6) { animation: cardReveal 0.8s ease 1.6s forwards; }
+        /* WCAG 2.1 Accessibility Enhancements */
         
-        @keyframes cardReveal {
-            0% { opacity: 0; transform: translateY(40px) scale(0.95); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
+        /* Screen reader only content */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
         
-        .feature-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.15) 100%);
-            opacity: 0; transition: opacity 0.4s ease;
+        /* Enhanced focus indicators */
+        .tool-card:focus-visible {
+            outline: 3px solid #3b82f6 !important;
+            outline-offset: 2px !important;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.12),
+                0 0 0 6px rgba(59, 130, 246, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
         }
         
-        .feature-card:hover::before { opacity: 1; }
+        /* Reduce motion for users who prefer it */
+        @media (prefers-reduced-motion: reduce) {
+            .tool-card,
+            .tool-background,
+            .tool-icon-integrated,
+            .tool-content,
+            .tool-expand {
+                animation: none !important;
+                transition: none !important;
+            }
+            
+            .tool-card:hover {
+                transform: none !important;
+            }
+        }
         
-        .feature-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 30px 80px rgba(0,0,0,0.25);
-            border-color: rgba(102, 126, 234, 0.3);
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .tool-card {
+                border: 2px solid ButtonText;
+                background: ButtonFace;
+            }
+            
+            .tool-title {
+                color: ButtonText;
+            }
+            
+            .tool-description {
+                color: ButtonText;
+            }
+        }
+        
+        /* Toolkit header styling */
+        .toolkit-header {
+            text-align: center;
+            margin-bottom: clamp(3rem, 6vw, 5rem);
+        }
+        
+        .toolkit-subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            color: var(--text-secondary, #64748b);
+            margin-top: 1rem;
+            font-weight: 450;
+        }
+        
+        /* 2025 Staggered Reveal Animation */
+        .tool-card:nth-child(1) { animation: modernCardReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; }
+        .tool-card:nth-child(2) { animation: modernCardReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards; }
+        .tool-card:nth-child(3) { animation: modernCardReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards; }
+        
+        @keyframes modernCardReveal {
+            0% { 
+                opacity: 0; 
+                transform: translateY(clamp(30px, 6vw, 50px)) scale(0.92) rotateX(15deg);
+                filter: blur(8px);
+            }
+            60% {
+                opacity: 0.8;
+                transform: translateY(clamp(-2px, -0.5vw, -4px)) scale(1.01) rotateX(-2deg);
+                filter: blur(2px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1) rotateX(0deg);
+                filter: blur(0px);
+            }
+        }
+        
+        /* Linear.app Luxury Hover Effects */
+        .tool-card::before {
+            content: ''; 
+            position: absolute; 
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                linear-gradient(135deg, 
+                    rgba(99, 102, 241, 0.02) 0%,
+                    rgba(168, 85, 247, 0.03) 50%,
+                    rgba(236, 72, 153, 0.02) 100%);
+            opacity: 0; 
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            border-radius: inherit;
+        }
+        
+        .tool-card:hover::before { 
+            opacity: 1; 
+        }
+        
+        .tool-card:hover {
+            /* Subtle Linear.app lift */
+            transform: translateY(clamp(-4px, -1vw, -8px)) scale(1.005);
+            
+            /* Premium shadow elevation */
+            box-shadow: 
+                0 2px 6px rgba(0, 0, 0, 0.03),
+                0 8px 20px rgba(0, 0, 0, 0.05),
+                0 20px 40px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+                
+            /* Enhanced luxury background */
+            background: 
+                linear-gradient(135deg, 
+                    rgba(255, 255, 255, 0.98) 0%, 
+                    rgba(255, 255, 255, 0.92) 100%);
+            backdrop-filter: blur(32px) saturate(220%);
+            -webkit-backdrop-filter: blur(32px) saturate(220%);
+            border-color: rgba(99, 102, 241, 0.12);
         }
         
         .tool-background {
-            position: absolute; top: 0; right: 0; width: 200px; height: 200px;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.06), rgba(118, 75, 162, 0.10));
-            border-radius: 50%; transform: translate(60px, -60px);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute; 
+            top: clamp(-20px, -3vw, -40px); 
+            right: clamp(-20px, -3vw, -40px); 
+            width: clamp(140px, 16vw, 200px); 
+            height: clamp(140px, 16vw, 200px);
+            
+            /* DHgate Monitor service header colors */
+            background: 
+                radial-gradient(circle at 30% 30%, 
+                    rgba(37, 99, 235, 0.08) 0%, 
+                    rgba(234, 88, 12, 0.06) 35%,
+                    rgba(37, 99, 235, 0.04) 70%,
+                    transparent 100%);
+                    
+            border-radius: clamp(8px, 2vw, 16px); /* Square with rounded corners */
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            
+            /* Subtle breathing animation */
+            animation: luxuryBreath 8s ease-in-out infinite;
+        }
+        
+        @keyframes luxuryBreath {
+            0%, 100% { 
+                transform: scale(1) rotate(0deg);
+                opacity: 0.6;
+            }
+            50% { 
+                transform: scale(1.05) rotate(2deg);
+                opacity: 0.8;
+            }
         }
         
         .tool-card:hover .tool-background {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.20));
-            transform: translate(40px, -40px) scale(1.2);
+            background: 
+                radial-gradient(circle at 30% 30%, 
+                    rgba(37, 99, 235, 0.15) 0%, 
+                    rgba(234, 88, 12, 0.12) 35%,
+                    rgba(37, 99, 235, 0.08) 70%,
+                    transparent 100%);
+                    
+            transform: scale(1.1) rotate(5deg);
+            opacity: 1;
+            animation: none;
         }
         
+        /* Remove duplicate - handled below */
+        
+        
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 1px 3px rgba(0, 0, 0, 0.02),
+                0 8px 16px rgba(0, 0, 0, 0.08),
+                0 16px 32px rgba(0, 0, 0, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+        
+        /* DHgate Monitor Icon CSS - Direct Unicode Implementation */
+        .dhg {
+            font-family: 'DHGateMonitor-Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-variant: normal;
+            text-transform: none;
+            line-height: 1;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Specific icons used in toolkit - Correct Unicode values */
+        .dhg.dhg-buildings-1:before { content: "\uEA5E"; }
+        .dhg.dhg-box-archive-1:before { content: "\uEA51"; }
+        .dhg.dhg-pie-chart-2:before { content: "\uEB95"; }
+        .dhg.dhg-aeroplane-1:before { content: "\uEA04"; }
+        .dhg.dhg-search-1:before { content: "\uEBC7"; }
+        .dhg.dhg-calculator-1:before { content: "\uEA66"; }
+        
         .tool-icon-integrated {
-            position: absolute; top: 2rem; right: 2rem;
-            width: 48px; height: 48px; opacity: 0.4;
-            transition: all 0.4s ease; z-index: 1;
+            position: absolute; 
+            top: clamp(1.5rem, 4vw, 2.5rem); 
+            right: clamp(1.5rem, 4vw, 2.5rem);
+            
+            width: clamp(56px, 10vw, 80px); 
+            height: clamp(56px, 10vw, 80px);
+            
+            /* Linear.app icon container */
+            background: 
+                linear-gradient(135deg, 
+                    rgba(255, 255, 255, 0.8) 0%,
+                    rgba(255, 255, 255, 0.6) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            opacity: 0.9;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 2;
+            
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.04),
+                0 1px 2px rgba(0, 0, 0, 0.02);
         }
         
         .tool-card:hover .tool-icon-integrated {
-            opacity: 0.8; transform: scale(1.1) rotate(5deg);
+            opacity: 1;
+            transform: translateY(-2px) scale(1.05);
+            background: 
+                linear-gradient(135deg, 
+                    rgba(255, 255, 255, 0.95) 0%,
+                    rgba(255, 255, 255, 0.85) 100%);
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.08),
+                0 3px 6px rgba(0, 0, 0, 0.04);
         }
         
         .tool-icon-integrated svg {
@@ -22534,33 +22953,75 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         }
         
         .tool-icon-integrated i {
-            font-size: 48px;
-            color: var(--dhg-icon-color);
-            opacity: inherit;
-            transition: color 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .tool-card:hover .tool-icon-integrated svg {
-            stroke: var(--dhg-icon-color-hover);
+            font-size: clamp(28px, 5vw, 40px);
+            color: var(--dhg-primary-blue);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
         
         .tool-card:hover .tool-icon-integrated i {
-            color: var(--dhg-icon-color-hover);
+            color: var(--dhg-primary-blue-hover);
+            transform: scale(1.1);
+        }
+        
+        .tool-icon-integrated svg {
+            width: clamp(28px, 5vw, 40px);
+            height: clamp(28px, 5vw, 40px);
+            stroke: var(--dhg-primary-blue);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .tool-card:hover .tool-icon-integrated svg {
+            stroke: var(--dhg-primary-blue-hover);
+            transform: scale(1.1);
         }
         
         .tool-content {
             position: relative; z-index: 2; text-align: left;
             display: flex; flex-direction: column; height: 100%;
+            
+            /* 2025 Micro-animations on content */
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         
-        .feature-card h3 {
-            font-size: 1.6rem; font-weight: 700; color: #1a202c; 
-            margin-bottom: 1rem; line-height: 1.3;
+        .tool-card:hover .tool-content {
+            transform: translateY(clamp(-2px, -0.5vw, -4px));
+        }
+        
+        .tool-title {
+            /* 2025 Fluid Typography */
+            font-size: clamp(1.25rem, 3vw, 1.5rem); 
+            font-weight: 700; 
+            color: #1e293b; 
+            margin-bottom: clamp(0.75rem, 2vw, 1rem); 
+            line-height: 1.3;
+            letter-spacing: -0.02em;
+            
+            /* Smooth color transition */
+            transition: color 0.3s ease;
+        }
+        
+        .tool-card:hover .tool-title {
+            color: #0f172a;
         }
         
         .tool-description {
-            font-size: 1rem; color: #4a5568; line-height: 1.6;
-            flex: 1; margin-bottom: 2rem;
+            /* 2025 Fluid Typography */
+            font-size: clamp(0.9rem, 2.2vw, 1rem); 
+            color: #64748b; 
+            line-height: 1.65;
+            flex: 1; 
+            margin-bottom: clamp(1.5rem, 3vw, 2rem);
+            
+            /* Enhanced readability */
+            font-weight: 450;
+            letter-spacing: -0.005em;
+            
+            /* Smooth color transition */
+            transition: color 0.3s ease;
+        }
+        
+        .tool-card:hover .tool-description {
+            color: #475569;
         }
         
         .tool-expand {
@@ -22645,17 +23106,43 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         
         .modal {
             display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.8); z-index: 1000; padding: 2rem;
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            /* 2025 Glassmorphism Background */
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(234, 88, 12, 0.3) 0%, transparent 50%),
+                rgba(0, 0, 0, 0.4);
+            z-index: 1000; padding: clamp(1rem, 4vw, 2rem);
+            /* Advanced backdrop blur for modern glassmorphism */
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
             overflow-y: auto;
+            animation: modalBackdropFadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        @keyframes modalBackdropFadeIn {
+            0% { 
+                opacity: 0; 
+                backdrop-filter: blur(0px) saturate(100%);
+                -webkit-backdrop-filter: blur(0px) saturate(100%);
+            }
+            100% { 
+                opacity: 1; 
+                backdrop-filter: blur(24px) saturate(180%);
+                -webkit-backdrop-filter: blur(24px) saturate(180%);
+            }
         }
         
         .modal-content {
-            background: #ffffff; color: #000000; border-radius: 16px; 
+            background: #ffffff; color: #000000; 
+            border-radius: clamp(16px, 3vw, 24px); 
             max-width: 1000px; margin: 0 auto; position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            /* DHgate Monitor shadow with brand colors */
+            box-shadow: 
+                0 25px 50px -12px rgba(37, 99, 235, 0.15),
+                0 16px 32px rgba(234, 88, 12, 0.1),
+                0 8px 16px rgba(0, 0, 0, 0.1);
             opacity: 0; transform: scale(0.95) translateY(20px);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
         }
         
         .modal-content.modal-enter {
@@ -22699,8 +23186,9 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         
         .modal-hero {
             position: relative; padding: 4rem 3rem 2rem 3rem; text-align: center;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            border-radius: 20px 20px 0 0;
+            /* DHgate Monitor Service Header Gradient */
+            background: linear-gradient(135deg, #2563EB 0%, #EA580C 100%);
+            border-radius: clamp(16px, 3vw, 24px) clamp(16px, 3vw, 24px) 0 0;
         }
         
         .modal-illustration {
@@ -22742,21 +23230,42 @@ function generateToolkitHTML(t, lang, theme = 'light') {
         
         .modal-close {
             position: absolute; top: 1.5rem; right: 1.5rem; z-index: 1001;
-            background: rgba(0, 0, 0, 0.05); border: none; color: #6B7280;
-            width: 40px; height: 40px; border-radius: 8px; cursor: pointer;
+            /* 2025 Glassmorphism button */
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            color: rgba(255, 255, 255, 0.9);
+            width: clamp(36px, 8vw, 44px); 
+            height: clamp(36px, 8vw, 44px); 
+            border-radius: clamp(8px, 2vw, 12px); 
+            cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s ease;
+            /* Advanced micro-interaction */
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-origin: center;
         }
         
         .modal-close:hover {
-            background: rgba(0, 0, 0, 0.1); color: #374151;
+            background: rgba(255, 255, 255, 0.25);
+            color: #FFFFFF;
+            transform: scale(1.1) rotate(90deg);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px rgba(255, 255, 255, 0.2);
+        }
+        
+        .modal-close:active {
+            transform: scale(0.95) rotate(90deg);
+            transition: all 0.1s ease;
         }
         
         .modal-close svg { width: 20px; height: 20px; }
         
         .modal-body { 
-            padding: 3rem; flex: 1; background: #1a1a1a;
-            border-radius: 0 0 20px 20px;
+            padding: clamp(2rem, 4vw, 3rem); flex: 1; 
+            /* Clean white background consistent with DHgate Monitor design */
+            background: #ffffff;
+            border-radius: 0 0 clamp(16px, 3vw, 24px) clamp(16px, 3vw, 24px);
         }
         
         .feature-section {
@@ -22832,14 +23341,1486 @@ function generateToolkitHTML(t, lang, theme = 'light') {
             box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
         
+        /* Modern Product Modal Styles - Linear.app inspired */
+        .product-modal-container {
+            padding: 3rem;
+        }
+        
+        .product-hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(2rem, 6vw, 4rem);
+            align-items: center;
+            margin-bottom: clamp(3rem, 6vw, 4rem);
+            /* DHgate Monitor Service Header Background - will be overridden by inline styles */
+            background: linear-gradient(135deg, #2563EB 0%, #EA580C 100%);
+            padding: clamp(3rem, 6vw, 4rem);
+            border-radius: clamp(16px, 3vw, 24px);
+            color: white !important;
+        }
+        
+        .product-hero * {
+            color: white !important;
+        }
+        
+        .product-title {
+            font-size: clamp(2rem, 5vw, 2.5rem);
+            font-weight: 800;
+            /* White text on gradient background */
+            color: #FFFFFF;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+        
+        .product-subtitle {
+            font-size: clamp(1.1rem, 3vw, 1.25rem);
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+        
+        .product-description {
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 2rem;
+        }
+        
+        .product-highlights {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .highlight-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        .highlight-icon {
+            width: 20px;
+            height: 20px;
+            color: rgba(255, 255, 255, 0.9) !important;
+            flex-shrink: 0;
+        }
+        
+        .product-hero-visual-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .product-cta-section {
+            text-align: center;
+            padding: 3rem 0;
+            border-top: 1px solid #E5E7EB;
+        }
+        
+        .cta-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .coming-soon-badge {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+        
+        .cta-description {
+            color: #6B7280;
+            font-size: 0.95rem;
+        }
+        
+        /* Product Tracking Dashboard Preview */
+        .tracking-dashboard-preview {
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.05),
+                0 1px 3px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #E2E8F0;
+        }
+        
+        .dashboard-header h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1E293B;
+            margin: 0;
+        }
+        
+        .alert-badge {
+            background: #EF4444;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .product-tracking-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .tracked-product {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #E2E8F0;
+        }
+        
+        .product-thumb {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+        
+        .product-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .product-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #1E293B;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        
+        .price-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .current-price {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #059669;
+        }
+        
+        .current-price.out-of-stock {
+            color: #DC2626;
+        }
+        
+        .price-change {
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 0.125rem 0.375rem;
+            border-radius: 4px;
+        }
+        
+        .price-change.down {
+            background: #DCFCE7;
+            color: #059669;
+        }
+        
+        .price-change.up {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+        
+        .price-change.neutral {
+            background: #F1F5F9;
+            color: #64748B;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .status-indicator.price-drop {
+            background: #059669;
+            box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2);
+        }
+        
+        .status-indicator.watching {
+            background: #3B82F6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        
+        .status-indicator.out-of-stock {
+            background: #DC2626;
+            box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+        }
+        
+        /* Enhanced CTA Section */
+        .early-access-form {
+            display: flex;
+            gap: 0.75rem;
+            margin: 1.5rem 0 0.75rem 0;
+            max-width: 350px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .email-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+            transition: all 0.2s ease;
+        }
+        
+        .email-input:focus {
+            outline: none;
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+        
+        .early-access-btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            white-space: nowrap;
+        }
+        
+        .early-access-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 16px rgba(5, 150, 105, 0.3),
+                0 4px 8px rgba(5, 150, 105, 0.2);
+        }
+        
+        .early-access-btn:active {
+            transform: translateY(0);
+        }
+        
+        .form-note {
+            font-size: 0.8rem;
+            color: #6B7280;
+            margin: 0;
+        }
+        
+        @media (max-width: 640px) {
+            .early-access-form {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+        
+        /* ================================================================ */
+        /* 2025 UX REDESIGN: MOBILE-FIRST, PROGRESSIVE DISCLOSURE */
+        /* ================================================================ */
+        
+        .product-modal-2025 {
+            padding: 0;
+            background: var(--card-bg);
+            border-radius: clamp(16px, 2vw, 20px);
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            max-width: 720px;
+            width: 95vw;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modal-header-2025 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            background: var(--bg-secondary);
+            min-height: 56px;
+        }
+        
+        .close-modal {
+            background: var(--btn-ghost);
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            color: var(--text-muted);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-modal:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            transform: scale(1.05);
+        }
+        
+        .breadcrumb-nav {
+            font-size: 0.875rem;
+        }
+        
+        .back-link {
+            color: var(--primary-blue);
+            cursor: pointer;
+            font-weight: 500;
+            transition: color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .back-link:hover {
+            color: var(--primary-blue-hover);
+        }
+        
+        .product-content-2025 {
+            padding: 1.75rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            text-align: left;
+        }
+        
+        /* Mobile Layout: Stack vertically */
+        .content-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        /* Desktop Layout: Better Space Usage */
+        @media (min-width: 640px) {
+            .product-content-2025 {
+                padding: 2rem 2.5rem;
+            }
+            
+            .content-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+                align-items: start;
+            }
+            
+            .visual-preview {
+                margin: 0;
+            }
+            
+            .cta-hero {
+                margin: 0;
+            }
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 639px) {
+            .product-modal-2025 {
+                max-width: 95vw;
+                width: 95vw;
+                margin: 1rem;
+            }
+            
+            .modal-header-2025 {
+                padding: 0.75rem 1rem;
+            }
+            
+            .product-content-2025 {
+                padding: 1.5rem 1rem;
+                gap: 1.25rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .cta-primary {
+                width: 100%;
+                padding: 1rem 1.5rem;
+            }
+        }
+        
+        /* Hero Section - Tighter, More Impactful */
+        .product-hero-combined {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--card-bg) 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            position: relative;
+        }
+        
+        .hero-badges {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .pain-badge, .solution-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.25rem 0.625rem;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+        }
+        
+        .pain-badge {
+            background: linear-gradient(135deg, #FEE2E2, #FECACA);
+            color: #DC2626;
+            border: 1px solid #F87171;
+        }
+        
+        .solution-badge {
+            background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+            color: #059669;
+            border: 1px solid #34D399;
+        }
+        
+        .hero-headline {
+            font-size: clamp(1.375rem, 4vw, 1.75rem);
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 0 0 0.5rem 0;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+        
+        .hero-product-name {
+            font-size: clamp(1.125rem, 3vw, 1.25rem);
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin: 0 0 0.75rem 0;
+            line-height: 1.3;
+        }
+        
+        .hero-description {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin: 0;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+        
+        /* Rich Visual Preview */
+        .visual-preview {
+            background: linear-gradient(135deg, #F8FAFC, #F1F5F9);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border: 1px solid var(--border-light);
+            position: relative;
+            min-height: 300px;
+        }
+        
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .preview-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .preview-dashboard {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        
+        .dashboard-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .metric-card {
+            background: var(--bg-secondary);
+            padding: 0.75rem;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid var(--border-light);
+        }
+        
+        .metric-value {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin: 0;
+        }
+        
+        .metric-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.25rem;
+        }
+        
+        .alert-feed {
+            border-top: 1px solid var(--border-light);
+            padding-top: 0.75rem;
+        }
+        
+        .feed-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+        
+        .feed-item.price-drop {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .feed-item.stable {
+            background: rgba(107, 114, 128, 0.05);
+            border: 1px solid rgba(107, 114, 128, 0.1);
+        }
+        
+        .feed-item.sold-out {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        .feed-product {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .feed-status {
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+        
+        .feed-item.price-drop .feed-status {
+            color: var(--success);
+        }
+        
+        .feed-item.stable .feed-status {
+            color: var(--text-muted);
+        }
+        
+        .feed-item.sold-out .feed-status {
+            color: var(--error);
+        }
+        
+        /* Prominent CTA Section */
+        .cta-hero {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-hover));
+            border-radius: 16px;
+            padding: 2rem 1.75rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.25);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .cta-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            pointer-events: none;
+        }
+        
+        .cta-hero > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .launch-announcement {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            display: inline-block;
+            margin-bottom: 1.25rem;
+            backdrop-filter: blur(8px);
+        }
+        
+        .launch-date {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .cta-headline {
+            font-size: 1.375rem;
+            font-weight: 800;
+            color: white;
+            margin: 0 0 0.5rem 0;
+            line-height: 1.3;
+        }
+        
+        .cta-subline {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0 0 1.75rem 0;
+            line-height: 1.4;
+        }
+        
+        .signup-form {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.25rem;
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .email-input {
+            flex: 1;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: white;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+        
+        .email-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .cta-primary {
+            padding: 0.875rem 1.75rem;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-hover));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+        }
+        
+        .cta-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
+        }
+        
+        .trust-indicators {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+        }
+        
+        .waiting-count {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .no-spam {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        /* Progressive Disclosure */
+        .features-reveal {
+            width: 100%;
+            background: var(--btn-ghost);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 0.875rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .features-reveal:hover {
+            background: var(--btn-ghost-hover);
+            color: var(--text-primary);
+        }
+        
+        .reveal-icon {
+            color: var(--primary-blue);
+            transition: transform 0.2s ease;
+        }
+        
+        .features-reveal.expanded .reveal-icon {
+            transform: rotate(180deg);
+        }
+        
+        .features-hidden {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .feature-item {
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+        }
+        
+        .feature-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        
+        .hero-focused {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            padding: clamp(2rem, 5vw, 3rem);
+            background: var(--bg-gradient);
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .problem-statement {
+            margin-bottom: 2rem;
+        }
+        
+        .pain-point {
+            display: inline-block;
+            background: rgba(234, 88, 12, 0.1);
+            color: var(--accent-orange);
+            padding: 0.375rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(234, 88, 12, 0.2);
+        }
+        
+        .solution-title {
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+        }
+        
+        .solution-subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.125rem);
+            color: var(--text-secondary);
+            font-weight: 400;
+            line-height: 1.5;
+        }
+        
+        .primary-cta-container {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--card-shadow);
+            backdrop-filter: var(--backdrop-blur);
+        }
+        
+        .launch-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .launch-date {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        
+        .early-access-benefit {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .priority-signup {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .business-email {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-medium);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: var(--bg-secondary);
+            transition: all 0.2s ease;
+            color: var(--text-primary);
+        }
+        
+        .business-email:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            background: var(--card-bg);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .priority-access-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--btn-primary-bg);
+            color: var(--text-white);
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .priority-access-btn:hover {
+            background: var(--btn-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--card-shadow-hover);
+        }
+        
+        .trust-indicators {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            text-align: center;
+        }
+        
+        .users-waiting {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .no-spam {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .hero-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .dashboard-teaser {
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .screen-mockup {
+            background: var(--card-bg);
+            border: 1px solid var(--border-medium);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: var(--backdrop-blur);
+        }
+        
+        .mockup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .mockup-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        .live-indicator {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .mockup-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .price-alert {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            border-radius: 6px;
+            background: var(--bg-secondary);
+        }
+        
+        .price-alert.active {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .product-name {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .price-drop {
+            font-size: 0.75rem;
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        .price-stable {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .out-of-stock {
+            font-size: 0.75rem;
+            color: var(--error);
+        }
+        
+        .features-expandable {
+            border-top: 1px solid var(--border-light);
+        }
+        
+        .features-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            cursor: pointer;
+            background: var(--bg-secondary);
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+        
+        .features-toggle:hover {
+            background: var(--btn-ghost);
+        }
+        
+        .chevron {
+            transition: transform 0.2s ease;
+            color: var(--primary-blue);
+        }
+        
+        .features-expandable[open] .chevron {
+            transform: rotate(180deg);
+        }
+        
+        .features-content {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            background: var(--card-bg);
+        }
+        
+        .feature-minimal {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .feature-minimal:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .feature-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin: 0;
+        }
+        
+        .primary-cta {
+            width: 100%;
+            padding: 0.875rem 1.5rem;
+            background: var(--btn-primary-bg);
+            color: var(--text-white);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 0.5rem;
+        }
+        
+        .primary-cta:hover {
+            background: var(--btn-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--card-shadow-hover);
+        }
+        
+        .trial-note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin: 0;
+        }
+        
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            .hero-focused {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 2rem;
+            }
+            
+            .priority-signup {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .screen-mockup {
+                padding: 0.75rem;
+            }
+        }
+        
+        .highlight-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        
+        .highlight-icon {
+            width: 20px;
+            height: 20px;
+            color: #059669;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .highlight-item span {
+            color: #374151;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        .product-hero-visual-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .product-hero-visual {
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        /* Dashboard Preview */
+        .dashboard-preview {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            color: white;
+        }
+        
+        .chart-container {
+            display: flex;
+            align-items: end;
+            gap: 0.5rem;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+        
+        .chart-bar {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            flex: 1;
+            min-height: 20px;
+            transition: all 0.3s ease;
+            animation: chartGrow 1s ease 0.5s both;
+        }
+        
+        @keyframes chartGrow {
+            from { height: 0; }
+        }
+        
+        .metrics-row {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .metric {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .metric-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+        
+        /* Product Grid Preview */
+        .product-grid-preview {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            padding: 1.5rem;
+            background: #F9FAFB;
+            border-radius: 12px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(45deg, #E5E7EB, #D1D5DB);
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .price-badge {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .price-badge.discount {
+            color: #DC2626;
+        }
+        
+        .stock-indicator {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .stock-indicator.green {
+            background: #10B981;
+        }
+        
+        .stock-indicator.red {
+            background: #EF4444;
+        }
+        
+        /* Calculator Preview */
+        .calculator-preview {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .calc-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .calc-inputs {
+            margin-bottom: 1.5rem;
+        }
+        
+        .calc-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #F3F4F6;
+        }
+        
+        .calc-row:last-child {
+            border-bottom: none;
+        }
+        
+        .calc-value {
+            font-weight: 600;
+            color: #111827;
+        }
+        
+        .calc-result {
+            background: #F0FDF4;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .profit-margin {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #059669;
+            margin-bottom: 0.25rem;
+        }
+        
+        .profit-amount {
+            font-size: 1rem;
+            color: #065F46;
+        }
+        
+        /* Features Section */
+        .product-features {
+            margin-bottom: 4rem;
+        }
+        
+        .features-title {
+            font-size: clamp(1.5rem, 4vw, 1.875rem);
+            font-weight: 700;
+            /* DHgate Monitor primary blue */
+            color: var(--dhg-primary-blue, #2563EB);
+            margin-bottom: 2rem;
+            text-align: center;
+            letter-spacing: -0.01em;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .feature-card-modal {
+            /* 2025 Glassmorphism Feature Cards */
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: clamp(12px, 3vw, 16px);
+            padding: clamp(1.25rem, 3vw, 1.5rem);
+            /* Advanced micro-interactions */
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(0px);
+            opacity: 0;
+            animation: featureCardStagger 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+        
+        @keyframes featureCardStagger {
+            0% {
+                opacity: 0;
+                transform: translateY(24px) scale(0.96);
+                filter: blur(4px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0px) scale(1);
+                filter: blur(0px);
+            }
+        }
+        
+        .feature-card-modal:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card-modal:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card-modal:nth-child(3) { animation-delay: 0.3s; }
+        .feature-card-modal:nth-child(4) { animation-delay: 0.4s; }
+        
+        .feature-card-modal:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                0 8px 16px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+        
+        .feature-icon-container {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-icon-container i {
+            font-size: 24px;
+            color: white;
+        }
+        
+        .feature-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature-description {
+            font-size: 0.9rem;
+            color: #6B7280;
+            line-height: 1.5;
+        }
+        
+        /* CTA Section */
+        .product-cta-section {
+            background: #F9FAFB;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .coming-soon-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .cta-description {
+            color: #6B7280;
+            font-size: 0.9rem;
+        }
+        
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             header h1 { font-size: 2rem; }
             .toolkit-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+            .modal { padding: 1rem; }
             .modal-content { margin: 1rem; }
             .modal-header { padding: 1.5rem 1.5rem 1rem 1.5rem; }
             .modal-body { padding: 1.5rem; }
             .back-button { top: 1rem; left: 1rem; padding: 0.5rem 1rem; }
+            
+            /* Product modal mobile adjustments */
+            .product-modal-container { padding: 2rem; }
+            .product-hero {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+                padding: clamp(2rem, 4vw, 3rem);
+            }
+            .product-title { font-size: clamp(1.75rem, 4vw, 2rem); }
+            .features-grid { grid-template-columns: 1fr; }
+            .product-grid-preview { grid-template-columns: repeat(2, 1fr); }
+            
+            .product-modal-container {
+                padding: clamp(1.5rem, 4vw, 2rem);
+            }
         }
     </style>
 </head>
@@ -22855,60 +24836,85 @@ function generateToolkitHTML(t, lang, theme = 'light') {
             <p>${lang === 'nl' ? 'Professionele tools voor DHgate sellers' : 'Professional tools for DHgate sellers'}</p>
         </header>
         
-        <div class="toolkit-grid">
-            <div class="tool-card" onclick="openProductPage('shop-tracking')"
-                <div class="tool-background"></div>
-                <div class="tool-icon-integrated">
-                    <i class="dhg dhg-aeroplane-1"></i>
-                </div>
+        <!-- WCAG 2.1 Compliant Toolkit Grid -->
+        <div class="toolkit-grid" role="group" aria-labelledby="toolkit-title">
+            <!-- Shop Tracking Tool -->
+            <article class="tool-card" 
+                     role="button" 
+                     tabindex="0"
+                     aria-labelledby="shop-tracking-title"
+                     aria-describedby="shop-tracking-desc"
+                     data-product="shop-tracking"
+                     onclick="openProductPage('shop-tracking')"
+                     onkeydown="handleCardKeydown(event, 'shop-tracking')">
+                <div class="tool-background" aria-hidden="true"></div>
                 <div class="tool-content">
-                    <h3>${lang === 'nl' ? 'Shop Tracking' : 'Shop Tracking'}</h3>
-                    <p class="tool-description">${lang === 'nl' ? 'Monitor de prestaties van DHgate shops, track bestellingen en analyseer trends om de beste leveranciers te identificeren.' : 'Monitor DHgate shop performance, track orders and analyze trends to identify the best suppliers.'}</p>
-                    <div class="tool-expand">
+                    <h3 id="shop-tracking-title" class="tool-title">${lang === 'nl' ? 'Shop Tracking' : 'Shop Tracking'}</h3>
+                    <p id="shop-tracking-desc" class="tool-description">${lang === 'nl' ? 'Monitor de prestaties van DHgate shops, track bestellingen en analyseer trends om de beste leveranciers te identificeren.' : 'Monitor DHgate shop performance, track orders and analyze trends to identify the best suppliers.'}</p>
+                    <div class="tool-expand" aria-hidden="true">
+                        <span class="sr-only">${lang === 'nl' ? 'Klik voor meer informatie over Shop Tracking' : 'Click for more information about Shop Tracking'}</span>
                         ${lang === 'nl' ? 'Meer informatie' : 'Learn more'}
-                        <svg viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
                     </div>
                 </div>
-            </div>
+            </article>
             
-            <div class="tool-card" onclick="openProductPage('product-tracking')">
-                <div class="tool-background"></div>
-                <div class="tool-icon-integrated">
-                    <i class="dhg dhg-search-1"></i>
-                </div>
+            <!-- Product Tracking Tool -->
+            <article class="tool-card" 
+                     role="button" 
+                     tabindex="0"
+                     aria-labelledby="product-tracking-title"
+                     aria-describedby="product-tracking-desc"
+                     data-product="product-tracking"
+                     onclick="openProductPage('product-tracking')"
+                     onkeydown="handleCardKeydown(event, 'product-tracking')">
+                <div class="tool-background" aria-hidden="true"></div>
                 <div class="tool-content">
-                    <h3>${lang === 'nl' ? 'Product Tracking' : 'Product Tracking'}</h3>
-                    <p class="tool-description">${lang === 'nl' ? 'Volg specifieke producten, monitor prijswijzigingen en ontvang alerts wanneer je favoriete items in voorraad komen.' : 'Track specific products, monitor price changes and receive alerts when your favorite items come in stock.'}</p>
-                    <div class="tool-expand">
+                    <h3 id="product-tracking-title" class="tool-title">${lang === 'nl' ? 'Product Tracking' : 'Product Tracking'}</h3>
+                    <p id="product-tracking-desc" class="tool-description">${lang === 'nl' ? 'Volg specifieke producten, monitor prijswijzigingen en ontvang alerts wanneer je favoriete items in voorraad komen.' : 'Track specific products, monitor price changes and receive alerts when your favorite items come in stock.'}</p>
+                    <div class="tool-expand" aria-hidden="true">
+                        <span class="sr-only">${lang === 'nl' ? 'Klik voor meer informatie over Product Tracking' : 'Click for more information about Product Tracking'}</span>
                         ${lang === 'nl' ? 'Meer informatie' : 'Learn more'}
-                        <svg viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
                     </div>
                 </div>
-            </div>
+            </article>
             
-            <div class="tool-card" onclick="openProductPage('margin-calculator')">
-                <div class="tool-background"></div>
-                <div class="tool-icon-integrated">
-                    <i class="dhg dhg-calculator-1"></i>
-                </div>
+            <!-- Margin Calculator Tool -->
+            <article class="tool-card" 
+                     role="button" 
+                     tabindex="0"
+                     aria-labelledby="margin-calculator-title"
+                     aria-describedby="margin-calculator-desc"
+                     data-product="margin-calculator"
+                     onclick="openProductPage('margin-calculator')"
+                     onkeydown="handleCardKeydown(event, 'margin-calculator')">
+                <div class="tool-background" aria-hidden="true"></div>
                 <div class="tool-content">
-                    <h3>${lang === 'nl' ? 'Marge Calculator' : 'Margin Calculator'}</h3>
-                    <p class="tool-description">${lang === 'nl' ? 'Bereken je winst marge, inclusief verzendkosten, belastingen en andere fees om je pricing strategie te optimaliseren.' : 'Calculate your profit margin, including shipping costs, taxes and other fees to optimize your pricing strategy.'}</p>
-                    <div class="tool-expand">
+                    <h3 id="margin-calculator-title" class="tool-title">${lang === 'nl' ? 'Marge Calculator' : 'Margin Calculator'}</h3>
+                    <p id="margin-calculator-desc" class="tool-description">${lang === 'nl' ? 'Bereken je winst marge, inclusief verzendkosten, belastingen en andere fees om je pricing strategie te optimaliseren.' : 'Calculate your profit margin, including shipping costs, taxes and other fees to optimize your pricing strategy.'}</p>
+                    <div class="tool-expand" aria-hidden="true">
+                        <span class="sr-only">${lang === 'nl' ? 'Klik voor meer informatie over Marge Calculator' : 'Click for more information about Margin Calculator'}</span>
                         ${lang === 'nl' ? 'Meer informatie' : 'Learn more'}
-                        <svg viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
                     </div>
                 </div>
-            </div>
+            </article>
         </div>
     </div>
     
-    <div id="productModal" class="modal">
+    <!-- WCAG 2.1 Compliant Product Modal -->
+    <div id="productModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeProductModal()">
-                <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <button class="modal-close" onclick="closeProductModal()" aria-label="Close product details modal" type="button">
+                <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
             </button>
-            <div id="modalBody"></div>
+            <main id="modalBody" role="main">
+                <!-- Product content will be inserted here -->
+            </main>
         </div>
     </div>
     
@@ -23041,9 +25047,17 @@ function generateToolkitHTML(t, lang, theme = 'light') {
             return illustrations[toolId] || '';
         }
         
-        function openProductPage(productId) {
+        window.openProductPage = function(productId) {
             const modal = document.getElementById('productModal');
             const modalBody = document.getElementById('modalBody');
+            
+            if (!modal || !modalBody) {
+                console.error('Modal elements not found:', { modal, modalBody });
+                return;
+            }
+            
+            // Store the previously focused element for restoration
+            window.previouslyFocusedElement = document.activeElement;
             
             // Update URL with hash
             history.pushState({ productId }, '', \`#\${productId}\`);
@@ -23088,7 +25102,7 @@ function generateToolkitHTML(t, lang, theme = 'light') {
                 'product-tracking': {
                     title: 'Product Tracking',
                     subtitle: 'Never miss a price drop or restock',
-                    heroVideo: '<div class="product-hero-visual"><div class="product-grid-preview"><div class="product-card"><div class="product-image"></div><div class="price-badge">€24.99</div><div class="stock-indicator green"></div></div><div class="product-card"><div class="product-image"></div><div class="price-badge discount">€18.99</div><div class="stock-indicator green"></div></div><div class="product-card"><div class="product-image"></div><div class="price-badge">€31.50</div><div class="stock-indicator red"></div></div></div></div>',
+                    heroVideo: '<div class="product-hero-visual"><div class="tracking-dashboard-preview"><div class="dashboard-header"><h4>Tracked Products (24)</h4><div class="alert-badge">3 alerts today</div></div><div class="product-tracking-grid"><div class="tracked-product"><div class="product-thumb"></div><div class="product-info"><span class="product-name">Wireless Earbuds</span><div class="price-trend"><span class="current-price">€18.99</span><span class="price-change down">-€6.00</span></div></div><div class="status-indicator price-drop"></div></div><div class="tracked-product"><div class="product-thumb"></div><div class="product-info"><span class="product-name">Phone Case</span><div class="price-trend"><span class="current-price">€12.45</span><span class="price-change neutral">±€0.00</span></div></div><div class="status-indicator watching"></div></div><div class="tracked-product"><div class="product-thumb"></div><div class="product-info"><span class="product-name">LED Strip</span><div class="price-trend"><span class="current-price out-of-stock">Out of Stock</span><span class="price-change up">+€2.50</span></div></div><div class="status-indicator out-of-stock"></div></div></div></div></div>',
                     description: 'Stay ahead of the competition with intelligent product monitoring. Track prices, inventory levels, and market trends across thousands of products automatically.',
                     highlights: [
                         'Monitor unlimited products across multiple DHgate shops',
@@ -23160,60 +25174,138 @@ function generateToolkitHTML(t, lang, theme = 'light') {
             const product = products[productId];
             if (!product) return;
             
+            // SEO: Update dynamic meta tags for product
+            updateMetaTags(product);
+            
+            // 2025 Contextual Colors per product
+            const productColors = {
+                'shop-tracking': { primary: '#2563EB', secondary: '#3B82F6', accent: '#60A5FA' },
+                'product-tracking': { primary: '#059669', secondary: '#10B981', accent: '#34D399' },
+                'margin-calculator': { primary: '#7C3AED', secondary: '#8B5CF6', accent: '#A78BFA' }
+            };
+            const colors = productColors[productId] || productColors['shop-tracking'];
+            
             modalBody.innerHTML = \`
-                <div class="product-modal-container">
-                    <!-- Hero Section -->
-                    <div class="product-hero">
-                        <div class="product-hero-content">
-                            <h1 class="product-title">\${product.title}</h1>
-                            <p class="product-subtitle">\${product.subtitle}</p>
-                            <div class="product-description">
-                                <p>\${product.description}</p>
-                            </div>
-                            <div class="product-highlights">
-                                \${product.highlights.map(highlight => \`
-                                    <div class="highlight-item">
-                                        <svg class="highlight-icon" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                        </svg>
-                                        <span>\${highlight}</span>
-                                    </div>
-                                \`).join('')}
-                            </div>
+                <div class="product-modal-2025" data-product="\${productId}">
+                    <!-- Clean Header with Clear Exit -->
+                    <header class="modal-header-2025">
+                        <div class="breadcrumb-nav">
+                            <span class="back-link" onclick="closeModal()">← ${lang === 'nl' ? 'Toolkit' : 'Toolkit'}</span>
                         </div>
-                        <div class="product-hero-visual-container">
-                            \${product.heroVideo}
+                        <button class="close-modal" onclick="closeModal()" aria-label="${lang === 'nl' ? 'Sluit product details' : 'Close product details'}">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </header>
+
+                    <div class="product-content-2025">
+                        <!-- Combined Hero Section -->
+                        <div class="product-hero-combined">
+                            <div class="hero-badges">
+                                <div class="pain-badge">${lang === 'nl' ? 'Probleem' : 'Problem'}</div>
+                                <div class="solution-badge">${lang === 'nl' ? 'Oplossing' : 'Solution'}</div>
+                            </div>
+                            <h1 class="hero-headline">${lang === 'nl' ? 'Mis je winstgevende prijsdalingen?' : 'Missing profitable price drops?'}</h1>
+                            <h2 class="hero-product-name">\${product.title}</h2>
+                            <p class="hero-description">\${product.subtitle}</p>
                         </div>
-                    </div>
-                    
-                    <!-- Features Section -->
-                    <div class="product-features">
-                        <h2 class="features-title">${lang === 'nl' ? 'Belangrijkste functies' : 'Key Features'}</h2>
-                        <div class="features-grid">
-                            \${product.features.map(feature => \`
-                                <div class="feature-card-modal">
-                                    <div class="feature-icon-container">
-                                        \${feature.icon}
-                                    </div>
-                                    <div class="feature-content">
-                                        <h3 class="feature-title">\${feature.title}</h3>
-                                        <p class="feature-description">\${feature.description}</p>
+
+                        <!-- Desktop: Side-by-side Preview & CTA -->
+                        <div class="content-grid">
+                            <!-- Rich Visual Preview -->
+                            <div class="visual-preview">
+                                <div class="preview-header">
+                                    <div class="preview-title">
+                                        <span class="live-dot"></span>
+                                        ${lang === 'nl' ? 'Live Dashboard' : 'Live Dashboard'}
                                     </div>
                                 </div>
-                            \`).join('')}
-                        </div>
-                    </div>
-                    
-                    <!-- CTA Section -->
-                    <div class="product-cta-section">
-                        <div class="cta-container">
+                                <div class="preview-dashboard">
+                                    <div class="dashboard-metrics">
+                                        <div class="metric-card">
+                                            <div class="metric-value">24</div>
+                                            <div class="metric-label">${lang === 'nl' ? 'Producten' : 'Products'}</div>
+                                        </div>
+                                        <div class="metric-card">
+                                            <div class="metric-value">3</div>
+                                            <div class="metric-label">${lang === 'nl' ? 'Alerts' : 'Alerts'}</div>
+                                        </div>
+                                    </div>
+                                    <div class="alert-feed">
+                                        <div class="feed-item price-drop">
+                                            <div class="feed-product">
+                                                <span>📉</span>
+                                                <span>Wireless Earbuds</span>
+                                            </div>
+                                            <div class="feed-status">-24%</div>
+                                        </div>
+                                        <div class="feed-item stable">
+                                            <div class="feed-product">
+                                                <span>📱</span>
+                                                <span>Phone Case</span>
+                                            </div>
+                                            <div class="feed-status">€12.45</div>
+                                        </div>
+                                        <div class="feed-item sold-out">
+                                            <div class="feed-product">
+                                                <span>💡</span>
+                                                <span>LED Strip</span>
+                                            </div>
+                                            <div class="feed-status">${lang === 'nl' ? 'Uitverkocht' : 'Sold Out'}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hero CTA Section -->
+                            <div class="cta-hero">
                             \${product.status === 'coming-soon' ? \`
-                                <div class="coming-soon-badge">${lang === 'nl' ? 'Binnenkort beschikbaar' : 'Coming Soon'}</div>
-                                <p class="cta-description">${lang === 'nl' ? 'Deze functie wordt momenteel ontwikkeld en zal binnenkort beschikbaar zijn.' : 'This feature is currently in development and will be available soon.'}</p>
+                                <div class="launch-announcement">
+                                    <div class="launch-date">${lang === 'nl' ? 'Lanceert Q1 2025' : 'Launching Q1 2025'}</div>
+                                </div>
+                                <h3 class="cta-headline">${lang === 'nl' ? 'Krijg vroege toegang' : 'Get Early Access'}</h3>
+                                <p class="cta-subline">${lang === 'nl' ? '3 maanden gratis voor de eerste 1000 gebruikers' : '3 months free for the first 1000 users'}</p>
+                                <form class="signup-form" onsubmit="handleEarlySignup(event, '\${productId}')">
+                                    <div class="form-row">
+                                        <input type="email" placeholder="${lang === 'nl' ? 'Jouw e-mailadres' : 'Your email address'}" required class="email-input" />
+                                        <button type="submit" class="cta-primary">${lang === 'nl' ? 'Meld je aan' : 'Sign Up'}</button>
+                                    </div>
+                                </form>
+                                <div class="trust-indicators">
+                                    <div class="waiting-count">
+                                        <span>👥</span>
+                                        <span>847+ ${lang === 'nl' ? 'wachten al' : 'waiting'}</span>
+                                    </div>
+                                    <div class="no-spam">
+                                        <span>🔒</span>
+                                        <span>${lang === 'nl' ? 'Geen spam' : 'No spam'}</span>
+                                    </div>
+                                </div>
                             \` : \`
-                                <button class="cta-button" onclick="alert('Feature available!')">\${product.cta}</button>
-                                <p class="cta-description">${lang === 'nl' ? 'Start je gratis proefperiode van 14 dagen.' : 'Start your 14-day free trial.'}</p>
+                                <h3 class="cta-headline">${lang === 'nl' ? 'Start vandaag nog' : 'Start Today'}</h3>
+                                <p class="cta-subline">${lang === 'nl' ? '14 dagen gratis proberen, geen creditcard vereist' : '14-day free trial, no credit card required'}</p>
+                                <button class="cta-primary" onclick="handleProductCTA('\${productId}')">\${product.cta || (lang === 'nl' ? 'Start Gratis Trial' : 'Start Free Trial')}</button>
                             \`}
+                            </div>
+                        </div>
+
+                        <!-- Progressive Disclosure: Features -->
+                        <button class="features-reveal" onclick="toggleFeatures(this)">
+                            <span class="reveal-text">${lang === 'nl' ? 'Alle functies bekijken' : 'View all features'}</span>
+                            <svg class="reveal-icon" width="16" height="16" viewBox="0 0 16 16">
+                                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" fill="none"/>
+                            </svg>
+                        </button>
+                        
+                        <div class="features-hidden" style="display: none;">
+                            \${product.features.map(feature => \`
+                                <div class="feature-item">
+                                    <div class="feature-title">\${feature.title}</div>
+                                    <div class="feature-desc">\${feature.description}</div>
+                                </div>
+                            \`).join('')}
                         </div>
                     </div>
                 </div>
@@ -23222,13 +25314,131 @@ function generateToolkitHTML(t, lang, theme = 'light') {
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
             
-            // Add entrance animation
+            // Add entrance animation with WCAG 2.1 compliance
             requestAnimationFrame(() => {
-                modal.querySelector('.modal-content').classList.add('modal-enter');
+                const modalContent = modal.querySelector('.modal-content');
+                if (modalContent) {
+                    modalContent.classList.add('modal-enter');
+                }
+                
+                // WCAG 2.1: Focus management
+                const closeButton = modal.querySelector('.modal-close');
+                if (closeButton) {
+                    closeButton.focus();
+                }
+                
+                // Create focus trap
+                createFocusTrap(modal);
+                
+                // Announce to screen readers
+                announceToScreenReader(\`Product details for \${product.title} opened\`);
             });
         }
         
-        function closeProductModal() {
+        // WCAG 2.1: Focus trap implementation
+        function createFocusTrap(modal) {
+            const focusableElements = modal.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            const firstFocusable = focusableElements[0];
+            const lastFocusable = focusableElements[focusableElements.length - 1];
+            
+            modal.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    if (e.shiftKey) {
+                        if (document.activeElement === firstFocusable) {
+                            lastFocusable.focus();
+                            e.preventDefault();
+                        }
+                    } else {
+                        if (document.activeElement === lastFocusable) {
+                            firstFocusable.focus();
+                            e.preventDefault();
+                        }
+                    }
+                }
+            });
+        }
+        
+        // WCAG 2.1: Screen reader announcements
+        function announceToScreenReader(message, priority = 'polite') {
+            const announcement = document.createElement('div');
+            announcement.setAttribute('aria-live', priority);
+            announcement.setAttribute('aria-atomic', 'true');
+            announcement.className = 'sr-only';
+            announcement.textContent = message;
+            document.body.appendChild(announcement);
+            
+            setTimeout(() => {
+                document.body.removeChild(announcement);
+            }, 1000);
+        }
+        
+        // SEO: Dynamic meta tags update for product modals
+        function updateMetaTags(product) {
+            // Update document title
+            document.title = \`\${product.title} - DHgate Monitor Toolkit\`;
+            
+            // Update meta description
+            const metaDescription = document.querySelector('meta[name="description"]');
+            if (metaDescription) {
+                metaDescription.content = product.description;
+            }
+            
+            // Update Open Graph tags
+            const ogTitle = document.querySelector('meta[property="og:title"]');
+            if (ogTitle) {
+                ogTitle.content = \`\${product.title} - DHgate Monitor\`;
+            }
+            
+            const ogDescription = document.querySelector('meta[property="og:description"]');
+            if (ogDescription) {
+                ogDescription.content = product.description;
+            }
+            
+            const ogUrl = document.querySelector('meta[property="og:url"]');
+            if (ogUrl) {
+                ogUrl.content = \`https://dhgate-monitor.com/toolkit#\${product.title.toLowerCase().replace(/\\s+/g, '-')}\`;
+            }
+            
+            // Update Twitter Card
+            const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+            if (twitterTitle) {
+                twitterTitle.content = \`\${product.title} - DHgate Monitor\`;
+            }
+            
+            const twitterDescription = document.querySelector('meta[name="twitter:description"]');
+            if (twitterDescription) {
+                twitterDescription.content = product.description;
+            }
+        }
+        
+        // SEO: Restore original meta tags when modal closes
+        function restoreOriginalMetaTags() {
+            document.title = 'DHgate Monitor Toolkit - Interactive Demo';
+            
+            const metaDescription = document.querySelector('meta[name="description"]');
+            if (metaDescription) {
+                metaDescription.content = 'Ontdek de geavanceerde functies van ons moderne monitoring platform met interactieve product demonstraties';
+            }
+            
+            const ogTitle = document.querySelector('meta[property="og:title"]');
+            if (ogTitle) {
+                ogTitle.content = 'DHgate Monitor Toolkit';
+            }
+            
+            const ogDescription = document.querySelector('meta[property="og:description"]');
+            if (ogDescription) {
+                ogDescription.content = 'Ontdek de geavanceerde functies van ons moderne monitoring platform';
+            }
+            
+            const ogUrl = document.querySelector('meta[property="og:url"]');
+            if (ogUrl) {
+                ogUrl.content = 'https://dhgate-monitor.com/toolkit';
+            }
+        }
+        
+        window.closeProductModal = function() {
             const modal = document.getElementById('productModal');
             const modalContent = modal.querySelector('.modal-content');
             
@@ -23240,9 +25450,117 @@ function generateToolkitHTML(t, lang, theme = 'light') {
                 modalContent.classList.remove('modal-exit');
                 document.body.style.overflow = 'auto';
                 
+                // WCAG 2.1: Restore focus to previously focused element
+                if (window.previouslyFocusedElement) {
+                    window.previouslyFocusedElement.focus();
+                    window.previouslyFocusedElement = null;
+                }
+                
                 // Update URL to remove hash
                 history.pushState({}, '', window.location.pathname);
+                
+                // SEO: Restore original meta tags
+                restoreOriginalMetaTags();
+                
+                // Announce to screen readers
+                announceToScreenReader('Product modal closed');
             }, 400);
+        }
+        
+        // 2025 UX: New modal functions
+        window.closeModal = function() {
+            window.closeProductModal();
+        }
+        
+        window.toggleFeatures = function(button) {
+            const featuresHidden = document.querySelector('.features-hidden');
+            const revealIcon = button.querySelector('.reveal-icon');
+            const revealText = button.querySelector('.reveal-text');
+            
+            const isHidden = featuresHidden.style.display === 'none';
+            
+            if (isHidden) {
+                featuresHidden.style.display = 'flex';
+                button.classList.add('expanded');
+                revealText.textContent = '${lang === 'nl' ? 'Verberg functies' : 'Hide features'}';
+            } else {
+                featuresHidden.style.display = 'none';
+                button.classList.remove('expanded');
+                revealText.textContent = '${lang === 'nl' ? 'Toon functies' : 'Show features'}';
+            }
+            
+            // Micro-interaction: smooth reveal
+            if (isHidden) {
+                featuresHidden.style.opacity = '0';
+                featuresHidden.style.transform = 'translateY(-10px)';
+                requestAnimationFrame(() => {
+                    featuresHidden.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    featuresHidden.style.opacity = '1';
+                    featuresHidden.style.transform = 'translateY(0)';
+                });
+            }
+        }
+        
+        window.handleEarlySignup = function(event, productId) {
+            event.preventDefault();
+            const email = event.target.querySelector('.email-input').value;
+            
+            // Micro-interaction: Button loading state
+            const submitBtn = event.target.querySelector('.cta-primary');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '${lang === 'nl' ? 'Bezig...' : 'Signing up...'}';
+            submitBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                submitBtn.textContent = '${lang === 'nl' ? '✓ Toegevoegd!' : '✓ Added!'}';
+                submitBtn.style.background = 'var(--success)';
+                
+                // Show success message
+                const form = event.target;
+                form.innerHTML = \`
+                    <div style="text-align: center; padding: 1rem 0;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎉</div>
+                        <div style="font-weight: 600; color: var(--success); margin-bottom: 0.25rem;">
+                            \${lang === 'nl' ? 'Welkom aan boord!' : 'Welcome aboard!'}
+                        </div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">
+                            \${lang === 'nl' ? 'Je krijgt als eerste bericht wanneer we live gaan' : "You'll be first to know when we go live"}
+                        </div>
+                    </div>
+                \`;
+                
+                // Analytics: Track early signup
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'early_signup', {
+                        product_id: productId,
+                        email: email.split('@')[1] // Domain only for privacy
+                    });
+                }
+            }, 1500);
+        }
+        
+        window.handleProductCTA = function(productId) {
+            // For active products, redirect to signup or demo
+            console.log('CTA clicked for product:', productId);
+            
+            // Micro-interaction: Button feedback
+            const button = event.target;
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+            }, 150);
+            
+            // Analytics: Track CTA click
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'product_cta_click', {
+                    product_id: productId
+                });
+            }
+            
+            // For demo purposes, show success message
+            button.textContent = '${lang === 'nl' ? '✓ Demo wordt voorbereid...' : '✓ Demo being prepared...'}';
+            button.style.background = 'var(--success)';
         }
         
         function openCalculator() {
@@ -23254,8 +25572,35 @@ function generateToolkitHTML(t, lang, theme = 'light') {
             if (e.target === this) closeToolModal();
         });
         
+        // URL routing for browser navigation
+        window.addEventListener('popstate', (e) => {
+            if (e.state && e.state.productId) {
+                openProductPage(e.state.productId);
+            } else {
+                closeProductModal();
+            }
+        });
+        
+        // Handle hash on page load
+        window.addEventListener('load', () => {
+            const hash = window.location.hash.slice(1);
+            if (hash && ['shop-tracking', 'product-tracking', 'margin-calculator'].includes(hash)) {
+                openProductPage(hash);
+            }
+        });
+        
+        // Event listeners
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeToolModal();
+            if (e.key === 'Escape') {
+                closeProductModal();
+            }
+        });
+        
+        // Close modal on backdrop click
+        document.getElementById('productModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeProductModal();
+            }
         });
     </script>
 </body>
