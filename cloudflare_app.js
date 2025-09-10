@@ -4195,13 +4195,21 @@ async function initializeAdminTables(env) {
       ).run();
     }
 
-    // Initialize basic subscriptions table for platform metrics (if not exists)
+    // Initialize subscriptions table for widget signups
     await env.DB.prepare(`
       CREATE TABLE IF NOT EXISTS subscriptions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT NOT NULL,
-        status TEXT DEFAULT 'active',
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        stores TEXT,
+        tags TEXT,
+        lang TEXT DEFAULT 'nl',
+        unsubscribe_token TEXT,
+        dashboard_token TEXT,
+        dashboard_access BOOLEAN DEFAULT 1,
+        subscribed BOOLEAN DEFAULT 1,
+        email_marketing_consent BOOLEAN DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `).run();
 
@@ -10335,8 +10343,21 @@ function generateDashboardHTML(subscription, t, lang, theme = 'light') {
                                 <div class="info-value">${subscription.email}</div>
                             </div>
                             <div class="info-row">
-                                <div class="info-label">${lang === 'nl' ? 'Gemonitorde shop:' : 'Monitored shop:'}</div>
-                                <div class="info-value">${subscription.store_url ? `<a href="${subscription.store_url}" target="_blank" style="color: var(--accent-color); text-decoration: none;">${subscription.store_url.replace('https://www.dhgate.com/store/', '').replace('https://', '')}</a>` : '-'}</div>
+                                <div class="info-label">${lang === 'nl' ? 'Gemonitorde shops:' : 'Monitored shops:'}</div>
+                                <div class="info-value">${(() => {
+                                    // Handle both old format (store_url) and new format (stores array)
+                                    if (subscription.store_url) {
+                                        return `<a href="${subscription.store_url}" target="_blank" style="color: var(--accent-color); text-decoration: none;">${subscription.store_url.replace('https://www.dhgate.com/store/', '').replace('https://', '')}</a>`;
+                                    } else if (subscription.stores) {
+                                        try {
+                                            const stores = typeof subscription.stores === 'string' ? JSON.parse(subscription.stores) : subscription.stores;
+                                            return Array.isArray(stores) ? stores.join(', ') : stores;
+                                        } catch (e) {
+                                            return subscription.stores;
+                                        }
+                                    }
+                                    return '-';
+                                })()}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">${lang === 'nl' ? 'Zoektermen:' : 'Search terms:'}</div>
@@ -10344,11 +10365,11 @@ function generateDashboardHTML(subscription, t, lang, theme = 'light') {
                             </div>
                             <div class="info-row">
                                 <div class="info-label">${lang === 'nl' ? 'Frequentie:' : 'Frequency:'}</div>
-                                <div class="info-value">${subscription.frequency || '-'}</div>
+                                <div class="info-value">${subscription.frequency || (lang === 'nl' ? 'Real-time' : 'Real-time')}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">${lang === 'nl' ? 'Meldingstijd:' : 'Notification time:'}</div>
-                                <div class="info-value">${subscription.preferred_time || 'Direct'}</div>
+                                <div class="info-value">${subscription.preferred_time || (lang === 'nl' ? 'Direct' : 'Immediate')}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">${lang === 'nl' ? 'Status:' : 'Status:'}</div>
@@ -13414,9 +13435,21 @@ async function handleWidgetSignup(request, env) {
     try {
       await env.DB.prepare(`
         INSERT OR REPLACE INTO subscriptions 
-        (email, status, created_at) 
-        VALUES (?, 'active', ?)
-      `).bind(sanitizedEmail, new Date().toISOString()).run();
+        (email, stores, tags, lang, unsubscribe_token, dashboard_token, dashboard_access, subscribed, email_marketing_consent, created_at, last_updated) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).bind(
+        sanitizedEmail, 
+        JSON.stringify(stores), 
+        tags, 
+        lang, 
+        unsubscribeToken, 
+        dashboardToken, 
+        true, 
+        true, 
+        true, 
+        new Date().toISOString(), 
+        new Date().toISOString()
+      ).run();
       
       console.log('✅ [WIDGET] Subscription stored in both KV and D1 for:', sanitizedEmail);
     } catch (dbError) {
@@ -13432,7 +13465,8 @@ async function handleWidgetSignup(request, env) {
     return new Response(JSON.stringify({
       success: true,
       message: message,
-      emailSent: false // No confirmation email, but monitoring emails will be sent
+      emailSent: false, // No confirmation email, but monitoring emails will be sent
+      dashboardToken: dashboardToken // Include dashboard token for testing
     }), {
       headers: { 'Content-Type': 'application/json' }
     });
@@ -15288,19 +15322,12 @@ async function getSubscriptionByDashboardToken(env, dashboardToken) {
       };
     }
     
-    // Try D1 Database first
-    const result = await env.DB.prepare(`
-      SELECT * FROM subscriptions WHERE dashboard_token = ?
-    `).bind(dashboardToken).first();
-    
-    if (result) {
-      console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Subscription found in D1 database for dashboard token: ${dashboardToken.substring(0, 8)}...`);
-      return result;
-    }
-    
-    // Fallback to KV storage
+    // Use KV storage directly (skip D1 database for now)
     const email = await env.DHGATE_MONITOR_KV.get(`dashboard:${dashboardToken}`);
-    if (!email) return null;
+    if (!email) {
+      console.log(`❌ No email found for dashboard token: ${dashboardToken.substring(0, 8)}...`);
+      return null;
+    }
     
     const subscription = await env.DHGATE_MONITOR_KV.get(`subscription:${email}`);
     if (subscription) {
