@@ -1133,13 +1133,13 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                 <div class="form-description">${t.storeDescription}</div>
                 
                 <div class="store-selection-group">
-                    <div class="store-grid">
-                        ${aiStores.map(store => `
+                <div class="store-grid">
+                    ${aiStores.map(store => `
                             <div class="store-card" data-store-id="${store.id}" onclick="selectStore(${store.id})" tabindex="0" role="button" aria-label="${lang === 'nl' ? 'Selecteer' : 'Select'} ${store.name}" style="--store-bg-image: url('${store.backgroundImage}')">
-                                <div class="ai-badge">${t.aiPowered}</div>
-                                <div class="store-check" aria-hidden="true">✓</div>
+                            <div class="ai-badge">${t.aiPowered}</div>
+                            <div class="store-check" aria-hidden="true">✓</div>
                                 
-                                <div class="store-header">
+                            <div class="store-header">
                                     <div class="store-icon">
                                         ${store.id === 1 ? `
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1160,14 +1160,14 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                                         `}
                                     </div>
                                     <div class="store-name-container">
-                                        <div class="store-name">${store.name}</div>
+                                <div class="store-name">${store.name}</div>
                                         ${store.verified ? `<div class="verified-badge">
                                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                             </svg>
                                             ${lang === 'nl' ? 'Geverifieerd' : 'Verified'}
                                         </div>` : ''}
-                                    </div>
+                            </div>
                                 </div>
                                 
                                                                 <div class="store-proposition">${store.reason}</div>
@@ -1185,9 +1185,9 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                                        aria-label="${lang === 'nl' ? 'Bekijk' : 'View'} ${store.name} ${lang === 'nl' ? 'op DHgate' : 'on DHgate'}">
                                         ${lang === 'nl' ? 'Bekijk winkel' : 'View store'}
                                     </a>
-                                </div>
                             </div>
-                        `).join('')}
+                        </div>
+                    `).join('')}
                     </div>
                 </div>
                 
@@ -1263,8 +1263,8 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                     </svg>
                     ${t.backButton}
                 </button>
-                <button class="btn btn-primary" id="submit-btn" onclick="submitForm()">
-                    ${t.submitButton}
+                <button class="btn btn-primary" onclick="nextStep()">
+                    ${t.nextButton}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="9,18 15,12 9,6"/>
                     </svg>
@@ -1321,7 +1321,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             </div>
             
                 <div class="dashboard-actions">
-                    <a href="https://dhgate-monitor.com/dashboard?key=pending" class="btn btn-primary dashboard-link" target="_top">
+                    <a href="/dashboard" class="btn btn-primary dashboard-link">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="3" width="7" height="7"/>
                             <rect x="14" y="3" width="7" height="7"/>
@@ -1391,8 +1391,9 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         
         // Generate unique dashboard key
         function generateDashboardKey() {
-            // This is just a placeholder - the real token comes from the API response
-            return 'pending';
+            // Generate a proper unique token similar to the backend
+            const data = 'widget_dashboard_' + Date.now() + Math.random();
+            return btoa(data).replace(/[+/=]/g, '').substring(0, 32);
         }
         
         // Expert User Type Detection
@@ -1410,11 +1411,9 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         
         // Navigation functions
         function nextStep() {
-            console.log('=== NEXT STEP CALLED ===', 'currentStep:', currentStep);
             if (validateCurrentStep()) {
-                if (currentStep < 3) {
+                if (currentStep < 4) {
                     currentStep++;
-                    console.log('Moving to step:', currentStep);
                     updateStep();
                 }
             }
@@ -1472,8 +1471,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             
             if (currentStep === 1) {
                 const email = document.getElementById('email-input').value;
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!email || !emailRegex.test(email)) {
+                if (!email || !email.includes('@')) {
                     showError('email-error', lang === 'nl' ? 'Voer een geldig email adres in' : 'Please enter a valid email address');
                     return false;
                 }
@@ -1563,9 +1561,6 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             const email = document.getElementById('email-input').value;
             const tags = document.getElementById('tags-input').value;
             
-            // Generate unique dashboard key
-            dashboardKey = generateDashboardKey();
-            
             document.getElementById('summary-email').textContent = email;
             document.getElementById('summary-tags').textContent = tags || (lang === 'nl' ? 'Geen zoektermen' : 'No search terms');
             
@@ -1583,29 +1578,24 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             
             document.getElementById('summary-stores').textContent = selectedStoreNames.length > 0 ? selectedStoreNames.join(', ') : (lang === 'nl' ? 'Geen winkels geselecteerd' : 'No stores selected');
             
-            // Update dashboard link with unique key (only if not already set with real token)
+            // Set dashboard link to pending initially
             const dashboardLink = document.querySelector('.dashboard-link');
             if (dashboardLink) {
-                // Don't overwrite if the link already has a real token marked
-                if (!dashboardLink.getAttribute('data-has-real-token') && (dashboardKey === 'pending' || !dashboardLink.href.includes('?key=') || dashboardLink.href.includes('key=pending'))) {
-                    console.log('Setting dashboard link with key:', dashboardKey);
-                    dashboardLink.href = 'https://dhgate-monitor.com/dashboard?key=' + dashboardKey;
-                    console.log('Final dashboard link:', dashboardLink.href);
-                } else {
-                    console.log('Dashboard link already has real token, not overwriting:', dashboardLink.href);
-                }
+                dashboardLink.href = '#';
+                dashboardLink.style.opacity = '0.6';
+                dashboardLink.style.pointerEvents = 'none';
+                dashboardLink.innerHTML = 
+                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                        '<path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>' +
+                    '</svg>' +
+                    (lang === 'nl' ? 'Monitoring activeren...' : 'Activating monitoring...');
             }
+            
+            // Automatically submit the form when reaching step 4
+            setTimeout(() => submitForm(), 500);
         }
         
         function submitForm() {
-            console.log('=== SUBMIT FORM CALLED ===');
-            const submitBtn = document.getElementById('submit-btn');
-            console.log('Submit button found:', !!submitBtn);
-            const originalText = submitBtn.innerHTML;
-            
-            submitBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Processing...';
-            submitBtn.disabled = true;
-            
             // Get form data
             const email = document.getElementById('email-input').value;
             const tags = document.getElementById('tags-input').value;
@@ -1614,8 +1604,13 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                 return store ? store.name : '';
             }).filter(name => name);
             
-            // Add custom stores to the list
-            const allStores = [...selectedStoreNames, ...customStores.map(cs => cs.name || cs.url)];
+            // Add custom stores
+            const allStoreNames = [...selectedStoreNames];
+            if (customStores.length > 0) {
+                customStores.forEach(customStore => {
+                    allStoreNames.push(customStore.name || (lang === 'nl' ? 'Aangepaste winkel' : 'Custom store'));
+                });
+            }
             
             // Submit to API
             fetch('/api/widget-signup', {
@@ -1625,19 +1620,13 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                 },
                 body: JSON.stringify({
                     email: email,
-                    stores: allStores,
+                    stores: allStoreNames,
                     tags: tags,
                     lang: lang
                 })
             })
-            .then(response => {
-                console.log('Raw response status:', response.status);
-                return response.text();
-            })
-            .then(responseText => {
-                console.log('Raw response text:', responseText);
-                const data = JSON.parse(responseText);
-                console.log('Parsed API Response:', data);
+            .then(response => response.json())
+            .then(data => {
                 if (data.success) {
                     // Track expert recommendations usage
                     const userType = detectUserType(email);
@@ -1651,49 +1640,73 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                         });
                     }
                     
-                    // Navigate to success step (step 4) first
-                    currentStep = 4;
-                    
-                    // Update global dashboard key with real token from API
-                    if (data.dashboardToken) {
-                        dashboardKey = data.dashboardToken;
-                        console.log('Dashboard key PERMANENTLY updated with API token:', data.dashboardToken);
+                    // Update dashboard link with real token from API
+                    const dashboardLink = document.querySelector('.dashboard-link');
+                    if (data.dashboardToken && dashboardLink) {
+                        dashboardLink.href = '/dashboard?key=' + data.dashboardToken + '&lang=' + lang;
+                        dashboardLink.style.opacity = '1';
+                        dashboardLink.style.pointerEvents = 'auto';
+                        dashboardLink.innerHTML = `
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                            </svg>
+                            ${t.dashboardButton}
+                        `;
+                        console.log('✅ Dashboard link activated with token:', data.dashboardToken);
                         
-                        // Manually update the dashboard link IMMEDIATELY after setting the key
-                        const dashboardLink = document.querySelector('.dashboard-link');
+                        // Store the token for later use
+                        dashboardKey = data.dashboardToken;
+                    } else {
+                        console.error('❌ No dashboard token received from API');
+                        // Fallback to generated token
+                        dashboardKey = generateDashboardKey();
                         if (dashboardLink) {
-                            dashboardLink.href = 'https://dhgate-monitor.com/dashboard?key=' + data.dashboardToken;
-                            console.log('Dashboard link IMMEDIATELY updated to:', dashboardLink.href);
-                            // Mark the link as having a real token to prevent overwrites
-                            dashboardLink.setAttribute('data-has-real-token', 'true');
+                            dashboardLink.href = '/dashboard?key=' + dashboardKey + '&lang=' + lang;
+                            dashboardLink.style.opacity = '1';
+                            dashboardLink.style.pointerEvents = 'auto';
+                            dashboardLink.innerHTML = `
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="7" height="7"/>
+                                    <rect x="14" y="3" width="7" height="7"/>
+                                    <rect x="14" y="14" width="7" height="7"/>
+                                    <rect x="3" y="14" width="7" height="7"/>
+                                </svg>
+                                ${t.dashboardButton}
+                            `;
                         }
                     }
-                    
-                    // Update step UI after setting the token
-                    updateStep();
                 } else {
-                    alert(data.message || (lang === 'nl' ? 'Er is een fout opgetreden' : 'An error occurred'));
+                    console.error('API Error:', data.message);
+                    // Show error and allow retry
+                    const dashboardLink = document.querySelector('.dashboard-link');
+                    if (dashboardLink) {
+                        dashboardLink.innerHTML = `
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 9v3m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            ${lang === 'nl' ? 'Fout - probeer opnieuw' : 'Error - try again'}
+                        `;
+                        dashboardLink.style.opacity = '0.6';
+                        dashboardLink.onclick = () => submitForm();
+                    }
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                // For development/testing: navigate to success step anyway
-                if (window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1')) {
-                    console.log('Development mode: proceeding to success step');
-                    // Generate a fake dashboard token for development
-                    const email = document.getElementById('email-input').value;
-                    const devToken = btoa('dashboard_' + email + Date.now()).replace(/[+/=]/g, '').substring(0, 40);
-                    dashboardKey = devToken;
-                    console.log('Development dashboard key set to:', devToken);
-                    currentStep = 4;
-                    updateStep();
-                } else {
-                    alert(lang === 'nl' ? 'Er is een fout opgetreden' : 'An error occurred');
+                console.error('Network Error:', error);
+                const dashboardLink = document.querySelector('.dashboard-link');
+                if (dashboardLink) {
+                    dashboardLink.innerHTML = `
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 9v3m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        ${lang === 'nl' ? 'Netwerk fout' : 'Network error'}
+                    `;
+                    dashboardLink.style.opacity = '0.6';
+                    dashboardLink.onclick = () => submitForm();
                 }
-            })
-            .finally(() => {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
             });
         }
         
@@ -1723,7 +1736,18 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             // Reset dashboard link to placeholder
             const dashboardLink = document.querySelector('.dashboard-link');
             if (dashboardLink) {
-                dashboardLink.href = 'https://dhgate-monitor.com/dashboard?key=pending';
+                dashboardLink.href = '#';
+                dashboardLink.style.opacity = '0.6';
+                dashboardLink.style.pointerEvents = 'none';
+                dashboardLink.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"/>
+                        <rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    ${t.dashboardButton}
+                `;
             }
             
             // Clear errors
@@ -1778,12 +1802,22 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             updateStep();
-            generateDashboardKey();
             
-            // Dashboard link will navigate to dashboard - no need to reset form
+            // Add click handler for dashboard link to reset form after navigation
             const dashboardLink = document.querySelector('.dashboard-link');
             if (dashboardLink) {
-                console.log('Dashboard link initialized:', dashboardLink.href);
+                dashboardLink.addEventListener('click', function(e) {
+                    // Only allow click if link is active (has real token)
+                    if (dashboardLink.href === '#' || dashboardLink.style.pointerEvents === 'none') {
+                        e.preventDefault();
+                        return false;
+                    }
+                    
+                    // Reset form after user clicks dashboard link
+                    setTimeout(() => {
+                        resetForm();
+                    }, 1000); // Small delay to ensure navigation happens
+                });
             }
             
             // Test and set background images after DOM is loaded

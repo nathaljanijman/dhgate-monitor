@@ -1,32 +1,59 @@
 name = "dhgate-monitor"
-main = "cloudflare_app.js" # of "src/index.js" als dat je entrypoint is
+main = "cloudflare_app.js"
 compatibility_date = "2025-08-20"
 compatibility_flags = ["nodejs_compat"]
 
-[vars]
-ENVIRONMENT = "production"
+# ==================================
+# Production Environment
+# ==================================
+[env.production]
+name = "dhgate-monitor"
+vars = { ENVIRONMENT = "production" }
 
-# KV Namespace for data storage
-[[kv_namespaces]]
+# KV Namespace for production
+[[env.production.kv_namespaces]]
 binding = "DHGATE_MONITOR_KV"
 id = "9e3e5971f9454b55b2241aeba6b1e1ba"
 
-# Scheduled monitoring (daily at 09:00 UTC)
-[triggers]
-crons = ["0 9 * * *"]
-
-# Custom domain routing
-[[routes]]
-pattern = "dhgate-monitor.com/*"
-zone_name = "dhgate-monitor.com"
-
-[[routes]]
-pattern = "www.dhgate-monitor.com/*"
-zone_name = "dhgate-monitor.com"
-
-# D1 Database binding
-[[d1_databases]]
+# D1 Database binding for production
+[[env.production.d1_databases]]
 binding = "DB"
 database_name = "dhgate-monitor"
 database_id = "c81bf194-e0ca-4247-9086-cd5f57846846"
 
+# Production routes
+[[env.production.routes]]
+pattern = "dhgate-monitor.com/*"
+zone_name = "dhgate-monitor.com"
+
+[[env.production.routes]]
+pattern = "www.dhgate-monitor.com/*"
+zone_name = "dhgate-monitor.com"
+
+# Scheduled monitoring (daily at 09:00 UTC)
+[env.production.triggers]
+crons = ["0 9 * * *"]
+
+# ==================================
+# Development Environment
+# ==================================
+[env.dev]
+name = "dhgate-monitor-dev"
+vars = { ENVIRONMENT = "development" }
+
+# Development KV namespace
+[[env.dev.kv_namespaces]]
+binding = "DHGATE_MONITOR_KV"
+id = "af8a406e64144d91a68558815e230444"
+
+# Development D1 database
+[[env.dev.d1_databases]]
+binding = "DB"
+database_name = "dhgate-monitor-dev"
+database_id = "8e1a9d7c-11b3-454d-87b8-d4fab069b28e"
+
+# Development routes
+[[env.dev.routes]]
+
+pattern = "dev.dhgate-monitor.com/*"
+zone_name = "dhgate-monitor.com"

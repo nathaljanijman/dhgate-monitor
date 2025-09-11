@@ -1,0 +1,1295 @@
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHgate Monitor - Customer Dashboard Demo</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    
+    <style>
+      /* Customer Dashboard Navigation Styles - UNIFIED DESIGN SYSTEM */
+      
+      /* RALEWAY FONT IMPORT */
+      @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap');
+      
+      /* TYPOGRAPHY SYSTEM - Raleway Based */
+      .customer-text-display { 
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; 
+        font-weight: 800; 
+        letter-spacing: -0.025em; 
+      }
+      .customer-text-heading { 
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; 
+        font-weight: 700; 
+        letter-spacing: -0.015em; 
+      }
+      .customer-text-title { 
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; 
+        font-weight: 600; 
+      }
+      .customer-text-body { 
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; 
+        font-weight: 500; 
+      }
+      .customer-text-caption { 
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; 
+        font-weight: 400; 
+        letter-spacing: 0.025em; 
+      }
+      
+      /* BASE NAVIGATION STYLES */
+      .customer-dashboard-sidebar {
+        width: 280px;
+        height: 100vh;
+        background: #FFFFFF;
+        border-right: 2px solid #E5E7EB;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1000;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+      }
+      
+      .customer-dashboard-sidebar.collapsed {
+        width: 72px;
+      }
+      
+      .customer-sidebar-header {
+        padding: 1.5rem;
+        border-bottom: 2px solid #E5E7EB;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #F8FAFC;
+      }
+      
+      .customer-sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+      }
+      
+      .customer-logo-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #2563EB 0%, #EA580C 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+      
+      .customer-logo-icon svg {
+        width: 22px;
+        height: 22px;
+      }
+      
+      .customer-logo-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+      }
+      
+      .customer-logo-title {
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #111827;
+        letter-spacing: -0.015em;
+      }
+      
+      .customer-logo-subtitle {
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        font-weight: 500;
+        font-size: 0.75rem;
+        color: #374151;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      
+      .customer-sidebar-toggle {
+        background: none;
+        border: none;
+        color: #374151;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .customer-sidebar-toggle:hover {
+        background: #F1F5F9;
+        color: #111827;
+      }
+      
+      .customer-sidebar-toggle svg {
+        width: 18px;
+        height: 18px;
+        fill: currentColor;
+      }
+      
+      .customer-sidebar-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.5rem 0;
+      }
+      
+      .customer-nav-section {
+        margin-bottom: 1.5rem;
+      }
+      
+      .customer-nav-section-header {
+        padding: 0.75rem 1.25rem 0.5rem;
+        cursor: default;
+        color: #374151;
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.075em;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+      }
+      
+      .customer-nav-section-header.collapsible {
+        cursor: pointer;
+        padding: 0.875rem 1.25rem;
+        margin: 0 0.5rem;
+        border-radius: 8px;
+      }
+      
+      .customer-nav-section-header.collapsible:hover {
+        background: #F1F5F9;
+        color: #111827;
+      }
+      
+      .customer-nav-section-icon {
+        width: 18px;
+        height: 18px;
+        margin-right: 0.75rem;
+        color: #2563EB;
+        fill: currentColor;
+        flex-shrink: 0;
+      }
+      
+      .customer-nav-section-title {
+        flex: 1;
+      }
+      
+      .customer-nav-section-toggle {
+        width: 16px;
+        height: 16px;
+        transition: transform 0.2s ease;
+        fill: currentColor;
+      }
+      
+      .customer-nav-section.collapsed .customer-nav-section-toggle {
+        transform: rotate(-90deg);
+      }
+      
+      .customer-nav-items {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        transition: max-height 0.3s ease;
+        overflow: hidden;
+      }
+      
+      .customer-nav-section.collapsed .customer-nav-items {
+        max-height: 0;
+      }
+      
+      .customer-nav-item {
+        margin: 0.25rem 0.5rem;
+      }
+      
+      .customer-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+        padding: 0.875rem 1rem;
+        color: #374151;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        border-radius: 10px;
+        font-weight: 500;
+        transform: translateZ(0);
+      }
+      
+      .customer-nav-link:hover {
+        background: #F1F5F9;
+        color: #111827;
+        transform: translateX(4px);
+      }
+      
+      .customer-nav-item.active .customer-nav-link {
+        background: linear-gradient(135deg, #2563EB15 0%, #EA580C15 100%);
+        color: #2563EB;
+        font-weight: 600;
+        border-left: 3px solid #2563EB;
+        box-shadow: 0 4px 12px #2563EB20;
+      }
+      
+      .customer-nav-icon {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+        flex-shrink: 0;
+      }
+      
+      .customer-nav-text {
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 500;
+        line-height: 1.25;
+      }
+      
+      .customer-nav-indicator {
+        position: absolute;
+        right: 0.75rem;
+        width: 6px;
+        height: 6px;
+        background: #2563EB;
+        border-radius: 50%;
+      }
+      
+      /* SIDEBAR FOOTER */
+      .customer-sidebar-footer {
+        border-top: 2px solid #E5E7EB;
+        padding: 1.25rem;
+        background: #F8FAFC;
+      }
+      
+      .customer-user-info {
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+        position: relative;
+      }
+      
+      .customer-user-avatar {
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, #2563EB 0%, #EA580C 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        flex-shrink: 0;
+      }
+      
+      .customer-user-avatar svg {
+        width: 20px;
+        height: 20px;
+      }
+      
+      .customer-user-details {
+        flex: 1;
+        min-width: 0;
+      }
+      
+      .customer-user-name {
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #111827;
+        margin-bottom: 0.125rem;
+        text-transform: capitalize;
+      }
+      
+      .customer-user-email {
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        font-size: 0.8125rem;
+        font-weight: 400;
+        color: #6B7280;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      
+      .customer-user-actions {
+        flex-shrink: 0;
+      }
+      
+      .customer-user-menu-toggle {
+        background: none;
+        border: none;
+        color: #374151;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+      }
+      
+      .customer-user-menu-toggle:hover {
+        background: #F1F5F9;
+        color: #111827;
+      }
+      
+      .customer-user-menu-toggle svg {
+        width: 16px;
+        height: 16px;
+      }
+      
+      .customer-user-menu {
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        right: 0;
+        background: #FFFFFF;
+        border: 1px solid #E5E7EB;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px #6B728020;
+        padding: 0.5rem 0;
+        margin-bottom: 0.5rem;
+        z-index: 1001;
+      }
+      
+      .customer-user-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        color: #111827;
+        text-decoration: none;
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+      
+      .customer-user-menu-item:hover {
+        background: #F1F5F9;
+        color: #2563EB;
+      }
+      
+      .customer-user-menu-item svg {
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+      }
+      
+      .customer-user-menu-divider {
+        height: 1px;
+        background: #E5E7EB;
+        border: none;
+        margin: 0.5rem 0;
+      }
+      
+      .customer-user-menu-logout {
+        color: #EF4444;
+      }
+      
+      .customer-user-menu-logout:hover {
+        background: #EF444415;
+        color: #EF4444;
+      }
+      
+      /* RESPONSIVE DESIGN */
+      @media (max-width: 1024px) {
+        .customer-dashboard-sidebar {
+          transform: translateX(-100%);
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .customer-dashboard-sidebar.open {
+          transform: translateX(0);
+        }
+        
+        .customer-dashboard-sidebar::before {
+          content: '';
+          position: fixed;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 280px;
+          background: #6B728060;
+          backdrop-filter: blur(4px);
+          z-index: -1;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+        
+        .customer-dashboard-sidebar.open::before {
+          opacity: 1;
+        }
+      }
+      
+      @media (max-width: 768px) {
+        .customer-dashboard-sidebar {
+          width: 100%;
+          max-width: 320px;
+        }
+        
+        .customer-sidebar-header {
+          padding: 1.25rem;
+        }
+        
+        .customer-logo-title {
+          font-size: 1rem;
+        }
+        
+        .customer-nav-link {
+          padding: 1rem;
+        }
+        
+        .customer-nav-text {
+          font-size: 0.875rem;
+        }
+      }
+      
+      /* ACCESSIBILITY IMPROVEMENTS */
+      @media (prefers-reduced-motion: reduce) {
+        .customer-dashboard-sidebar,
+        .customer-nav-link,
+        .customer-nav-section-toggle,
+        .customer-sidebar-toggle,
+        .customer-user-menu-toggle {
+          transition: none;
+        }
+      }
+      
+      /* FOCUS STATES */
+      .customer-nav-link:focus,
+      .customer-sidebar-toggle:focus,
+      .customer-user-menu-toggle:focus,
+      .customer-nav-section-header:focus {
+        outline: 2px solid #2563EB;
+        outline-offset: 2px;
+      }
+      
+      /* HIGH CONTRAST MODE */
+      @media (prefers-contrast: high) {
+        .customer-dashboard-sidebar {
+          border-right-color: #111827;
+        }
+        
+        .customer-nav-link:hover,
+        .customer-nav-item.active .customer-nav-link {
+          outline: 1px solid #2563EB;
+        }
+      }
+    </style>
+  
+    
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        background: #F8FAFC;
+        color: #111827;
+      }
+      
+      .demo-main {
+        margin-left: 280px;
+        padding: 2rem;
+        min-height: 100vh;
+        transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .demo-header {
+        background: #FFFFFF;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        border: 1px solid #E5E7EB;
+      }
+      
+      .demo-title {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #2563EB, #EA580C);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      
+      .demo-subtitle {
+        font-size: 1.1rem;
+        color: #6B7280;
+        margin-bottom: 1.5rem;
+      }
+      
+      .demo-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+      
+      .demo-feature {
+        background: #FFFFFF;
+        border: 1px solid #E5E7EB;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+      
+      .demo-feature h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: #2563EB;
+      }
+      
+      .demo-feature p {
+        color: #6B7280;
+        line-height: 1.6;
+        margin: 0;
+      }
+      
+      .demo-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, #2563EB, #EA580C);
+        color: white;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+      
+      .demo-sidebar-collapsed .demo-main {
+        margin-left: 72px;
+      }
+      
+      @media (max-width: 1024px) {
+        .demo-main {
+          margin-left: 0;
+          padding: 1rem;
+        }
+        
+        .demo-sidebar-open .demo-main {
+          margin-left: 0;
+        }
+      }
+      
+      .demo-toggle {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        z-index: 1001;
+        display: none;
+        background: #2563EB;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      }
+      
+      @media (max-width: 1024px) {
+        .demo-toggle {
+          display: block;
+        }
+      }
+    </style>
+</head>
+<body>
+    
+    <!-- Customer Navigation Sidebar -->
+    
+    <nav class="customer-dashboard-sidebar" 
+         data-theme="light"
+         role="navigation"
+         aria-label="Customer dashboard hoofdnavigatie">
+      <div class="customer-sidebar-header" role="banner">
+        <div class="customer-sidebar-logo">
+          <div class="customer-logo-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1Z"/></svg>
+          </div>
+          <div class="customer-logo-text">
+            <div class="customer-logo-title">DHgate Monitor</div>
+            <div class="customer-logo-subtitle">Dashboard</div>
+          </div>
+        </div>
+        <button class="customer-sidebar-toggle" 
+                data-toggle-sidebar
+                aria-label="Sidebar inklappen/uitklappen"
+                aria-expanded="true"
+                type="button">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+      </div>
+      <div class="customer-sidebar-content" role="main">
+        
+      <div class="customer-nav-section" 
+           data-section="overview"
+           role="group"
+           aria-labelledby="customer-section-overview-header">
+        <div class="customer-nav-section-header " 
+             id="customer-section-overview-header"
+             role="heading" aria-level="2">
+          <span class="customer-nav-section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg></span>
+          <span class="customer-nav-section-title">Overzicht</span>
+          
+        </div>
+        <ul class="customer-nav-items" 
+            id="customer-nav-section-overview"
+            role="menu"
+            aria-labelledby="customer-section-overview-header">
+          
+        <li class="customer-nav-item active" role="none">
+          <a href="/dashboard?key=demo123&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard"
+             role="menuitem"
+             aria-current="page"
+             aria-label="Dashboard (huidige pagina)"
+             title="Hoofddashboard met overzicht">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg></span>
+            <span class="customer-nav-text">Dashboard</span>
+            <span class="customer-nav-indicator" aria-hidden="true"></span>
+          </a>
+        </li>
+      
+        </ul>
+      </div>
+    
+      <div class="customer-nav-section" 
+           data-section="shop-management"
+           role="group"
+           aria-labelledby="customer-section-shop-management-header">
+        <div class="customer-nav-section-header collapsible" 
+             id="customer-section-shop-management-header"
+             
+               data-toggle-section="customer-nav-section-shop-management"
+               role="button"
+               aria-expanded="true"
+               aria-controls="customer-nav-section-shop-management"
+               tabindex="0"
+               aria-label="Shop Beheer sectie inklappen/uitklappen"
+             >
+          <span class="customer-nav-section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 7h-3V6a4 4 0 0 0-8 0v1H5a1 1 0 0 0-1 1v11a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a1 1 0 0 0-1-1zM10 6a2 2 0 0 1 4 0v1h-4V6zm8 13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V9h2v1a1 1 0 0 0 2 0V9h4v1a1 1 0 0 0 2 0V9h2v10z"/></svg></span>
+          <span class="customer-nav-section-title">Shop Beheer</span>
+          <span class="customer-nav-section-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></span>
+        </div>
+        <ul class="customer-nav-items" 
+            id="customer-nav-section-shop-management"
+            role="menu"
+            aria-labelledby="customer-section-shop-management-header">
+          
+        <li class="customer-nav-item " role="none">
+          <a href="/dashboard/shops?key=${dashboardKey}&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard/shops"
+             role="menuitem"
+             aria-current="false"
+             aria-label="Mijn Shops "
+             title="Beheer uw DHgate shops">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm5 15h-2v-6H9v6H7v-6H5l7-7 7 7h-2v6z"/></svg></span>
+            <span class="customer-nav-text">Mijn Shops</span>
+            
+          </a>
+        </li>
+      
+        <li class="customer-nav-item " role="none">
+          <a href="/dashboard/shops/add?key=${dashboardKey}&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard/shops/add"
+             role="menuitem"
+             aria-current="false"
+             aria-label="Shop Toevoegen "
+             title="Nieuwe shop toevoegen">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg></span>
+            <span class="customer-nav-text">Shop Toevoegen</span>
+            
+          </a>
+        </li>
+      
+        <li class="customer-nav-item " role="none">
+          <a href="/dashboard/shops/analytics?key=${dashboardKey}&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard/shops/analytics"
+             role="menuitem"
+             aria-current="false"
+             aria-label="Shop Analytics "
+             title="Analyse per shop">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg></span>
+            <span class="customer-nav-text">Shop Analytics</span>
+            
+          </a>
+        </li>
+      
+        </ul>
+      </div>
+    
+      <div class="customer-nav-section" 
+           data-section="product-tracking"
+           role="group"
+           aria-labelledby="customer-section-product-tracking-header">
+        <div class="customer-nav-section-header collapsible" 
+             id="customer-section-product-tracking-header"
+             
+               data-toggle-section="customer-nav-section-product-tracking"
+               role="button"
+               aria-expanded="true"
+               aria-controls="customer-nav-section-product-tracking"
+               tabindex="0"
+               aria-label="Product Tracking sectie inklappen/uitklappen"
+             >
+          <span class="customer-nav-section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.89 3l8.11 4.55v8.9L12.89 21 4.78 16.45v-8.9L12.89 3zm6.33 6.45L12.89 6.7 6.56 9.45l6.33 2.75 6.33-2.75zM5.78 11.24l6.11 2.65v6.22l-6.11-3.65v-5.22zm14.22 0v5.22l-6.11 3.65v-6.22l6.11-2.65z"/></svg></span>
+          <span class="customer-nav-section-title">Product Tracking</span>
+          <span class="customer-nav-section-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></span>
+        </div>
+        <ul class="customer-nav-items" 
+            id="customer-nav-section-product-tracking"
+            role="menu"
+            aria-labelledby="customer-section-product-tracking-header">
+          
+        <li class="customer-nav-item " role="none">
+          <a href="/dashboard/products?key=${dashboardKey}&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard/products"
+             role="menuitem"
+             aria-current="false"
+             aria-label="Alle Producten "
+             title="Overzicht van alle producten">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l8 4.5v11L12 22l-8-4.5v-11L12 2zm6 7l-6-3.5L6 9l6 3.5L18 9zM5 11v8l6 3.5v-7L5 11zm8 4.5v7L19 19v-8l-6 4.5z"/></svg></span>
+            <span class="customer-nav-text">Alle Producten</span>
+            
+          </a>
+        </li>
+      
+        <li class="customer-nav-item " role="none">
+          <a href="/dashboard/products/trending?key=${dashboardKey}&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard/products/trending"
+             role="menuitem"
+             aria-current="false"
+             aria-label="Trending Producten "
+             title="Populaire en trending items">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg></span>
+            <span class="customer-nav-text">Trending Producten</span>
+            
+          </a>
+        </li>
+      
+        <li class="customer-nav-item " role="none">
+          <a href="/dashboard/competitors?key=${dashboardKey}&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard/competitors"
+             role="menuitem"
+             aria-current="false"
+             aria-label="Concurrent Analyse "
+             title="Concurrent product monitoring">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A3 3 0 0 0 17.07 6H16.93a3 3 0 0 0-2.89 2.37L11.5 16H14v6h6zM12.5 11.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5S11 9.17 11 10s.67 1.5 1.5 1.5zm-2 8.5v-6H8l2.54-7.63A3 3 0 0 1 13.43 4h.14c1.28 0 2.43.8 2.89 2.37L19 14h-2.5v6h-6z"/></svg></span>
+            <span class="customer-nav-text">Concurrent Analyse</span>
+            
+          </a>
+        </li>
+      
+        </ul>
+      </div>
+    
+      <div class="customer-nav-section" 
+           data-section="alerts-monitoring"
+           role="group"
+           aria-labelledby="customer-section-alerts-monitoring-header">
+        <div class="customer-nav-section-header collapsible" 
+             id="customer-section-alerts-monitoring-header"
+             
+               data-toggle-section="customer-nav-section-alerts-monitoring"
+               role="button"
+               aria-expanded="true"
+               aria-controls="customer-nav-section-alerts-monitoring"
+               tabindex="0"
+               aria-label="Alerts & Monitoring sectie inklappen/uitklappen"
+             >
+          <span class="customer-nav-section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+          <span class="customer-nav-section-title">Alerts & Monitoring</span>
+          <span class="customer-nav-section-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></span>
+        </div>
+        <ul class="customer-nav-items" 
+            id="customer-nav-section-alerts-monitoring"
+            role="menu"
+            aria-labelledby="customer-section-alerts-monitoring-header">
+          
+        <li class="customer-nav-item " role="none">
+          <a href="/dashboard/alerts/price?key=${dashboardKey}&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard/alerts/price"
+             role="menuitem"
+             aria-current="false"
+             aria-label="Prijs Alerts "
+             title="Prijs wijzigingen monitoren">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg></span>
+            <span class="customer-nav-text">Prijs Alerts</span>
+            
+          </a>
+        </li>
+      
+        <li class="customer-nav-item " role="none">
+          <a href="/dashboard/alerts/stock?key=${dashboardKey}&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard/alerts/stock"
+             role="menuitem"
+             aria-current="false"
+             aria-label="Voorraad Alerts "
+             title="Voorraad status monitoren">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 8v13H3V8l2-6h14l2 6zM5 10v10h14V10H5zm6 4h2v2h-2v-2zM6.5 4L5 8h14l-1.5-4h-11z"/></svg></span>
+            <span class="customer-nav-text">Voorraad Alerts</span>
+            
+          </a>
+        </li>
+      
+        <li class="customer-nav-item " role="none">
+          <a href="/dashboard/alerts/keywords?key=${dashboardKey}&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard/alerts/keywords"
+             role="menuitem"
+             aria-current="false"
+             aria-label="Keyword Alerts "
+             title="Zoekterm monitoring">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></span>
+            <span class="customer-nav-text">Keyword Alerts</span>
+            
+          </a>
+        </li>
+      
+        </ul>
+      </div>
+    
+      <div class="customer-nav-section" 
+           data-section="analytics-insights"
+           role="group"
+           aria-labelledby="customer-section-analytics-insights-header">
+        <div class="customer-nav-section-header collapsible" 
+             id="customer-section-analytics-insights-header"
+             
+               data-toggle-section="customer-nav-section-analytics-insights"
+               role="button"
+               aria-expanded="true"
+               aria-controls="customer-nav-section-analytics-insights"
+               tabindex="0"
+               aria-label="Analytics & Insights sectie inklappen/uitklappen"
+             >
+          <span class="customer-nav-section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></span>
+          <span class="customer-nav-section-title">Analytics & Insights</span>
+          <span class="customer-nav-section-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></span>
+        </div>
+        <ul class="customer-nav-items" 
+            id="customer-nav-section-analytics-insights"
+            role="menu"
+            aria-labelledby="customer-section-analytics-insights-header">
+          
+        <li class="customer-nav-item " role="none">
+          <a href="/dashboard/analytics/performance?key=${dashboardKey}&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard/analytics/performance"
+             role="menuitem"
+             aria-current="false"
+             aria-label="Performance Dashboard "
+             title="Prestatie overzicht">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg></span>
+            <span class="customer-nav-text">Performance Dashboard</span>
+            
+          </a>
+        </li>
+      
+        <li class="customer-nav-item " role="none">
+          <a href="/dashboard/analytics/trends?key=${dashboardKey}&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard/analytics/trends"
+             role="menuitem"
+             aria-current="false"
+             aria-label="Markt Trends "
+             title="Markt trend analyse">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2v10l8.66-5C19.15 4.94 15.88 2.66 12 2zM12 12v10c7.18 0 12.15-7.32 9.76-14.32L12 12z"/></svg></span>
+            <span class="customer-nav-text">Markt Trends</span>
+            
+          </a>
+        </li>
+      
+        <li class="customer-nav-item " role="none">
+          <a href="/dashboard/reports?key=${dashboardKey}&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard/reports"
+             role="menuitem"
+             aria-current="false"
+             aria-label="Rapporten "
+             title="Gedetailleerde rapporten">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/></svg></span>
+            <span class="customer-nav-text">Rapporten</span>
+            
+          </a>
+        </li>
+      
+        </ul>
+      </div>
+    
+      <div class="customer-nav-section" 
+           data-section="account-settings"
+           role="group"
+           aria-labelledby="customer-section-account-settings-header">
+        <div class="customer-nav-section-header collapsible" 
+             id="customer-section-account-settings-header"
+             
+               data-toggle-section="customer-nav-section-account-settings"
+               role="button"
+               aria-expanded="true"
+               aria-controls="customer-nav-section-account-settings"
+               tabindex="0"
+               aria-label="Account & Instellingen sectie inklappen/uitklappen"
+             >
+          <span class="customer-nav-section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg></span>
+          <span class="customer-nav-section-title">Account & Instellingen</span>
+          <span class="customer-nav-section-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></span>
+        </div>
+        <ul class="customer-nav-items" 
+            id="customer-nav-section-account-settings"
+            role="menu"
+            aria-labelledby="customer-section-account-settings-header">
+          
+        <li class="customer-nav-item " role="none">
+          <a href="/dashboard/profile?key=${dashboardKey}&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard/profile"
+             role="menuitem"
+             aria-current="false"
+             aria-label="Profiel "
+             title="Account instellingen">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span>
+            <span class="customer-nav-text">Profiel</span>
+            
+          </a>
+        </li>
+      
+        <li class="customer-nav-item " role="none">
+          <a href="/dashboard/notifications?key=${dashboardKey}&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard/notifications"
+             role="menuitem"
+             aria-current="false"
+             aria-label="Notificaties "
+             title="Notificatie voorkeuren">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21,19V20H3V19L5,17V11C5,7.9 7.03,5.17 10,4.29C10,4.19 10,4.1 10,4A2,2 0 0,1 12,2A2,2 0 0,1 14,4C14,4.1 14,4.19 14,4.29C16.97,5.17 19,7.9 19,11V17L21,19M14,21A2,2 0 0,1 12,23A2,2 0 0,1 10,21"/></svg></span>
+            <span class="customer-nav-text">Notificaties</span>
+            
+          </a>
+        </li>
+      
+        <li class="customer-nav-item " role="none">
+          <a href="/dashboard/billing?key=${dashboardKey}&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard/billing"
+             role="menuitem"
+             aria-current="false"
+             aria-label="Facturatie "
+             title="Abonnement en facturatie">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg></span>
+            <span class="customer-nav-text">Facturatie</span>
+            
+          </a>
+        </li>
+      
+        <li class="customer-nav-item " role="none">
+          <a href="/dashboard/api?key=${dashboardKey}&lang=nl&theme=light" 
+             class="customer-nav-link" 
+             data-route="/dashboard/api"
+             role="menuitem"
+             aria-current="false"
+             aria-label="API Toegang "
+             title="API sleutels beheren">
+            <span class="customer-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm0-4c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm12.78-1.38C19.93 6.8 18.24 5 16.12 5c-2.12 0-3.81 1.8-3.66 3.62L18 14.17 19.83 12.45c.39-.39 1.02-.39 1.41 0l.39.39L20.22 11.42c.39-.39.39-1.02 0-1.41z"/></svg></span>
+            <span class="customer-nav-text">API Toegang</span>
+            
+          </a>
+        </li>
+      
+        </ul>
+      </div>
+    
+      </div>
+      <div class="customer-sidebar-footer">
+        <div class="customer-user-info">
+          <div class="customer-user-avatar" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          </div>
+          <div class="customer-user-details">
+            <div class="customer-user-name">demo</div>
+            <div class="customer-user-email">demo@dhgate-monitor.com</div>
+          </div>
+          <div class="customer-user-actions">
+            <button class="customer-user-menu-toggle" 
+                    aria-label="Gebruikersmenu"
+                    data-toggle="customer-user-menu">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="customer-user-menu" id="customer-user-menu" hidden>
+          <a href="/dashboard/profile?key=${dashboardKey}&lang=nl" class="customer-user-menu-item">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg> Profiel
+          </a>
+          <a href="/dashboard/billing?key=${dashboardKey}&lang=nl" class="customer-user-menu-item">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg> Facturatie
+          </a>
+          <a href="/dashboard/notifications?key=${dashboardKey}&lang=nl" class="customer-user-menu-item">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg> Notificaties
+          </a>
+          <hr class="customer-user-menu-divider">
+          <a href="/help" class="customer-user-menu-item">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg> Help & Support
+          </a>
+          <a href="/logout" class="customer-user-menu-item customer-user-menu-logout">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg> Uitloggen
+          </a>
+        </div>
+      </div>
+    </nav>
+  
+    
+    <!-- Mobile Toggle Button -->
+    <button class="demo-toggle" data-toggle="customer-mobile-menu" aria-label="Open menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+      </svg>
+    </button>
+    
+    <!-- Main Content -->
+    <main class="demo-main">
+      <div class="demo-header">
+        <div class="demo-badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          Demo Dashboard
+        </div>
+        
+        <h1 class="demo-title">Customer Dashboard Navigation</h1>
+        <p class="demo-subtitle">
+          Nieuwe customer-gerichte navigation met moderne UX, toegankelijkheid en brand consistentie.
+          Geoptimaliseerd voor shop management, product tracking en analytics.
+        </p>
+        
+        <div class="demo-features">
+          <div class="demo-feature">
+            <h3>🏪 Shop Management Focus</h3>
+            <p>Primaire focus op shop beheer met dedicated secties voor het toevoegen van shops, analytics per shop, en overzicht van alle DHgate activiteiten.</p>
+          </div>
+          
+          <div class="demo-feature">
+            <h3>📦 Product Tracking</h3>
+            <p>Gespecialiseerde product monitoring met trending analysis, concurrent vergelijking en uitgebreide product categorieën.</p>
+          </div>
+          
+          <div class="demo-feature">
+            <h3>🔔 Smart Alerts</h3>
+            <p>Intelligente alert systemen voor prijs wijzigingen, voorraad updates en keyword monitoring met real-time notificaties.</p>
+          </div>
+          
+          <div class="demo-feature">
+            <h3>📊 Customer Analytics</h3>
+            <p>Customer-specifieke analytics dashboard met performance metrics, market trends en gedetailleerde rapporten voor zakelijke inzichten.</p>
+          </div>
+          
+          <div class="demo-feature">
+            <h3>⚙️ Account Management</h3>
+            <p>Volledige account controle met profiel instellingen, notificatie voorkeuren, facturatie beheer en API toegang.</p>
+          </div>
+          
+          <div class="demo-feature">
+            <h3>♿ Accessibility First</h3>
+            <p>WCAG 2.1 compliant met screen reader support, keyboard navigation, focus management en high contrast mode ondersteuning.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    
+    <script>
+      // Customer Dashboard Navigation JavaScript
+      document.addEventListener('DOMContentLoaded', function() {
+        
+        // Sidebar toggle functionality
+        const sidebarToggle = document.querySelector('[data-toggle-sidebar]');
+        const sidebar = document.querySelector('.customer-dashboard-sidebar');
+        
+        if (sidebarToggle && sidebar) {
+          sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            
+            // Update aria-expanded
+            const expanded = !sidebar.classList.contains('collapsed');
+            sidebarToggle.setAttribute('aria-expanded', expanded);
+            
+            // Store preference
+            localStorage.setItem('customer-sidebar-collapsed', sidebar.classList.contains('collapsed'));
+          });
+          
+          // Restore sidebar state
+          const isCollapsed = localStorage.getItem('customer-sidebar-collapsed') === 'true';
+          if (isCollapsed) {
+            sidebar.classList.add('collapsed');
+            sidebarToggle.setAttribute('aria-expanded', 'false');
+          }
+        }
+        
+        // Collapsible sections
+        const collapsibleHeaders = document.querySelectorAll('.customer-nav-section-header.collapsible');
+        
+        collapsibleHeaders.forEach(header => {
+          header.addEventListener('click', function() {
+            const section = header.closest('.customer-nav-section');
+            const sectionId = header.getAttribute('data-toggle-section');
+            const items = document.getElementById(sectionId);
+            
+            if (section && items) {
+              section.classList.toggle('collapsed');
+              
+              // Update aria-expanded
+              const expanded = !section.classList.contains('collapsed');
+              header.setAttribute('aria-expanded', expanded);
+              
+              // Store section state
+              localStorage.setItem(`customer-section-${section.dataset.section}-collapsed`, section.classList.contains('collapsed'));
+            }
+          });
+          
+          // Restore section states
+          const section = header.closest('.customer-nav-section');
+          if (section) {
+            const isCollapsed = localStorage.getItem(`customer-section-${section.dataset.section}-collapsed`) === 'true';
+            if (isCollapsed) {
+              section.classList.add('collapsed');
+              header.setAttribute('aria-expanded', 'false');
+            }
+          }
+        });
+        
+        // User menu toggle
+        const userMenuToggle = document.querySelector('[data-toggle="customer-user-menu"]');
+        const userMenu = document.getElementById('customer-user-menu');
+        
+        if (userMenuToggle && userMenu) {
+          userMenuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const isHidden = userMenu.hasAttribute('hidden');
+            
+            if (isHidden) {
+              userMenu.removeAttribute('hidden');
+              userMenuToggle.setAttribute('aria-expanded', 'true');
+            } else {
+              userMenu.setAttribute('hidden', '');
+              userMenuToggle.setAttribute('aria-expanded', 'false');
+            }
+          });
+          
+          // Close menu when clicking outside
+          document.addEventListener('click', function(e) {
+            if (!userMenu.contains(e.target) && !userMenuToggle.contains(e.target)) {
+              userMenu.setAttribute('hidden', '');
+              userMenuToggle.setAttribute('aria-expanded', 'false');
+            }
+          });
+        }
+        
+        // Mobile sidebar overlay handling
+        if (window.innerWidth <= 1024) {
+          const sidebarOverlay = document.createElement('div');
+          sidebarOverlay.className = 'customer-sidebar-overlay';
+          sidebarOverlay.addEventListener('click', function() {
+            sidebar?.classList.remove('open');
+          });
+          
+          // Mobile menu button (if exists)
+          const mobileMenuButton = document.querySelector('[data-toggle="customer-mobile-menu"]');
+          if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', function() {
+              sidebar?.classList.add('open');
+            });
+          }
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+          // Escape key closes user menu and mobile sidebar
+          if (e.key === 'Escape') {
+            if (userMenu && !userMenu.hasAttribute('hidden')) {
+              userMenu.setAttribute('hidden', '');
+              userMenuToggle?.setAttribute('aria-expanded', 'false');
+              userMenuToggle?.focus();
+            }
+            
+            if (sidebar?.classList.contains('open') && window.innerWidth <= 1024) {
+              sidebar.classList.remove('open');
+            }
+          }
+          
+          // Enter/Space on collapsible headers
+          if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('collapsible')) {
+            e.preventDefault();
+            e.target.click();
+          }
+        });
+        
+        // Active route highlighting
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.customer-nav-link');
+        
+        navLinks.forEach(link => {
+          const route = link.getAttribute('data-route');
+          if (route && (currentPath === route || currentPath.startsWith(route + '/'))) {
+            link.closest('.customer-nav-item')?.classList.add('active');
+            link.setAttribute('aria-current', 'page');
+          }
+        });
+      });
+    </script>
+  
+    
+    <script>
+      // Demo-specific enhancements
+      document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.querySelector('.customer-dashboard-sidebar');
+        const main = document.querySelector('.demo-main');
+        const body = document.body;
+        
+        // Track sidebar state for demo
+        const sidebarToggle = document.querySelector('[data-toggle-sidebar]');
+        if (sidebarToggle) {
+          sidebarToggle.addEventListener('click', function() {
+            if (sidebar.classList.contains('collapsed')) {
+              body.classList.add('demo-sidebar-collapsed');
+            } else {
+              body.classList.remove('demo-sidebar-collapsed');
+            }
+          });
+        }
+        
+        // Mobile demo handling
+        const mobileToggle = document.querySelector('[data-toggle="customer-mobile-menu"]');
+        if (mobileToggle) {
+          mobileToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            body.classList.toggle('demo-sidebar-open');
+          });
+        }
+      });
+    </script>
+</body>
+</html>
+  

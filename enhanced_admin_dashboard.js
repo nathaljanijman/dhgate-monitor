@@ -1,7 +1,14 @@
 // Enhanced Admin Dashboard Implementation for DHgate Monitor
 // Complete production-ready implementation with all requested features
 
-function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, affiliatePerformance, ga4Data, geographicData, alertsData, testResults, lang = 'nl', theme = 'light') {
+import { 
+  generateAdminSidebarNavigation, 
+  generateAdminDashboardHeader, 
+  generateAdminNavigationCSS, 
+  generateAdminNavigationJS 
+} from './admin-navigation.js';
+
+function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, affiliatePerformance, ga4Data, geographicData, alertsData, testResults, lang = 'nl', theme = 'light', currentRoute = '/admin/dashboard', userEmail = 'admin@dhgate-monitor.com') {
   const totalClicks = affiliateAnalytics.clicks.reduce((sum, day) => sum + day.total_clicks, 0);
   const totalConversions = affiliateAnalytics.clicks.reduce((sum, day) => sum + day.conversions, 0);
   const conversionRate = totalClicks > 0 ? ((totalConversions / totalClicks) * 100).toFixed(2) : 0;
@@ -331,6 +338,8 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
     
+    ${generateAdminNavigationCSS(theme)}
+    
     <style>
         /* CSS Custom Properties for Theme Support */
         :root {
@@ -366,7 +375,41 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
           color: var(--text-primary);
+          padding: 0;
+        }
+        
+        /* Admin Dashboard Layout Adjustments */
+        .dashboard-main {
+          margin-left: 260px;
+          margin-top: 64px;
+          min-height: calc(100vh - 64px);
           padding: 1.5rem;
+          background: var(--bg-secondary);
+        }
+        
+        .admin-dashboard-sidebar.collapsed ~ .admin-dashboard-header + .admin-container .dashboard-main {
+          margin-left: 72px;
+        }
+        
+        .dashboard-content {
+          max-width: 1400px;
+          margin: 0 auto;
+        }
+        
+        .dashboard-title-section {
+          margin-bottom: 2rem;
+          padding: 1.5rem;
+          background: var(--card-bg);
+          border-radius: 12px;
+          box-shadow: var(--card-shadow);
+        }
+        
+        .title-content {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 1rem;
         }
         
         .admin-container {
@@ -448,10 +491,12 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
           left: 100%;
         }
         
+        /* Button Priority System */
         .btn-primary {
           background: var(--primary-blue);
           color: white;
           box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+          font-weight: 700;
         }
         
         .btn-primary:hover {
@@ -460,10 +505,37 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
           box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
         }
         
+        .btn-secondary {
+          background: rgba(255, 255, 255, 0.1);
+          color: var(--text-primary);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          font-weight: 500;
+        }
+        
+        .btn-secondary:hover {
+          background: rgba(255, 255, 255, 0.15);
+          border-color: rgba(255, 255, 255, 0.3);
+          transform: translateY(-1px);
+        }
+        
+        .btn-tertiary {
+          background: transparent;
+          color: var(--text-secondary);
+          border: none;
+          font-weight: 400;
+          padding: 0.5rem 1rem;
+        }
+        
+        .btn-tertiary:hover {
+          background: rgba(255, 255, 255, 0.05);
+          color: var(--text-primary);
+        }
+        
         .btn-danger {
           background: var(--error);
           color: white;
           box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+          font-weight: 600;
         }
         
         .btn-danger:hover {
@@ -472,12 +544,100 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
           box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
         }
         
-        /* KPI Cards */
+        /* Loading States */
+        .btn.loading {
+          pointer-events: none;
+          opacity: 0.7;
+        }
+        
+        .btn.loading::after {
+          content: '';
+          position: absolute;
+          width: 16px;
+          height: 16px;
+          border: 2px solid transparent;
+          border-top: 2px solid currentColor;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+        
+        /* KPI Cards - Improved UX */
         .kpi-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
           gap: 1.5rem;
           margin-bottom: 2rem;
+        }
+        
+        /* Progressive Disclosure for KPI Cards */
+        .kpi-card.collapsed {
+          height: 80px;
+          overflow: hidden;
+        }
+        
+        .kpi-card.collapsed .kpi-details {
+          display: none;
+        }
+        
+        .kpi-expand-btn {
+          position: absolute;
+          top: 1rem;
+          right: 1rem;
+          background: rgba(255, 255, 255, 0.1);
+          border: none;
+          border-radius: 50%;
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+        
+        .kpi-expand-btn:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Tooltip System */
+        .tooltip {
+          position: relative;
+          display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+          visibility: hidden;
+          width: 200px;
+          background-color: rgba(0, 0, 0, 0.9);
+          color: #fff;
+          text-align: center;
+          border-radius: 8px;
+          padding: 8px 12px;
+          position: absolute;
+          z-index: 1000;
+          bottom: 125%;
+          left: 50%;
+          margin-left: -100px;
+          opacity: 0;
+          transition: opacity 0.3s;
+          font-size: 0.75rem;
+          line-height: 1.4;
+        }
+        
+        .tooltip .tooltiptext::after {
+          content: "";
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          margin-left: -5px;
+          border-width: 5px;
+          border-style: solid;
+          border-color: rgba(0, 0, 0, 0.9) transparent transparent transparent;
+        }
+        
+        .tooltip:hover .tooltiptext {
+          visibility: visible;
+          opacity: 1;
         }
         
         .kpi-card {
@@ -545,6 +705,60 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
           to { transform: rotate(360deg); }
         }
         
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+        
+        @keyframes slideIn {
+          from { transform: translateY(20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Skeleton Loading */
+        .skeleton {
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 8px;
+        }
+        
+        @keyframes loading {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+        
+        /* Toast Notifications */
+        .toast {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: var(--card-bg);
+          border-radius: 12px;
+          padding: 1rem 1.5rem;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+          z-index: 1000;
+          transform: translateX(400px);
+          transition: transform 0.3s ease;
+          max-width: 400px;
+        }
+        
+        .toast.show {
+          transform: translateX(0);
+        }
+        
+        .toast.success {
+          border-left: 4px solid var(--success);
+        }
+        
+        .toast.error {
+          border-left: 4px solid var(--error);
+        }
+        
+        .toast.warning {
+          border-left: 4px solid var(--warning);
+        }
+        
         .kpi-value {
           font-size: 2rem;
           font-weight: 800;
@@ -574,11 +788,68 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
           color: var(--error);
         }
         
-        /* Main Layout */
+        /* Main Layout - Improved */
         .content-grid {
           display: grid;
           grid-template-columns: 2fr 1fr;
           gap: 2rem;
+        }
+        
+        /* Breadcrumb Navigation */
+        .breadcrumb {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 1.5rem;
+          font-size: 0.875rem;
+          color: var(--text-secondary);
+        }
+        
+        .breadcrumb a {
+          color: var(--text-secondary);
+          text-decoration: none;
+          transition: color 0.3s ease;
+        }
+        
+        .breadcrumb a:hover {
+          color: var(--primary-blue);
+        }
+        
+        .breadcrumb-separator {
+          color: var(--text-muted);
+        }
+        
+        /* Search Bar */
+        .search-container {
+          position: relative;
+          margin-bottom: 1.5rem;
+        }
+        
+        .search-input {
+          width: 100%;
+          padding: 0.75rem 1rem 0.75rem 2.5rem;
+          border: 1px solid var(--border-light);
+          border-radius: 12px;
+          background: var(--card-bg);
+          color: var(--text-primary);
+          font-size: 0.875rem;
+          transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+          outline: none;
+          border-color: var(--primary-blue);
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .search-icon {
+          position: absolute;
+          left: 0.75rem;
+          top: 50%;
+          transform: translateY(-50%);
+          color: var(--text-muted);
+          width: 16px;
+          height: 16px;
         }
         
         .main-content,
@@ -802,9 +1073,16 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
         }
         
         @media (max-width: 768px) {
-          body {
+          .dashboard-main {
+            margin-left: 0;
+            margin-top: 64px;
             padding: 1rem;
           }
+          
+          .admin-container {
+            padding: 0;
+          }
+        }
           
           .kpi-grid {
             grid-template-columns: 1fr;
@@ -876,6 +1154,158 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
           100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
         
+        /* Admin Actions Dropdown - 2025 Design */
+        .admin-actions-dropdown {
+          position: relative;
+          display: inline-block;
+        }
+        
+        .admin-actions-toggle {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          position: relative;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .admin-actions-chevron {
+          transition: transform 0.3s ease;
+        }
+        
+        .admin-actions-toggle[aria-expanded="true"] .admin-actions-chevron {
+          transform: rotate(180deg);
+        }
+        
+        .admin-actions-menu {
+          position: absolute;
+          top: calc(100% + 8px);
+          right: 0;
+          background: var(--card-bg);
+          border-radius: 16px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+          border: 1px solid var(--border-light);
+          min-width: 240px;
+          z-index: 1000;
+          opacity: 0;
+          visibility: hidden;
+          transform: translateY(-10px);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          backdrop-filter: blur(20px);
+          overflow: hidden;
+        }
+        
+        .admin-actions-menu.show {
+          opacity: 1;
+          visibility: visible;
+          transform: translateY(0);
+        }
+        
+        .admin-action-item {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 0.75rem 1rem;
+          color: var(--text-primary);
+          text-decoration: none;
+          border: none;
+          background: none;
+          width: 100%;
+          text-align: left;
+          font-size: 0.875rem;
+          font-weight: 500;
+          transition: all 0.2s ease;
+          cursor: pointer;
+        }
+        
+        .admin-action-item:hover {
+          background: var(--bg-secondary);
+          color: var(--primary-blue);
+        }
+        
+        .admin-action-item svg {
+          flex-shrink: 0;
+          opacity: 0.7;
+          transition: opacity 0.2s ease;
+        }
+        
+        .admin-action-item:hover svg {
+          opacity: 1;
+        }
+        
+        .admin-action-item.admin-action-danger {
+          color: var(--error);
+        }
+        
+        .admin-action-item.admin-action-danger:hover {
+          background: rgba(239, 68, 68, 0.1);
+          color: var(--error);
+        }
+        
+        .admin-action-divider {
+          height: 1px;
+          background: var(--border-light);
+          margin: 0.5rem 0;
+        }
+        
+        /* Modern Button Hierarchy */
+        .btn-primary {
+          background: linear-gradient(135deg, var(--primary-blue), #1D4ED8);
+          color: white;
+          box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+          font-weight: 600;
+          border: none;
+        }
+        
+        .btn-primary:hover {
+          background: linear-gradient(135deg, #1D4ED8, #1E40AF);
+          transform: translateY(-1px);
+          box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+        }
+        
+        .btn-secondary {
+          background: rgba(255, 255, 255, 0.08);
+          color: var(--text-primary);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          font-weight: 500;
+          backdrop-filter: blur(10px);
+        }
+        
+        .btn-secondary:hover {
+          background: rgba(255, 255, 255, 0.12);
+          border-color: rgba(255, 255, 255, 0.25);
+          transform: translateY(-1px);
+        }
+        
+        /* Minimalist Header Spacing */
+        .title-actions {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+        
+        .title-content {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 1.5rem;
+        }
+        
+        .title-left h1 {
+          font-size: clamp(1.75rem, 4vw, 2.25rem);
+          font-weight: 800;
+          margin: 0 0 0.5rem 0;
+          letter-spacing: -0.02em;
+          color: var(--text-primary);
+        }
+        
+        .title-left p {
+          color: var(--text-secondary);
+          font-size: 1rem;
+          margin: 0;
+          font-weight: 400;
+        }
+        
         /* Footer */
         .footer-info {
           text-align: center;
@@ -888,56 +1318,114 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
     </style>
 </head>
 <body>
+    <!-- Admin Dashboard Navigation -->
+    ${generateAdminSidebarNavigation(currentRoute, lang, theme)}
+    
+    <!-- Admin Dashboard Header -->  
+    ${generateAdminDashboardHeader(currentRoute, lang, theme, userEmail)}
+    
     <div class="admin-container">
-        <!-- Header -->
-        <header class="main-header" role="banner">
-            <div class="header-content">
-                <div class="header-left">
-                    <h1>${t.title}</h1>
-                    <p>${t.subtitle}</p>
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="dashboard-content">
+                <!-- Breadcrumb Navigation -->
+                <nav class="breadcrumb" aria-label="Breadcrumb">
+                    <a href="/admin/dashboard?lang=${lang}&theme=${theme}">${lang === 'nl' ? 'Admin' : 'Admin'}</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span>${lang === 'nl' ? 'Dashboard' : 'Dashboard'}</span>
+                </nav>
+                
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                    <input type="text" class="search-input" placeholder="${lang === 'nl' ? 'Zoek in dashboard...' : 'Search dashboard...'}" id="dashboard-search">
                 </div>
-                <div class="header-actions">
-                    <a href="/admin/icons-components?lang=${lang}&theme=${theme}" class="btn btn-secondary" aria-label="${lang === 'nl' ? 'Icon Bibliotheek' : 'Icon Library'}">
-                        <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
-                            <rect x="3" y="3" width="7" height="7"/>
-                            <rect x="14" y="3" width="7" height="7"/>
-                            <rect x="14" y="14" width="7" height="7"/>
-                            <rect x="3" y="14" width="7" height="7"/>
-                        </svg>
-                        ${lang === 'nl' ? 'Icons' : 'Icons'}
-                    </a>
-                    
-                    <a href="/admin/component-library?lang=${lang}&theme=${theme}" class="btn btn-secondary" aria-label="${lang === 'nl' ? 'Component Bibliotheek' : 'Component Library'}">
-                        <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                            <circle cx="12" cy="12" r="4"/>
-                        </svg>
-                        ${lang === 'nl' ? 'Components' : 'Components'}
-                    </a>
-                    
-                    <button class="btn btn-secondary" onclick="refreshDashboard()" aria-label="${t.refresh}">
-                        <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
-                            <polyline points="23,4 23,10 17,10"/>
-                            <polyline points="1,20 1,14 7,14"/>
-                            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
-                        </svg>
-                        ${t.refresh}
-                    </button>
-                    
-                    <button class="btn btn-primary" onclick="runTestPlan()" aria-label="${t.runTestPlan}">
-                        <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                            <path d="M16,9H13V4H6V20H18V9H16Z"/>
-                        </svg>
-                        ${t.runTestPlan}
-                    </button>
-
-                    <a href="/admin/logout?lang=${lang}&theme=${theme}" class="btn btn-danger" aria-label="${t.logout}">
-                        <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M9,21V19H15V21H9M12,17A6,6 0 0,1 6,11V6H8V11A4,4 0 0,0 12,15A4,4 0 0,0 16,11V6H18V11A6,6 0 0,1 12,17Z"/>
-                        </svg>
-                        ${t.logout}
-                    </a>
+                
+                <!-- Dashboard Title Section -->
+                <section class="dashboard-title-section" role="banner">
+                    <div class="title-content">
+                        <div class="title-left">
+                            <h1>${t.title}</h1>
+                            <p>${t.subtitle}</p>
+                        </div>
+                        <div class="title-actions">
+                            <!-- Primary Action: Refresh (Most Important) -->
+                            <div class="tooltip">
+                                <button class="btn btn-primary" onclick="refreshDashboard()" aria-label="${t.refresh}">
+                                    <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                                        <polyline points="23,4 23,10 17,10"/>
+                                        <polyline points="1,20 1,14 7,14"/>
+                                        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+                                    </svg>
+                                    ${t.refresh}
+                                </button>
+                                <span class="tooltiptext">${lang === 'nl' ? 'Vernieuw dashboard data' : 'Refresh dashboard data'}</span>
+                            </div>
+                            
+                            <!-- Secondary Actions: Consolidated in Dropdown -->
+                            <div class="admin-actions-dropdown">
+                                <button class="btn btn-secondary admin-actions-toggle" onclick="toggleAdminActions()" aria-label="${lang === 'nl' ? 'Meer acties' : 'More actions'}" aria-expanded="false">
+                                    <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                                        <circle cx="12" cy="12" r="1"/>
+                                        <circle cx="19" cy="12" r="1"/>
+                                        <circle cx="5" cy="12" r="1"/>
+                                    </svg>
+                                    <span class="admin-actions-text">${lang === 'nl' ? 'Acties' : 'Actions'}</span>
+                                    <svg class="icon-sm admin-actions-chevron" viewBox="0 0 24 24" aria-hidden="true">
+                                        <polyline points="6,9 12,15 18,9"/>
+                                    </svg>
+                                </button>
+                                
+                                <div class="admin-actions-menu" id="admin-actions-menu">
+                                    <a href="/admin/icons-components?lang=${lang}&theme=${theme}" class="admin-action-item">
+                                        <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                                            <rect x="3" y="3" width="7" height="7"/>
+                                            <rect x="14" y="3" width="7" height="7"/>
+                                            <rect x="14" y="14" width="7" height="7"/>
+                                            <rect x="3" y="14" width="7" height="7"/>
+                                        </svg>
+                                        <span>${lang === 'nl' ? 'Icon Bibliotheek' : 'Icon Library'}</span>
+                                    </a>
+                                    
+                                    <a href="/admin/component-library?lang=${lang}&theme=${theme}" class="admin-action-item">
+                                        <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                                            <circle cx="12" cy="12" r="4"/>
+                                        </svg>
+                                        <span>${lang === 'nl' ? 'Component Bibliotheek' : 'Component Library'}</span>
+                                    </a>
+                                    
+                                    <button class="admin-action-item" onclick="runTestPlan()">
+                                        <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                            <path d="M16,9H13V4H6V20H18V9H16Z"/>
+                                        </svg>
+                                        <span>${t.runTestPlan}</span>
+                                    </button>
+                                    
+                                    <div class="admin-action-divider"></div>
+                                    
+                                    <a href="/admin/settings?lang=${lang}&theme=${theme}" class="admin-action-item">
+                                        <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                                            <circle cx="12" cy="12" r="3"/>
+                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                                        </svg>
+                                        <span>${lang === 'nl' ? 'Instellingen' : 'Settings'}</span>
+                                    </a>
+                                    
+                                    <div class="admin-action-divider"></div>
+                                    
+                                    <a href="/admin/logout?lang=${lang}&theme=${theme}" class="admin-action-item admin-action-danger">
+                                        <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M9,21V19H15V21H9M12,17A6,6 0 0,1 6,11V6H8V11A4,4 0 0,0 12,15A4,4 0 0,0 16,11V6H18V11A6,6 0 0,1 12,17Z"/>
+                                        </svg>
+                                        <span>${t.logout}</span>
+                                    </a>
+                                </div>
+                            </div>
                 </div>
             </div>
         </header>
@@ -1445,15 +1933,103 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
             }
         });
         
-        // Dashboard Functions
+        // Dashboard Functions - Enhanced UX
         function refreshDashboard() {
             const button = event.target.closest('.btn');
             button.classList.add('loading');
+            button.disabled = true;
+            
+            // Show toast notification
+            showToast('${lang === "nl" ? "Dashboard wordt ververst..." : "Refreshing dashboard..."}', 'info');
             
             // Simulate refresh
             setTimeout(() => {
+                button.classList.remove('loading');
+                button.disabled = false;
+                showToast('${lang === "nl" ? "Dashboard succesvol ververst!" : "Dashboard refreshed successfully!"}', 'success');
                 window.location.reload();
-            }, 1000);
+            }, 2000);
+        }
+        
+        // Toast notification system
+        function showToast(message, type = 'info', duration = 3000) {
+            // Create toast container if it doesn't exist
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                container.style.position = 'fixed';
+                container.style.top = '20px';
+                container.style.right = '20px';
+                container.style.zIndex = '1000';
+                document.body.appendChild(container);
+            }
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            toast.innerHTML = 
+                '<div style="display: flex; align-items: center; gap: 0.5rem;">' +
+                    '<span>' + message + '</span>' +
+                    '<button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: inherit; cursor: pointer; font-size: 1.2rem;">×</button>' +
+                '</div>';
+            
+            container.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            // Auto remove
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+        
+        // Search functionality
+        function initializeSearch() {
+            const searchInput = document.getElementById('dashboard-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const query = e.target.value.toLowerCase();
+                    filterDashboardContent(query);
+                });
+            }
+        }
+        
+        function filterDashboardContent(query) {
+            const cards = document.querySelectorAll('.kpi-card, .card');
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(query) || query === '') {
+                    card.style.display = 'block';
+                    card.style.animation = 'slideIn 0.3s ease';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Progressive disclosure for KPI cards
+        function initializeProgressiveDisclosure() {
+            const kpiCards = document.querySelectorAll('.kpi-card');
+            kpiCards.forEach((card, index) => {
+                // Collapse cards beyond the first 5
+                if (index >= 5) {
+                    card.classList.add('collapsed');
+                }
+                
+                // Add expand button
+                const expandBtn = document.createElement('button');
+                expandBtn.className = 'kpi-expand-btn';
+                expandBtn.innerHTML = card.classList.contains('collapsed') ? '+' : '−';
+                expandBtn.onclick = () => toggleKpiCard(card, expandBtn);
+                card.appendChild(expandBtn);
+            });
+        }
+        
+        function toggleKpiCard(card, button) {
+            card.classList.toggle('collapsed');
+            button.innerHTML = card.classList.contains('collapsed') ? '+' : '−';
         }
         
         // Test Plan Execution
@@ -1812,11 +2388,70 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
             }
         });
         
+        // Admin Actions Dropdown Functionality
+        function toggleAdminActions() {
+            const menu = document.getElementById('admin-actions-menu');
+            const toggle = document.querySelector('.admin-actions-toggle');
+            
+            if (menu && toggle) {
+                const isOpen = menu.classList.contains('show');
+                
+                if (isOpen) {
+                    menu.classList.remove('show');
+                    toggle.setAttribute('aria-expanded', 'false');
+                } else {
+                    menu.classList.add('show');
+                    toggle.setAttribute('aria-expanded', 'true');
+                }
+            }
+        }
+        
+        function initializeAdminActions() {
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                const dropdown = document.querySelector('.admin-actions-dropdown');
+                const menu = document.getElementById('admin-actions-menu');
+                const toggle = document.querySelector('.admin-actions-toggle');
+                
+                if (dropdown && menu && toggle) {
+                    if (!dropdown.contains(event.target)) {
+                        menu.classList.remove('show');
+                        toggle.setAttribute('aria-expanded', 'false');
+                    }
+                }
+            });
+            
+            // Close dropdown on escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    const menu = document.getElementById('admin-actions-menu');
+                    const toggle = document.querySelector('.admin-actions-toggle');
+                    
+                    if (menu && toggle) {
+                        menu.classList.remove('show');
+                        toggle.setAttribute('aria-expanded', 'false');
+                    }
+                }
+            });
+        }
+        
         // Initialize tooltips and accessibility
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize UX improvements
+            initializeSearch();
+            initializeProgressiveDisclosure();
+            initializeAdminActions();
+            
             // Add ARIA labels to charts
-            document.getElementById('performanceChart').setAttribute('aria-describedby', 'performance-desc');
-            document.getElementById('testTrendChart').setAttribute('aria-describedby', 'test-trend-desc');
+            const performanceChart = document.getElementById('performanceChart');
+            const testTrendChart = document.getElementById('testTrendChart');
+            
+            if (performanceChart) {
+                performanceChart.setAttribute('aria-describedby', 'performance-desc');
+            }
+            if (testTrendChart) {
+                testTrendChart.setAttribute('aria-describedby', 'test-trend-desc');
+            }
             
             // Add screen reader descriptions
             const performanceDesc = document.createElement('div');
@@ -1832,6 +2467,13 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
             document.body.appendChild(testTrendDesc);
         });
     </script>
+    
+    <!-- Admin Navigation JavaScript -->
+    ${generateAdminNavigationJS()}
+    
+            </div>
+        </main>
+    </div>
 </body>
 </html>
   `;
