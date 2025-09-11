@@ -1682,10 +1682,11 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                     const dashboardLink = document.querySelector('.dashboard-link');
                     if (dashboardLink) {
                         dashboardLink.innerHTML = 
-                            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
-                                '<path d="M12 9v3m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>' +
-                            '</svg>' +
-                            (lang === 'nl' ? 'Fout - probeer opnieuw' : 'Error - try again'); 
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 9v3m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            (lang === 'nl' ? 'Fout - probeer opnieuw' : 'Error - try again')
+                        ; 
                         dashboardLink.style.opacity = '0.6';
                         dashboardLink.onclick = () => submitForm();
                     }
@@ -1696,10 +1697,11 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                 const dashboardLink = document.querySelector('.dashboard-link');
                 if (dashboardLink) {
                     dashboardLink.innerHTML = 
-                        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
-                            '<path d="M12 9v3m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>' +
-                        '</svg>' +
-                        (lang === 'nl' ? 'Netwerk fout' : 'Network error'); 
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 9v3m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        (lang === 'nl' ? 'Netwerk fout' : 'Network error')
+                    ; 
                     dashboardLink.style.opacity = '0.6';
                     dashboardLink.onclick = () => submitForm();
                 }
@@ -1736,13 +1738,14 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                 dashboardLink.style.opacity = '0.6';
                 dashboardLink.style.pointerEvents = 'none';
                 dashboardLink.innerHTML = 
-                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
-                        '<rect x="3" y="3" width="7" height="7"/>' +
-                        '<rect x="14" y="3" width="7" height="7"/>' +
-                        '<rect x="14" y="14" width="7" height="7"/>' +
-                        '<rect x="3" y="14" width="7" height="7"/>' +
-                    '</svg>' +
-                    (t.dashboardButton); 
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"/>
+                        <rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    (t.dashboardButton)
+                ; 
             }
             
             // Clear errors
@@ -1820,5 +1823,5 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         });
     </script>
 </body>
-</html>`;
+</html>; 
 }

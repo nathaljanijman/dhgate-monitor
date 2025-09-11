@@ -85,6 +85,7 @@ npm run tail
 - **HTTP Headers**: `X-Robots-Tag: noindex, nofollow`
 - **Search Engines**: Development site wordt niet geïndexeerd
 
+
 ### Password Management
 ```bash
 # Wijzig development password met script
