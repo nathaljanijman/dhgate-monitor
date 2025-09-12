@@ -90,7 +90,7 @@ const CONFIG = {
 // IMPORT ENHANCED ADMIN DASHBOARD
 // ============================================================================
 import { generateEnhancedAdminDashboard } from './enhanced_admin_dashboard.js';
-// import { generateSignupWidget } from './signup-widget.js';
+import { generateSignupWidget } from './signup-widget.js';
 import { API_CONFIG, getRegionsByPriority, calculateRetryDelay, CircuitBreaker } from './api-config.js';
 
 // ============================================================================
@@ -16287,8 +16287,7 @@ async function handleSignupWidget(request, env) {
   const theme = url.searchParams.get('theme') || 'light';
   
   // Generate the standalone widget HTML
-  // const widgetHTML = generateSignupWidget(env, lang, theme);
-  const widgetHTML = '<html><body><h1>Signup Widget Temporarily Unavailable</h1></body></html>';
+  const widgetHTML = generateSignupWidget(env, lang, theme);
   
   return new Response(widgetHTML, {
     headers: { 
