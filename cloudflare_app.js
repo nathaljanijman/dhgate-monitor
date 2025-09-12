@@ -7169,9 +7169,9 @@ async function generateRealTimeNotifications() {
     {
       id: `admin_${Date.now()}_1`,
       type: 'system_alert',
-      title: 'Platform Performance',
+      title: 'Platform performance',
       message: `Response time improved by 23% - Average: 145ms (target: <200ms)`,
-      redirectUrl: '/admin/performance',
+      redirectUrl: '/api/testplan/execute',
       timeAgo: formatTimeAgo(new Date(now.getTime() - 12 * 60 * 1000)), // 12 min ago
       severity: 'success',
       category: 'performance'
@@ -7179,8 +7179,8 @@ async function generateRealTimeNotifications() {
     {
       id: `admin_${Date.now()}_2`,
       type: 'user_activity',
-      title: 'New User Registrations',
-      message: `47 new users registered today (+32% vs yesterday). Peak hour: 14:00-15:00`,
+      title: 'Nieuwe gebruikers',
+      message: `47 nieuwe gebruikers vandaag (+32% vs gisteren). Piekuur: 14:00-15:00`,
       redirectUrl: '/admin/customers',
       timeAgo: formatTimeAgo(new Date(now.getTime() - 28 * 60 * 1000)), // 28 min ago
       severity: 'info',

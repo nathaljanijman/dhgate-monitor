@@ -27,52 +27,52 @@ const ADMIN_NAVIGATION_CONFIG = {
         icon: 'bell',
         title: { nl: 'Meldingen', en: 'Notifications' },
         items: [
-          { id: 'notifications', title: { nl: 'Live Alerts', en: 'Live Alerts' }, route: '/admin/notifications', icon: 'bell', prominent: true, badge: true }
+          { id: 'notifications', title: { nl: 'Meldingen', en: 'Notifications' }, route: '/admin/notifications', icon: 'bell', prominent: true, badge: true }
         ]
       },
       {
         id: 'growth',
         icon: 'users',
-        title: { nl: 'Users & Growth', en: 'Users & Growth' },
+        title: { nl: 'Gebruikers', en: 'Users' },
         collapsible: true,
         defaultExpanded: true,
         items: [
-          { id: 'customers', title: { nl: 'Customer Accounts', en: 'Customer Accounts' }, route: '/admin/customers', icon: 'user-group' },
-          { id: 'subscriptions', title: { nl: 'Subscriptions', en: 'Subscriptions' }, route: '/admin/subscriptions', icon: 'credit-card' },
-          { id: 'support', title: { nl: 'Support Tickets', en: 'Support Tickets' }, route: '/admin/support', icon: 'support' }
+          { id: 'customers', title: { nl: 'Klanten', en: 'Customers' }, route: '/admin/customers', icon: 'user-group' },
+          { id: 'subscriptions', title: { nl: 'Abonnementen', en: 'Subscriptions' }, route: '/admin/subscriptions', icon: 'credit-card' },
+          { id: 'support', title: { nl: 'Support', en: 'Support' }, route: '/admin/support', icon: 'support' }
         ]
       },
       {
         id: 'revenue',
         icon: 'currency-dollar',
-        title: { nl: 'Revenue & Analytics', en: 'Revenue & Analytics' },
+        title: { nl: 'Omzet', en: 'Revenue' },
         collapsible: true,
         items: [
-          { id: 'analytics', title: { nl: 'Platform Analytics', en: 'Platform Analytics' }, route: '/admin/analytics', icon: 'chart-bar' },
-          { id: 'revenue', title: { nl: 'Revenue Tracking', en: 'Revenue Tracking' }, route: '/admin/revenue', icon: 'trending-up' },
-          { id: 'affiliate', title: { nl: 'Affiliate Performance', en: 'Affiliate Performance' }, route: '/admin/affiliate', icon: 'funnel' }
+          { id: 'analytics', title: { nl: 'Analytics', en: 'Analytics' }, route: '/admin/analytics', icon: 'chart-bar' },
+          { id: 'revenue', title: { nl: 'Omzet', en: 'Revenue' }, route: '/admin/revenue', icon: 'trending-up' },
+          { id: 'affiliate', title: { nl: 'Partners', en: 'Affiliates' }, route: '/admin/affiliate', icon: 'funnel' }
         ]
       },
       {
         id: 'system',
         icon: 'cog',
-        title: { nl: 'System & Operations', en: 'System & Operations' },
+        title: { nl: 'Systeem', en: 'System' },
         collapsible: true,
         items: [
-          { id: 'performance', title: { nl: 'Performance Monitor', en: 'Performance Monitor' }, route: '/admin/performance', icon: 'lightning-bolt' },
-          { id: 'errors', title: { nl: 'Error Tracking', en: 'Error Tracking' }, route: '/admin/errors', icon: 'exclamation-triangle' },
-          { id: 'monitoring', title: { nl: 'Security Monitor', en: 'Security Monitor' }, route: '/admin/monitoring', icon: 'shield-check' }
+          { id: 'performance', title: { nl: 'Performance', en: 'Performance' }, route: '/admin/performance', icon: 'lightning-bolt' },
+          { id: 'errors', title: { nl: 'Errors', en: 'Errors' }, route: '/admin/errors', icon: 'exclamation-triangle' },
+          { id: 'monitoring', title: { nl: 'Security', en: 'Security' }, route: '/admin/monitoring', icon: 'shield-check' }
         ]
       },
       {
         id: 'content',
         icon: 'collection',
-        title: { nl: 'Content & Tools', en: 'Content & Tools' },
+        title: { nl: 'Tools', en: 'Tools' },
         collapsible: true,
         collapsed: true,
         items: [
-          { id: 'components', title: { nl: 'UI Components', en: 'UI Components' }, route: '/admin/component-library', icon: 'template' },
-          { id: 'icons', title: { nl: 'Icon Library', en: 'Icon Library' }, route: '/admin/icons-components', icon: 'sparkles' }
+          { id: 'components', title: { nl: 'Components', en: 'Components' }, route: '/admin/component-library', icon: 'template' },
+          { id: 'icons', title: { nl: 'Icons', en: 'Icons' }, route: '/admin/icons-components', icon: 'sparkles' }
         ]
       }
     ]
@@ -2027,15 +2027,15 @@ function generateAdminNavigationJS() {
       function getContextualActionText(severity, redirectUrl) {
         if (!redirectUrl || redirectUrl === '#') return 'View Details';
         
-        // Map URLs to contextual actions
+        // Map URLs to contextual actions - link to test suite for metrics
         const actionMap = {
-          '/admin/performance': severity === 'warning' ? 'Check Performance' : 'View Metrics',
-          '/admin/errors': 'View Error Logs',
-          '/admin/customers': 'View Customers',
-          '/admin/revenue': 'View Revenue',
-          '/admin/monitoring': 'Check Security',
-          '/admin/analytics': 'View Analytics',
-          '/admin/notifications': 'Manage Alerts'
+          '/admin/performance': 'Run tests',
+          '/admin/errors': 'Check logs', 
+          '/admin/customers': 'View users',
+          '/admin/revenue': 'View data',
+          '/admin/monitoring': 'Check status',
+          '/admin/analytics': 'View stats',
+          '/admin/notifications': 'View all'
         };
         
         // Check exact matches first
