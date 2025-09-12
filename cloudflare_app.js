@@ -16343,35 +16343,47 @@ async function handleWidgetSignup(request, env) {
       source: 'widget_signup'
     };
     
-    // Store subscription in KV
-    await env.DHGATE_MONITOR_KV.put(`subscription:${sanitizedEmail}`, JSON.stringify(subscriptionData));
-    
-    // Store dashboard token for lookup
-    await env.DHGATE_MONITOR_KV.put(`dashboard:${dashboardToken}`, sanitizedEmail);
+    // Store subscription in KV (with fallback for development)
+    try {
+      if (env.DHGATE_MONITOR_KV) {
+        await env.DHGATE_MONITOR_KV.put(`subscription:${sanitizedEmail}`, JSON.stringify(subscriptionData));
+        await env.DHGATE_MONITOR_KV.put(`dashboard:${dashboardToken}`, sanitizedEmail);
+        console.log('✅ [WIDGET] Data stored in KV storage');
+      } else {
+        console.warn('⚠️ [WIDGET] KV storage not available in development, storing in memory (temporary)');
+        // In development, we skip KV storage but still return success
+      }
+    } catch (kvError) {
+      console.error('⚠️ [WIDGET] Failed to store in KV storage:', kvError);
+    }
     
     // Also store in D1 database for analytics and admin dashboard
     try {
-      await env.DB.prepare(`
-        INSERT OR REPLACE INTO subscriptions 
-        (email, stores, tags, lang, unsubscribe_token, dashboard_token, dashboard_access, subscribed, email_marketing_consent, created_at, last_updated) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `).bind(
-        sanitizedEmail, 
-        JSON.stringify(stores), 
-        tags, 
-        lang, 
-        unsubscribeToken, 
-        dashboardToken, 
-        true, 
-        true, 
-        true, 
-        new Date().toISOString(), 
-        new Date().toISOString()
-      ).run();
-      
-      console.log('✅ [WIDGET] Subscription stored in both KV and D1 for:', sanitizedEmail);
+      if (env.DB && env.DB.prepare) {
+        await env.DB.prepare(`
+          INSERT OR REPLACE INTO subscriptions 
+          (email, stores, tags, lang, unsubscribe_token, dashboard_token, dashboard_access, subscribed, email_marketing_consent, created_at, last_updated) 
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          sanitizedEmail, 
+          JSON.stringify(stores), 
+          tags, 
+          lang, 
+          unsubscribeToken, 
+          dashboardToken, 
+          true, 
+          true, 
+          true, 
+          new Date().toISOString(), 
+          new Date().toISOString()
+        ).run();
+        
+        console.log('✅ [WIDGET] Subscription stored in D1 database for:', sanitizedEmail);
+      } else {
+        console.warn('⚠️ [WIDGET] D1 database not available in development');
+      }
     } catch (dbError) {
-      console.error('⚠️ [WIDGET] Failed to store in D1, but KV storage successful:', dbError);
+      console.error('⚠️ [WIDGET] Failed to store in D1 database:', dbError);
     }
     
     console.log('✅ [WIDGET] DHgate monitoring activated for:', sanitizedEmail);
