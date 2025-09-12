@@ -140,26 +140,26 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             --gray-100: ${theme === 'dark' ? '#1E293B' : '#F3F4F6'};
             --gray-200: ${theme === 'dark' ? '#334155' : '#E5E7EB'};
             --gray-300: ${theme === 'dark' ? '#475569' : '#D1D5DB'};
-            --gray-400: (theme === 'dark' ? '#64748B' : '#9CA3AF');
-            --gray-500: (theme === 'dark' ? '#94A3B8' : '#6B7280');
-            --gray-600: (theme === 'dark' ? '#CBD5E1' : '#4B5563');
-            --gray-700: (theme === 'dark' ? '#E2E8F0' : '#374151');
-            --gray-800: (theme === 'dark' ? '#F1F5F9' : '#1F2937');
-            --gray-900: (theme === 'dark' ? '#F8FAFC' : '#111827');
+            --gray-400: ${theme === "dark" ? "#64748B" : "#9CA3AF"};
+            --gray-500: ${theme === "dark" ? "#94A3B8" : "#6B7280"};
+            --gray-600: ${theme === "dark" ? "#CBD5E1" : "#4B5563"};
+            --gray-700: ${theme === "dark" ? "#E2E8F0" : "#374151"};
+            --gray-800: ${theme === "dark" ? "#F1F5F9" : "#1F2937"};
+            --gray-900: ${theme === "dark" ? "#F8FAFC" : "#111827"};
             
             /* Typography */
-            --text-primary: (theme === 'dark' ? '#FFFFFF' : '#111827');
-            --text-secondary: (theme === 'dark' ? '#CBD5E1' : '#4B5563');
-            --text-muted: (theme === 'dark' ? '#94A3B8' : '#6B7280');
+            --text-primary: ${theme === "dark" ? "#FFFFFF" : "#111827"};
+            --text-secondary: ${theme === "dark" ? "#CBD5E1" : "#4B5563"};
+            --text-muted: ${theme === "dark" ? "#94A3B8" : "#6B7280"};
             
             /* Backgrounds */
             --bg-primary: transparent;
-            --bg-secondary: (theme === 'dark' ? 'rgba(30, 41, 59, 0.9)' : 'rgba(255, 255, 255, 0.9)');
-            --bg-card: (theme === 'dark' ? 'rgba(30, 41, 59, 0.95)' : 'rgba(255, 255, 255, 0.95)');
+            --bg-secondary: ${theme === "dark" ? "rgba(30, 41, 59, 0.9)" : "rgba(255, 255, 255, 0.9)"};
+            --bg-card: ${theme === "dark" ? "rgba(30, 41, 59, 0.95)" : "rgba(255, 255, 255, 0.95)"};
             
             /* 2025 Glassmorphism 2.0 */
-            --glass-bg: (theme === 'dark' ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)');
-            --glass-border: (theme === 'dark' ? 'rgba(37, 99, 235, 0.3)' : 'rgba(0, 0, 0, 0.1)');
+            --glass-bg: ${theme === "dark" ? "rgba(15, 23, 42, 0.95)" : "rgba(255, 255, 255, 0.95)"};
+            --glass-border: ${theme === "dark" ? "rgba(37, 99, 235, 0.3)" : "rgba(0, 0, 0, 0.1)"};
             
             /* Fluid Spacing System 2025 */
             --space-1: clamp(0.25rem, 0.2rem + 0.25vw, 0.5rem);
@@ -232,8 +232,8 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             right: var(--space-4);
             display: flex;
             gap: 2px;
-            background: (theme === 'dark' ? 'rgba(30, 41, 59, 0.9)' : 'rgba(255, 255, 255, 0.95)');
-            border: 1px solid (theme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)');
+            background: ${theme === "dark" ? "rgba(30, 41, 59, 0.9)" : "rgba(255, 255, 255, 0.95)"};
+            border: 1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.1)"};
             border-radius: var(--radius-md);
             padding: 2px;
             backdrop-filter: blur(10px);
@@ -244,7 +244,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         .lang-btn {
             background: transparent;
             border: none;
-            color: (theme === 'dark' ? '#94A3B8' : '#6B7280');
+            color: ${theme === "dark" ? "#94A3B8" : "#6B7280"};
             font-size: 0.75rem;
             font-weight: 600;
             padding: var(--space-1) var(--space-2);
@@ -257,8 +257,8 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         }
         
         .lang-btn:hover {
-            color: (theme === 'dark' ? '#CBD5E1' : '#4B5563');
-            background: (theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)');
+            color: ${theme === "dark" ? "#CBD5E1" : "#4B5563"};
+            background: ${theme === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.05)"};
         }
         
         .lang-btn.active {
@@ -271,13 +271,13 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
             font-weight: 700;
             margin-bottom: var(--space-2);
-            color: (theme === 'dark' ? '#FFFFFF' : '#111827');
+            color: ${theme === "dark" ? "#FFFFFF" : "#111827"};
             letter-spacing: -0.025em;
         }
         
         .widget-subtitle {
             font-size: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
-            color: (theme === 'dark' ? '#CBD5E1' : '#4B5563');
+            color: ${theme === "dark" ? "#CBD5E1" : "#4B5563"};
             line-height: 1.6;
             font-weight: 400;
         }
@@ -326,14 +326,14 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: (theme === 'dark' ? 'rgba(30, 41, 59, 0.9)' : 'rgba(255, 255, 255, 0.9)');
-            border: 2px solid (theme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)');
+            background: ${theme === "dark" ? "rgba(30, 41, 59, 0.9)" : "rgba(255, 255, 255, 0.9)"};
+            border: 2px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.1)"};
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 0.875rem;
             font-weight: 600;
-            color: (theme === 'dark' ? '#94A3B8' : '#6B7280');
+            color: ${theme === "dark" ? "#94A3B8" : "#6B7280"};
             transition: var(--transition);
         }
         
@@ -352,7 +352,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         
         .step-label {
             font-size: 0.75rem;
-            color: (theme === 'dark' ? '#94A3B8' : '#6B7280');
+            color: ${theme === "dark" ? "#94A3B8" : "#6B7280"};
             font-weight: 500;
             text-align: center;
         }
@@ -393,16 +393,16 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             display: block;
             font-weight: 600;
             margin-bottom: var(--space-2);
-            color: (theme === 'dark' ? '#FFFFFF' : '#111827');
+            color: ${theme === "dark" ? "#FFFFFF" : "#111827"};
             font-size: 0.875rem;
         }
         
         .form-input {
             width: 100%;
             padding: var(--space-3) var(--space-4);
-            border: 1px solid (theme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)');
+            border: 1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.1)"};
             border-radius: var(--radius-md);
-            background: (theme === 'dark' ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)');
+            background: ${theme === "dark" ? "rgba(30, 41, 59, 0.8)" : "rgba(255, 255, 255, 0.8)"};
             color: var(--text-primary);
             font-size: 1rem;
             min-height: 44px; /* Mobile touch target compliance */
@@ -423,7 +423,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         
         .form-description {
             font-size: 0.875rem;
-            color: (theme === 'dark' ? '#CBD5E1' : '#4B5563');
+            color: ${theme === "dark" ? "#CBD5E1" : "#4B5563"};
             margin-top: var(--space-2);
             line-height: 1.5;
         }
@@ -436,12 +436,12 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         }
         
         .store-card {
-            border: 1px solid (theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)');
+            border: 1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.08)"};
             border-radius: var(--radius-lg);
             padding: var(--space-4);
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: (theme === 'dark' ? 'rgba(30, 41, 59, 0.9)' : 'rgba(255, 255, 255, 0.9)');
+            background: ${theme === "dark" ? "rgba(30, 41, 59, 0.9)" : "rgba(255, 255, 255, 0.9)"};
             backdrop-filter: blur(12px);
             position: relative;
             min-height: 160px;
@@ -572,7 +572,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         
         .store-name {
             font-weight: 600;
-            color: (theme === 'dark' ? '#FFFFFF' : '#111827');
+            color: ${theme === "dark" ? "#FFFFFF" : "#111827"};
             font-size: 0.875rem;
             line-height: 1.3;
             margin-bottom: var(--space-1);
@@ -582,7 +582,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         
         .store-proposition {
             font-size: 0.875rem;
-            color: (theme === 'dark' ? '#CBD5E1' : '#4B5563');
+            color: ${theme === "dark" ? "#CBD5E1" : "#4B5563"};
             margin: var(--space-2) 0 var(--space-3) 0;
             font-weight: 500;
             line-height: 1.4;
@@ -593,16 +593,16 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: (theme === 'dark' ? 'rgba(37, 99, 235, 0.1)' : 'rgba(37, 99, 235, 0.05)');
+            background: ${theme === "dark" ? "rgba(37, 99, 235, 0.1)" : "rgba(37, 99, 235, 0.05)"};
             padding: var(--space-2) var(--space-3);
             border-radius: var(--radius-sm);
-            border: 1px solid (theme === 'dark' ? 'rgba(37, 99, 235, 0.2)' : 'rgba(37, 99, 235, 0.1)');
+            border: 1px solid ${theme === "dark" ? "rgba(37, 99, 235, 0.2)" : "rgba(37, 99, 235, 0.1)"};
             margin-bottom: var(--space-3);
         }
         
         .kpi-label {
             font-size: 0.75rem;
-            color: (theme === 'dark' ? '#94A3B8' : '#6B7280');
+            color: ${theme === "dark" ? "#94A3B8" : "#6B7280"};
             font-weight: 500;
         }
         
@@ -633,9 +633,9 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         .custom-store-section {
             margin-top: var(--space-6);
             padding: var(--space-4);
-            border: 2px dashed (theme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)');
+            border: 2px dashed ${theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.2)"};
             border-radius: var(--radius-md);
-            background: (theme === 'dark' ? 'rgba(30, 41, 59, 0.3)' : 'rgba(255, 255, 255, 0.3)');
+            background: ${theme === "dark" ? "rgba(30, 41, 59, 0.3)" : "rgba(255, 255, 255, 0.3)"};
         }
         
         .custom-store-header {
@@ -645,13 +645,13 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         .custom-store-title {
             font-size: 0.875rem;
             font-weight: 600;
-            color: (theme === 'dark' ? '#FFFFFF' : '#111827');
+            color: ${theme === "dark" ? "#FFFFFF" : "#111827"};
             margin-bottom: var(--space-1);
         }
         
         .custom-store-description {
             font-size: 0.75rem;
-            color: (theme === 'dark' ? '#94A3B8' : '#6B7280');
+            color: ${theme === "dark" ? "#94A3B8" : "#6B7280"};
             line-height: 1.4;
             margin-bottom: var(--space-2);
         }
@@ -660,11 +660,11 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             display: flex;
             align-items: center;
             gap: var(--space-2);
-            color: (theme === 'dark' ? '#94A3B8' : '#6B7280');
+            color: ${theme === "dark" ? "#94A3B8" : "#6B7280"};
             font-size: 0.75rem;
             margin-bottom: var(--space-3);
             padding: var(--space-2);
-            background: (theme === 'dark' ? 'rgba(30, 41, 59, 0.6)' : 'rgba(255, 255, 255, 0.6)');
+            background: ${theme === "dark" ? "rgba(30, 41, 59, 0.6)" : "rgba(255, 255, 255, 0.6)"};
             border-radius: var(--radius-sm);
             border-left: 3px solid var(--primary);
         }
@@ -685,10 +685,10 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             flex: 1;
             min-width: 200px;
             padding: var(--space-2) var(--space-3);
-            border: 1px solid (theme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)');
+            border: 1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.1)"};
             border-radius: var(--radius);
-            background: (theme === 'dark' ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)');
-            color: (theme === 'dark' ? '#FFFFFF' : '#111827');
+            background: ${theme === "dark" ? "rgba(30, 41, 59, 0.8)" : "rgba(255, 255, 255, 0.8)"};
+            color: ${theme === "dark" ? "#FFFFFF" : "#111827"};
             font-size: 0.875rem;
             font-family: inherit;
             min-height: 28px;
@@ -701,7 +701,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         }
         
         .custom-store-input::placeholder {
-            color: (theme === 'dark' ? '#94A3B8' : '#6B7280');
+            color: ${theme === "dark" ? "#94A3B8" : "#6B7280"};
         }
         
         .custom-store-btn {
@@ -737,13 +737,13 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         .success-title {
             font-size: 1.5rem;
             font-weight: 700;
-            color: (theme === 'dark' ? '#FFFFFF' : '#111827');
+            color: ${theme === "dark" ? "#FFFFFF" : "#111827"};
             margin-bottom: var(--space-2);
         }
         
         .success-description {
             font-size: 1rem;
-            color: (theme === 'dark' ? '#CBD5E1' : '#4B5563');
+            color: ${theme === "dark" ? "#CBD5E1" : "#4B5563"};
             margin-bottom: var(--space-8);
             line-height: 1.6;
         }
@@ -755,8 +755,8 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         }
         
         .summary-card {
-            background: (theme === 'dark' ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)');
-            border: 1px solid (theme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)');
+            background: ${theme === "dark" ? "rgba(30, 41, 59, 0.8)" : "rgba(255, 255, 255, 0.8)"};
+            border: 1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.1)"};
             border-radius: var(--radius-md);
             padding: var(--space-4);
             text-align: left;
@@ -776,12 +776,12 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         .summary-card-title {
             font-size: 0.875rem;
             font-weight: 600;
-            color: (theme === 'dark' ? '#FFFFFF' : '#111827');
+            color: ${theme === "dark" ? "#FFFFFF" : "#111827"};
         }
         
         .summary-card-content {
             font-size: 0.875rem;
-            color: (theme === 'dark' ? '#CBD5E1' : '#4B5563');
+            color: ${theme === "dark" ? "#CBD5E1" : "#4B5563"};
             line-height: 1.5;
             word-break: break-word;
         }
@@ -888,17 +888,17 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         }
         
         .btn-secondary {
-            background: (theme === 'dark' ? 'rgba(30, 41, 59, 0.95)' : 'rgba(255, 255, 255, 0.95)');
-            color: (theme === 'dark' ? '#FFFFFF' : '#111827');
-            border: 2px solid (theme === 'dark' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.3)');
+            background: ${theme === "dark" ? "rgba(30, 41, 59, 0.95)" : "rgba(255, 255, 255, 0.95)"};
+            color: ${theme === "dark" ? "#FFFFFF" : "#111827"};
+            border: 2px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.3)"};
             font-weight: 600;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
         .btn-secondary:hover {
-            background: (theme === 'dark' ? 'rgba(30, 41, 59, 1)' : 'rgba(255, 255, 255, 1)');
-            border-color: (theme === 'dark' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.4)');
-            color: (theme === 'dark' ? '#FFFFFF' : '#111827');
+            background: ${theme === "dark" ? "rgba(30, 41, 59, 1)" : "rgba(255, 255, 255, 1)"};
+            border-color: ${theme === "dark" ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.4)"};
+            color: ${theme === "dark" ? "#FFFFFF" : "#111827"};
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
@@ -928,7 +928,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             text-align: center;
             margin-top: var(--space-4);
             padding: var(--space-2);
-            background: (theme === 'dark' ? 'rgba(30, 41, 59, 0.6)' : 'rgba(255, 255, 255, 0.6)');
+            background: ${theme === "dark" ? "rgba(30, 41, 59, 0.6)" : "rgba(255, 255, 255, 0.6)"};
             border-radius: var(--radius);
         }
         
@@ -1057,10 +1057,10 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
     <div class="widget-container">
         <div class="widget-header">
             <div class="language-switch">
-                <button class="lang-btn ${lang === "nl" ? "active" : ""})" onclick="switchLanguage('nl')" aria-label="Switch to Dutch">
+                <button class="lang-btn ${lang === "nl" ? "active" : ""}" onclick="switchLanguage('nl')" aria-label="Switch to Dutch">
                     NL
                 </button>
-                <button class="lang-btn (lang === 'en' ? 'active' : '')" onclick="switchLanguage('en')" aria-label="Switch to English">
+                <button class="lang-btn ${lang === 'en' ? 'active' : ''}" onclick="switchLanguage('en')" aria-label="Switch to English">
                     EN
                 </button>
             </div>
@@ -1128,7 +1128,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                 <div class="store-selection-group">
                 <div class="store-grid">
                     ${aiStores.map(store => `
-                            <div class="store-card" data-store-id="(store.id)" onclick="selectStore((store.id))" tabindex="0" role="button" aria-label="(lang === 'nl' ? 'Selecteer' : 'Select') (store.name)" style="--store-bg-image: url('(store.backgroundImage)')">
+                            <div class="store-card" data-store-id="${store.id}" onclick="selectStore(${store.id})" tabindex="0" role="button" aria-label="${lang === 'nl' ? 'Selecteer' : 'Select'} ${store.name}" style="--store-bg-image: url('${store.backgroundImage}')">
                             <div class="ai-badge">${t.aiPowered}</div>
                             <div class="store-check" aria-hidden="true">✓</div>
                                 
@@ -1153,30 +1153,30 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                                         `}
                                     </div>
                                     <div class="store-name-container">
-                                <div class="store-name">(store.name)</div>
+                                <div class="store-name">${store.name}</div>
                                         ${store.verified ? `<div class="verified-badge">
                                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                             </svg>
-                                            (lang === 'nl' ? 'Geverifieerd' : 'Verified')
+                                            ${lang === 'nl' ? 'Geverifieerd' : 'Verified'}
                                         </div>` : ''}
                             </div>
                                 </div>
                                 
-                                                                <div class="store-proposition">(store.reason)</div>
+                                                                <div class="store-proposition">${store.reason}</div>
                                 
                                 <div class="store-kpi">
-                                    <span class="kpi-label">(store.kpiLabel)</span>
-                                    <span class="kpi-value">(store.kpi)</span>
+                                    <span class="kpi-label">${store.kpiLabel}</span>
+                                    <span class="kpi-value">${store.kpi}</span>
                                 </div>
                                 
                                 <div class="store-actions">
-                                    <a href="(store.id === 1 ? 'https://www.dhgate.com/store/products/20522858.html' : store.id === 2 ? 'https://www.dhgate.com/store/top-selling/19846261.html' : 'https://www.dhgate.com/store/21168508')" 
+                                    <a href="${store.id === 1 ? 'https://www.dhgate.com/store/products/20522858.html' : store.id === 2 ? 'https://www.dhgate.com/store/top-selling/19846261.html' : 'https://www.dhgate.com/store/21168508'}" 
                                        target="_blank" 
                                        class="store-link-minimal" 
                                        onclick="event.stopPropagation()"
-                                       aria-label="(lang === 'nl' ? 'Bekijk' : 'View') (store.name) (lang === 'nl' ? 'op DHgate' : 'on DHgate')">
-                                        (lang === 'nl' ? 'Bekijk winkel' : 'View store')
+                                       aria-label="${lang === 'nl' ? 'Bekijk' : 'View'} ${store.name} ${lang === 'nl' ? 'op DHgate' : 'on DHgate'}">
+                                        ${lang === 'nl' ? 'Bekijk winkel' : 'View store'}
                                     </a>
                             </div>
                         </div>
@@ -1195,7 +1195,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3"/>
                                 <line x1="12" y1="17" x2="12.01" y2="17"/>
                             </svg>
-                            <span>(lang === 'nl' ? 'Format: https://www.dhgate.com/store/[winkelnaam]' : 'Format: https://www.dhgate.com/store/[storename]')</span>
+                            <span>${lang === 'nl' ? 'Format: https://www.dhgate.com/store/[winkelnaam]' : 'Format: https://www.dhgate.com/store/[storename]'}</span>
                         </div>
                     </div>
                     
@@ -1347,12 +1347,12 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         let selectedStores = [];
         let customStores = [];
         let dashboardKey = null;
-        const stores = (JSON.stringify(aiStores));
+        const stores = ${JSON.stringify(aiStores)};
         
         // Language detection with URL parameter override
         const urlParams = new URLSearchParams(window.location.search);
         const urlLang = urlParams.get('lang');
-        let lang = urlLang && ['nl', 'en'].includes(urlLang) ? urlLang : '(lang)';
+        let lang = urlLang && ['nl', 'en'].includes(urlLang) ? urlLang : '${lang}';
         
         // Language switching function
         function switchLanguage(newLang) {
@@ -1735,7 +1735,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                         '<rect x="14" y="14" width="7" height="7"/>' +
                         '<rect x="3" y="14" width="7" height="7"/>' +
                     '</svg>' +
-                    ${t.dashboardButton}; 
+                    '${t.dashboardButton}'; 
             }
             
             // Clear errors
