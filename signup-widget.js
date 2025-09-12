@@ -1403,11 +1403,17 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         
         // Navigation functions
         function nextStep() {
+            console.log('🔄 [WIDGET] Attempting to go to next step from:', currentStep);
             if (validateCurrentStep()) {
                 if (currentStep < 4) {
                     currentStep++;
+                    console.log('✅ [WIDGET] Moving to step:', currentStep);
                     updateStep();
+                } else {
+                    console.log('⚠️ [WIDGET] Already at final step');
                 }
+            } else {
+                console.log('❌ [WIDGET] Validation failed for step:', currentStep);
             }
         }
         
@@ -1460,13 +1466,19 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         
         function validateCurrentStep() {
             clearAllErrors();
+            console.log('🔍 [WIDGET] Validating step:', currentStep);
             
             if (currentStep === 1) {
-                const email = document.getElementById('email-input').value;
-                if (!email || !email.includes('@')) {
-                    showError('email-error', lang === 'nl' ? 'Voer een geldig email adres in' : 'Please enter a valid email address');
+                const email = document.getElementById('email-input').value.trim();
+                console.log('📧 [WIDGET] Email value:', email);
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!email || !emailRegex.test(email)) {
+                    console.log('❌ [WIDGET] Email validation failed');
+                    showError('email-error', lang === 'nl' ? 'Voer een geldig email adres in (bijv. naam@example.com)' : 'Please enter a valid email address (e.g. name@example.com)');
+                    document.getElementById('email-input').focus();
                     return false;
                 }
+                console.log('✅ [WIDGET] Email validation passed');
             } else if (currentStep === 2) {
                 if (selectedStores.length === 0 && customStores.length === 0) {
                     showError('store-error', lang === 'nl' ? 'Selecteer minimaal één winkel of voeg een eigen winkel toe' : 'Please select at least one store or add a custom store');
