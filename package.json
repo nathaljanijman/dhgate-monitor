@@ -33,7 +33,9 @@
     "build:analyze": "webpack --config .bundleanalyzer.js",
     "build:stats": "webpack --config webpack.config.js --json > build-stats.json",
     "optimize": "npm run build && npm run build:analyze",
-    "perf:check": "node scripts/performance-check.cjs"
+    "perf:check": "node scripts/performance-check.cjs",
+    "changelog:auto": "node scripts/auto-changelog.js",
+    "deploy:changelog": "npm run deploy && npm run changelog:auto"
   },
   "repository": {
     "type": "git",

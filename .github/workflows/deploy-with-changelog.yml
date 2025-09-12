@@ -1,0 +1,195 @@
+name: Deploy with Automatic Changelog
+
+on:
+  push:
+    branches: [main]
+    # Only trigger on production-ready commits
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - '.github/**'
+  
+  # Manual trigger for releases  
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 2.1.0)'
+        required: false
+        default: 'auto'
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+env:
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+jobs:
+  # Test suite before deployment
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full git history for changelog
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run linting
+        run: npm run lint
+        
+      - name: Run test suite
+        run: npm run test:qa:full
+        
+      - name: Performance check
+        run: npm run perf:check
+
+  # Deploy to staging first
+  deploy-staging:
+    name: Deploy to Staging
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install Wrangler
+        run: npm install -g wrangler@latest
+        
+      - name: Deploy to staging
+        run: wrangler deploy --env staging
+        
+      - name: Wait for deployment propagation
+        run: sleep 30
+        
+      - name: Test staging deployment
+        run: |
+          curl -f https://dhgate-monitor-staging.nathaljanijman.workers.dev/admin/login || exit 1
+          echo "✅ Staging deployment successful"
+
+  # Deploy to production with changelog
+  deploy-production:
+    name: Deploy to Production & Generate Changelog
+    needs: [test, deploy-staging]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history needed for changelog
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Wrangler
+        run: npm install -g wrangler@latest
+        
+      - name: Deploy to production
+        run: wrangler deploy --env production
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          
+      - name: Wait for deployment propagation
+        run: sleep 60
+        
+      - name: Verify production deployment
+        run: |
+          curl -f https://dhgate-monitor.nathaljanijman.workers.dev/admin/login || exit 1
+          echo "✅ Production deployment successful"
+          
+      - name: Generate automatic changelog
+        run: node scripts/auto-changelog.js
+        env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+          CHANGELOG_API_ENDPOINT: https://dhgate-monitor.nathaljanijman.workers.dev/admin/api/changelog/create
+          COMMIT_RANGE: ${{ github.event.before }}..${{ github.sha }}
+        continue-on-error: true  # Don't fail deployment if changelog fails
+        
+      - name: Test public changelog
+        run: |
+          curl -f https://dhgate-monitor.nathaljanijman.workers.dev/newsroom/changelog || exit 1
+          curl -f https://dhgate-monitor.nathaljanijman.workers.dev/api/changelog/latest || exit 1
+          echo "✅ Public changelog accessible"
+          
+      - name: Commit updated changelog (if needed)
+        run: |
+          if [[ -n $(git status --porcelain docs/CHANGELOG.md) ]]; then
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add docs/CHANGELOG.md
+            git commit -m "📝 Auto-update changelog for $(date +%Y-%m-%d) deployment
+
+            - Generated from production deployment
+            - Includes latest commit messages and changes
+            - Auto-published to /newsroom/changelog
+
+            [skip ci]"
+            git push
+          else
+            echo "No changelog updates needed"
+          fi
+        continue-on-error: true
+
+  # Health check and notification
+  post-deployment:
+    name: Post-Deployment Checks
+    needs: deploy-production
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Final health check
+        run: |
+          echo "🔍 Running post-deployment health checks..."
+          
+          # Check main site
+          curl -f https://dhgate-monitor.nathaljanijman.workers.dev || exit 1
+          
+          # Check admin dashboard  
+          curl -f https://dhgate-monitor.nathaljanijman.workers.dev/admin/dashboard || exit 1
+          
+          # Check API endpoints
+          curl -f https://dhgate-monitor.nathaljanijman.workers.dev/api/health || exit 1
+          curl -f https://dhgate-monitor.nathaljanijman.workers.dev/api/changelog/latest || exit 1
+          
+          echo "✅ All health checks passed!"
+          
+      - name: Notify deployment success
+        if: success()
+        run: |
+          echo "🎉 Deployment completed successfully!"
+          echo "🌐 Production: https://dhgate-monitor.nathaljanijman.workers.dev"
+          echo "📝 Changelog: https://dhgate-monitor.nathaljanijman.workers.dev/newsroom/changelog"
+          echo "🎛️ Admin: https://dhgate-monitor.nathaljanijman.workers.dev/admin/dashboard"
+          
+      - name: Notify deployment failure  
+        if: failure()
+        run: |
+          echo "❌ Deployment failed! Check logs for details."
+          echo "🔄 Consider rolling back or fixing issues."
+          exit 1
