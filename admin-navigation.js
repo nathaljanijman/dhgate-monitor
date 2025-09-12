@@ -15,31 +15,27 @@ const ADMIN_NAVIGATION_CONFIG = {
   sidebar: {
     sections: [
       {
-        id: 'overview',
+        id: 'core',
         icon: 'dashboard',
-        title: { nl: 'Overzicht', en: 'Overview' },
+        title: { nl: 'Dashboard', en: 'Dashboard' },
         items: [
-          { id: 'dashboard', title: { nl: 'Admin Dashboard', en: 'Admin Dashboard' }, route: '/admin/dashboard', icon: 'chart-line' },
-          { id: 'notifications', title: { nl: '🔔 Meldingen', en: '🔔 Notifications' }, route: '/admin/notifications', icon: 'bell', prominent: true }
+          { id: 'dashboard', title: { nl: 'Admin Dashboard', en: 'Admin Dashboard' }, route: '/admin/dashboard', icon: 'chart-line' }
         ]
       },
       {
-        id: 'business-intelligence',
-        icon: 'analytics',
-        title: { nl: 'Business Intelligence', en: 'Business Intelligence' },
-        collapsible: true,
+        id: 'alerts',
+        icon: 'bell',
+        title: { nl: 'Meldingen', en: 'Notifications' },
         items: [
-          { id: 'analytics', title: { nl: 'Platform Analytics', en: 'Platform Analytics' }, route: '/admin/analytics', icon: 'chart-bar' },
-          { id: 'revenue', title: { nl: 'Revenue Tracking', en: 'Revenue Tracking' }, route: '/admin/revenue', icon: 'currency-dollar' },
-          { id: 'affiliate', title: { nl: 'Affiliate Performance', en: 'Affiliate Performance' }, route: '/admin/affiliate', icon: 'trending-up' },
-          { id: 'conversion', title: { nl: 'Conversion Funnel', en: 'Conversion Funnel' }, route: '/admin/conversions', icon: 'funnel' }
+          { id: 'notifications', title: { nl: 'Live Alerts', en: 'Live Alerts' }, route: '/admin/notifications', icon: 'bell', prominent: true, badge: true }
         ]
       },
       {
-        id: 'user-management',
+        id: 'growth',
         icon: 'users',
-        title: { nl: 'Gebruikersmanagement', en: 'User Management' },
+        title: { nl: 'Users & Growth', en: 'Users & Growth' },
         collapsible: true,
+        defaultExpanded: true,
         items: [
           { id: 'customers', title: { nl: 'Customer Accounts', en: 'Customer Accounts' }, route: '/admin/customers', icon: 'user-group' },
           { id: 'subscriptions', title: { nl: 'Subscriptions', en: 'Subscriptions' }, route: '/admin/subscriptions', icon: 'credit-card' },
@@ -47,26 +43,36 @@ const ADMIN_NAVIGATION_CONFIG = {
         ]
       },
       {
-        id: 'system-operations',
+        id: 'revenue',
+        icon: 'currency-dollar',
+        title: { nl: 'Revenue & Analytics', en: 'Revenue & Analytics' },
+        collapsible: true,
+        items: [
+          { id: 'analytics', title: { nl: 'Platform Analytics', en: 'Platform Analytics' }, route: '/admin/analytics', icon: 'chart-bar' },
+          { id: 'revenue', title: { nl: 'Revenue Tracking', en: 'Revenue Tracking' }, route: '/admin/revenue', icon: 'trending-up' },
+          { id: 'affiliate', title: { nl: 'Affiliate Performance', en: 'Affiliate Performance' }, route: '/admin/affiliate', icon: 'funnel' }
+        ]
+      },
+      {
+        id: 'system',
         icon: 'cog',
-        title: { nl: 'Systeembeheer', en: 'System Operations' },
+        title: { nl: 'System & Operations', en: 'System & Operations' },
         collapsible: true,
         items: [
           { id: 'performance', title: { nl: 'Performance Monitor', en: 'Performance Monitor' }, route: '/admin/performance', icon: 'lightning-bolt' },
           { id: 'errors', title: { nl: 'Error Tracking', en: 'Error Tracking' }, route: '/admin/errors', icon: 'exclamation-triangle' },
-          { id: 'monitoring', title: { nl: 'Service Monitoring', en: 'Service Monitoring' }, route: '/admin/monitoring', icon: 'shield-check' },
-          { id: 'configuration', title: { nl: 'System Config', en: 'System Config' }, route: '/admin/config', icon: 'adjustments' }
+          { id: 'monitoring', title: { nl: 'Security Monitor', en: 'Security Monitor' }, route: '/admin/monitoring', icon: 'shield-check' }
         ]
       },
       {
-        id: 'content-management',
+        id: 'content',
         icon: 'collection',
-        title: { nl: 'Content Beheer', en: 'Content Management' },
+        title: { nl: 'Content & Tools', en: 'Content & Tools' },
         collapsible: true,
+        collapsed: true,
         items: [
           { id: 'components', title: { nl: 'UI Components', en: 'UI Components' }, route: '/admin/component-library', icon: 'template' },
-          { id: 'icons', title: { nl: 'Icon Library', en: 'Icon Library' }, route: '/admin/icons-components', icon: 'sparkles' },
-          { id: 'emails', title: { nl: 'Email Templates', en: 'Email Templates' }, route: '/admin/email-templates', icon: 'mail-open' }
+          { id: 'icons', title: { nl: 'Icon Library', en: 'Icon Library' }, route: '/admin/icons-components', icon: 'sparkles' }
         ]
       }
     ]
@@ -143,11 +149,13 @@ function generateAdminSidebarNavigation(currentRoute = '/admin/dashboard', lang 
   const sections = ADMIN_NAVIGATION_CONFIG.sidebar.sections.map(section => {
     const sectionTitle = section.title[lang] || section.title['nl'];
     const isCollapsible = section.collapsible || false;
+    const isCollapsed = section.collapsed === true && !section.defaultExpanded;
     const sectionId = `admin-nav-section-${section.id}`;
     
     const items = section.items.map(item => {
       const itemTitle = item.title[lang] || item.title['nl'];
       const isActive = currentRoute === item.route || currentRoute.startsWith(item.route + '/');
+      const hasBadge = item.badge === true;
       
       return `
         <li class="admin-nav-item ${isActive ? 'active' : ''} ${item.prominent ? 'prominent' : ''}" role="none">
@@ -159,6 +167,7 @@ function generateAdminSidebarNavigation(currentRoute = '/admin/dashboard', lang 
              aria-label="${itemTitle} ${isActive ? '(huidige pagina)' : ''}">
             <span class="admin-nav-icon" aria-hidden="true">${ADMIN_ICONS[item.icon] || ADMIN_ICONS.template}</span>
             <span class="admin-nav-text">${itemTitle}</span>
+            ${hasBadge ? '<span class="admin-nav-badge" aria-label="New alerts">4</span>' : ''}
             ${isActive ? '<span class="admin-nav-indicator" aria-hidden="true"></span>' : ''}
           </a>
         </li>
@@ -166,7 +175,7 @@ function generateAdminSidebarNavigation(currentRoute = '/admin/dashboard', lang 
     }).join('');
     
     return `
-      <div class="admin-nav-section" 
+      <div class="admin-nav-section ${isCollapsed ? 'collapsed' : ''}" 
            data-section="${section.id}"
            role="group"
            aria-labelledby="admin-section-${section.id}-header">
@@ -175,7 +184,7 @@ function generateAdminSidebarNavigation(currentRoute = '/admin/dashboard', lang 
              ${isCollapsible ? `
                data-toggle-section="${sectionId}"
                role="button"
-               aria-expanded="true"
+               aria-expanded="${!isCollapsed ? 'true' : 'false'}"
                aria-controls="${sectionId}"
                tabindex="0"
                aria-label="${sectionTitle} sectie ${isCollapsible ? 'inklappen/uitklappen' : ''}"
@@ -468,18 +477,27 @@ function generateAdminDashboardHeader(currentRoute = '/admin/dashboard', lang = 
 // ============================================================================
 
 function generateAdminNavigationCSS(theme = 'light') {
-  // UNIFIED COLOR SYSTEM - Aligned with Tailwind config and brand identity
+  // ENHANCED UX DESIGN SYSTEM - Better contrast and spacing
+  const spacing = {
+    xs: '4px',   // tight spacing
+    sm: '8px',   // default spacing  
+    md: '16px',  // section spacing
+    lg: '24px',  // major spacing
+    xl: '32px'   // section breaks
+  };
+  
   const colors = theme === 'dark' ? {
-    // Dark theme colors (matching Tailwind config exactly)
-    bg: '#0F172A',           // bg-primary from Tailwind
-    bgSecondary: '#1E293B',  // bg-secondary from Tailwind  
-    bgTertiary: '#334155',   // bg-tertiary from Tailwind
-    bgCard: '#1E293B',       // bg-card from Tailwind
-    text: '#F8FAFC',         // text-primary from Tailwind
-    textSecondary: '#CBD5E1', // text-secondary from Tailwind
-    textMuted: '#64748B',    // text-muted from Tailwind
-    border: '#334155',       // border-light from Tailwind
-    borderLight: '#475569',  // border-medium from Tailwind
+    // Dark theme colors - Enhanced contrast ratios
+    bg: '#0F172A',           
+    bgSecondary: '#1E293B',  
+    bgTertiary: '#334155',   
+    bgCard: '#1E293B',       
+    text: '#F8FAFC',         // 87% opacity - improved readability
+    textSecondary: '#E2E8F0', // 60% opacity - improved from CBD5E1
+    textMuted: '#94A3B8',    // Improved from 64748B for better readability
+    border: '#334155',       
+    borderLight: '#475569',  
+    borderMedium: '#64748B', // 12% opacity improvement
     // BRAND COLORS - Consistent with logo and Tailwind
     primary: '#2563EB',      // Blue-600 (logo primary)
     primaryHover: '#1D4ED8', // Blue-700
@@ -494,16 +512,17 @@ function generateAdminNavigationCSS(theme = 'light') {
     offline: '#EF4444',      // Red-500
     success: '#10B981'       // Emerald-500
   } : {
-    // Light theme colors
+    // Light theme colors - Enhanced contrast
     bg: '#FFFFFF',
     bgSecondary: '#F8FAFC',
     bgTertiary: '#E2E8F0',
     bgCard: '#FFFFFF',
-    text: '#1A202C',
-    textSecondary: '#4A5568',
-    textMuted: '#718096',
+    text: '#1E293B',         // 87% opacity equivalent
+    textSecondary: '#475569', // 60% opacity - improved contrast  
+    textMuted: '#64748B',    // Better readability
     border: '#E2E8F0',
-    borderLight: '#CBD5E0',
+    borderLight: '#F1F5F9',
+    borderMedium: '#CBD5E1', // 12% opacity improvement
     // BRAND COLORS - Consistent across themes
     primary: '#2563EB',      // Blue-600 (logo primary)
     primaryHover: '#1D4ED8', // Blue-700
@@ -648,14 +667,14 @@ function generateAdminNavigationCSS(theme = 'light') {
       }
       
       .admin-nav-section {
-        margin-bottom: 1.5rem;
+        margin-bottom: ${spacing.xl}; /* 32px - major section spacing */
       }
       
       .admin-nav-section-header {
-        padding: 0.75rem 1.25rem;
+        padding: ${spacing.md} ${spacing.lg}; /* 16px 24px - better proportions */
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: ${spacing.sm}; /* 8px - consistent spacing */
         cursor: default;
         color: ${colors.textSecondary};
         font-size: 0.8125rem;
@@ -711,14 +730,14 @@ function generateAdminNavigationCSS(theme = 'light') {
       
       .admin-nav-item {
         position: relative;
-        margin: 0 0.5rem 0.25rem 0.5rem;
+        margin: 0 ${spacing.md} ${spacing.xs} ${spacing.md}; /* 0 16px 4px 16px - better proportions */
       }
       
       .admin-nav-link {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        padding: 0.75rem 1rem;
+        gap: ${spacing.sm}; /* 8px - consistent spacing */
+        padding: ${spacing.sm} ${spacing.md}; /* 8px 16px - more balanced */
         color: ${colors.textSecondary};
         text-decoration: none;
         transition: all 0.2s ease;
@@ -767,6 +786,22 @@ function generateAdminNavigationCSS(theme = 'light') {
         height: 18px;
         fill: currentColor;
         flex-shrink: 0;
+      }
+      
+      .admin-nav-badge {
+        background: ${colors.accent};
+        color: white;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        padding: 0.125rem 0.375rem;
+        border-radius: 10px;
+        margin-left: auto;
+        min-width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
       }
       
       .admin-nav-text {
@@ -1985,6 +2020,48 @@ function generateAdminNavigationJS() {
       }
       
       // ============================================================================
+      // CONTEXTUAL ACTION HELPERS
+      // ============================================================================
+      
+      // Get contextual action text based on notification type and redirect URL
+      function getContextualActionText(severity, redirectUrl) {
+        if (!redirectUrl || redirectUrl === '#') return 'View Details';
+        
+        // Map URLs to contextual actions
+        const actionMap = {
+          '/admin/performance': severity === 'warning' ? 'Check Performance' : 'View Metrics',
+          '/admin/errors': 'View Error Logs',
+          '/admin/customers': 'View Customers',
+          '/admin/revenue': 'View Revenue',
+          '/admin/monitoring': 'Check Security',
+          '/admin/analytics': 'View Analytics',
+          '/admin/notifications': 'Manage Alerts'
+        };
+        
+        // Check exact matches first
+        if (actionMap[redirectUrl]) {
+          return actionMap[redirectUrl];
+        }
+        
+        // Check partial matches
+        for (const [path, action] of Object.entries(actionMap)) {
+          if (redirectUrl.includes(path)) {
+            return action;
+          }
+        }
+        
+        // Fallback based on severity
+        const severityMap = {
+          'success': 'View Report',
+          'warning': 'Check Issue',
+          'error': 'Fix Problem',
+          'info': 'View Details'
+        };
+        
+        return severityMap[severity] || 'View Details';
+      }
+      
+      // ============================================================================
       // AUTO-REFRESH NOTIFICATION SYSTEM
       // ============================================================================
       
@@ -2112,7 +2189,7 @@ function generateAdminNavigationJS() {
                   <a href="\${notification.redirectUrl || '#'}" 
                      class="notification-action-btn primary"
                      onclick="markNotificationRead('\${notification.id}')">
-                    View Details
+                    \${getContextualActionText(notification.severity, notification.redirectUrl)}
                   </a>
                   <button class="notification-action-btn secondary" 
                           onclick="markNotificationRead('\${notification.id}')">
