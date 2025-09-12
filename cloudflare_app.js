@@ -8847,21 +8847,38 @@ async function handleDashboard(request, env) {
     const lang = url.searchParams.get('lang') || 'nl';
     const theme = url.searchParams.get('theme') || 'light';
     
-    // Validate dashboard key
-    if (!dashboardKey) {
-      return new Response(generateDashboardErrorHTML(lang, theme, 'missing_key'), {
-        status: 400,
-        headers: { 'Content-Type': 'text/html' }
-      });
-    }
+    // Development mode fallback - allow dashboard access without valid tokens
+    let subscription = null;
     
-    // Get subscription by dashboard token
-    const subscription = await getSubscriptionByDashboardToken(env, dashboardKey);
-    if (!subscription || !subscription.dashboard_access) {
-      return new Response(generateDashboardErrorHTML(lang, theme, 'invalid_key'), {
-        status: 404,
-        headers: { 'Content-Type': 'text/html' }
-      });
+    if (!env.DHGATE_MONITOR_KV) {
+      // Development mode - create demo subscription
+      console.log('🔧 [DEV] Dashboard accessed in development mode without KV storage');
+      subscription = {
+        email: 'demo@dhgate-monitor.com',
+        stores: ['Demo Store', 'Test Store'],
+        tags: 'smartphone, gadgets',
+        lang: lang,
+        dashboard_access: true,
+        subscribed: true,
+        created_at: new Date().toISOString()
+      };
+    } else {
+      // Production mode - validate dashboard key
+      if (!dashboardKey) {
+        return new Response(generateDashboardErrorHTML(lang, theme, 'missing_key'), {
+          status: 400,
+          headers: { 'Content-Type': 'text/html' }
+        });
+      }
+      
+      // Get subscription by dashboard token
+      subscription = await getSubscriptionByDashboardToken(env, dashboardKey);
+      if (!subscription || !subscription.dashboard_access) {
+        return new Response(generateDashboardErrorHTML(lang, theme, 'invalid_key'), {
+          status: 404,
+          headers: { 'Content-Type': 'text/html' }
+        });
+      }
     }
     
     const t = getTranslations(lang);
