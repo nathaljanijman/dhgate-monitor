@@ -5364,6 +5364,7 @@ async function getCombinedNewsroomArticles(env, lang, options = {}) {
   const { limit = 20, search = '', category = '', tag = '', sort = 'newest' } = options;
   
   let articles = [];
+  let hasChangelogEntries = false;
   
   // Fetch Prepr CMS articles
   try {
@@ -5388,6 +5389,7 @@ async function getCombinedNewsroomArticles(env, lang, options = {}) {
       const changelogEntries = JSON.parse(changelogList);
       const changelogArticles = convertChangelogToArticles(changelogEntries, lang);
       articles = articles.concat(changelogArticles);
+      hasChangelogEntries = true;
     }
   } catch (error) {
     console.warn('Failed to fetch changelog entries:', error.message);
@@ -5431,7 +5433,7 @@ async function getCombinedNewsroomArticles(env, lang, options = {}) {
   return {
     articles: filteredArticles.slice(0, limit),
     total: filteredArticles.length,
-    hasChangelog: changelogList !== null
+    hasChangelog: hasChangelogEntries
   };
 }
 
