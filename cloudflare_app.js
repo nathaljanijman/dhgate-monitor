@@ -5299,6 +5299,142 @@ async function handleCreateChangelogEntry(request, env) {
   }
 }
 
+// Convert changelog entries to article format for newsroom integration
+function convertChangelogToArticles(changelogEntries, lang) {
+  return changelogEntries.map(entry => {
+    const publishDate = new Date(entry.published || entry.date);
+    const dateString = publishDate.toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    
+    // Generate content from changelog entry
+    let content = `<div class="changelog-entry">`;
+    content += `<h2>${entry.title}</h2>`;
+    content += `<p class="description">${entry.description}</p>`;
+    
+    if (entry.features && entry.features.length > 0) {
+      content += `<h3>${lang === 'nl' ? '✨ Nieuwe Features' : '✨ New Features'}</h3><ul>`;
+      entry.features.forEach(feature => {
+        content += `<li>${feature.message} <code>(${feature.hash})</code></li>`;
+      });
+      content += `</ul>`;
+    }
+    
+    if (entry.improvements && entry.improvements.length > 0) {
+      content += `<h3>${lang === 'nl' ? '🔧 Verbeteringen' : '🔧 Improvements'}</h3><ul>`;
+      entry.improvements.forEach(improvement => {
+        content += `<li>${improvement.message} <code>(${improvement.hash})</code></li>`;
+      });
+      content += `</ul>`;
+    }
+    
+    if (entry.fixes && entry.fixes.length > 0) {
+      content += `<h3>${lang === 'nl' ? '🐛 Bug Fixes' : '🐛 Bug Fixes'}</h3><ul>`;
+      entry.fixes.forEach(fix => {
+        content += `<li>${fix.message} <code>(${fix.hash})</code></li>`;
+      });
+      content += `</ul>`;
+    }
+    
+    content += `</div>`;
+    
+    return {
+      id: `changelog-${entry.id}`,
+      title: `${lang === 'nl' ? 'Versie' : 'Version'} ${entry.version}: ${entry.title}`,
+      slug: `changelog-${entry.version.replace(/\./g, '-')}`,
+      excerpt: entry.description.substring(0, 200) + '...',
+      content: content,
+      published_at: entry.published || entry.date,
+      updated_at: entry.published || entry.date,
+      publishDate: dateString,
+      author: entry.author || 'DHgate Monitor Team',
+      category: lang === 'nl' ? 'Platform Update' : 'Platform Update',
+      tags: ['changelog', 'release', 'update'],
+      readTime: Math.ceil(content.length / 1000) || 3,
+      isChangelog: true,
+      version: entry.version
+    };
+  });
+}
+
+// Get combined articles from both Prepr CMS and changelog entries
+async function getCombinedNewsroomArticles(env, lang, options = {}) {
+  const { limit = 20, search = '', category = '', tag = '', sort = 'newest' } = options;
+  
+  let articles = [];
+  
+  // Fetch Prepr CMS articles
+  try {
+    const { articles: preprArticles, total: preprTotal } = await fetchPreprArticles({
+      limit: 30,
+      offset: 0,
+      search,
+      category: category === 'Platform Update' ? '' : category, // Exclude platform updates from Prepr
+      tag: tag === 'changelog' ? '' : tag, // Exclude changelog tags from Prepr
+      sort,
+      lang
+    });
+    articles = articles.concat(preprArticles || []);
+  } catch (error) {
+    console.warn('Failed to fetch Prepr articles:', error.message);
+  }
+  
+  // Fetch changelog entries
+  try {
+    const changelogList = await env.DHGATE_MONITOR_KV?.get('changelog:latest');
+    if (changelogList) {
+      const changelogEntries = JSON.parse(changelogList);
+      const changelogArticles = convertChangelogToArticles(changelogEntries, lang);
+      articles = articles.concat(changelogArticles);
+    }
+  } catch (error) {
+    console.warn('Failed to fetch changelog entries:', error.message);
+  }
+  
+  // Apply local filtering
+  let filteredArticles = articles.filter(article => {
+    // Search filter
+    if (search && !article.title.toLowerCase().includes(search.toLowerCase()) && 
+        !article.excerpt.toLowerCase().includes(search.toLowerCase())) {
+      return false;
+    }
+    
+    // Category filter
+    if (category && article.category !== category) {
+      return false;
+    }
+    
+    // Tag filter
+    if (tag && !article.tags.includes(tag)) {
+      return false;
+    }
+    
+    return true;
+  });
+  
+  // Sort articles
+  filteredArticles.sort((a, b) => {
+    const dateA = new Date(a.published_at);
+    const dateB = new Date(b.published_at);
+    
+    switch (sort) {
+      case 'oldest':
+        return dateA - dateB;
+      case 'newest':
+      default:
+        return dateB - dateA;
+    }
+  });
+  
+  return {
+    articles: filteredArticles.slice(0, limit),
+    total: filteredArticles.length,
+    hasChangelog: changelogList !== null
+  };
+}
+
 // Handle public changelog API (no authentication required)
 async function handlePublicChangelogAPI(request, env) {
   try {
@@ -9714,34 +9850,17 @@ async function handleNewsroomPage(request, env) {
   const articlesPerPage = 5;
   const offset = (page - 1) * articlesPerPage;
   
-  const { articles: allArticles, total } = await fetchPreprArticles({
-    limit: 50, // Get more to allow for local filtering
-    offset: 0,
+  const { articles: allArticles, total, hasChangelog } = await getCombinedNewsroomArticles(env, lang, {
+    limit: 50, // Get more for pagination
     search,
     category,
     tag,
-    sort,
-    lang
-  });
-  
-  // Local filtering (could be moved to GraphQL query for better performance)
-  const filteredArticles = allArticles.filter(article => {
-    if (search && !article.title.toLowerCase().includes(search.toLowerCase()) && 
-        !article.excerpt.toLowerCase().includes(search.toLowerCase())) {
-      return false;
-    }
-
-    if (tag && !article.tags.includes(tag)) {
-      return false;
-    }
-    return true;
+    sort
   });
   
   // Pagination
-  const finalTotalPages = Math.ceil(filteredArticles.length / articlesPerPage);
-  
-  // Use only Prepr articles - no fallbacks
-  const finalArticles = filteredArticles.slice(offset, offset + articlesPerPage);
+  const finalTotalPages = Math.ceil(total / articlesPerPage);
+  const finalArticles = allArticles.slice(offset, offset + articlesPerPage);
   
   const t = lang === 'nl' ? {
     title: 'Newsroom',
@@ -9749,6 +9868,7 @@ async function handleNewsroomPage(request, env) {
     searchPlaceholder: 'Zoek in artikelen...',
     filterAll: 'Alle categorieën',
     filterProductUpdates: 'Product update',
+    filterPlatformUpdates: 'Platform Update',
     filterMonitoringTips: 'Monitoring Tips',
     filterMarketInsights: 'Markt Inzichten',
     filterCompanyNews: 'Bedrijfsnieuws',
@@ -9770,6 +9890,7 @@ async function handleNewsroomPage(request, env) {
     searchPlaceholder: 'Search articles...',
     filterAll: 'All categories',
     filterProductUpdates: 'Product update',
+    filterPlatformUpdates: 'Platform Update',
     filterMonitoringTips: 'Monitoring Tips',
     filterMarketInsights: 'Market Insights',
     filterCompanyNews: 'Company News',

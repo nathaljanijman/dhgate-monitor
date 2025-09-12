@@ -131,28 +131,45 @@ jobs:
           COMMIT_RANGE: ${{ github.event.before }}..${{ github.sha }}
         continue-on-error: true  # Don't fail deployment if changelog fails
         
+      - name: Update README with latest info
+        run: node scripts/update-readme.cjs
+        continue-on-error: true  # Don't fail deployment if README update fails
+        
       - name: Test public changelog
         run: |
           curl -f https://dhgate-monitor.nathaljanijman.workers.dev/newsroom/changelog || exit 1
           curl -f https://dhgate-monitor.nathaljanijman.workers.dev/api/changelog/latest || exit 1
           echo "✅ Public changelog accessible"
           
-      - name: Commit updated changelog (if needed)
+      - name: Commit updated changelog and README (if needed)
         run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          # Check for changes
+          CHANGED_FILES=""
           if [[ -n $(git status --porcelain docs/CHANGELOG.md) ]]; then
-            git config --local user.email "action@github.com"
-            git config --local user.name "GitHub Action"
             git add docs/CHANGELOG.md
-            git commit -m "📝 Auto-update changelog for $(date +%Y-%m-%d) deployment
+            CHANGED_FILES="$CHANGED_FILES changelog"
+          fi
+          if [[ -n $(git status --porcelain README.md) ]]; then
+            git add README.md
+            CHANGED_FILES="$CHANGED_FILES readme"
+          fi
+          
+          # Commit if any files changed
+          if [[ -n "$CHANGED_FILES" ]]; then
+            git commit -m "📝 Auto-update documentation for $(date +%Y-%m-%d) deployment
 
-            - Generated from production deployment
-            - Includes latest commit messages and changes
-            - Auto-published to /newsroom/changelog
+            - Updated: $CHANGED_FILES
+            - Generated from production deployment $(git rev-parse --short HEAD)
+            - Includes latest commit messages and version info
+            - Auto-published to platform
 
             [skip ci]"
             git push
           else
-            echo "No changelog updates needed"
+            echo "No documentation updates needed"
           fi
         continue-on-error: true
 
