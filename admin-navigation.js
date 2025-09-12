@@ -194,9 +194,7 @@ function generateAdminSidebarNavigation(currentRoute = '/admin/dashboard', lang 
          aria-label="Admin dashboard hoofdnavigatie">
       <div class="admin-sidebar-header" role="banner">
         <div class="admin-sidebar-logo">
-          <div class="admin-logo-icon" aria-hidden="true">
-            ${ADMIN_ICONS['shield-check']}
-          </div>
+          <img src="/assets/DHGateVector.png" alt="DHgate Monitor Logo" class="admin-logo-image" />
           <div class="admin-logo-text">
             <div class="admin-logo-title">DHgate Monitor</div>
             <div class="admin-logo-subtitle">Admin Console</div>
@@ -312,7 +310,7 @@ function generateAdminQuickActionButtons(lang = 'nl', theme = 'light') {
     const title = action.title[lang] || action.title['nl'];
     
     return `
-      <button class="admin-quick-action-btn" 
+      <button class="admin-fab-action" 
               data-action="${action.action}" 
               title="${title}">
         <span class="admin-action-icon">${ADMIN_ICONS[action.icon] || ADMIN_ICONS.wrench}</span>
@@ -322,8 +320,13 @@ function generateAdminQuickActionButtons(lang = 'nl', theme = 'light') {
   }).join('');
   
   return `
-    <div class="admin-quick-actions" data-theme="${theme}">
-      ${actions}
+    <div class="admin-fab-container" data-theme="${theme}">
+      <button class="admin-fab-toggle" title="${lang === 'nl' ? 'Quick Actions' : 'Quick Actions'}">
+        ${ADMIN_ICONS['lightning-bolt']}
+      </button>
+      <div class="admin-fab-menu">
+        ${actions}
+      </div>
     </div>
   `;
 }
@@ -334,7 +337,6 @@ function generateAdminQuickActionButtons(lang = 'nl', theme = 'light') {
 
 function generateAdminDashboardHeader(currentRoute = '/admin/dashboard', lang = 'nl', theme = 'light', userEmail = 'admin@dhgate-monitor.com') {
   const breadcrumbs = generateAdminBreadcrumbNavigation(currentRoute, lang);
-  const quickActions = generateAdminQuickActionButtons(lang, theme);
   
   return `
     <header class="admin-dashboard-header" data-theme="${theme}">
@@ -345,22 +347,18 @@ function generateAdminDashboardHeader(currentRoute = '/admin/dashboard', lang = 
         ${breadcrumbs}
       </div>
       <div class="admin-header-center">
-        <div class="admin-system-status">
-          <span class="admin-status-indicator online" title="System Online"></span>
-          <span class="admin-status-text">${lang === 'nl' ? 'Systeem Online' : 'System Online'}</span>
-        </div>
+        <!-- Clean breathing room - no clutter -->
       </div>
       <div class="admin-header-right">
-        ${quickActions}
         <div class="admin-header-user">
           <div class="admin-notifications">
-            <button class="admin-notification-btn" data-toggle-notifications>
+            <button class="admin-notification-btn" data-toggle-notifications title="${lang === 'nl' ? 'Meldingen' : 'Notifications'}">
               ${ADMIN_ICONS['exclamation-triangle']}
               <span class="admin-notification-badge">3</span>
             </button>
           </div>
           <div class="admin-user-menu">
-            <button class="admin-user-toggle" data-toggle-admin-menu>
+            <button class="admin-user-toggle" data-toggle-admin-menu title="${userEmail}">
               <span class="admin-user-avatar">${ADMIN_ICONS['shield-check']}</span>
               <span class="admin-user-email">${userEmail}</span>
               <span class="admin-user-chevron">${ADMIN_ICONS['chevron-down']}</span>
@@ -507,21 +505,12 @@ function generateAdminNavigationCSS(theme = 'light') {
         gap: 0.75rem;
       }
       
-      .admin-logo-icon {
+      .admin-logo-image {
         width: 36px;
         height: 36px;
-        background: linear-gradient(135deg, ${colors.primary} 0%, ${colors.accent} 100%);
         border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-      }
-      
-      .admin-logo-icon svg {
-        width: 20px;
-        height: 20px;
+        object-fit: contain;
+        flex-shrink: 0;
       }
       
       .admin-logo-text {
@@ -737,9 +726,11 @@ function generateAdminNavigationCSS(theme = 'light') {
       }
       
       .admin-user-name {
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
         font-weight: 600;
         font-size: 0.875rem;
         color: ${colors.text};
+        letter-spacing: -0.01em;
       }
       
       .admin-user-role {
@@ -922,40 +913,141 @@ function generateAdminNavigationCSS(theme = 'light') {
         fill: ${colors.textMuted};
       }
       
-      /* Admin Quick Actions Styles */
-      .admin-quick-actions {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+      /* Admin Floating Action Button (FAB) */
+      .admin-fab-container {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 1000;
       }
       
-      .admin-quick-action-btn {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 0.75rem;
+      .admin-fab-toggle {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
         background: ${colors.primary};
         color: white;
         border: none;
-        border-radius: 6px;
-        font-size: 0.8125rem;
-        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .admin-fab-toggle:hover {
+        background: ${colors.primaryHover};
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(37, 99, 235, 0.4);
+      }
+      
+      .admin-fab-toggle svg {
+        width: 24px;
+        height: 24px;
+        fill: currentColor;
+        transition: transform 0.3s ease;
+      }
+      
+      .admin-fab-container.active .admin-fab-toggle svg {
+        transform: rotate(45deg);
+      }
+      
+      .admin-fab-menu {
+        position: absolute;
+        bottom: 72px;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+      }
+      
+      .admin-fab-container.active .admin-fab-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+      
+      .admin-fab-action {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        background: ${colors.bgCard};
+        color: ${colors.text};
+        border: 1px solid ${colors.border};
+        border-radius: 28px;
+        font-size: 0.875rem;
+        font-weight: 500;
         cursor: pointer;
         transition: all 0.2s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.025em;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        white-space: nowrap;
+        min-width: 160px;
+        justify-content: flex-start;
       }
       
-      .admin-quick-action-btn:hover {
-        background: ${colors.primaryHover};
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px ${colors.primary}40;
+      .admin-fab-action:hover {
+        background: ${colors.primary};
+        color: white;
+        border-color: ${colors.primary};
+        transform: translateX(-4px);
+        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.2);
       }
       
-      .admin-action-icon svg {
-        width: 14px;
-        height: 14px;
+      .admin-fab-action .admin-action-icon svg {
+        width: 16px;
+        height: 16px;
         fill: currentColor;
+        flex-shrink: 0;
+      }
+      
+      .admin-fab-action .admin-action-text {
+        font-family: 'Raleway', sans-serif;
+        font-weight: 500;
+      }
+      
+      /* FAB Responsive */
+      @media (max-width: 768px) {
+        .admin-fab-container {
+          bottom: 16px;
+          right: 16px;
+        }
+        
+        .admin-fab-toggle {
+          width: 48px;
+          height: 48px;
+        }
+        
+        .admin-fab-toggle svg {
+          width: 20px;
+          height: 20px;
+        }
+        
+        .admin-fab-action {
+          min-width: 140px;
+          padding: 10px 14px;
+          font-size: 0.8125rem;
+        }
+        
+        .admin-fab-action .admin-action-text {
+          display: none;
+        }
+        
+        .admin-fab-action {
+          min-width: auto;
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          padding: 0;
+          justify-content: center;
+        }
       }
       
       /* Admin User Menu Styles */
@@ -1030,8 +1122,10 @@ function generateAdminNavigationCSS(theme = 'light') {
       }
       
       .admin-user-email {
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
         font-size: 0.875rem;
         font-weight: 500;
+        letter-spacing: -0.01em;
       }
       
       .admin-user-chevron svg {
@@ -1238,8 +1332,35 @@ function generateAdminNavigationJS() {
           });
         }
         
-        // Admin quick action handlers
-        document.querySelectorAll('[data-action]').forEach(button => {
+        // Admin FAB toggle functionality
+        const fabContainer = document.querySelector('.admin-fab-container');
+        const fabToggle = document.querySelector('.admin-fab-toggle');
+        
+        if (fabToggle && fabContainer) {
+          fabToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            fabContainer.classList.toggle('active');
+          });
+          
+          // Close FAB menu when clicking outside
+          document.addEventListener('click', function(e) {
+            if (!fabContainer.contains(e.target)) {
+              fabContainer.classList.remove('active');
+            }
+          });
+          
+          // Handle FAB action clicks
+          document.querySelectorAll('.admin-fab-action[data-action]').forEach(button => {
+            button.addEventListener('click', function() {
+              const action = this.getAttribute('data-action');
+              handleAdminQuickAction(action);
+              fabContainer.classList.remove('active'); // Close menu after action
+            });
+          });
+        }
+        
+        // Legacy quick action handlers (fallback)
+        document.querySelectorAll('[data-action]:not(.admin-fab-action)').forEach(button => {
           button.addEventListener('click', function() {
             const action = this.getAttribute('data-action');
             handleAdminQuickAction(action);

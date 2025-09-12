@@ -4,6 +4,7 @@
 import { 
   generateAdminSidebarNavigation, 
   generateAdminDashboardHeader, 
+  generateAdminQuickActionButtons,
   generateAdminNavigationCSS, 
   generateAdminNavigationJS 
 } from './admin-navigation.js';
@@ -2474,6 +2475,9 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
             </div>
         </main>
     </div>
+    
+    <!-- Floating Action Button for Quick Actions -->
+    ${generateAdminQuickActionButtons(lang, theme)}
 </body>
 </html>
   `;

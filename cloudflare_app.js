@@ -4923,6 +4923,79 @@ async function handleAdminDashboard(request, env) {
   }
 }
 
+// Handle admin profile page
+async function handleAdminProfile(request, env) {
+  const url = new URL(request.url);
+  const lang = url.searchParams.get('lang') || 'nl';
+  const theme = url.searchParams.get('theme') || 'light';
+  
+  // Check authentication
+  const cookies = request.headers.get('Cookie') || '';
+  const tokenMatch = cookies.match(/admin_token=([^;]+)/);
+  const token = tokenMatch ? tokenMatch[1] : null;
+  
+  const isAuthenticated = await verifyAdminSession(env, token);
+  
+  if (!isAuthenticated) {
+    return Response.redirect(`${url.origin}/admin/login?lang=${lang}&theme=${theme}`, 302);
+  }
+  
+  try {
+    // Handle POST request for profile updates
+    if (request.method === 'POST') {
+      const formData = await request.formData();
+      const action = formData.get('action');
+      
+      if (action === 'update_profile') {
+        // Handle profile update
+        const fullName = formData.get('full_name');
+        const email = formData.get('email');
+        const timezone = formData.get('timezone');
+        const language = formData.get('language');
+        const theme_preference = formData.get('theme_preference');
+        
+        // In a real app, save to database
+        console.log('Profile update:', { fullName, email, timezone, language, theme_preference });
+        
+        // Redirect with success message
+        return Response.redirect(`${url.origin}/admin/profile?updated=true&lang=${lang}&theme=${theme}`, 302);
+      } else if (action === 'change_password') {
+        // Handle password change
+        const currentPassword = formData.get('current_password');
+        const newPassword = formData.get('new_password');
+        const confirmPassword = formData.get('confirm_password');
+        
+        if (newPassword !== confirmPassword) {
+          return Response.redirect(`${url.origin}/admin/profile?error=password_mismatch&lang=${lang}&theme=${theme}`, 302);
+        }
+        
+        // In a real app, verify current password and update
+        console.log('Password change request for admin');
+        
+        // Redirect with success message
+        return Response.redirect(`${url.origin}/admin/profile?password_updated=true&lang=${lang}&theme=${theme}`, 302);
+      }
+    }
+    
+    // GET request - show profile form
+    const success = url.searchParams.get('updated') === 'true';
+    const passwordUpdated = url.searchParams.get('password_updated') === 'true';
+    const error = url.searchParams.get('error');
+    
+    const html = generateAdminProfileHTML(lang, theme, success, passwordUpdated, error);
+    
+    return new Response(html, {
+      headers: { 
+        'Content-Type': 'text/html',
+        'Cache-Control': 'no-cache'
+      }
+    });
+  } catch (error) {
+    console.error('Error in admin profile handler:', error);
+    return new Response('Error loading admin profile', { status: 500 });
+  }
+}
+
 // Handle icons & components admin page
 async function handleIconsComponents(request, env) {
   const url = new URL(request.url);
@@ -5469,6 +5542,414 @@ function generateAdminLoginHTML(lang = 'nl', theme = 'light', error = null) {
   `;
 }
 
+// Generate admin profile HTML
+function generateAdminProfileHTML(lang = 'nl', theme = 'light', success = false, passwordUpdated = false, error = null) {
+  const timezones = [
+    { value: 'Europe/Amsterdam', label: lang === 'nl' ? 'Amsterdam (CET/CEST)' : 'Amsterdam (CET/CEST)' },
+    { value: 'Europe/London', label: lang === 'nl' ? 'Londen (GMT/BST)' : 'London (GMT/BST)' },
+    { value: 'America/New_York', label: lang === 'nl' ? 'New York (EST/EDT)' : 'New York (EST/EDT)' },
+    { value: 'America/Los_Angeles', label: lang === 'nl' ? 'Los Angeles (PST/PDT)' : 'Los Angeles (PST/PDT)' },
+    { value: 'Asia/Tokyo', label: lang === 'nl' ? 'Tokyo (JST)' : 'Tokyo (JST)' },
+    { value: 'Asia/Singapore', label: lang === 'nl' ? 'Singapore (SGT)' : 'Singapore (SGT)' }
+  ];
+  
+  const errorMessages = {
+    password_mismatch: lang === 'nl' ? 'Wachtwoorden komen niet overeen.' : 'Passwords do not match.',
+  };
+  
+  return `
+<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${lang === 'nl' ? 'Admin Profiel - DHgate Monitor' : 'Admin Profile - DHgate Monitor'}</title>
+    <meta name="description" content="${lang === 'nl' ? 'Admin profiel instellingen voor DHgate Monitor platform.' : 'Admin profile settings for DHgate Monitor platform.'}">
+    <meta name="robots" content="noindex, nofollow">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    ${generateGlobalCSS(theme)}
+    
+    <style>
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Raleway', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .profile-main {
+            min-height: 100vh;
+            padding: 2rem;
+            background: var(--bg-secondary);
+        }
+        
+        .profile-header-nav {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .nav-breadcrumb a {
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+        
+        .nav-breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .profile-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .profile-header {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            padding: 2rem;
+        }
+        
+        .profile-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            color: var(--text-primary);
+        }
+        
+        .profile-subtitle {
+            color: var(--text-secondary);
+            margin: 0;
+        }
+        
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .profile-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0 0 1.5rem 0;
+            color: var(--text-primary);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            font-family: 'Raleway', sans-serif;
+        }
+        
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Raleway', sans-serif;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-blue-hover);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Raleway', sans-serif;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+        
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--success) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-main {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Main Content -->
+        <main class="profile-main">
+            <!-- Navigation Header -->
+            <div class="profile-header-nav">
+                <div class="nav-breadcrumb">
+                    <a href="/admin/dashboard?lang=${lang}&theme=${theme}">Admin Dashboard</a>
+                    <span>›</span>
+                    <span>${lang === 'nl' ? 'Profiel' : 'Profile'}</span>
+                </div>
+                <div>
+                    <a href="/admin/dashboard?lang=${lang}&theme=${theme}" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                        ← ${lang === 'nl' ? 'Terug naar Dashboard' : 'Back to Dashboard'}
+                    </a>
+                </div>
+            </div>
+            
+            <div class="profile-content">
+                <!-- Header -->
+                <div class="profile-header">
+                    <div class="profile-avatar">A</div>
+                    <h1 class="profile-title">${lang === 'nl' ? 'Admin Profiel' : 'Admin Profile'}</h1>
+                    <p class="profile-subtitle">${lang === 'nl' ? 'Beheer je account instellingen en voorkeuren' : 'Manage your account settings and preferences'}</p>
+                </div>
+                
+                <!-- Success/Error Messages -->
+                ${success ? `
+                <div class="alert alert-success">
+                    ✅ ${lang === 'nl' ? 'Profiel succesvol bijgewerkt!' : 'Profile updated successfully!'}
+                </div>
+                ` : ''}
+                
+                ${passwordUpdated ? `
+                <div class="alert alert-success">
+                    ✅ ${lang === 'nl' ? 'Wachtwoord succesvol gewijzigd!' : 'Password changed successfully!'}
+                </div>
+                ` : ''}
+                
+                ${error ? `
+                <div class="alert alert-error">
+                    ⚠️ ${errorMessages[error] || error}
+                </div>
+                ` : ''}
+                
+                <!-- Profile Forms -->
+                <div class="profile-grid">
+                    <!-- General Settings -->
+                    <div class="profile-card">
+                        <h2 class="card-title">${lang === 'nl' ? 'Algemene Instellingen' : 'General Settings'}</h2>
+                        
+                        <form method="POST" action="/admin/profile">
+                            <input type="hidden" name="action" value="update_profile">
+                            <input type="hidden" name="lang" value="${lang}">
+                            <input type="hidden" name="theme" value="${theme}">
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="full_name">${lang === 'nl' ? 'Volledige Naam' : 'Full Name'}</label>
+                                <input type="text" id="full_name" name="full_name" class="form-input" value="System Administrator" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="email">${lang === 'nl' ? 'Email Adres' : 'Email Address'}</label>
+                                <input type="email" id="email" name="email" class="form-input" value="admin@dhgate-monitor.com" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="timezone">${lang === 'nl' ? 'Tijdzone' : 'Timezone'}</label>
+                                <select id="timezone" name="timezone" class="form-select">
+                                    ${timezones.map(tz => `
+                                        <option value="${tz.value}" ${tz.value === 'Europe/Amsterdam' ? 'selected' : ''}>${tz.label}</option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="language">${lang === 'nl' ? 'Taal' : 'Language'}</label>
+                                <select id="language" name="language" class="form-select">
+                                    <option value="nl" ${lang === 'nl' ? 'selected' : ''}>Nederlands</option>
+                                    <option value="en" ${lang === 'en' ? 'selected' : ''}>English</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="theme_preference">${lang === 'nl' ? 'Thema Voorkeur' : 'Theme Preference'}</label>
+                                <select id="theme_preference" name="theme_preference" class="form-select">
+                                    <option value="light" ${theme === 'light' ? 'selected' : ''}>${lang === 'nl' ? 'Licht' : 'Light'}</option>
+                                    <option value="dark" ${theme === 'dark' ? 'selected' : ''}>${lang === 'nl' ? 'Donker' : 'Dark'}</option>
+                                    <option value="auto">${lang === 'nl' ? 'Automatisch' : 'Auto'}</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary">${lang === 'nl' ? 'Opslaan' : 'Save Changes'}</button>
+                                <a href="/admin/dashboard?lang=${lang}&theme=${theme}" class="btn-secondary">${lang === 'nl' ? 'Annuleren' : 'Cancel'}</a>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Security Settings -->
+                    <div class="profile-card">
+                        <h2 class="card-title">${lang === 'nl' ? 'Beveiliging' : 'Security'}</h2>
+                        
+                        <form method="POST" action="/admin/profile">
+                            <input type="hidden" name="action" value="change_password">
+                            <input type="hidden" name="lang" value="${lang}">
+                            <input type="hidden" name="theme" value="${theme}">
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="current_password">${lang === 'nl' ? 'Huidig Wachtwoord' : 'Current Password'}</label>
+                                <input type="password" id="current_password" name="current_password" class="form-input" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="new_password">${lang === 'nl' ? 'Nieuw Wachtwoord' : 'New Password'}</label>
+                                <input type="password" id="new_password" name="new_password" class="form-input" required minlength="8">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="confirm_password">${lang === 'nl' ? 'Bevestig Nieuw Wachtwoord' : 'Confirm New Password'}</label>
+                                <input type="password" id="confirm_password" name="confirm_password" class="form-input" required minlength="8">
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary">${lang === 'nl' ? 'Wachtwoord Wijzigen' : 'Change Password'}</button>
+                            </div>
+                        </form>
+                        
+                        <hr style="margin: 2rem 0; border: 1px solid var(--border-light);">
+                        
+                        <div style="margin-top: 2rem;">
+                            <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary);">
+                                ${lang === 'nl' ? 'Sessie Management' : 'Session Management'}
+                            </h3>
+                            <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;">
+                                ${lang === 'nl' ? 'Beheer actieve sessies en uitlog opties.' : 'Manage active sessions and logout options.'}
+                            </p>
+                            <a href="/admin/logout" class="btn-secondary" style="color: var(--error); border-color: var(--error);">
+                                ${lang === 'nl' ? 'Uitloggen' : 'Logout'}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Navigation and JS will be added dynamically -->
+    
+    <script>
+        // Password confirmation validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const newPassword = document.getElementById('new_password');
+            const confirmPassword = document.getElementById('confirm_password');
+            
+            function validatePasswords() {
+                if (newPassword.value && confirmPassword.value) {
+                    if (newPassword.value !== confirmPassword.value) {
+                        confirmPassword.setCustomValidity('${lang === 'nl' ? 'Wachtwoorden komen niet overeen' : 'Passwords do not match'}');
+                    } else {
+                        confirmPassword.setCustomValidity('');
+                    }
+                }
+            }
+            
+            if (newPassword && confirmPassword) {
+                newPassword.addEventListener('input', validatePasswords);
+                confirmPassword.addEventListener('input', validatePasswords);
+            }
+        });
+    </script>
+</body>
+</html>
+  `;
+}
+
 // Insert test affiliate data (for development only)
 async function insertTestAffiliateData(env) {
   try {
@@ -5716,6 +6197,9 @@ export default {
           
         case '/admin/dashboard':
           return await handleAdminDashboard(request, env);
+          
+        case '/admin/profile':
+          return await handleAdminProfile(request, env);
           
         case '/admin/icons-components':
           return await handleIconsComponents(request, env);
