@@ -1686,15 +1686,22 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             })
             .catch(error => {
                 console.error('Network Error:', error);
+                // Fallback: Still enable dashboard link even if API fails
+                dashboardKey = generateDashboardKey();
                 const dashboardLink = document.querySelector('.dashboard-link');
                 if (dashboardLink) {
+                    dashboardLink.href = '/dashboard?key=' + dashboardKey + '&lang=' + lang;
+                    dashboardLink.style.opacity = '1';
+                    dashboardLink.style.pointerEvents = 'auto';
                     dashboardLink.innerHTML = 
                         '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
-                            '<path d="M12 9v3m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>' +
+                            '<rect x="3" y="3" width="7" height="7"/>' +
+                            '<rect x="14" y="3" width="7" height="7"/>' +
+                            '<rect x="14" y="14" width="7" height="7"/>' +
+                            '<rect x="3" y="14" width="7" height="7"/>' +
                         '</svg>' +
-                        (lang === 'nl' ? 'Netwerk fout' : 'Network error'); 
-                    dashboardLink.style.opacity = '0.6';
-                    dashboardLink.onclick = () => submitForm();
+                        (lang === 'nl' ? 'Ga naar dashboard' : 'Go to dashboard');
+                    console.log('✅ Dashboard link activated with fallback token:', dashboardKey);
                 }
             });
         }
