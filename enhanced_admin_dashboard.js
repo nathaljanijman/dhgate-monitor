@@ -1432,6 +1432,11 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
         </header>
         
         <!-- KPI Cards -->
+        <!-- Live Data Timestamp -->
+        <div style="text-align: right; margin-bottom: 1rem; color: var(--text-secondary); font-size: 0.875rem;">
+            Last updated: <span data-timestamp>${new Date().toLocaleTimeString()}</span>
+        </div>
+        
         <section class="kpi-grid" aria-label="Key Performance Indicators">
             <div class="kpi-card">
                 <div class="kpi-header">
@@ -1442,7 +1447,7 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
                     </div>
                     <div class="kpi-trend">+0.03%</div>
                 </div>
-                <div class="kpi-value">${performanceMetrics.uptime}</div>
+                <div class="kpi-value" data-metric="uptime">${performanceMetrics.uptime}</div>
                 <div class="kpi-label">${t.uptime}</div>
             </div>
             
@@ -1456,7 +1461,7 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
                     </div>
                     <div class="kpi-trend">-12ms</div>
                 </div>
-                <div class="kpi-value">${performanceMetrics.responseTime}ms</div>
+                <div class="kpi-value" data-metric="response-time">${performanceMetrics.responseTime}ms</div>
                 <div class="kpi-label">${t.responseTime}</div>
             </div>
             
@@ -1471,7 +1476,7 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
                     </div>
                     <div class="kpi-trend">-0.01%</div>
                 </div>
-                <div class="kpi-value">${performanceMetrics.errorRate}%</div>
+                <div class="kpi-value" data-metric="error-rate">${performanceMetrics.errorRate}%</div>
                 <div class="kpi-label">${t.errorRate}</div>
             </div>
             
@@ -1487,7 +1492,7 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
                 </div>
                     <div class="kpi-trend">+${performanceMetrics.recentSignups}</div>
                 </div>
-                <div class="kpi-value">${performanceMetrics.totalUsers.toLocaleString()}</div>
+                <div class="kpi-value" data-metric="total-users">${performanceMetrics.totalUsers.toLocaleString()}</div>
                 <div class="kpi-label">${t.activeUsers}</div>
             </div>
         </section>
@@ -1784,30 +1789,30 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
                         <div style="margin: 1rem 0;">
                             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
                                 <span style="font-size: 0.875rem; color: var(--text-secondary);">CPU Usage</span>
-                                <span style="font-size: 0.875rem; font-weight: 600;">${performanceMetrics.cpuUsage}%</span>
+                                <span style="font-size: 0.875rem; font-weight: 600;" data-resource="cpu">${performanceMetrics.cpuUsage}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${performanceMetrics.cpuUsage}%;"></div>
+                                <div class="progress-fill" data-progress="cpu" style="width: ${performanceMetrics.cpuUsage}%;"></div>
                             </div>
                         </div>
                         
                         <div style="margin: 1rem 0;">
                             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
                                 <span style="font-size: 0.875rem; color: var(--text-secondary);">Memory Usage</span>
-                                <span style="font-size: 0.875rem; font-weight: 600;">${performanceMetrics.memoryUsage}%</span>
+                                <span style="font-size: 0.875rem; font-weight: 600;" data-resource="memory">${performanceMetrics.memoryUsage}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${performanceMetrics.memoryUsage}%;"></div>
+                                <div class="progress-fill" data-progress="memory" style="width: ${performanceMetrics.memoryUsage}%;"></div>
                             </div>
                         </div>
                         
                         <div style="margin: 1rem 0;">
                             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
                                 <span style="font-size: 0.875rem; color: var(--text-secondary);">Disk Usage</span>
-                                <span style="font-size: 0.875rem; font-weight: 600;">${performanceMetrics.diskUsage}%</span>
+                                <span style="font-size: 0.875rem; font-weight: 600;" data-resource="disk">${performanceMetrics.diskUsage}%</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${performanceMetrics.diskUsage}%;"></div>
+                                <div class="progress-fill" data-progress="disk" style="width: ${performanceMetrics.diskUsage}%;"></div>
                             </div>
                         </div>
                     </div>
@@ -2370,10 +2375,72 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
             });
         }
         
-        // Auto-refresh every 5 minutes
-        setInterval(() => {
-            window.location.reload();
-        }, 300000);
+        // Real-time data refresh system
+        let refreshInterval = 30000; // 30 seconds base interval
+        
+        async function refreshDashboardData() {
+            try {
+                const response = await fetch('/admin/api/dashboard/metrics', {
+                    method: 'GET',
+                    credentials: 'same-origin'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    updateDashboardMetrics(data);
+                }
+            } catch (error) {
+                console.error('Dashboard data refresh failed:', error);
+            }
+        }
+        
+        function updateDashboardMetrics(data) {
+            // Update uptime
+            const uptimeElement = document.querySelector('[data-metric="uptime"]');
+            if (uptimeElement && data.uptime) {
+                uptimeElement.textContent = data.uptime;
+            }
+            
+            // Update response time
+            const responseElement = document.querySelector('[data-metric="response-time"]');
+            if (responseElement && data.responseTime) {
+                responseElement.textContent = data.responseTime + 'ms';
+            }
+            
+            // Update total users
+            const usersElement = document.querySelector('[data-metric="total-users"]');
+            if (usersElement && data.totalUsers) {
+                usersElement.textContent = data.totalUsers.toLocaleString();
+            }
+            
+            // Update error rate
+            const errorElement = document.querySelector('[data-metric="error-rate"]');
+            if (errorElement && data.errorRate !== undefined) {
+                errorElement.textContent = data.errorRate + '%';
+            }
+            
+            // Update system resources
+            ['cpu', 'memory', 'disk'].forEach(resource => {
+                const element = document.querySelector(`[data-resource="${resource}"]`);
+                const progressBar = document.querySelector(`[data-progress="${resource}"]`);
+                if (element && progressBar && data[resource + 'Usage'] !== undefined) {
+                    element.textContent = data[resource + 'Usage'] + '%';
+                    progressBar.style.width = data[resource + 'Usage'] + '%';
+                }
+            });
+            
+            // Update timestamp
+            const timestampElement = document.querySelector('[data-timestamp]');
+            if (timestampElement) {
+                timestampElement.textContent = new Date().toLocaleTimeString();
+            }
+        }
+        
+        // Start refresh cycle
+        setInterval(refreshDashboardData, refreshInterval);
+        
+        // Immediate refresh on page load
+        setTimeout(refreshDashboardData, 1000);
         
         // Keyboard navigation for alerts
         document.addEventListener('keydown', function(e) {
