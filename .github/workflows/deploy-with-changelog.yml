@@ -124,7 +124,7 @@ jobs:
           echo "✅ Production deployment successful"
           
       - name: Generate automatic changelog
-        run: node scripts/auto-changelog.js
+        run: node scripts/auto-changelog.cjs
         env:
           ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
           CHANGELOG_API_ENDPOINT: https://dhgate-monitor.nathaljanijman.workers.dev/admin/api/changelog/create
