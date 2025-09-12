@@ -188,8 +188,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         
         body {
             font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
+            background: transparent;
             color: var(--text-primary);
             line-height: 1.6;
             padding: 0;
@@ -1314,7 +1313,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             </div>
             
                 <div class="dashboard-actions">
-                    <a href="/dashboard" class="btn btn-primary dashboard-link">
+                    <a href="http://localhost:3000/dashboard" class="btn btn-primary dashboard-link">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="3" width="7" height="7"/>
                             <rect x="14" y="3" width="7" height="7"/>
@@ -1636,7 +1635,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                     // Update dashboard link with real token from API
                     const dashboardLink = document.querySelector('.dashboard-link');
                     if (data.dashboardToken && dashboardLink) {
-                        dashboardLink.href = '/dashboard?key=' + data.dashboardToken + '&lang=' + lang;
+                        dashboardLink.href = 'http://localhost:3000/dashboard?key=' + data.dashboardToken + '&lang=' + lang;
                         dashboardLink.style.opacity = '1';
                         dashboardLink.style.pointerEvents = 'auto';
                         dashboardLink.innerHTML = 
@@ -1656,7 +1655,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                         // Fallback to generated token
                         dashboardKey = generateDashboardKey();
                         if (dashboardLink) {
-                            dashboardLink.href = '/dashboard?key=' + dashboardKey + '&lang=' + lang;
+                            dashboardLink.href = 'http://localhost:3000/dashboard?key=' + dashboardKey + '&lang=' + lang;
                             dashboardLink.style.opacity = '1';
                             dashboardLink.style.pointerEvents = 'auto';
                             dashboardLink.innerHTML = 
@@ -1690,7 +1689,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                 dashboardKey = generateDashboardKey();
                 const dashboardLink = document.querySelector('.dashboard-link');
                 if (dashboardLink) {
-                    dashboardLink.href = '/dashboard?key=' + dashboardKey + '&lang=' + lang;
+                    dashboardLink.href = 'http://localhost:3000/dashboard?key=' + dashboardKey + '&lang=' + lang;
                     dashboardLink.style.opacity = '1';
                     dashboardLink.style.pointerEvents = 'auto';
                     dashboardLink.innerHTML = 
