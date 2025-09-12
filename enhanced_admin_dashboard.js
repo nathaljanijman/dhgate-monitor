@@ -2421,8 +2421,8 @@ function generateEnhancedAdminDashboard(affiliateAnalytics, platformMetrics, aff
             
             // Update system resources
             ['cpu', 'memory', 'disk'].forEach(resource => {
-                const element = document.querySelector(`[data-resource="${resource}"]`);
-                const progressBar = document.querySelector(`[data-progress="${resource}"]`);
+                const element = document.querySelector('[data-resource="' + resource + '"]');
+                const progressBar = document.querySelector('[data-progress="' + resource + '"]');
                 if (element && progressBar && data[resource + 'Usage'] !== undefined) {
                     element.textContent = data[resource + 'Usage'] + '%';
                     progressBar.style.width = data[resource + 'Usage'] + '%';
