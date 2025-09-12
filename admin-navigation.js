@@ -19,7 +19,8 @@ const ADMIN_NAVIGATION_CONFIG = {
         icon: 'dashboard',
         title: { nl: 'Overzicht', en: 'Overview' },
         items: [
-          { id: 'dashboard', title: { nl: 'Admin Dashboard', en: 'Admin Dashboard' }, route: '/admin/dashboard', icon: 'chart-line' }
+          { id: 'dashboard', title: { nl: 'Admin Dashboard', en: 'Admin Dashboard' }, route: '/admin/dashboard', icon: 'chart-line' },
+          { id: 'notifications', title: { nl: '🔔 Meldingen', en: '🔔 Notifications' }, route: '/admin/notifications', icon: 'bell', prominent: true }
         ]
       },
       {
@@ -42,8 +43,7 @@ const ADMIN_NAVIGATION_CONFIG = {
         items: [
           { id: 'customers', title: { nl: 'Customer Accounts', en: 'Customer Accounts' }, route: '/admin/customers', icon: 'user-group' },
           { id: 'subscriptions', title: { nl: 'Subscriptions', en: 'Subscriptions' }, route: '/admin/subscriptions', icon: 'credit-card' },
-          { id: 'support', title: { nl: 'Support Tickets', en: 'Support Tickets' }, route: '/admin/support', icon: 'support' },
-          { id: 'communications', title: { nl: 'Communications', en: 'Communications' }, route: '/admin/communications', icon: 'mail' }
+          { id: 'support', title: { nl: 'Support Tickets', en: 'Support Tickets' }, route: '/admin/support', icon: 'support' }
         ]
       },
       {
@@ -125,7 +125,14 @@ const ADMIN_ICONS = {
   'chevron-right': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>',
   'chevron-left': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>',
   'menu': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>',
-  'x': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>'
+  'x': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>',
+  
+  // Notifications
+  'bell': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>',
+  'external-link': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>',
+  'check': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>',
+  'check-circle': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
+  'warning': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22M12 6l7.53 13H4.47M11 10v4h2v-4m-1 6h2v2h-2"/></svg>'
 };
 
 // ============================================================================
@@ -143,7 +150,7 @@ function generateAdminSidebarNavigation(currentRoute = '/admin/dashboard', lang 
       const isActive = currentRoute === item.route || currentRoute.startsWith(item.route + '/');
       
       return `
-        <li class="admin-nav-item ${isActive ? 'active' : ''}" role="none">
+        <li class="admin-nav-item ${isActive ? 'active' : ''} ${item.prominent ? 'prominent' : ''}" role="none">
           <a href="${item.route}" 
              class="admin-nav-link" 
              data-route="${item.route}"
@@ -242,6 +249,7 @@ function generateAdminBreadcrumbNavigation(currentRoute = '/admin/dashboard', la
   const adminRouteMap = {
     'admin': { nl: 'Admin', en: 'Admin' },
     'dashboard': { nl: 'Dashboard', en: 'Dashboard' },
+    'notifications': { nl: 'Meldingen', en: 'Notifications' },
     'analytics': { nl: 'Platform Analytics', en: 'Platform Analytics' },
     'revenue': { nl: 'Revenue Tracking', en: 'Revenue Tracking' },
     'affiliate': { nl: 'Affiliate Performance', en: 'Affiliate Performance' },
@@ -249,7 +257,6 @@ function generateAdminBreadcrumbNavigation(currentRoute = '/admin/dashboard', la
     'customers': { nl: 'Customer Accounts', en: 'Customer Accounts' },
     'subscriptions': { nl: 'Subscriptions', en: 'Subscriptions' },
     'support': { nl: 'Support Tickets', en: 'Support Tickets' },
-    'communications': { nl: 'Communications', en: 'Communications' },
     'performance': { nl: 'Performance Monitor', en: 'Performance Monitor' },
     'errors': { nl: 'Error Tracking', en: 'Error Tracking' },
     'monitoring': { nl: 'Service Monitoring', en: 'Service Monitoring' },
@@ -356,6 +363,80 @@ function generateAdminDashboardHeader(currentRoute = '/admin/dashboard', lang = 
               ${ADMIN_ICONS['exclamation-triangle']}
               <span class="admin-notification-badge">3</span>
             </button>
+            <div class="admin-notifications-dropdown" id="admin-notifications-menu">
+              <div class="notifications-header">
+                <h3>${lang === 'nl' ? 'Meldingen' : 'Notifications'} <span class="notification-count">(3)</span></h3>
+                <button class="mark-all-read-btn" onclick="markAllNotificationsRead()">
+                  ${lang === 'nl' ? 'Alles gelezen' : 'Mark all read'}
+                </button>
+              </div>
+              
+              <div class="notifications-list">
+                <div class="notification-item critical unread" data-notification-id="1">
+                  <div class="notification-icon critical">
+                    ${ADMIN_ICONS['exclamation-triangle']}
+                  </div>
+                  <div class="notification-content">
+                    <div class="notification-title">${lang === 'nl' ? 'Hoge foutfrequentie gedetecteerd' : 'High Error Rate Detected'}</div>
+                    <div class="notification-desc">${lang === 'nl' ? 'API fouten zijn 300% gestegen in de laatste 15 minuten' : 'API errors increased by 300% in last 15 minutes'}</div>
+                    <div class="notification-time">2 ${lang === 'nl' ? 'minuten geleden' : 'minutes ago'}</div>
+                  </div>
+                  <div class="notification-actions">
+                    <a href="/admin/errors" class="notification-action-btn primary" onclick="markNotificationRead(1)" title="${lang === 'nl' ? 'Bekijk error logs' : 'View error logs'}">
+                      ${lang === 'nl' ? 'Error Logs' : 'View Errors'}
+                    </a>
+                    <button class="notification-action-btn secondary" onclick="markNotificationRead(1)" title="${lang === 'nl' ? 'Verbergen' : 'Dismiss'}">
+                      ${lang === 'nl' ? 'Verbergen' : 'Dismiss'}
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="notification-item warning unread" data-notification-id="2">
+                  <div class="notification-icon warning">
+                    ${ADMIN_ICONS['warning']}
+                  </div>
+                  <div class="notification-content">
+                    <div class="notification-title">${lang === 'nl' ? 'Server schijfruimte laag' : 'Server Disk Space Low'}</div>
+                    <div class="notification-desc">${lang === 'nl' ? 'Vrije schijfruimte onder 15% op hoofdserver' : 'Free disk space below 15% on main server'}</div>
+                    <div class="notification-time">1 ${lang === 'nl' ? 'uur geleden' : 'hour ago'}</div>
+                  </div>
+                  <div class="notification-actions">
+                    <a href="/admin/performance" class="notification-action-btn primary" onclick="markNotificationRead(2)" title="${lang === 'nl' ? 'Bekijk performance metrics' : 'View performance metrics'}">
+                      ${lang === 'nl' ? 'Performance' : 'View Metrics'}
+                    </a>
+                    <button class="notification-action-btn secondary" onclick="markNotificationRead(2)" title="${lang === 'nl' ? 'Verbergen' : 'Dismiss'}">
+                      ${lang === 'nl' ? 'Verbergen' : 'Dismiss'}
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="notification-item success unread" data-notification-id="3">
+                  <div class="notification-icon success">
+                    ${ADMIN_ICONS['check-circle']}
+                  </div>
+                  <div class="notification-content">
+                    <div class="notification-title">${lang === 'nl' ? 'Nieuwe gebruikersregistraties' : 'New User Registrations'}</div>
+                    <div class="notification-desc">${lang === 'nl' ? '12 nieuwe gebruikers geregistreerd vandaag' : '12 new users registered today'}</div>
+                    <div class="notification-time">3 ${lang === 'nl' ? 'uur geleden' : 'hours ago'}</div>
+                  </div>
+                  <div class="notification-actions">
+                    <a href="/admin/customers" class="notification-action-btn primary" onclick="markNotificationRead(3)" title="${lang === 'nl' ? 'Bekijk nieuwe gebruikers' : 'View new customers'}">
+                      ${lang === 'nl' ? 'Klanten' : 'View Customers'}
+                    </a>
+                    <button class="notification-action-btn secondary" onclick="markNotificationRead(3)" title="${lang === 'nl' ? 'Verbergen' : 'Dismiss'}">
+                      ${lang === 'nl' ? 'Verbergen' : 'Dismiss'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="notifications-empty" style="display: none;">
+                <div class="empty-state">
+                  ${ADMIN_ICONS['check-circle']}
+                  <p>${lang === 'nl' ? 'Geen nieuwe meldingen' : 'No new notifications'}</p>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="admin-user-menu">
             <button class="admin-user-toggle" data-toggle-admin-menu title="${userEmail}">
@@ -657,6 +738,28 @@ function generateAdminNavigationCSS(theme = 'light') {
         color: ${colors.primary};
         font-weight: 600;
         border-left: 3px solid ${colors.primary};
+      }
+      
+      /* Prominent navigation items (like notifications) */
+      .admin-nav-item.prominent .admin-nav-link {
+        background: linear-gradient(135deg, ${colors.accent}10 0%, ${colors.primary}10 100%);
+        border: 1px solid ${colors.accent}30;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      
+      .admin-nav-item.prominent:not(.active) .admin-nav-link:hover {
+        background: linear-gradient(135deg, ${colors.accent}20 0%, ${colors.primary}20 100%);
+        border: 1px solid ${colors.accent}50;
+        transform: translateX(4px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      }
+      
+      .admin-nav-item.prominent.active .admin-nav-link {
+        background: linear-gradient(135deg, ${colors.accent}25 0%, ${colors.primary}25 100%);
+        color: ${colors.accent};
+        border-left: 4px solid ${colors.accent};
+        border: 1px solid ${colors.accent}50;
       }
       
       .admin-nav-icon svg {
@@ -1098,6 +1201,294 @@ function generateAdminNavigationCSS(theme = 'light') {
         text-align: center;
       }
       
+      /* Admin Notifications Dropdown */
+      .admin-notifications-dropdown {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        width: 380px;
+        background: ${colors.bgCard};
+        border: 1px solid ${colors.border};
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        max-height: 500px;
+        overflow: hidden;
+      }
+      
+      .admin-notifications-dropdown.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+      
+      .notifications-header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid ${colors.border};
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: ${colors.bgSecondary};
+        border-radius: 12px 12px 0 0;
+      }
+      
+      .notifications-header h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+        color: ${colors.text};
+      }
+      
+      .notification-count {
+        color: ${colors.textMuted};
+        font-weight: 400;
+      }
+      
+      .mark-all-read-btn {
+        background: none;
+        border: none;
+        color: ${colors.primary};
+        font-size: 0.8125rem;
+        font-weight: 500;
+        cursor: pointer;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+      }
+      
+      .mark-all-read-btn:hover {
+        background: ${colors.primaryLight};
+        color: ${colors.primaryDark};
+      }
+      
+      .notifications-list {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      
+      .notification-item {
+        display: flex;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid ${colors.borderLight};
+        transition: background-color 0.2s ease;
+        gap: 0.75rem;
+        align-items: flex-start;
+      }
+      
+      .notification-item:last-child {
+        border-bottom: none;
+      }
+      
+      .notification-item:hover {
+        background: ${colors.bgSecondary};
+      }
+      
+      .notification-item.unread {
+        background: ${colors.bgPrimary};
+        border-left: 3px solid ${colors.primary};
+      }
+      
+      .notification-item.unread:hover {
+        background: ${colors.bgSecondary};
+      }
+      
+      .notification-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      
+      .notification-icon svg {
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+      }
+      
+      .notification-icon.critical {
+        background: rgba(239, 68, 68, 0.1);
+        color: ${colors.danger};
+      }
+      
+      .notification-icon.warning {
+        background: rgba(245, 158, 11, 0.1);
+        color: ${colors.warning};
+      }
+      
+      .notification-icon.success {
+        background: rgba(16, 185, 129, 0.1);
+        color: ${colors.success};
+      }
+      
+      .notification-icon.info {
+        background: rgba(59, 130, 246, 0.1);
+        color: ${colors.info};
+      }
+      
+      .notification-content {
+        flex: 1;
+        min-width: 0;
+      }
+      
+      .notification-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: ${colors.text};
+        margin-bottom: 0.25rem;
+        line-height: 1.3;
+      }
+      
+      .notification-desc {
+        font-size: 0.8125rem;
+        color: ${colors.textMuted};
+        line-height: 1.4;
+        margin-bottom: 0.375rem;
+      }
+      
+      .notification-time {
+        font-size: 0.75rem;
+        color: ${colors.textSecondary};
+        font-weight: 500;
+      }
+      
+      .notification-actions {
+        display: flex;
+        gap: 0.25rem;
+        align-items: flex-start;
+        flex-shrink: 0;
+      }
+      
+      .notification-action-btn {
+        background: none;
+        border: none;
+        color: ${colors.textMuted};
+        cursor: pointer;
+        padding: 0.5rem 0.75rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+      
+      .notification-action-btn:hover {
+        background: ${colors.bgSecondary};
+        color: ${colors.primary};
+        text-decoration: none;
+      }
+      
+      .notification-action-btn.primary {
+        background: ${colors.primary}15;
+        color: ${colors.primary};
+        border: 1px solid ${colors.primary}30;
+      }
+      
+      .notification-action-btn.primary:hover {
+        background: ${colors.primary}25;
+        border: 1px solid ${colors.primary}50;
+      }
+      
+      .notification-action-btn.secondary {
+        color: ${colors.textSecondary};
+        border: 1px solid ${colors.borderLight};
+      }
+      
+      .notification-action-btn.secondary:hover {
+        color: ${colors.textMuted};
+        border: 1px solid ${colors.borderMedium};
+      }
+      
+      /* New notification highlight animation */
+      .notification-item.new-notification {
+        background: linear-gradient(90deg, ${colors.accent}15 0%, ${colors.primary}15 100%);
+        border-left: 3px solid ${colors.accent};
+        animation: newNotificationGlow 3s ease-out;
+        box-shadow: 0 0 0 1px ${colors.accent}30;
+      }
+      
+      @keyframes newNotificationGlow {
+        0% {
+          background: linear-gradient(90deg, ${colors.accent}30 0%, ${colors.primary}30 100%);
+          transform: translateX(-2px);
+        }
+        50% {
+          background: linear-gradient(90deg, ${colors.accent}20 0%, ${colors.primary}20 100%);
+        }
+        100% {
+          background: linear-gradient(90deg, ${colors.accent}15 0%, ${colors.primary}15 100%);
+          transform: translateX(0);
+        }
+      }
+      
+      /* Pulse animation for notification badge */
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 ${colors.primary}40;
+        }
+        50% {
+          transform: scale(1.1);
+          box-shadow: 0 0 0 4px ${colors.primary}20;
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 ${colors.primary}00;
+        }
+      }
+      
+      .notification-action-btn svg {
+        width: 14px;
+        height: 14px;
+        fill: currentColor;
+      }
+      
+      .notifications-empty {
+        padding: 2rem;
+        text-align: center;
+      }
+      
+      .empty-state {
+        color: ${colors.textMuted};
+      }
+      
+      .empty-state svg {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 0.5rem;
+        opacity: 0.5;
+        fill: currentColor;
+      }
+      
+      .empty-state p {
+        margin: 0;
+        font-size: 0.875rem;
+      }
+      
+      /* Responsive notifications dropdown */
+      @media (max-width: 768px) {
+        .admin-notifications-dropdown {
+          width: 320px;
+          right: -20px;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        .admin-notifications-dropdown {
+          width: 280px;
+          right: -40px;
+        }
+      }
+      
       .admin-user-toggle {
         background: none;
         border: none;
@@ -1332,6 +1723,30 @@ function generateAdminNavigationJS() {
           });
         }
         
+        // Admin notifications toggle functionality
+        const notificationsToggle = document.querySelector('[data-toggle-notifications]');
+        const notificationsMenu = document.getElementById('admin-notifications-menu');
+        
+        if (notificationsToggle && notificationsMenu) {
+          notificationsToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            notificationsMenu.classList.toggle('show');
+            
+            // Close user menu if it's open
+            const userMenu = document.getElementById('admin-user-menu');
+            if (userMenu) {
+              userMenu.classList.remove('show');
+            }
+          });
+          
+          // Close notifications dropdown when clicking outside
+          document.addEventListener('click', function(e) {
+            if (!notificationsToggle.contains(e.target) && !notificationsMenu.contains(e.target)) {
+              notificationsMenu.classList.remove('show');
+            }
+          });
+        }
+        
         // Admin FAB toggle functionality
         const fabContainer = document.querySelector('.admin-fab-container');
         const fabToggle = document.querySelector('.admin-fab-toggle');
@@ -1469,6 +1884,408 @@ function generateAdminNavigationJS() {
         handleQuickAction: handleAdminQuickAction,
         refreshData: refreshAdminDashboardData
       };
+      
+      // Notification action functions
+      window.markNotificationRead = function(notificationId) {
+        console.log('Marking notification as read:', notificationId);
+        const notificationItem = document.querySelector(\`[data-notification-id="\${notificationId}"]\`);
+        if (notificationItem) {
+          notificationItem.classList.remove('unread');
+          notificationItem.style.opacity = '0.6';
+          
+          // Update notification count
+          updateNotificationCount();
+          
+          // Optional: Hide notification after a delay
+          setTimeout(() => {
+            notificationItem.style.display = 'none';
+            updateNotificationCount();
+          }, 1000);
+        }
+      };
+      
+      window.viewNotificationDetails = function(notificationId, redirectUrl) {
+        console.log('Viewing notification details:', notificationId, 'redirecting to:', redirectUrl);
+        
+        // Mark as read first
+        markNotificationRead(notificationId);
+        
+        // Close notifications dropdown
+        const notificationsMenu = document.getElementById('admin-notifications-menu');
+        if (notificationsMenu) {
+          notificationsMenu.classList.remove('show');
+        }
+        
+        // Navigate to the details page
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
+        }
+      };
+      
+      window.markAllNotificationsRead = function() {
+        console.log('Marking all notifications as read');
+        const unreadNotifications = document.querySelectorAll('.notification-item.unread');
+        
+        unreadNotifications.forEach(notification => {
+          notification.classList.remove('unread');
+          notification.style.opacity = '0.6';
+        });
+        
+        // Update badge count
+        updateNotificationCount();
+        
+        // Hide all notifications after a delay
+        setTimeout(() => {
+          unreadNotifications.forEach(notification => {
+            notification.style.display = 'none';
+          });
+          
+          // Show empty state if no notifications left
+          showEmptyNotificationsState();
+          updateNotificationCount();
+        }, 1500);
+      };
+      
+      function updateNotificationCount() {
+        const unreadCount = document.querySelectorAll('.notification-item.unread:not([style*="display: none"])').length;
+        const badge = document.querySelector('.admin-notification-badge');
+        const headerCount = document.querySelector('.notification-count');
+        
+        if (badge) {
+          if (unreadCount > 0) {
+            badge.textContent = unreadCount;
+            badge.style.display = 'block';
+          } else {
+            badge.style.display = 'none';
+          }
+        }
+        
+        if (headerCount) {
+          headerCount.textContent = \`(\${unreadCount})\`;
+        }
+        
+        // If no unread notifications, show empty state after a delay
+        if (unreadCount === 0) {
+          setTimeout(showEmptyNotificationsState, 2000);
+        }
+      }
+      
+      function showEmptyNotificationsState() {
+        const notificationsList = document.querySelector('.notifications-list');
+        const emptyState = document.querySelector('.notifications-empty');
+        
+        if (notificationsList && emptyState) {
+          const visibleNotifications = document.querySelectorAll('.notification-item:not([style*="display: none"])').length;
+          
+          if (visibleNotifications === 0) {
+            notificationsList.style.display = 'none';
+            emptyState.style.display = 'block';
+          }
+        }
+      }
+      
+      // ============================================================================
+      // AUTO-REFRESH NOTIFICATION SYSTEM
+      // ============================================================================
+      
+      let notificationRefreshInterval = null;
+      let lastNotificationCheck = Date.now();
+      
+      // Function to fetch fresh notifications from server
+      async function refreshNotifications() {
+        try {
+          const response = await fetch('/admin/api/notifications/latest?timestamp=' + lastNotificationCheck);
+          if (response.ok) {
+            const data = await response.json();
+            
+            if (data.notifications && data.notifications.length > 0) {
+              console.log(\`🔔 Received \${data.notifications.length} new notifications\`);
+              
+              // Add new notifications to the dropdown
+              addNewNotificationsToDOM(data.notifications);
+              updateNotificationCount();
+              lastNotificationCheck = Date.now();
+              
+              // Show visual indicator for new notifications
+              showNewNotificationIndicator(data.notifications.length);
+              
+              return true; // Found new notifications
+            } else {
+              console.log('📭 No new notifications');
+              return false; // No new notifications
+            }
+          } else {
+            console.warn('Failed to fetch notifications:', response.status);
+            return false;
+          }
+        } catch (error) {
+          console.error('Failed to refresh notifications:', error);
+          throw error; // Re-throw for retry logic
+        }
+      }
+      
+      // Show visual indicator for new notifications
+      function showNewNotificationIndicator(count) {
+        const badge = document.querySelector('.admin-notification-badge');
+        if (badge) {
+          // Pulse animation for new notifications
+          badge.style.animation = 'none';
+          badge.offsetHeight; // Trigger reflow
+          badge.style.animation = 'pulse 1s ease-in-out 2';
+          
+          // Optional: Play subtle notification sound (if user preferences allow)
+          // playNotificationSound();
+        }
+        
+        // Show temporary toast notification
+        showNotificationToast(\`\${count} new notification\${count > 1 ? 's' : ''}\`);
+      }
+      
+      // Show temporary toast notification
+      function showNotificationToast(message) {
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.style.cssText = \`
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: #10B981;
+          color: white;
+          padding: 12px 16px;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+          z-index: 9999;
+          font-size: 14px;
+          font-weight: 500;
+          opacity: 0;
+          transform: translateY(-20px);
+          transition: all 0.3s ease;
+        \`;
+        toast.textContent = message;
+        
+        document.body.appendChild(toast);
+        
+        // Animate in
+        setTimeout(() => {
+          toast.style.opacity = '1';
+          toast.style.transform = 'translateY(0)';
+        }, 100);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(-20px)';
+          setTimeout(() => {
+            document.body.removeChild(toast);
+          }, 300);
+        }, 3000);
+      }
+      
+      // Function to add new notifications to the DOM
+      function addNewNotificationsToDOM(newNotifications) {
+        const notificationsList = document.querySelector('.notifications-list');
+        const emptyState = document.querySelector('.notifications-empty');
+        
+        if (!notificationsList) return;
+        
+        // Hide empty state if showing
+        if (emptyState) {
+          emptyState.style.display = 'none';
+        }
+        
+        // Show notifications list
+        notificationsList.style.display = 'block';
+        
+        // Add each new notification
+        newNotifications.forEach(notification => {
+          const notificationHTML = \`
+            <div class="notification-item unread" data-notification-id="\${notification.id}">
+              <div class="notification-content">
+                <div class="notification-header">
+                  <span class="notification-title">\${notification.title}</span>
+                  <span class="notification-time">\${notification.timeAgo}</span>
+                </div>
+                <div class="notification-message">
+                  \${notification.message}
+                </div>
+                <div class="notification-actions">
+                  <a href="\${notification.redirectUrl || '#'}" 
+                     class="notification-action-btn primary"
+                     onclick="markNotificationRead('\${notification.id}')">
+                    View Details
+                  </a>
+                  <button class="notification-action-btn secondary" 
+                          onclick="markNotificationRead('\${notification.id}')">
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+            </div>
+          \`;
+          
+          // Insert at the beginning of the list
+          notificationsList.insertAdjacentHTML('afterbegin', notificationHTML);
+        });
+        
+        // Add visual highlight for new notifications
+        setTimeout(() => {
+          newNotifications.forEach(notification => {
+            const element = document.querySelector(\`[data-notification-id="\${notification.id}"]\`);
+            if (element) {
+              element.classList.add('new-notification');
+              setTimeout(() => element.classList.remove('new-notification'), 3000);
+            }
+          });
+        }, 100);
+      }
+      
+      // Enhanced polling system with adaptive intervals
+      let pollingInterval = 30000; // Start with 30 seconds
+      let consecutiveEmptyChecks = 0;
+      let isUserActive = true;
+      let connectionRetryCount = 0;
+      const maxRetryCount = 3;
+      
+      // Start auto-refresh system with advanced polling
+      function startNotificationAutoRefresh() {
+        // Initial refresh
+        refreshNotifications();
+        
+        // Set up adaptive polling interval
+        notificationRefreshInterval = setInterval(() => {
+          if (isUserActive) {
+            refreshNotificationsWithRetry();
+          }
+        }, pollingInterval);
+        
+        // Check when user opens the dropdown
+        const notificationToggle = document.getElementById('admin-notifications-toggle');
+        if (notificationToggle) {
+          notificationToggle.addEventListener('click', () => {
+            // Immediate check when opening dropdown
+            setTimeout(refreshNotificationsWithRetry, 200);
+            // Reset to frequent polling when interacting
+            resetPollingInterval();
+          });
+        }
+        
+        // Track user activity for smart polling
+        setupActivityTracking();
+        
+        // Setup visibility change detection
+        setupVisibilityTracking();
+      }
+      
+      // Enhanced refresh with retry logic
+      async function refreshNotificationsWithRetry() {
+        try {
+          const hasNewNotifications = await refreshNotifications();
+          connectionRetryCount = 0; // Reset on successful request
+          
+          // Adaptive polling based on activity
+          if (hasNewNotifications) {
+            consecutiveEmptyChecks = 0;
+            // Increase frequency when getting notifications
+            pollingInterval = Math.max(15000, pollingInterval - 5000);
+          } else {
+            consecutiveEmptyChecks++;
+            // Decrease frequency when no new notifications
+            if (consecutiveEmptyChecks > 3) {
+              pollingInterval = Math.min(120000, pollingInterval + 15000); // Max 2 minutes
+            }
+          }
+          
+          // Update interval
+          updatePollingInterval();
+          
+        } catch (error) {
+          console.error('Notification refresh failed:', error);
+          connectionRetryCount++;
+          
+          if (connectionRetryCount >= maxRetryCount) {
+            console.warn('Max retry attempts reached, falling back to slower polling');
+            pollingInterval = 120000; // Fall back to 2 minutes
+            updatePollingInterval();
+            connectionRetryCount = 0;
+          }
+        }
+      }
+      
+      // Reset polling to frequent interval
+      function resetPollingInterval() {
+        pollingInterval = 30000;
+        consecutiveEmptyChecks = 0;
+        updatePollingInterval();
+      }
+      
+      // Update the polling interval
+      function updatePollingInterval() {
+        if (notificationRefreshInterval) {
+          clearInterval(notificationRefreshInterval);
+          notificationRefreshInterval = setInterval(() => {
+            if (isUserActive) {
+              refreshNotificationsWithRetry();
+            }
+          }, pollingInterval);
+        }
+        console.log(\`🔄 Updated polling interval to \${pollingInterval/1000}s\`);
+      }
+      
+      // Track user activity for smart polling
+      function setupActivityTracking() {
+        let activityTimer;
+        
+        const resetActivityTimer = () => {
+          isUserActive = true;
+          clearTimeout(activityTimer);
+          activityTimer = setTimeout(() => {
+            isUserActive = false;
+            console.log('📴 User inactive, reducing notification polling');
+          }, 300000); // 5 minutes of inactivity
+        };
+        
+        // Track various user activities
+        ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'].forEach(event => {
+          document.addEventListener(event, resetActivityTimer, true);
+        });
+        
+        resetActivityTimer(); // Initialize
+      }
+      
+      // Track page visibility for smart polling
+      function setupVisibilityTracking() {
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            console.log('📱 Page hidden, reducing notification frequency');
+            isUserActive = false;
+          } else {
+            console.log('👀 Page visible, resuming normal notification frequency');
+            isUserActive = true;
+            // Immediate check when page becomes visible
+            setTimeout(refreshNotificationsWithRetry, 500);
+            resetPollingInterval();
+          }
+        });
+      }
+      
+      // Stop auto-refresh (useful for cleanup)
+      function stopNotificationAutoRefresh() {
+        if (notificationRefreshInterval) {
+          clearInterval(notificationRefreshInterval);
+          notificationRefreshInterval = null;
+        }
+      }
+      
+      // Initialize auto-refresh when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', startNotificationAutoRefresh);
+      } else {
+        startNotificationAutoRefresh();
+      }
+      
+      // Stop refresh when page unloads
+      window.addEventListener('beforeunload', stopNotificationAutoRefresh);
+      
     </script>
   `;
 }
