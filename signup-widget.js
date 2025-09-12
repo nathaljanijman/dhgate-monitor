@@ -7,16 +7,9 @@
 export function generateSignupWidget(env = null, lang = null, theme = 'light') {
   const widgetId = '2025-signup-widget-' + Date.now();
   
-  // Auto-detect language based on URL if not provided
+  // Set default language if not provided
   if (!lang) {
-    const hostname = window.location.hostname;
-    if (hostname.includes('.nl') || hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
-      lang = 'nl';
-    } else if (hostname.includes('.com') || hostname.includes('.org') || hostname.includes('.net')) {
-      lang = 'en';
-    } else {
-      lang = 'nl'; // Default fallback
-    }
+    lang = 'nl'; // Default fallback
   }
   
   // Expert-recommended store data with UX-driven proposition elements
@@ -123,11 +116,11 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
   };
   
   return `<!DOCTYPE html>
-<html lang="(lang)" dir="ltr">
+<html lang="${lang}" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>(t.title)</title>
+    <title>${t.title}</title>
     
     <!-- Raleway Font (as requested) -->
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -143,10 +136,10 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
             --warning: #F59E0B;
             
             /* Neutral Colors */
-            --gray-50: (theme === 'dark' ? '#0F172A' : '#F9FAFB');
-            --gray-100: (theme === 'dark' ? '#1E293B' : '#F3F4F6');
-            --gray-200: (theme === 'dark' ? '#334155' : '#E5E7EB');
-            --gray-300: (theme === 'dark' ? '#475569' : '#D1D5DB');
+            --gray-50: ${theme === 'dark' ? '#0F172A' : '#F9FAFB'};
+            --gray-100: ${theme === 'dark' ? '#1E293B' : '#F3F4F6'};
+            --gray-200: ${theme === 'dark' ? '#334155' : '#E5E7EB'};
+            --gray-300: ${theme === 'dark' ? '#475569' : '#D1D5DB'};
             --gray-400: (theme === 'dark' ? '#64748B' : '#9CA3AF');
             --gray-500: (theme === 'dark' ? '#94A3B8' : '#6B7280');
             --gray-600: (theme === 'dark' ? '#CBD5E1' : '#4B5563');
@@ -1064,61 +1057,61 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
     <div class="widget-container">
         <div class="widget-header">
             <div class="language-switch">
-                <button class="lang-btn (lang === 'nl' ? 'active' : '')" onclick="switchLanguage('nl')" aria-label="Switch to Dutch">
+                <button class="lang-btn ${lang === "nl" ? "active" : ""})" onclick="switchLanguage('nl')" aria-label="Switch to Dutch">
                     NL
                 </button>
                 <button class="lang-btn (lang === 'en' ? 'active' : '')" onclick="switchLanguage('en')" aria-label="Switch to English">
                     EN
                 </button>
             </div>
-            <h1 class="widget-title">(t.title)</h1>
-            <p class="widget-subtitle">(t.subtitle)</p>
+            <h1 class="widget-title">${t.title}</h1>
+            <p class="widget-subtitle">${t.subtitle}</p>
         </div>
         
         <!-- 2025 Progress Indicator -->
-        <div class="progress-indicator" role="progressbar" aria-label="(t.accessibility.progressLabel)" aria-valuenow="1" aria-valuemin="1" aria-valuemax="4">
+        <div class="progress-indicator" role="progressbar" aria-label="${t.accessibility.progressLabel}" aria-valuenow="1" aria-valuemin="1" aria-valuemax="4">
             <div class="progress-line">
                 <div class="progress-fill" id="progress-fill"></div>
             </div>
             <div class="progress-step">
                 <div class="step-indicator active" id="step-1">1</div>
-                <div class="step-label active">(t.step1)</div>
+                <div class="step-label active">${t.step1}</div>
             </div>
             <div class="progress-step">
                 <div class="step-indicator" id="step-2">2</div>
-                <div class="step-label">(t.step2)</div>
+                <div class="step-label">${t.step2}</div>
             </div>
             <div class="progress-step">
                 <div class="step-indicator" id="step-3">3</div>
-                <div class="step-label">(t.step3)</div>
+                <div class="step-label">${t.step3}</div>
             </div>
             <div class="progress-step">
                 <div class="step-indicator" id="step-4">4</div>
-                <div class="step-label">(t.step4)</div>
+                <div class="step-label">${t.step4}</div>
             </div>
         </div>
         
         <!-- Step 1: Email -->
         <div class="step-content active" id="step-1-content">
             <div class="form-group">
-                <label class="form-label" for="email-input">(t.emailLabel)</label>
+                <label class="form-label" for="email-input">${t.emailLabel}</label>
                 <input 
                     type="email" 
                     class="form-input" 
                     id="email-input" 
-                    placeholder="(t.emailPlaceholder)"
+                    placeholder="${t.emailPlaceholder}"
                     autocomplete="email"
                     required
                     aria-describedby="email-help"
                 >
-                <div class="form-description" id="email-help">(t.emailDescription)</div>
+                <div class="form-description" id="email-help">${t.emailDescription}</div>
                 <div class="error-message" id="email-error"></div>
             </div>
             
             <div class="button-group">
                 <div></div>
                 <button class="btn btn-primary" onclick="nextStep()" aria-describedby="step-1-help">
-                    (t.nextButton)
+                    ${t.nextButton}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="9,18 15,12 9,6"/>
                     </svg>
@@ -1129,14 +1122,14 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         <!-- Step 2: AI-Powered Store Selection -->
         <div class="step-content" id="step-2-content">
             <div class="form-group">
-                <label class="form-label">(t.storeTitle)</label>
-                <div class="form-description">(t.storeDescription)</div>
+                <label class="form-label">${t.storeTitle}</label>
+                <div class="form-description">${t.storeDescription}</div>
                 
                 <div class="store-selection-group">
                 <div class="store-grid">
                     ${aiStores.map(store => `
                             <div class="store-card" data-store-id="(store.id)" onclick="selectStore((store.id))" tabindex="0" role="button" aria-label="(lang === 'nl' ? 'Selecteer' : 'Select') (store.name)" style="--store-bg-image: url('(store.backgroundImage)')">
-                            <div class="ai-badge">(t.aiPowered)</div>
+                            <div class="ai-badge">${t.aiPowered}</div>
                             <div class="store-check" aria-hidden="true">✓</div>
                                 
                             <div class="store-header">
@@ -1194,8 +1187,8 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                 <!-- Custom Store Section -->
                 <div class="custom-store-section">
                     <div class="custom-store-header">
-                        <h3 class="custom-store-title">(t.addCustomTitle)</h3>
-                        <p class="custom-store-description">(t.addCustomDescription)</p>
+                        <h3 class="custom-store-title">${t.addCustomTitle}</h3>
+                        <p class="custom-store-description">${t.addCustomDescription}</p>
                         <div class="url-format-hint">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"/>
@@ -1211,11 +1204,11 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                             type="url" 
                             class="custom-store-input" 
                             id="custom-store-url" 
-                            placeholder="(t.addStorePlaceholder)"
-                            aria-label="(t.addStorePlaceholder)"
+                            placeholder="${t.addStorePlaceholder}"
+                            aria-label="${t.addStorePlaceholder}"
                         >
                         <button class="btn btn-secondary custom-store-btn" onclick="addCustomStore()">
-                            (t.addStoreButton)
+                            ${t.addStoreButton}
                         </button>
                     </div>
                     
@@ -1230,10 +1223,10 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="15,18 9,12 15,6"/>
                     </svg>
-                    (t.backButton)
+                    ${t.backButton}
                 </button>
                 <button class="btn btn-primary" onclick="nextStep()">
-                    (t.nextButton)
+                    ${t.nextButton}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="9,18 15,12 9,6"/>
                     </svg>
@@ -1244,15 +1237,15 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         <!-- Step 3: Search Terms -->
         <div class="step-content" id="step-3-content">
             <div class="form-group">
-                <label class="form-label" for="tags-input">(t.tagsLabel)</label>
+                <label class="form-label" for="tags-input">${t.tagsLabel}</label>
                 <textarea 
                     class="form-input" 
                     id="tags-input" 
-                    placeholder="(t.tagsPlaceholder)"
+                    placeholder="${t.tagsPlaceholder}"
                     rows="3"
                     style="resize: vertical;"
                 ></textarea>
-                <div class="form-description">(t.tagsDescription)</div>
+                <div class="form-description">${t.tagsDescription}</div>
                 <div class="error-message" id="tags-error"></div>
             </div>
             
@@ -1261,10 +1254,10 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="15,18 9,12 15,6"/>
                     </svg>
-                    (t.backButton)
+                    ${t.backButton}
                 </button>
                 <button class="btn btn-primary" onclick="nextStep()">
-                    (t.nextButton)
+                    ${t.nextButton}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="9,18 15,12 9,6"/>
                     </svg>
@@ -1282,8 +1275,8 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                     </svg>
                 </div>
                 
-                <h2 class="success-title">(t.successTitle)</h2>
-                <p class="success-description">(t.successDescription)</p>
+                <h2 class="success-title">${t.successTitle}</h2>
+                <p class="success-description">${t.successDescription}</p>
                 
                 <div class="summary-cards">
                     <div class="summary-card">
@@ -1328,7 +1321,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                             <rect x="14" y="14" width="7" height="7"/>
                             <rect x="3" y="14" width="7" height="7"/>
                     </svg>
-                        (t.dashboardButton)
+                        ${t.dashboardButton}
                     </a>
                     
                     <button class="btn btn-secondary" onclick="resetForm()">
@@ -1336,7 +1329,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                             <path d="M3 12a9 9 0 0118 0 9 9 0 01-18 0z"/>
                             <path d="M12 8v8l4-4"/>
                     </svg>
-                        (t.newSignupButton)
+                        ${t.newSignupButton}
                 </button>
                 </div>
             </div>
@@ -1344,7 +1337,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
         
         <!-- Accessibility Hint -->
         <div class="accessibility-hint" aria-live="polite">
-            (t.accessibility.navigationHint)
+            ${t.accessibility.navigationHint}
         </div>
     </div>
     
@@ -1742,7 +1735,7 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
                         '<rect x="14" y="14" width="7" height="7"/>' +
                         '<rect x="3" y="14" width="7" height="7"/>' +
                     '</svg>' +
-                    (t.dashboardButton); 
+                    ${t.dashboardButton}; 
             }
             
             // Clear errors
