@@ -90,7 +90,7 @@ const CONFIG = {
 // IMPORT ENHANCED ADMIN DASHBOARD
 // ============================================================================
 import { generateEnhancedAdminDashboard } from './enhanced_admin_dashboard.js';
-import { generateSignupWidget } from './signup-widget.js';
+import { generateSignupWidget, generateSimplifiedSignupWidget } from './signup-widget.js';
 import { API_CONFIG, getRegionsByPriority, calculateRetryDelay, CircuitBreaker } from './api-config.js';
 
 // ============================================================================
@@ -8843,7 +8843,7 @@ export default {
 async function handleDashboard(request, env) {
   try {
     const url = new URL(request.url);
-    const dashboardKey = url.searchParams.get('key');
+    const dashboardKey = url.searchParams.get('key') || url.searchParams.get('token');
     const lang = url.searchParams.get('lang') || 'nl';
     const theme = url.searchParams.get('theme') || 'light';
     
@@ -9361,6 +9361,15 @@ async function handleToolkit(request, env) {
 
 async function handleIconFont(request, pathname, env) {
   try {
+    // Check if KV storage is available (not in development mode)
+    if (!env?.DHGATE_MONITOR_KV?.get) {
+      console.log('🔧 Development mode: Font/CSS requests skipped (KV storage not available)');
+      return new Response('Development mode: KV storage not available', { 
+        status: 404,
+        headers: { 'Content-Type': 'text/plain' }
+      });
+    }
+
     // Handle CSS file requests
     if (pathname.endsWith('.css')) {
       const cssKey = pathname.includes('dhgate-monitor-icons.css') ? 'dhgate-monitor-css' : null;
@@ -12992,6 +13001,32 @@ function getDefaultConfig() {
 }
 
 function generateDashboardHTML(subscription, t, lang, theme = 'light') {
+  // Parse JSON data if needed (for stores and tags)
+  let parsedStores = subscription.stores;
+  let parsedTags = subscription.tags;
+  
+  try {
+    // If stores is a string, parse it as JSON
+    if (typeof subscription.stores === 'string') {
+      parsedStores = JSON.parse(subscription.stores);
+    }
+  } catch (e) {
+    parsedStores = subscription.stores || [];
+  }
+  
+  try {
+    // If tags is a string, parse it as JSON
+    if (typeof subscription.tags === 'string') {
+      parsedTags = JSON.parse(subscription.tags);
+    }
+  } catch (e) {
+    parsedTags = subscription.tags || [];
+  }
+  
+  // Format the displays
+  const storesDisplay = Array.isArray(parsedStores) ? parsedStores.join(', ') : (parsedStores || '-');
+  const tagsDisplay = Array.isArray(parsedTags) ? parsedTags.join(', ') : (parsedTags || '-');
+
   return `
 <!DOCTYPE html>
 <html lang="${lang}">
@@ -13284,7 +13319,7 @@ function generateDashboardHTML(subscription, t, lang, theme = 'light') {
                             </div>
                             <div class="info-row">
                                 <div class="info-label">${lang === 'nl' ? 'Zoektermen:' : 'Search terms:'}</div>
-                                <div class="info-value">${subscription.tags || '-'}</div>
+                                <div class="info-value">${tagsDisplay}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">${lang === 'nl' ? 'Frequentie:' : 'Frequency:'}</div>
@@ -16384,7 +16419,7 @@ async function handleWidgetSignup(request, env) {
         `).bind(
           sanitizedEmail, 
           JSON.stringify(stores), 
-          tags, 
+          JSON.stringify(tags), 
           lang, 
           unsubscribeToken, 
           dashboardToken, 
@@ -18656,6 +18691,21 @@ function generateDashboardErrorHTML(lang, theme, errorType) {
 
 // Generate Unsubscribe Page HTML
 function generateUnsubscribePageHTML(subscription, token, t, lang, theme = 'light') {
+  // Parse JSON data if needed (for stores and tags)
+  let parsedTags = subscription.tags;
+  
+  try {
+    // If tags is a string, parse it as JSON
+    if (typeof subscription.tags === 'string') {
+      parsedTags = JSON.parse(subscription.tags);
+    }
+  } catch (e) {
+    parsedTags = subscription.tags || [];
+  }
+  
+  // Format the display
+  const tagsDisplay = Array.isArray(parsedTags) ? parsedTags.join(', ') : (parsedTags || '-');
+
   return `
 <!DOCTYPE html>
 <html lang="${lang}">
@@ -18852,7 +18902,7 @@ function generateUnsubscribePageHTML(subscription, token, t, lang, theme = 'ligh
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">${lang === 'nl' ? 'Zoektermen:' : 'Search terms:'}</div>
-                    <div class="detail-value">${subscription.tags || '-'}</div>
+                    <div class="detail-value">${tagsDisplay}</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">${lang === 'nl' ? 'Frequentie:' : 'Frequency:'}</div>
