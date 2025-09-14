@@ -45,7 +45,12 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
     // Progress
     stepOf: 'Stap {{current}} van {{total}}',
     backButton: 'Terug',
-    processing: 'Bezig...'
+    processing: 'Bezig...',
+    
+    // GDPR Consent
+    gdprConsent: 'Ik ga akkoord met het verwerken van mijn gegevens voor DHgate monitoring',
+    privacyPolicy: 'Privacybeleid',
+    consentRequired: 'Toestemming is verplicht om door te gaan'
   } : {
     // Step 1
     step1Title: 'Start free DHgate monitoring',
@@ -80,7 +85,12 @@ export function generateSignupWidget(env = null, lang = null, theme = 'light') {
     // Progress
     stepOf: 'Step {{current}} of {{total}}',
     backButton: 'Back',
-    processing: 'Processing...'
+    processing: 'Processing...',
+    
+    // GDPR Consent
+    gdprConsent: 'I agree to the processing of my data for DHgate monitoring',
+    privacyPolicy: 'Privacy Policy',
+    consentRequired: 'Consent is required to continue'
   };
 
   return `
@@ -239,6 +249,77 @@ body {
     border-color: #2563EB;
     box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
     transform: translateY(-1px);
+}
+
+/* GDPR Consent Styling */
+.gdpr-consent {
+    margin-top: 1rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.gdpr-checkbox {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.checkmark {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d1d5db;
+    border-radius: 4px;
+    background: white;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.gdpr-checkbox:checked + .checkmark {
+    background: linear-gradient(135deg, #2563EB, #1d4ed8);
+    border-color: #2563EB;
+}
+
+.gdpr-checkbox:checked + .checkmark::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 10px;
+    border: 2px solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.consent-text {
+    color: #64748b;
+    margin-top: 1px;
+}
+
+.privacy-link {
+    color: #2563EB;
+    text-decoration: underline;
+    font-weight: 500;
+    margin-left: 0.25rem;
+}
+
+.privacy-link:hover {
+    color: #1d4ed8;
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    font-weight: 500;
 }
 
 .form-input::placeholder {
@@ -1621,6 +1702,20 @@ body {
             >
         </div>
         
+        <div class="form-group">
+            <div class="gdpr-consent">
+                <label class="checkbox-label">
+                    <input type="checkbox" class="gdpr-checkbox" id="gdprConsent" required>
+                    <span class="checkmark"></span>
+                    <span class="consent-text">
+                        ${t.gdprConsent}
+                        <a href="/privacy" target="_blank" class="privacy-link">${t.privacyPolicy}</a>
+                    </span>
+                </label>
+                <div class="error-message" id="consentError" style="display: none;">${t.consentRequired}</div>
+            </div>
+        </div>
+        
         <div class="button-group">
             <button type="button" class="btn" id="step1Next">${t.nextButton}</button>
         </div>
@@ -1957,11 +2052,26 @@ body {
     // Step 1 handlers
     document.getElementById('step1Next').addEventListener('click', function() {
         const email = document.getElementById('emailInput').value.trim();
+        const gdprConsent = document.getElementById('gdprConsent').checked;
+        
+        // Validate email
         if (!email || !email.includes('@')) {
             showError('${lang === 'nl' ? 'Voer een geldig e-mailadres in' : 'Please enter a valid email address'}');
             return;
         }
+        
+        // Validate GDPR consent
+        if (!gdprConsent) {
+            document.getElementById('consentError').style.display = 'block';
+            showError('${lang === 'nl' ? 'Toestemming is verplicht om door te gaan' : 'Consent is required to continue'}');
+            return;
+        }
+        
+        // Hide consent error if shown
+        document.getElementById('consentError').style.display = 'none';
+        
         data.email = email;
+        data.gdprConsent = true;
         showStep(2);
     });
 

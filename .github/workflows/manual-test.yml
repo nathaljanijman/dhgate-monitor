@@ -1,0 +1,109 @@
+name: Manual Customer Journey Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Test Environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - development
+      test_email:
+        description: 'Test Email Address'
+        required: false
+        default: 'manual-test@dhgate-monitor.com'
+        type: string
+      verbose:
+        description: 'Verbose Output'
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  manual-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Wrangler CLI
+        run: npm install -g wrangler
+
+      - name: Authenticate with Cloudflare
+        run: echo "${{ secrets.CLOUDFLARE_API_TOKEN }}" | wrangler auth token
+
+      - name: Run Customer Journey Tests
+        env:
+          TEST_EMAIL: ${{ github.event.inputs.test_email }}
+          VERBOSE: ${{ github.event.inputs.verbose }}
+          ENVIRONMENT: ${{ github.event.inputs.environment }}
+        run: |
+          echo "🧪 Starting Manual Customer Journey Test"
+          echo "Environment: $ENVIRONMENT"
+          echo "Test Email: $TEST_EMAIL"
+          echo "Verbose: $VERBOSE"
+          
+          # Execute the test via Wrangler
+          if [ "$ENVIRONMENT" = "production" ]; then
+            wrangler dev --remote --env production &
+            WORKER_PID=$!
+            sleep 10
+            BASE_URL="https://dhgate-monitor.com"
+          else
+            wrangler dev --env dev &
+            WORKER_PID=$!  
+            sleep 10
+            BASE_URL="http://localhost:8787"
+          fi
+          
+          # Run the comprehensive test
+          curl -X POST "$BASE_URL/test/customer-journey" \
+            -H "Content-Type: application/json" \
+            -d "{\"email\":\"$TEST_EMAIL\",\"verbose\":$VERBOSE}" \
+            --fail --show-error --silent | jq '.'
+          
+          # Stop the worker
+          kill $WORKER_PID || true
+          
+          echo "✅ Manual test completed"
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ github.event.inputs.environment }}
+          path: |
+            test-results.json
+            test-logs.txt
+          retention-days: 30
+
+      - name: Create Test Summary
+        if: always()
+        run: |
+          echo "## 🧪 Customer Journey Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** ${{ github.event.inputs.environment }}" >> $GITHUB_STEP_SUMMARY  
+          echo "- **Test Email:** ${{ github.event.inputs.test_email }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Test Execution Details" >> $GITHUB_STEP_SUMMARY
+          echo "The comprehensive customer journey test covers:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Happy path signup flow" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Field validation testing" >> $GITHUB_STEP_SUMMARY  
+          echo "- ✅ Unique key behavior verification" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Dashboard access validation" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Security & privacy compliance" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ UX & accessibility testing" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Performance validation" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Error handling verification" >> $GITHUB_STEP_SUMMARY

@@ -37,7 +37,10 @@
     "changelog:auto": "node scripts/auto-changelog.cjs",
     "readme:update": "node scripts/update-readme.cjs",
     "deploy:changelog": "npm run deploy && npm run changelog:auto",
-    "deploy:full": "npm run deploy && npm run changelog:auto && npm run readme:update"
+    "deploy:full": "npm run deploy && npm run changelog:auto && npm run readme:update",
+    "test:customer-journey": "node scripts/manual-test.js",
+    "test:customer-journey:production": "ENVIRONMENT=production node scripts/manual-test.js",
+    "test:customer-journey:dev": "ENVIRONMENT=development node scripts/manual-test.js"
   },
   "repository": {
     "type": "git",

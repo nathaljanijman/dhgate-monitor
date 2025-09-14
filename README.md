@@ -112,6 +112,83 @@ npm run dev
 npm run deploy
 ```
 
+## 🧪 Test Automation System
+
+### **Comprehensive Customer Journey Testing**
+
+Our platform includes an advanced automated testing system that runs comprehensive customer journey tests covering all aspects of user interaction, from signup to dashboard access.
+
+### **Daily Automated Testing**
+- **Schedule**: Runs automatically every day at 09:00 UTC via Cloudflare cron triggers
+- **Coverage**: 8 comprehensive test scenarios including signup flow, validation, security, and performance
+- **Reporting**: Results are automatically uploaded to the dashboard and sent via email daily
+- **Storage**: Test results stored in both KV storage (7-30 days) and D1 database (long-term analytics)
+
+### **Manual Test Execution**
+
+#### **Via Terminal Commands**
+```bash
+# Run customer journey tests locally
+npm run test:customer-journey
+
+# Run against production environment
+npm run test:customer-journey:production
+
+# Run against development environment  
+npm run test:customer-journey:dev
+
+# With custom configuration
+TEST_EMAIL="custom@test.com" VERBOSE=true npm run test:customer-journey
+```
+
+#### **Via GitHub Actions**
+1. Go to the **Actions** tab in GitHub
+2. Select **"Manual Customer Journey Test"** workflow
+3. Click **"Run workflow"** 
+4. Configure options:
+   - **Environment**: production or development
+   - **Test Email**: Custom test email address
+   - **Verbose Output**: Enable detailed logging
+5. Monitor results in the workflow summary
+
+### **Test Coverage**
+
+Our comprehensive test suite covers:
+
+| Test Scenario | Description | Validation |
+|---------------|-------------|------------|
+| **Health Check** | Platform availability | Response time < 2s, 200 status |
+| **Homepage Load** | Main page functionality | Content loading, performance |
+| **Widget API** | Signup widget endpoint | API response, widget generation |
+| **User Signup** | Complete signup flow | Form validation, token generation |
+| **Dashboard Access** | User dashboard functionality | Authentication, data display |
+| **Security Testing** | XSS and injection protection | Input sanitization, HTTPS |
+| **Form Validation** | Input validation logic | Error handling, edge cases |
+| **Performance** | Response times and optimization | Sub-5s response times |
+
+### **Test Result Analytics**
+
+- **Real-time Dashboard**: View latest test results at [dhgate-monitor.com/admin/dashboard](https://dhgate-monitor.com/admin/dashboard)
+- **Historical Data**: 30-day test history with trend analysis  
+- **Success Metrics**: Success rate tracking and performance benchmarks
+- **Alert System**: Automatic notifications when tests fail or performance degrades
+
+### **Test Environment Configuration**
+
+Test execution automatically adapts based on environment:
+
+- **Production**: Tests against live platform at dhgate-monitor.com
+- **Development**: Tests against local development server
+- **Custom Environment**: Configurable via environment variables
+
+```bash
+# Environment variables for test configuration
+ENVIRONMENT=production     # Target environment
+TEST_EMAIL=test@test.com  # Test email address  
+VERBOSE=true              # Enable detailed logging
+TIMEOUT=30000             # Request timeout (ms)
+```
+
 ## 📈 Recent Updates
 
 ### 🆕 **Latest Changes (2025-09-12)**

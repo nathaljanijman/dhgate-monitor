@@ -1741,6 +1741,57 @@ class SecurityUtils {
   }
   
   /**
+   * Sanitizes store names and keywords to prevent XSS
+   * @param {Array|string} input - Store names or keywords to sanitize
+   * @returns {Array|string} - Sanitized input
+   */
+  static sanitizeUserInput(input) {
+    if (Array.isArray(input)) {
+      return input.map(item => this.sanitizeHtml(String(item).trim()));
+    }
+    if (typeof input === 'string') {
+      return this.sanitizeHtml(input.trim());
+    }
+    return input;
+  }
+
+  /**
+   * Validates and sanitizes keyword input
+   * @param {Array} keywords - Keywords to validate
+   * @returns {Object} - {isValid: boolean, sanitized: Array, error?: string}
+   */
+  static validateKeywords(keywords) {
+    if (!Array.isArray(keywords)) {
+      return { isValid: false, error: 'Keywords must be an array' };
+    }
+    
+    const sanitized = keywords
+      .map(keyword => this.sanitizeHtml(String(keyword).trim()))
+      .filter(keyword => keyword.length > 0)
+      .slice(0, 10); // Limit to 10 keywords
+    
+    return { isValid: true, sanitized };
+  }
+
+  /**
+   * Validates and sanitizes store names
+   * @param {Array} stores - Store names to validate
+   * @returns {Object} - {isValid: boolean, sanitized: Array, error?: string}
+   */
+  static validateStores(stores) {
+    if (!Array.isArray(stores)) {
+      return { isValid: false, error: 'Stores must be an array' };
+    }
+    
+    const sanitized = stores
+      .map(store => this.sanitizeHtml(String(store).trim()))
+      .filter(store => store.length > 0)
+      .slice(0, 5); // Limit to 5 stores
+    
+    return { isValid: true, sanitized };
+  }
+
+  /**
    * Generates CSRF token
    * @returns {string} - CSRF token
    */
@@ -8137,22 +8188,365 @@ async function getPlatformMetrics(env) {
 
 // Get test plan results for admin dashboard
 async function getTestPlanResults(env) {
-  // Mock test results - in production, this would come from actual test runs
-  return {
-    total_tests: 24,
-    passed: 23,
-    failed: 1,
-    success_rate: 95.8,
+  console.log('🧪 Executing comprehensive customer journey tests...');
+  const startTime = Date.now();
+  
+  try {
+    // Execute the actual customer journey tests
+    const testResults = await executeCustomerJourneyTests(env);
+    
+    const duration = Date.now() - startTime;
+    console.log(`✅ Customer journey tests completed in ${duration}ms`);
+    
+    return testResults;
+  } catch (error) {
+    console.error('❌ Test execution failed:', error);
+    return {
+      total_tests: 8,
+      passed: 0,
+      failed: 8,
+      success_rate: 0,
+      last_run: new Date().toISOString(),
+      error: error.message,
+      test_categories: [
+        { name: 'Customer Journey Tests', passed: 0, failed: 8, total: 8 }
+      ],
+      failed_tests: [{
+        name: 'Test Execution Error',
+        category: 'System',
+        error: error.message,
+        duration: `${Date.now() - startTime}ms`
+      }]
+    };
+  }
+}
+
+// Upload test results to dashboard daily
+async function uploadTestResultsToDashboard(env, testResults) {
+  try {
+    // Store test results with timestamp for dashboard display
+    const testHistoryKey = `test_history_${new Date().toISOString().split('T')[0]}`;
+    
+    const testEntry = {
+      timestamp: new Date().toISOString(),
+      date: new Date().toLocaleDateString('nl-NL'),
+      time: new Date().toLocaleTimeString('nl-NL'),
+      ...testResults,
+      uploaded_at: new Date().toISOString()
+    };
+    
+    // Store in KV for dashboard access
+    if (env.DHGATE_MONITOR_KV) {
+      await env.DHGATE_MONITOR_KV.put(testHistoryKey, JSON.stringify(testEntry), {
+        expirationTtl: 30 * 24 * 60 * 60 // Keep for 30 days
+      });
+      
+      // Also store latest test results for quick dashboard access
+      await env.DHGATE_MONITOR_KV.put('latest_test_results', JSON.stringify(testEntry), {
+        expirationTtl: 7 * 24 * 60 * 60 // Keep for 7 days
+      });
+      
+      console.log(`📊 Test results stored in KV: ${testHistoryKey}`);
+    }
+    
+    // Store in D1 database for long-term storage and analytics
+    if (env.DB) {
+      try {
+        const insertQuery = `
+          INSERT INTO test_results (
+            date, timestamp, total_tests, passed, failed, 
+            success_rate, duration, test_details, environment
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        
+        await env.DB.prepare(insertQuery)
+          .bind(
+            testEntry.date,
+            testEntry.timestamp,
+            testResults.total_tests || 0,
+            testResults.passed || 0,
+            testResults.failed || 0,
+            testResults.success_rate || 0,
+            testResults.duration || 0,
+            JSON.stringify(testResults),
+            'production'
+          )
+          .run();
+          
+        console.log(`📊 Test results stored in D1 database`);
+      } catch (d1Error) {
+        console.warn('⚠️ Could not store test results in D1:', d1Error.message);
+        // Don't throw - KV storage is sufficient
+      }
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('❌ Failed to upload test results:', error);
+    throw error;
+  }
+}
+
+// Execute comprehensive customer journey tests
+async function executeCustomerJourneyTests(env) {
+  const startTime = Date.now();
+  const testResults = {
+    total_tests: 0,
+    passed: 0,
+    failed: 0,
+    success_rate: 0,
     last_run: new Date().toISOString(),
-    test_categories: [
-      { name: 'Email Notifications', passed: 6, failed: 0, total: 6 },
-      { name: 'DHgate URL Processing', passed: 5, failed: 0, total: 5 },
-      { name: 'Subscription Management', passed: 4, failed: 0, total: 4 },
-      { name: 'Database Operations', passed: 4, failed: 0, total: 4 },
-      { name: 'API Endpoints', passed: 3, failed: 1, total: 4 },
-      { name: 'Theme & Language', passed: 1, failed: 0, total: 1 }
-    ]
+    test_categories: [],
+    failed_tests: []
   };
+  
+  const tests = [
+    // 1. Happy Path Signup Journey
+    {
+      name: 'Happy Path Signup',
+      category: 'Customer Journey',
+      test: async () => {
+        const email = `qa-test-${Date.now()}@testdomain.com`;
+        const response = await fetch('https://dhgate-monitor.nathaljanijman.workers.dev/api/widget-signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+            stores: ['DHgate Beauty Store'],
+            tags: ['smartphone'],
+            lang: 'nl'
+          })
+        });
+        
+        if (!response.ok) throw new Error(`API returned ${response.status}`);
+        const result = await response.json();
+        if (!result.success || !result.dashboardToken) {
+          throw new Error('Invalid API response structure');
+        }
+        return { success: true, dashboardToken: result.dashboardToken };
+      }
+    },
+    
+    // 2. Dashboard Access Test
+    {
+      name: 'Dashboard Access',
+      category: 'Customer Journey',
+      test: async () => {
+        // First create a test subscription
+        const email = `dashboard-test-${Date.now()}@example.com`;
+        const signupResponse = await fetch('https://dhgate-monitor.nathaljanijman.workers.dev/api/widget-signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+            stores: ['Test Store'],
+            tags: ['test'],
+            lang: 'nl'
+          })
+        });
+        
+        const signupResult = await signupResponse.json();
+        if (!signupResult.dashboardToken) throw new Error('No dashboard token generated');
+        
+        // Test dashboard access
+        const dashboardResponse = await fetch(`https://dhgate-monitor.nathaljanijman.workers.dev/dashboard?token=${signupResult.dashboardToken}`);
+        if (!dashboardResponse.ok) throw new Error(`Dashboard returned ${dashboardResponse.status}`);
+        
+        const dashboardHtml = await dashboardResponse.text();
+        if (!dashboardHtml.includes(email)) {
+          throw new Error('Dashboard does not show user data');
+        }
+        return { success: true };
+      }
+    },
+    
+    // 3. Email Validation Tests
+    {
+      name: 'Email Validation',
+      category: 'Input Validation',
+      test: async () => {
+        const invalidEmails = ['', 'invalid-email', '@missing.com', 'test@'];
+        for (const email of invalidEmails) {
+          const response = await fetch('https://dhgate-monitor.nathaljanijman.workers.dev/api/widget-signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, stores: ['Test'], tags: ['test'], lang: 'nl' })
+          });
+          
+          const result = await response.json();
+          if (result.success) {
+            throw new Error(`Invalid email ${email} was accepted`);
+          }
+        }
+        return { success: true };
+      }
+    },
+    
+    // 4. XSS Protection Test
+    {
+      name: 'XSS Protection',
+      category: 'Security',
+      test: async () => {
+        const email = `xss-test-${Date.now()}@example.com`;
+        const response = await fetch('https://dhgate-monitor.nathaljanijman.workers.dev/api/widget-signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+            stores: ['<script>alert("xss")</script>'],
+            tags: ['<script>'],
+            lang: 'nl'
+          })
+        });
+        
+        const result = await response.json();
+        if (result.message && result.message.includes('<script>')) {
+          throw new Error('XSS vulnerability detected in response message');
+        }
+        return { success: true };
+      }
+    },
+    
+    // 5. Token Security Test
+    {
+      name: 'Token Security',
+      category: 'Security',
+      test: async () => {
+        // Test invalid token
+        const response = await fetch('https://dhgate-monitor.nathaljanijman.workers.dev/dashboard?token=INVALID_TOKEN_123');
+        const html = await response.text();
+        
+        if (html.includes('demo@dhgate-monitor.com') || !html.includes('error')) {
+          throw new Error('Invalid token shows unauthorized data');
+        }
+        return { success: true };
+      }
+    },
+    
+    // 6. HTTPS Security Test
+    {
+      name: 'HTTPS Security',
+      category: 'Security',
+      test: async () => {
+        const response = await fetch('https://dhgate-monitor.nathaljanijman.workers.dev/widget');
+        if (response.url.startsWith('http:')) {
+          throw new Error('Non-HTTPS connection detected');
+        }
+        return { success: true };
+      }
+    },
+    
+    // 7. Duplicate Registration Test
+    {
+      name: 'Duplicate Registration',
+      category: 'Data Management',
+      test: async () => {
+        const email = `duplicate-${Date.now()}@example.com`;
+        
+        // First registration
+        const first = await fetch('https://dhgate-monitor.nathaljanijman.workers.dev/api/widget-signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, stores: ['Store1'], tags: ['tag1'], lang: 'nl' })
+        });
+        
+        // Second registration
+        const second = await fetch('https://dhgate-monitor.nathaljanijman.workers.dev/api/widget-signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, stores: ['Store2'], tags: ['tag2'], lang: 'nl' })
+        });
+        
+        const firstResult = await first.json();
+        const secondResult = await second.json();
+        
+        if (!firstResult.success || !secondResult.success) {
+          throw new Error('Registration requests failed');
+        }
+        
+        // Should generate same token for same email
+        if (firstResult.dashboardToken !== secondResult.dashboardToken) {
+          throw new Error('Different tokens generated for same email');
+        }
+        
+        return { success: true };
+      }
+    },
+    
+    // 8. Widget Page Load Test
+    {
+      name: 'Widget Page Load',
+      category: 'Performance',
+      test: async () => {
+        const startTime = Date.now();
+        const response = await fetch('https://dhgate-monitor.nathaljanijman.workers.dev/widget');
+        const loadTime = Date.now() - startTime;
+        
+        if (!response.ok) throw new Error(`Widget page returned ${response.status}`);
+        
+        const html = await response.text();
+        if (!html.includes('DHgate monitoring') || !html.includes('emailInput')) {
+          throw new Error('Widget page missing required elements');
+        }
+        
+        if (loadTime > 3000) {
+          throw new Error(`Page load too slow: ${loadTime}ms`);
+        }
+        
+        return { success: true, loadTime };
+      }
+    }
+  ];
+  
+  // Execute all tests
+  for (const testConfig of tests) {
+    const testStartTime = Date.now();
+    testResults.total_tests++;
+    
+    try {
+      console.log(`🧪 Running ${testConfig.name}...`);
+      await testConfig.test();
+      testResults.passed++;
+      console.log(`✅ ${testConfig.name} passed`);
+    } catch (error) {
+      testResults.failed++;
+      testResults.failed_tests.push({
+        name: testConfig.name,
+        category: testConfig.category,
+        error: error.message,
+        duration: `${Date.now() - testStartTime}ms`
+      });
+      console.log(`❌ ${testConfig.name} failed: ${error.message}`);
+    }
+  }
+  
+  // Calculate results
+  testResults.success_rate = ((testResults.passed / testResults.total_tests) * 100).toFixed(1);
+  
+  // Group by category
+  const categories = {};
+  for (const test of tests) {
+    if (!categories[test.category]) {
+      categories[test.category] = { passed: 0, failed: 0, total: 0 };
+    }
+    categories[test.category].total++;
+    
+    const failed = testResults.failed_tests.find(f => f.name === test.name);
+    if (failed) {
+      categories[test.category].failed++;
+    } else {
+      categories[test.category].passed++;
+    }
+  }
+  
+  testResults.test_categories = Object.entries(categories).map(([name, stats]) => ({
+    name,
+    ...stats
+  }));
+  
+  console.log(`✅ Test execution completed: ${testResults.passed}/${testResults.total_tests} passed (${testResults.success_rate}%)`);
+  
+  return testResults;
 }
 
 export default {
@@ -8306,6 +8700,9 @@ export default {
         
         case '/dashboard':
           return await handleDashboard(request, env);
+        
+        case '/privacy':
+          return await handlePrivacyPolicy(request, env);
           
 
         
@@ -8349,8 +8746,6 @@ export default {
         case '/api/status':
           return await handleStatus(request, env);
         
-        case '/privacy':
-          return await handlePrivacyPage(request, env);
         
         case '/terms':
           return await handleTermsPage(request, env);
@@ -8831,6 +9226,15 @@ export default {
         console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Error sending daily monitoring email:', emailError);
       }
       
+      // Upload test results to dashboard daily
+      try {
+        console.log('📊 Uploading test results to dashboard...');
+        await uploadTestResultsToDashboard(env, testResults);
+        console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Test results uploaded to dashboard successfully');
+      } catch (uploadError) {
+        console.error('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Error uploading test results:', uploadError);
+      }
+      
       console.log('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Daily monitoring check completed successfully');
       
     } catch (error) {
@@ -8891,6 +9295,24 @@ async function handleDashboard(request, env) {
   } catch (error) {
     console.error('Dashboard Error:', error);
     return new Response('Dashboard Error: ' + error.message, { status: 500 });
+  }
+}
+
+// Privacy Policy Handler
+async function handlePrivacyPolicy(request, env) {
+  try {
+    const url = new URL(request.url);
+    const lang = url.searchParams.get('lang') || 'nl';
+    const theme = url.searchParams.get('theme') || 'light';
+    
+    const html = generatePrivacyPolicyHTML(lang, theme);
+    
+    return new Response(html, {
+      headers: { 'Content-Type': 'text/html' }
+    });
+  } catch (error) {
+    console.error('Privacy Policy Error:', error);
+    return new Response('Privacy Policy Error: ' + error.message, { status: 500 });
   }
 }
 
@@ -16361,9 +16783,9 @@ async function handleWidgetSignup(request, env) {
     const requestData = await request.json();
     const { email, stores, tags, lang } = requestData;
     
-    console.log('📧 [WIDGET] Processing widget signup:', { email, storesCount: stores.length, tags, lang });
+    console.log('📧 [WIDGET] Processing widget signup:', { email, storesCount: stores?.length || 0, tags, lang });
     
-    // Validate email
+    // Validate and sanitize email
     const emailValidation = SecurityUtils.validateEmail(email);
     if (!emailValidation.isValid) {
       return new Response(JSON.stringify({
@@ -16375,7 +16797,33 @@ async function handleWidgetSignup(request, env) {
       });
     }
     
+    // Validate and sanitize stores
+    const storesValidation = SecurityUtils.validateStores(stores || []);
+    if (!storesValidation.isValid) {
+      return new Response(JSON.stringify({
+        success: false,
+        message: 'Invalid store data'
+      }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
+    // Validate and sanitize keywords/tags
+    const tagsValidation = SecurityUtils.validateKeywords(tags || []);
+    if (!tagsValidation.isValid) {
+      return new Response(JSON.stringify({
+        success: false,
+        message: 'Invalid keyword data'
+      }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
     const sanitizedEmail = emailValidation.sanitized;
+    const sanitizedStores = storesValidation.sanitized;
+    const sanitizedTags = tagsValidation.sanitized;
     
     // Generate unique tokens for this subscription
     const unsubscribeToken = generateUnsubscribeToken(sanitizedEmail);
@@ -16384,8 +16832,8 @@ async function handleWidgetSignup(request, env) {
     // Create subscription data
     const subscriptionData = {
       email: sanitizedEmail,
-      stores: stores,
-      tags: tags,
+      stores: sanitizedStores,
+      tags: sanitizedTags,
       lang: lang,
       unsubscribe_token: unsubscribeToken,
       dashboard_token: dashboardToken,
@@ -16419,8 +16867,8 @@ async function handleWidgetSignup(request, env) {
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
           sanitizedEmail, 
-          JSON.stringify(stores), 
-          JSON.stringify(tags), 
+          JSON.stringify(sanitizedStores), 
+          JSON.stringify(sanitizedTags), 
           lang, 
           unsubscribeToken, 
           dashboardToken, 
@@ -16442,8 +16890,8 @@ async function handleWidgetSignup(request, env) {
     console.log('✅ [WIDGET] DHgate monitoring activated for:', sanitizedEmail);
     
     const message = lang === 'nl' ? 
-      `Monitoring geactiveerd! Je ontvangt emails wanneer er nieuwe producten met "${tags}" gevonden worden in de geselecteerde winkels.` :
-      `Monitoring activated! You'll receive emails when new products matching "${tags}" are found in your selected stores.`;
+      `Monitoring geactiveerd! Je ontvangt emails wanneer er nieuwe producten met "${sanitizedTags.join(',')}" gevonden worden in de geselecteerde winkels.` :
+      `Monitoring activated! You'll receive emails when new products matching "${sanitizedTags.join(',')}" are found in your selected stores.`;
     
     return new Response(JSON.stringify({
       success: true,
@@ -29541,6 +29989,34 @@ function generateComponentLibraryHTML(lang, theme) {
             }
         });
     </script>
+</body>
+</html>`;
+}
+
+
+// Generate Privacy Policy HTML  
+function generatePrivacyPolicyHTML(lang = "nl", theme = "light") {
+  const title = lang === "nl" ? "Privacybeleid - DHgate Monitor" : "Privacy Policy - DHgate Monitor";
+  return `<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title}</title>
+    <style>
+        body { font-family: Raleway, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; }
+        .container { background: white; padding: 2rem; border-radius: 8px; }
+        h1 { color: #2563EB; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>${lang === "nl" ? "Privacybeleid" : "Privacy Policy"}</h1>
+        <p>${lang === "nl" ? "DHgate Monitor respecteert uw privacy en beschermt uw gegevens." : "DHgate Monitor respects your privacy and protects your data."}</p>
+        <h2>${lang === "nl" ? "Gegevensverzameling" : "Data Collection"}</h2>
+        <p>${lang === "nl" ? "Wij verzamelen alleen uw e-mailadres voor monitoring services." : "We only collect your email address for monitoring services."}</p>
+        <a href="javascript:history.back()">← ${lang === "nl" ? "Terug" : "Back"}</a>
+    </div>
 </body>
 </html>`;
 }
