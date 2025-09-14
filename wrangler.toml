@@ -3,6 +3,17 @@ main = "cloudflare_app.js"
 compatibility_date = "2025-08-20"
 compatibility_flags = ["nodejs_compat"]
 
+# KV Namespace for top-level deployment
+[[kv_namespaces]]
+binding = "DHGATE_MONITOR_KV"
+id = "9e3e5971f9454b55b2241aeba6b1e1ba"
+
+# D1 Database binding for top-level deployment
+[[d1_databases]]
+binding = "DB"
+database_name = "dhgate-monitor"
+database_id = "c81bf194-e0ca-4247-9086-cd5f57846846"
+
 # ==================================
 # Production Environment
 # ==================================

@@ -8847,8 +8847,9 @@ async function handleDashboard(request, env) {
     const lang = url.searchParams.get('lang') || 'nl';
     const theme = url.searchParams.get('theme') || 'light';
     
-    // Development mode fallback - allow dashboard access without valid tokens
+    // Check KV storage availability and validate dashboard key
     let subscription = null;
+    
     
     if (!env.DHGATE_MONITOR_KV) {
       // Development mode - create demo subscription
@@ -18313,7 +18314,7 @@ async function getSubscriptionByDashboardToken(env, dashboardToken) {
     
     const subscription = await env.DHGATE_MONITOR_KV.get(`subscription:${email}`);
     if (subscription) {
-      console.log(`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17.02" x2="12.01" y2="17"/></svg>  Subscription found in KV fallback for dashboard access: ${email}`);
+      console.log(`✅ Subscription found in KV for dashboard access: ${email}`);
       return JSON.parse(subscription);
     }
     
